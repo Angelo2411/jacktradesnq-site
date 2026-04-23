@@ -258,3 +258,109 @@ footer {
   color: #9aaac0;
   margin-bottom: 1rem;
 }
+
+/* ── one-page layout overrides ── */
+html { scroll-behavior: smooth; }
+
+body {
+  display: block;
+  padding: 0;
+}
+
+main {
+  max-width: none;
+  display: block;
+  gap: 0;
+  padding: 0;
+}
+
+#hero {
+  padding: 5rem 1rem 4rem;
+  text-align: center;
+}
+
+/* ── sticky nav ── */
+.nav {
+  position: sticky;
+  top: 1rem;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 720px;
+  margin: 1rem auto;
+  padding: 0.6rem 1.2rem;
+  background: rgba(16, 23, 41, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 999px;
+}
+.nav-logo {
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+}
+.nav-links {
+  display: flex;
+  gap: 1.25rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.nav-links a {
+  color: #8a9ab8;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.nav-links a:hover { color: #fff; }
+
+/* ── sections ── */
+.section {
+  max-width: 720px;
+  margin: 4rem auto;
+  padding: 0 1rem;
+}
+.section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #1a2340;
+}
+.section-sub {
+  color: #8a9ab8;
+  margin-bottom: 2rem;
+}
+.cards {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+.card-item {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+.card-item h3 { margin: 0 0 0.5rem; color: #1a2340; }
+.card-item p { color: #8a9ab8; font-size: 0.9rem; margin-bottom: 0.75rem; }
+.card-item a { color: #1a2340; text-decoration: none; font-size: 0.9rem; font-weight: 600; }
+
+/* ── CTA button ── */
+.cta {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: #1a2340;
+  color: #fff;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 600;
+}
+.cta:hover { background: #2a3460; }
+
+/* ── mobile ── */
+@media (max-width: 480px) {
+  .nav-links { gap: 0.75rem; }
+  .nav-links a { font-size: 0.8rem; }
+  .cards { grid-template-columns: 1fr; }
+}
