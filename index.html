@@ -15,24 +15,27 @@
   <meta name="twitter:site" content="@jacktradesnq">
   <meta name="twitter:title" content="JackTradesNQ — Trader NQ Futures">
   <meta name="twitter:description" content="Indicateurs TradingView gratuits et contenu trading sur le NQ Futures.">
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
   <div class="sky" aria-hidden="true">
-    <div class="stars" id="stars"></div>
-    <div class="moon"></div>
-    <div class="shooting-star"></div>
-    <div class="shooting-star"></div>
+    <div class="sun"></div>
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+    <div class="petals" id="petals"></div>
   </div>
 
-  <div class="mountains" aria-hidden="true">
-    <svg class="mountain-back" viewBox="0 0 1200 200" preserveAspectRatio="none">
-      <path d="M0,200 L0,120 L150,60 L300,100 L450,40 L600,90 L750,30 L900,80 L1050,50 L1200,100 L1200,200 Z" fill="#1e1b4b"/>
+  <div class="ground" aria-hidden="true">
+    <svg class="hill-far" viewBox="0 0 1200 200" preserveAspectRatio="none">
+      <path d="M0,200 L0,140 Q200,80 400,110 T800,100 T1200,130 L1200,200 Z" fill="#b4d4a5"/>
     </svg>
-    <svg class="mountain-front" viewBox="0 0 1200 180" preserveAspectRatio="none">
-      <path d="M0,180 L0,140 L120,80 L240,120 L360,70 L480,110 L600,50 L720,100 L840,60 L960,90 L1080,70 L1200,110 L1200,180 Z" fill="#0f0a2e"/>
+    <svg class="hill-close" viewBox="0 0 1200 200" preserveAspectRatio="none">
+      <path d="M0,200 L0,150 Q300,60 600,100 T1200,120 L1200,200 Z" fill="#7ab55f"/>
     </svg>
   </div>
+
+  <div class="grass-layer" id="grass" aria-hidden="true"></div>
 
   <header class="nav">
     <a href="#hero" class="nav-logo">JT</a>
@@ -126,22 +129,35 @@
 <script>
 (function() {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const container = document.getElementById('stars');
-  if (!container) return;
-  const count = window.innerWidth < 480 ? 80 : 180;
-  const frag = document.createDocumentFragment();
-  for (let i = 0; i < count; i++) {
-    const s = document.createElement('div');
-    s.className = 'star';
-    s.style.left = Math.random() * 100 + '%';
-    s.style.top = Math.random() * 100 + '%';
-    s.style.setProperty('--dur', (2 + Math.random() * 4) + 's');
-    s.style.setProperty('--delay', Math.random() * 3 + 's');
-    const size = Math.random() < 0.2 ? 3 : Math.random() < 0.5 ? 2 : 1;
-    s.style.width = s.style.height = size + 'px';
-    frag.appendChild(s);
+
+  // Pétales
+  const petalsContainer = document.getElementById('petals');
+  if (petalsContainer) {
+    const count = window.innerWidth < 480 ? 8 : 16;
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement('div');
+      p.className = 'petal';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.animationDuration = (15 + Math.random() * 20) + 's';
+      p.style.animationDelay = (Math.random() * 15) + 's';
+      petalsContainer.appendChild(p);
+    }
   }
-  container.appendChild(frag);
+
+  // Herbes
+  const grass = document.getElementById('grass');
+  if (grass) {
+    const count = window.innerWidth < 480 ? 40 : 80;
+    for (let i = 0; i < count; i++) {
+      const b = document.createElement('div');
+      b.className = 'grass-blade';
+      b.style.left = (i / count * 100) + Math.random() + '%';
+      b.style.height = (30 + Math.random() * 40) + 'px';
+      b.style.setProperty('--delay', (Math.random() * 2) + 's');
+      b.style.animationDuration = (3 + Math.random() * 2) + 's';
+      grass.appendChild(b);
+    }
+  }
 })();
 </script>
 </body>
