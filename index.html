@@ -15,9 +15,25 @@
   <meta name="twitter:site" content="@jacktradesnq">
   <meta name="twitter:title" content="JackTradesNQ — Trader NQ Futures">
   <meta name="twitter:description" content="Indicateurs TradingView gratuits et contenu trading sur le NQ Futures.">
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
+  <div class="sky" aria-hidden="true">
+    <div class="stars" id="stars"></div>
+    <div class="moon"></div>
+    <div class="shooting-star"></div>
+    <div class="shooting-star"></div>
+  </div>
+
+  <div class="mountains" aria-hidden="true">
+    <svg class="mountain-back" viewBox="0 0 1200 200" preserveAspectRatio="none">
+      <path d="M0,200 L0,120 L150,60 L300,100 L450,40 L600,90 L750,30 L900,80 L1050,50 L1200,100 L1200,200 Z" fill="#1e1b4b"/>
+    </svg>
+    <svg class="mountain-front" viewBox="0 0 1200 180" preserveAspectRatio="none">
+      <path d="M0,180 L0,140 L120,80 L240,120 L360,70 L480,110 L600,50 L720,100 L840,60 L960,90 L1080,70 L1200,110 L1200,180 Z" fill="#0f0a2e"/>
+    </svg>
+  </div>
+
   <header class="nav">
     <a href="#hero" class="nav-logo">JT</a>
     <ul class="nav-links">
@@ -107,5 +123,26 @@
       <p class="copyright">© 2026 JackTradesNQ. All rights reserved.</p>
     </footer>
   </main>
+<script>
+(function() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const container = document.getElementById('stars');
+  if (!container) return;
+  const count = window.innerWidth < 480 ? 80 : 180;
+  const frag = document.createDocumentFragment();
+  for (let i = 0; i < count; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.left = Math.random() * 100 + '%';
+    s.style.top = Math.random() * 100 + '%';
+    s.style.setProperty('--dur', (2 + Math.random() * 4) + 's');
+    s.style.setProperty('--delay', Math.random() * 3 + 's');
+    const size = Math.random() < 0.2 ? 3 : Math.random() < 0.5 ? 2 : 1;
+    s.style.width = s.style.height = size + 'px';
+    frag.appendChild(s);
+  }
+  container.appendChild(frag);
+})();
+</script>
 </body>
 </html>
