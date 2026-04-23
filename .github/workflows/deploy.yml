@@ -18,5 +18,5 @@ jobs:
         uses: cloudflare/wrangler-action@9acf94ace14e7dc412b076f2c5c20b8ce93c79cd # v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: 8a94a9af2e887e4e8b7be770a78a5569
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy . --project-name=jacktradesnq --branch=main --commit-dirty=true
