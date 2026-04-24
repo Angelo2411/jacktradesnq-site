@@ -1,4 +1,5 @@
 import GhibliBackground from './components/GhibliBackground';
+import { HeroItem } from './components/HeroReveal';
 import Link from 'next/link';
 
 export default function Home() {
@@ -17,10 +18,10 @@ export default function Home() {
 
       <main>
         <section id="hero" className="profile">
-          <div className="avatar">JT</div>
-          <h1>JackTradesNQ</h1>
-          <p className="bio">NQ FUTURES TRADER</p>
-          <a href="#socials" className="cta">Follow</a>
+          <HeroItem delay={0}><div className="avatar">JT</div></HeroItem>
+          <HeroItem delay={0.15}><h1>JackTradesNQ</h1></HeroItem>
+          <HeroItem delay={0.3}><p className="bio">NQ FUTURES TRADER</p></HeroItem>
+          <HeroItem delay={0.45}><a href="#socials" className="cta">Follow</a></HeroItem>
         </section>
 
         <section id="socials" className="section">
