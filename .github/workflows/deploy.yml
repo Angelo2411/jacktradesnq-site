@@ -14,9 +14,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build Next.js static export
+        run: npm run build
+
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@9acf94ace14e7dc412b076f2c5c20b8ce93c79cd # v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy . --project-name=jacktradesnq --branch=main --commit-dirty=true
+          command: pages deploy out --project-name=jacktradesnq --branch=main --commit-dirty=true
