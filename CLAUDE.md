@@ -1,10 +1,11 @@
 # jacktradesnq.com — design & code rules
 
 ## Stack
-- HTML statique (pas de framework, pas de build step)
-- CSS pur dans style.css (pas de Tailwind, pas de SCSS)
-- Déploiement Cloudflare Pages auto via push main
-- JS vanilla inline minimal pour animations (pétales, herbes)
+- Next.js 15 App Router + TypeScript + Tailwind v4 (static export)
+- CSS pur dans app/globals.css (tokens OKLCH + import Fontshare)
+- Animations : Framer Motion (reveal) + GSAP ScrollTrigger (parallax scroll)
+- Déploiement Cloudflare Pages via GitHub Actions (npm run build → deploy out/)
+- Client Components isolés pour JS interactif (GhibliBackground, HeroReveal)
 
 ## Direction esthétique déclarée (ne PAS dévier)
 **Ghibli-organic editorial** — paysage prairie peint main + typographie magazine.
