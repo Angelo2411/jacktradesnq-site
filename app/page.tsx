@@ -1,4 +1,5 @@
 import GhibliBackground from './components/GhibliBackground';
+import GhibliParallax from './components/GhibliParallax';
 import { HeroItem } from './components/HeroReveal';
 import Link from 'next/link';
 
@@ -6,6 +7,7 @@ export default function Home() {
   return (
     <>
       <GhibliBackground />
+      <GhibliParallax />
 
       <header className="nav">
         <a href="#hero" className="nav-logo">JT</a>
