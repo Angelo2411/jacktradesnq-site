@@ -140,11 +140,11 @@ a { color: inherit; text-decoration: none; }
   background-repeat: no-repeat;
 }
 .sky-night {
-  background-image: url('/assets/scene1-night.png');
+  background-image: url('/assets/scene1-night.jpg');
   background-color: var(--c-night-lo);
 }
 .sky-day {
-  background-image: url('/assets/scene2-day.png');
+  background-image: url('/assets/scene2-day.jpg');
   background-color: var(--c-day-lo);
   opacity: 0;
 }
