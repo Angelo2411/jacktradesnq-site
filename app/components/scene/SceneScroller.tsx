@@ -55,7 +55,6 @@ const stagger = (delay: number) => ({
 });
 
 export default function SceneScroller() {
-  const skyDayRef = useRef<HTMLDivElement | null>(null);
   const groundRef = useRef<HTMLDivElement | null>(null);
   const centerRef = useRef<HTMLDivElement | null>(null);
   const cometWrapRef = useRef<HTMLDivElement | null>(null);
@@ -89,7 +88,6 @@ export default function SceneScroller() {
 
   // 2. RAF scroll orchestration + ambient drift
   useEffect(() => {
-    const skyDay = skyDayRef.current;
     const ground = groundRef.current;
     const center = centerRef.current;
     const cometWrap = cometWrapRef.current;
@@ -97,7 +95,7 @@ export default function SceneScroller() {
     const stars = starsRef.current;
     const nav = navRef.current;
 
-    if (!skyDay || !ground || !center || !cometWrap || !comet || !stars || !nav) return;
+    if (!ground || !center || !cometWrap || !comet || !stars || !nav) return;
 
     let target = 0;
     let current = 0;
@@ -115,9 +113,6 @@ export default function SceneScroller() {
       const vh = window.innerHeight;
       const totalH = document.documentElement.scrollHeight - vh;
       const p = clamp(current / Math.max(1, totalH), 0, 1);
-
-      const tScene = clamp((p - 0.10) / 0.65, 0, 1);
-      skyDay.style.opacity = tScene.toFixed(3);
 
       const starsT = clamp((p - 0.05) / 0.35, 0, 1);
       stars.style.opacity = (1 - starsT).toFixed(3);
@@ -146,7 +141,6 @@ export default function SceneScroller() {
       const ge = 1 - Math.pow(1 - groundT, 2.2);
       ground.style.transform = `translateY(${((1 - ge) * 100).toFixed(1)}%)`;
 
-      nav.style.color = tScene > 0.6 ? 'oklch(0.20 0.04 240)' : 'oklch(0.96 0.025 80)';
 
       raf = requestAnimationFrame(tick);
     };
@@ -243,9 +237,8 @@ export default function SceneScroller() {
 
   return (
     <>
-      {/* Sky layers — fixed, crossfade on scroll */}
-      <div className="sky-night" aria-hidden="true" />
-      <div className="sky-day" ref={skyDayRef} aria-hidden="true" />
+      {/* Sky — single bluehour background */}
+      <div className="sky-main" aria-hidden="true" />
 
       {/* Stars — fade out by 35% scroll */}
       <div className="stars" ref={starsRef} aria-hidden="true" />

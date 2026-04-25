@@ -132,21 +132,14 @@ a { color: inherit; text-decoration: none; }
    SCENE — sky / stars / comet / nav / center / ground / slimes
    ═══════════════════════════════════════════════════════════════════ */
 
-/* Photo backgrounds — full-bleed crossfade */
-.sky-night, .sky-day {
+/* Photo background — full-bleed single layer */
+.sky-main {
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-}
-.sky-night {
-  background-image: url('/assets/scene1-night.jpg');
+  background-image: url('/assets/scene-bluehour.jpg');
   background-color: var(--c-night-lo);
-}
-.sky-day {
-  background-image: url('/assets/scene2-day.jpg');
-  background-color: var(--c-day-lo);
-  opacity: 0;
 }
 
 /* Stars — fixed, fade out on scroll */
