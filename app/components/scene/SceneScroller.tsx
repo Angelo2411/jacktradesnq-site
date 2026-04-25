@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
+import SlimeCharacter from './SlimeCharacter';
 
 const SOCIAL_URL = '#socials';
 const INDICATORS_URL = 'https://www.tradingview.com/u/jack.tradesnq/';
@@ -9,7 +11,9 @@ const AFFILIATES_URL = '#affiliates';
 const ABOUT_URL = '#about';
 const CONTACT_URL = '#contact';
 
-const STAR_COUNT = 90;
+const STAR_COUNT = 110;
+const SHOOTING_STAR_INTERVAL = 4500; // ms between random shooting stars
+const SHOOTING_STAR_LIFETIME = 1500; // ms a streak lives
 
 type Star = {
   left: number;
@@ -21,16 +25,15 @@ type Star = {
 };
 
 function generateStars(): Star[] {
-  // deterministic seed-free generation; runs only once in client effect
   const stars: Star[] = [];
   for (let i = 0; i < STAR_COUNT; i++) {
     stars.push({
       left: Math.random() * 100,
-      top: Math.random() * 60,
+      top: Math.random() * 70,
       big: Math.random() < 0.18,
       twinkleDuration: 2 + Math.random() * 4,
       twinkleDelay: Math.random() * 4,
-      baseOpacity: 0.4 + Math.random() * 0.6,
+      baseOpacity: 0.45 + Math.random() * 0.55,
     });
   }
   return stars;
@@ -44,6 +47,13 @@ function lerp(a: number, b: number, t: number): number {
   return a + (b - a) * t;
 }
 
+const easeOut = [0.16, 1, 0.3, 1] as const;
+const stagger = (delay: number) => ({
+  initial: { opacity: 0, y: 18, filter: 'blur(8px)' },
+  animate: { opacity: 1, y: 0, filter: 'blur(0px)' },
+  transition: { duration: 0.9, delay, ease: easeOut },
+});
+
 export default function SceneScroller() {
   const skyDayRef = useRef<HTMLDivElement | null>(null);
   const groundRef = useRef<HTMLDivElement | null>(null);
@@ -51,12 +61,15 @@ export default function SceneScroller() {
   const cometWrapRef = useRef<HTMLDivElement | null>(null);
   const cometRef = useRef<HTMLDivElement | null>(null);
   const starsRef = useRef<HTMLDivElement | null>(null);
+  const shootingHostRef = useRef<HTMLDivElement | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
   const hamburgerRef = useRef<HTMLButtonElement | null>(null);
   const mobileMenuRef = useRef<HTMLDivElement | null>(null);
   const logoRef = useRef<HTMLAnchorElement | null>(null);
 
-  // 1. Inject stars (client-only, avoids SSR mismatch)
+  const reduceMotion = useReducedMotion() ?? false;
+
+  // 1. Inject ambient stars (client-only, avoids SSR mismatch)
   useEffect(() => {
     const el = starsRef.current;
     if (!el) return;
@@ -74,10 +87,8 @@ export default function SceneScroller() {
     }
   }, []);
 
-  // 2. RAF scroll orchestration
+  // 2. RAF scroll orchestration + ambient drift
   useEffect(() => {
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
     const skyDay = skyDayRef.current;
     const ground = groundRef.current;
     const center = centerRef.current;
@@ -91,13 +102,15 @@ export default function SceneScroller() {
     let target = 0;
     let current = 0;
     let raf = 0;
+    let t0 = performance.now();
 
     const onScroll = () => {
       target = window.scrollY;
     };
     window.addEventListener('scroll', onScroll, { passive: true });
 
-    const tick = () => {
+    const tick = (now: number) => {
+      const elapsed = (now - t0) / 1000; // seconds since mount
       current = reduceMotion ? target : lerp(current, target, 0.12);
       const vh = window.innerHeight;
       const totalH = document.documentElement.scrollHeight - vh;
@@ -113,9 +126,15 @@ export default function SceneScroller() {
       cometWrap.style.opacity = (1 - cometT).toFixed(3);
 
       if (!reduceMotion) {
-        const drift = current * 0.04;
-        stars.style.transform = `translateY(${(-drift * 0.3).toFixed(1)}px)`;
-        comet.style.transform = `rotate(28deg) translateX(${(cometT * 240).toFixed(1)}px) translateY(${(-cometT * 60).toFixed(1)}px)`;
+        // Ambient idle drift on stars (slow continuous parallax even at scroll 0)
+        const idleDriftY = Math.sin(elapsed * 0.18) * 6;
+        const scrollDriftY = current * 0.04 * 0.3;
+        stars.style.transform = `translateY(${(-scrollDriftY + idleDriftY).toFixed(1)}px)`;
+
+        // Comet idle bob + scroll-based exit
+        const cometBobX = Math.sin(elapsed * 0.5) * 4;
+        const cometBobY = Math.cos(elapsed * 0.5) * 3;
+        comet.style.transform = `rotate(28deg) translateX(${(cometT * 240 + cometBobX).toFixed(1)}px) translateY(${(-cometT * 60 + cometBobY).toFixed(1)}px)`;
       }
 
       const centerT = clamp((p - 0.05) / 0.30, 0, 1);
@@ -137,9 +156,54 @@ export default function SceneScroller() {
       window.removeEventListener('scroll', onScroll);
       cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [reduceMotion]);
 
-  // 3. Mobile menu toggle
+  // 3. Shooting stars (random recurring streaks across the night sky)
+  useEffect(() => {
+    if (reduceMotion) return;
+    const host = shootingHostRef.current;
+    if (!host) return;
+
+    let alive = true;
+    const spawn = () => {
+      if (!alive) return;
+      const el = document.createElement('div');
+      el.className = 'shooting-star';
+      // Random start position: top-right 30% of screen
+      const startTop = Math.random() * 35; // 0..35% from top
+      const startRight = Math.random() * 25; // 0..25% from right
+      const length = 120 + Math.random() * 220; // 120..340px
+      const angle = 22 + Math.random() * 12; // 22..34deg
+      const drift = 280 + Math.random() * 320; // total travel
+      el.style.top = `${startTop}%`;
+      el.style.right = `${startRight}%`;
+      el.style.width = `${length}px`;
+      el.style.transform = `rotate(${angle}deg) translateX(0)`;
+      el.style.setProperty('--shoot-drift', `${drift}px`);
+      el.style.setProperty('--shoot-angle', `${angle}deg`);
+      el.style.setProperty('--shoot-life', `${SHOOTING_STAR_LIFETIME}ms`);
+      host.appendChild(el);
+      // Remove after lifetime
+      window.setTimeout(() => {
+        el.remove();
+      }, SHOOTING_STAR_LIFETIME + 200);
+    };
+
+    // First streak slightly delayed to let entry animation play
+    const initial = window.setTimeout(spawn, 1800);
+    const interval = window.setInterval(() => {
+      // 60% chance to spawn each tick to vary cadence
+      if (Math.random() < 0.6) spawn();
+    }, SHOOTING_STAR_INTERVAL);
+
+    return () => {
+      alive = false;
+      window.clearTimeout(initial);
+      window.clearInterval(interval);
+    };
+  }, [reduceMotion]);
+
+  // 4. Mobile menu toggle + logo click → scroll top
   useEffect(() => {
     const ham = hamburgerRef.current;
     const menu = mobileMenuRef.current;
@@ -152,10 +216,13 @@ export default function SceneScroller() {
     };
 
     const onLogoClick = (e: MouseEvent) => {
+      e.preventDefault();
       if (window.innerWidth <= 760) {
-        e.preventDefault();
         toggleMenu();
+        return;
       }
+      // Desktop: smooth scroll back to top
+      window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
     };
 
     const onMenuClick = (e: MouseEvent) => {
@@ -172,7 +239,7 @@ export default function SceneScroller() {
       logo.removeEventListener('click', onLogoClick);
       menu.removeEventListener('click', onMenuClick);
     };
-  }, []);
+  }, [reduceMotion]);
 
   return (
     <>
@@ -183,29 +250,40 @@ export default function SceneScroller() {
       {/* Stars — fade out by 35% scroll */}
       <div className="stars" ref={starsRef} aria-hidden="true" />
 
-      {/* Comet + secondary streaks */}
+      {/* Shooting stars host — random streaks */}
+      <div className="shooting-host" ref={shootingHostRef} aria-hidden="true" />
+
+      {/* Hero comet — entry sweep then idle bob */}
       <div className="comet-wrap" ref={cometWrapRef} aria-hidden="true">
-        <div className="comet" ref={cometRef}>
+        <motion.div
+          className="comet"
+          ref={cometRef}
+          initial={reduceMotion ? false : { x: 600, y: -260, opacity: 0 }}
+          animate={{ x: 0, y: 0, opacity: 1 }}
+          transition={{ duration: 1.6, ease: easeOut, delay: 0.2 }}
+        >
           <div className="trail" />
           <div className="head" />
-        </div>
+        </motion.div>
         <div className="streak" style={{ top: '18%', right: '22%', width: 90, transform: 'rotate(28deg)' }} />
         <div className="streak" style={{ top: '32%', right: '55%', width: 60, transform: 'rotate(28deg)', opacity: 0.4 }} />
         <div className="streak" style={{ top: '14%', right: '70%', width: 120, transform: 'rotate(28deg)', opacity: 0.5 }} />
         <div className="streak" style={{ top: '42%', right: '12%', width: 50, transform: 'rotate(28deg)', opacity: 0.35 }} />
       </div>
 
-      {/* Sticky nav */}
+      {/* Sticky nav with entry stagger */}
       <nav className="scene-nav" ref={navRef} aria-label="Primary">
-        <a className="wordmark" ref={logoRef} href="#top">JTNQ</a>
-        <ul>
+        <motion.a className="wordmark" ref={logoRef} href="#top" {...stagger(0.1)}>
+          JTNQ
+        </motion.a>
+        <motion.ul {...stagger(0.35)}>
           <li><a href={ABOUT_URL}>About me</a></li>
           <li><a href={SOCIAL_URL}>Socials</a></li>
           <li><a href={INDICATORS_URL} target="_blank" rel="noopener noreferrer">Indicators</a></li>
           <li><a href={GITHUB_URL} target="_blank" rel="noopener noreferrer">GitHub</a></li>
           <li><a href={AFFILIATES_URL}>Affiliates</a></li>
           <li><a href={CONTACT_URL}>Contact</a></li>
-        </ul>
+        </motion.ul>
         <button
           type="button"
           className="hamburger"
@@ -225,132 +303,46 @@ export default function SceneScroller() {
         <a href={CONTACT_URL}>Contact</a>
       </div>
 
-      {/* Center stack — fades on scroll */}
+      {/* Center stack — entry stagger + glow pulse + scroll fade */}
       <div className="center" ref={centerRef}>
-        <a className="scene-btn" href={SOCIAL_URL}>
+        <motion.a className="scene-btn" href={SOCIAL_URL} {...stagger(0.55)}>
           <span>Socials</span>
           <span className="arrow" />
-        </a>
-        <a className="scene-btn" href={INDICATORS_URL} target="_blank" rel="noopener noreferrer">
+        </motion.a>
+        <motion.a
+          className="scene-btn"
+          href={INDICATORS_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          {...stagger(0.7)}
+        >
           <span>Indicators</span>
           <span className="arrow" />
-        </a>
-        <a className="scene-btn" href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
+        </motion.a>
+        <motion.a
+          className="scene-btn"
+          href={GITHUB_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          {...stagger(0.85)}
+        >
           <span>GitHub repo</span>
           <span className="arrow" />
-        </a>
-        <a className="scene-btn" href={AFFILIATES_URL}>
+        </motion.a>
+        <motion.a className="scene-btn" href={AFFILIATES_URL} {...stagger(1.0)}>
           <span>Affiliates</span>
           <span className="arrow" />
-        </a>
-        <div className="subline">Trader. Builder. Sharing what works.</div>
+        </motion.a>
+        <motion.div className="subline" {...stagger(1.2)}>
+          Trader. Builder. Sharing what works.
+        </motion.div>
       </div>
 
-      {/* Ground — rises from bottom, contains slimes */}
+      {/* Ground — rises from bottom, contains wandering slimes */}
       <div className="scene-ground" ref={groundRef} aria-hidden="true">
-        {/* Blue slime, front-left */}
-        <div
-          className="slime"
-          style={{ left: '9%', bottom: '14%', width: 170, ['--bd' as string]: '3.2s', ['--bdl' as string]: '0s' }}
-        >
-          <svg viewBox="0 0 200 160" width="100%" height="100%">
-            <ellipse cx="100" cy="148" rx="62" ry="6" fill="oklch(0.28 0.10 150)" opacity="0.45" />
-            <defs>
-              <radialGradient id="blueG" cx="40%" cy="35%" r="70%">
-                <stop offset="0%" stopColor="oklch(0.92 0.08 225)" />
-                <stop offset="50%" stopColor="oklch(0.78 0.13 230)" />
-                <stop offset="100%" stopColor="oklch(0.55 0.16 235)" />
-              </radialGradient>
-            </defs>
-            <path
-              d="M40,140 C30,90 60,40 100,40 C140,40 170,90 160,140 C155,150 130,150 100,150 C70,150 45,150 40,140 Z"
-              fill="url(#blueG)"
-              stroke="oklch(0.45 0.18 240)"
-              strokeWidth="2.5"
-            />
-            <path
-              d="M58,120 C50,80 75,55 105,55 C90,75 78,100 80,130 Z"
-              fill="oklch(0.96 0.06 220)"
-              opacity="0.55"
-            />
-            <path d="M75,90 q6,-6 12,0" stroke="oklch(0.20 0.08 240)" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-            <path d="M115,90 q6,-6 12,0" stroke="oklch(0.20 0.08 240)" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-            <path d="M92,108 q8,6 16,0" stroke="oklch(0.20 0.08 240)" strokeWidth="2.2" fill="none" strokeLinecap="round" />
-            <ellipse cx="70" cy="70" rx="9" ry="5" fill="oklch(0.99 0.01 220)" opacity="0.95" />
-            <ellipse cx="84" cy="62" rx="4" ry="2.5" fill="oklch(0.99 0.01 220)" opacity="0.9" />
-          </svg>
-        </div>
-
-        {/* Pink slime — mid-distance */}
-        <div
-          className="slime"
-          style={{ left: '42%', bottom: '22%', width: 90, ['--bd' as string]: '2.6s', ['--bdl' as string]: '0.4s' }}
-        >
-          <svg viewBox="0 0 200 160" width="100%" height="100%">
-            <ellipse cx="100" cy="148" rx="50" ry="5" fill="oklch(0.28 0.10 150)" opacity="0.45" />
-            <defs>
-              <radialGradient id="pinkG" cx="40%" cy="35%" r="70%">
-                <stop offset="0%" stopColor="oklch(0.94 0.08 10)" />
-                <stop offset="55%" stopColor="oklch(0.78 0.16 5)" />
-                <stop offset="100%" stopColor="oklch(0.58 0.20 10)" />
-              </radialGradient>
-            </defs>
-            <path
-              d="M45,140 C35,95 65,50 100,50 C135,50 165,95 155,140 C150,150 125,150 100,150 C75,150 50,150 45,140 Z"
-              fill="url(#pinkG)"
-              stroke="oklch(0.45 0.20 12)"
-              strokeWidth="2.5"
-            />
-            <path
-              d="M62,120 C56,82 78,62 105,62 C92,80 80,102 82,130 Z"
-              fill="oklch(0.96 0.06 20)"
-              opacity="0.55"
-            />
-            <path d="M78,92 q6,-6 12,0" stroke="oklch(0.25 0.10 15)" strokeWidth="2.2" fill="none" strokeLinecap="round" />
-            <path d="M110,92 q6,-6 12,0" stroke="oklch(0.25 0.10 15)" strokeWidth="2.2" fill="none" strokeLinecap="round" />
-            <path d="M92,108 q8,5 16,0" stroke="oklch(0.25 0.10 15)" strokeWidth="2" fill="none" strokeLinecap="round" />
-            <g transform="translate(100, 48)">
-              <g fill="oklch(0.97 0.02 90)">
-                <circle cx="0" cy="0" r="4" />
-                <circle cx="4" cy="-3" r="3.5" />
-                <circle cx="-4" cy="-3" r="3.5" />
-                <circle cx="3" cy="3" r="3.5" />
-                <circle cx="-3" cy="3" r="3.5" />
-              </g>
-              <circle cx="0" cy="0" r="2" fill="oklch(0.88 0.16 95)" />
-            </g>
-          </svg>
-        </div>
-
-        {/* Yellow slime — near horizon */}
-        <div
-          className="slime"
-          style={{ left: '62%', bottom: '34%', width: 48, ['--bd' as string]: '2.2s', ['--bdl' as string]: '0.9s' }}
-        >
-          <svg viewBox="0 0 200 160" width="100%" height="100%">
-            <ellipse cx="100" cy="148" rx="38" ry="4" fill="oklch(0.28 0.10 150)" opacity="0.4" />
-            <defs>
-              <radialGradient id="yellG" cx="40%" cy="35%" r="70%">
-                <stop offset="0%" stopColor="oklch(0.98 0.06 95)" />
-                <stop offset="55%" stopColor="oklch(0.90 0.16 90)" />
-                <stop offset="100%" stopColor="oklch(0.72 0.18 80)" />
-              </radialGradient>
-            </defs>
-            <path
-              d="M50,140 C40,100 70,60 100,60 C130,60 160,100 150,140 C145,150 125,150 100,150 C75,150 55,150 50,140 Z"
-              fill="url(#yellG)"
-              stroke="oklch(0.50 0.18 75)"
-              strokeWidth="2.2"
-            />
-            <path
-              d="M65,120 C60,90 80,72 105,72 C92,90 82,105 84,130 Z"
-              fill="oklch(0.99 0.06 95)"
-              opacity="0.55"
-            />
-            <path d="M80,98 q6,-5 12,0" stroke="oklch(0.30 0.10 75)" strokeWidth="2" fill="none" strokeLinecap="round" />
-            <path d="M108,98 q6,-5 12,0" stroke="oklch(0.30 0.10 75)" strokeWidth="2" fill="none" strokeLinecap="round" />
-          </svg>
-        </div>
+        <SlimeCharacter className="slime-blue"   baseLeft={9}  bottom={14} size={170} bd="3.2s" bdl="0s"   wanderRange={5} wanderSpeed={0.18} hue="blue"   />
+        <SlimeCharacter className="slime-pink"   baseLeft={42} bottom={22} size={90}  bd="2.6s" bdl="0.4s" wanderRange={6} wanderSpeed={0.22} hue="pink"   />
+        <SlimeCharacter className="slime-yellow" baseLeft={62} bottom={34} size={48}  bd="2.2s" bdl="0.9s" wanderRange={4} wanderSpeed={0.28} hue="yellow" />
       </div>
 
       {/* Scroll-length spacer (200vh total) */}

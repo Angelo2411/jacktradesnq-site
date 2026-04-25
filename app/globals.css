@@ -154,14 +154,36 @@ a { color: inherit; text-decoration: none; }
 .star {
   position: absolute; width: 2px; height: 2px; border-radius: 999px;
   background: var(--c-cream);
-  box-shadow: 0 0 6px oklch(0.96 0.03 80 / 0.7);
+  box-shadow: 0 0 6px oklch(0.96 0.03 80 / 0.85), 0 0 14px oklch(0.92 0.13 220 / 0.45);
   animation: twinkle var(--tw, 3s) ease-in-out infinite;
   animation-delay: var(--td, 0s);
 }
-.star.big { width: 3px; height: 3px; }
+.star.big { width: 3px; height: 3px; box-shadow: 0 0 10px var(--c-cream), 0 0 22px oklch(0.92 0.13 220 / 0.6); }
 @keyframes twinkle {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50%      { opacity: 1;   transform: scale(1.3); }
+  0%, 100% { opacity: 0.35; transform: scale(0.85); }
+  50%      { opacity: 1;    transform: scale(1.45); }
+}
+
+/* Shooting stars host — random recurring streaks */
+.shooting-host { position: fixed; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; }
+.shooting-star {
+  position: absolute; height: 2px; border-radius: 999px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    oklch(0.92 0.13 220 / 0.0) 10%,
+    oklch(0.92 0.13 220 / 0.5) 55%,
+    oklch(0.96 0.10 220 / 0.95) 92%,
+    var(--c-cream) 100%);
+  filter: drop-shadow(0 0 6px oklch(0.92 0.13 220 / 0.7));
+  opacity: 0;
+  animation: shoot var(--shoot-life, 1500ms) cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: right center;
+}
+@keyframes shoot {
+  0%   { opacity: 0;    transform: rotate(var(--shoot-angle, 28deg)) translateX(0) scaleX(0.4); }
+  20%  { opacity: 1;    transform: rotate(var(--shoot-angle, 28deg)) translateX(calc(var(--shoot-drift, 320px) * -0.2)) scaleX(1); }
+  90%  { opacity: 0.85; }
+  100% { opacity: 0;    transform: rotate(var(--shoot-angle, 28deg)) translateX(calc(var(--shoot-drift, 320px) * -1)) scaleX(0.6); }
 }
 
 /* Comet + secondary streaks — fixed */
@@ -270,6 +292,15 @@ a { color: inherit; text-decoration: none; }
   letter-spacing: 0.04em; text-transform: uppercase;
   cursor: pointer;
   transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+  animation: btn-breathe 5.5s ease-in-out infinite;
+}
+.scene-btn:nth-child(1) { animation-delay: 0s; }
+.scene-btn:nth-child(2) { animation-delay: 0.7s; }
+.scene-btn:nth-child(3) { animation-delay: 1.4s; }
+.scene-btn:nth-child(4) { animation-delay: 2.1s; }
+@keyframes btn-breathe {
+  0%, 100% { box-shadow: 0 0 0 0 oklch(0.92 0.13 220 / 0.0), inset 0 0 0 0 transparent; }
+  50%      { box-shadow: 0 0 22px 2px oklch(0.92 0.13 220 / 0.20), inset 0 0 14px oklch(0.92 0.13 220 / 0.06); }
 }
 .scene-btn .arrow {
   width: 18px; height: 1.5px; background: currentColor; position: relative; opacity: 0.7;
@@ -303,18 +334,22 @@ a { color: inherit; text-decoration: none; }
   transform: translateY(100%);
 }
 
-/* Slimes */
+/* Slimes — true hops + squash/stretch */
 .slime {
-  position: absolute; pointer-events: auto;
-  animation: bounce var(--bd, 3s) ease-in-out infinite;
+  position: absolute; pointer-events: none;
+  animation: hop var(--bd, 2.4s) cubic-bezier(0.45, 0, 0.55, 1) infinite;
   animation-delay: var(--bdl, 0s);
   transform-origin: 50% 100%;
+  will-change: transform, left;
+  transition: left 60ms linear;
 }
-@keyframes bounce {
-  0%, 100% { transform: translateY(0)    scaleY(1)    scaleX(1); }
-  45%      { transform: translateY(-6px) scaleY(1.04) scaleX(0.98); }
-  55%      { transform: translateY(-6px) scaleY(1.04) scaleX(0.98); }
-  80%      { transform: translateY(0)    scaleY(0.96) scaleX(1.04); }
+@keyframes hop {
+  0%   { transform: translateY(0)     scaleY(1)    scaleX(1); }
+  10%  { transform: translateY(0)     scaleY(0.78) scaleX(1.18); }   /* squash before jump */
+  35%  { transform: translateY(-26px) scaleY(1.12) scaleX(0.92); }   /* peak */
+  60%  { transform: translateY(-22px) scaleY(1.08) scaleX(0.94); }   /* hang */
+  85%  { transform: translateY(0)     scaleY(0.82) scaleX(1.14); }   /* squash on landing */
+  100% { transform: translateY(0)     scaleY(1)    scaleX(1); }
 }
 
 /* Spacer to enable 200vh scroll length */
@@ -415,6 +450,6 @@ a { color: inherit; text-decoration: none; }
 
 /* ── REDUCED MOTION ── */
 @media (prefers-reduced-motion: reduce) {
-  .star, .slime { animation: none !important; }
+  .star, .slime, .scene-btn, .shooting-star { animation: none !important; }
   html { scroll-behavior: auto; }
 }
