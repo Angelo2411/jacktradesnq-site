@@ -328,6 +328,25 @@ a { color: inherit; text-decoration: none; }
 }
 .scene-ground canvas { width: 100% !important; height: 100% !important; }
 
+/* Foreground grass layer */
+.grass-layer {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  height: 25vh; pointer-events: none; z-index: 21;
+  overflow: hidden; opacity: 0; transition: opacity 0.8s ease;
+}
+.grass-layer.visible { opacity: 1; }
+.grass-blade {
+  position: absolute; bottom: 0;
+  transform-origin: bottom center;
+  animation: grass-sway var(--gs, 3s) ease-in-out infinite;
+  animation-delay: var(--gd, 0s);
+  will-change: transform;
+}
+@keyframes grass-sway {
+  0%, 100% { transform: rotate(-4deg); }
+  50%       { transform: rotate(4deg); }
+}
+
 /* Slimes — JS-driven wander + jumps + mouse parallax. Shadow stays put. */
 .slime {
   position: absolute; pointer-events: none;
@@ -445,6 +464,6 @@ a { color: inherit; text-decoration: none; }
 
 /* ── REDUCED MOTION ── */
 @media (prefers-reduced-motion: reduce) {
-  .star, .slime, .scene-btn, .shooting-star { animation: none !important; }
+  .star, .slime, .scene-btn, .shooting-star, .grass-blade { animation: none !important; }
   html { scroll-behavior: auto; }
 }

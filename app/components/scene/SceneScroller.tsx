@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import Slime3DScene from './Slime3DScene';
+import GrassLayer from './GrassLayer';
 
 const SOCIAL_URL = '#socials';
 const INDICATORS_URL = 'https://www.tradingview.com/u/darkness2364167717/';
@@ -65,6 +66,7 @@ export default function SceneScroller() {
   const hamburgerRef = useRef<HTMLButtonElement | null>(null);
   const mobileMenuRef = useRef<HTMLDivElement | null>(null);
   const logoRef = useRef<HTMLAnchorElement | null>(null);
+  const grassRef = useRef<HTMLDivElement | null>(null);
 
   const reduceMotion = useReducedMotion() ?? false;
 
@@ -140,6 +142,10 @@ export default function SceneScroller() {
       const groundT = clamp((p - 0.25) / 0.55, 0, 1);
       const ge = 1 - Math.pow(1 - groundT, 2.2);
       ground.style.transform = `translateY(${((1 - ge) * 100).toFixed(1)}%)`;
+      if (grassRef.current) {
+        if (groundT > 0.1) grassRef.current.classList.add('visible');
+        else grassRef.current.classList.remove('visible');
+      }
 
 
       raf = requestAnimationFrame(tick);
@@ -335,6 +341,7 @@ export default function SceneScroller() {
       <div className="scene-ground" ref={groundRef} aria-hidden="true">
         <Slime3DScene />
       </div>
+      <GrassLayer ref={grassRef} />
 
       {/* Scroll-length spacer (200vh total) */}
       <div className="scene-spacer" aria-hidden="true" />
