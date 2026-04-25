@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import SlimeCharacter from './SlimeCharacter';
+import Slime3DScene from './Slime3DScene';
 
 const SOCIAL_URL = '#socials';
 const INDICATORS_URL = 'https://www.tradingview.com/u/darkness2364167717/';
@@ -331,11 +331,9 @@ export default function SceneScroller() {
         </motion.div>
       </div>
 
-      {/* Ground — rises from bottom, contains wandering slimes */}
+      {/* Ground — rises from bottom, contains 3D slimes */}
       <div className="scene-ground" ref={groundRef} aria-hidden="true">
-        <SlimeCharacter className="slime-blue"   baseLeft={9}  bottom={14} size={170} bd="3.2s" bdl="0s"   wanderRange={5} wanderSpeed={0.18} hue="blue"   />
-        <SlimeCharacter className="slime-pink"   baseLeft={42} bottom={22} size={90}  bd="2.6s" bdl="0.4s" wanderRange={6} wanderSpeed={0.22} hue="pink"   />
-        <SlimeCharacter className="slime-yellow" baseLeft={62} bottom={34} size={48}  bd="2.2s" bdl="0.9s" wanderRange={4} wanderSpeed={0.28} hue="yellow" />
+        <Slime3DScene />
       </div>
 
       {/* Scroll-length spacer (200vh total) */}

@@ -326,6 +326,7 @@ a { color: inherit; text-decoration: none; }
   z-index: 20; height: 62vh; pointer-events: none;
   transform: translateY(100%);
 }
+.scene-ground canvas { width: 100% !important; height: 100% !important; }
 
 /* Slimes — JS-driven wander + jumps + mouse parallax. Shadow stays put. */
 .slime {
