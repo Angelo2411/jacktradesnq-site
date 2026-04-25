@@ -5,7 +5,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import SlimeCharacter from './SlimeCharacter';
 
 const SOCIAL_URL = '#socials';
-const INDICATORS_URL = 'https://www.tradingview.com/u/jack.tradesnq/';
+const INDICATORS_URL = 'https://www.tradingview.com/u/darkness2364167717/';
 const GITHUB_URL = 'https://github.com/Angelo2411';
 const AFFILIATES_URL = '#affiliates';
 const ABOUT_URL = '#about';

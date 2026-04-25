@@ -334,22 +334,23 @@ a { color: inherit; text-decoration: none; }
   transform: translateY(100%);
 }
 
-/* Slimes — true hops + squash/stretch */
+/* Slimes — JS-driven wander + jumps + mouse parallax. Shadow stays put. */
 .slime {
   position: absolute; pointer-events: none;
-  animation: hop var(--bd, 2.4s) cubic-bezier(0.45, 0, 0.55, 1) infinite;
-  animation-delay: var(--bdl, 0s);
   transform-origin: 50% 100%;
-  will-change: transform, left;
-  transition: left 60ms linear;
+  display: flex; flex-direction: column; align-items: center;
+  will-change: left, transform;
 }
-@keyframes hop {
-  0%   { transform: translateY(0)     scaleY(1)    scaleX(1); }
-  10%  { transform: translateY(0)     scaleY(0.78) scaleX(1.18); }   /* squash before jump */
-  35%  { transform: translateY(-26px) scaleY(1.12) scaleX(0.92); }   /* peak */
-  60%  { transform: translateY(-22px) scaleY(1.08) scaleX(0.94); }   /* hang */
-  85%  { transform: translateY(0)     scaleY(0.82) scaleX(1.14); }   /* squash on landing */
-  100% { transform: translateY(0)     scaleY(1)    scaleX(1); }
+.slime-body {
+  width: 100%;
+  transform-origin: 50% 100%;
+  will-change: transform;
+}
+.slime-shadow {
+  position: absolute; left: 0; right: 0; bottom: -2px;
+  width: 100%;
+  pointer-events: none;
+  filter: blur(0.5px);
 }
 
 /* Spacer to enable 200vh scroll length */
