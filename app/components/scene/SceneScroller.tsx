@@ -13,7 +13,7 @@ const ABOUT_URL = '#about';
 const CONTACT_URL = '#contact';
 
 const STAR_COUNT = 110;
-const SHOOTING_STAR_INTERVAL = 4500; // ms between random shooting stars
+const SHOOTING_STAR_INTERVAL = 2000; // ms between random shooting stars
 const SHOOTING_STAR_LIFETIME = 1500; // ms a streak lives
 
 type Star = {
@@ -192,8 +192,14 @@ export default function SceneScroller() {
     // First streak slightly delayed to let entry animation play
     const initial = window.setTimeout(spawn, 1800);
     const interval = window.setInterval(() => {
-      // 60% chance to spawn each tick to vary cadence
-      if (Math.random() < 0.6) spawn();
+      if (Math.random() < 0.85) {
+        spawn();
+        // 15% chance of double/triple streak (meteor shower)
+        if (Math.random() < 0.15) {
+          window.setTimeout(spawn, 200);
+          if (Math.random() < 0.4) window.setTimeout(spawn, 420);
+        }
+      }
     }, SHOOTING_STAR_INTERVAL);
 
     return () => {
