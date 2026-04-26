@@ -1,3 +1,5 @@
+@/Users/angelo/obsidian-mind/work/active/jacktradesnq/jacktradesnq.md
+
 # jacktradesnq.com — design & code rules
 
 ## Stack
