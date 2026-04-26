@@ -206,10 +206,42 @@ a { color: inherit; text-decoration: none; }
 }
 .card:hover .card-arrow { transform: translate(3px, -2px); }
 
-/* Featured cards (TradingView, GitHub) — taller, more presence */
+/* Featured cards (TradingView, GitHub) — taller, animated marching border */
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+/* Wrapper that holds the rotating gradient — card sits on top to mask the center */
+.card-frame {
+  position: relative;
+  border-radius: calc(var(--r-md) + 2px);
+  padding: 2px;
+  background: conic-gradient(
+    from var(--angle),
+    transparent 0deg,
+    transparent 200deg,
+    var(--accent-deep) 280deg,
+    var(--accent) 320deg,
+    var(--accent-deep) 360deg
+  );
+  animation: marching 4s linear infinite;
+  display: block;
+}
+.card-frame:hover { animation-duration: 2s; }
+
 .card-featured {
   padding: var(--s-6) var(--s-6);
-  background: oklch(1 0 0 / 0.7);
+  background: oklch(1 0 0);
+  border: none;
+  border-radius: var(--r-md);
+}
+.card-featured:hover::before {
+  animation-duration: 2s;
+}
+@keyframes marching {
+  to { --angle: 360deg; }
 }
 .card-featured .card-icon { width: 28px; height: 28px; }
 .card-featured .card-label {
@@ -218,6 +250,10 @@ a { color: inherit; text-decoration: none; }
   font-weight: 800;
   font-size: var(--fs-lg);
   letter-spacing: -0.02em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-featured::before { animation: none; }
 }
 
 /* ═══════════════════════════════════════════════════════════════════
