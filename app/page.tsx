@@ -50,7 +50,7 @@ export default function Home() {
       {/* Group 2 — TradingView featured (animated gradient border) */}
       <div className="group">
         <div className="card-frame">
-          <a className="card card-featured" href="https://www.tradingview.com/u/darkness2364167717/" target="_blank" rel="noopener noreferrer">
+          <a className="card card-featured" href="https://www.tradingview.com/u/jacktradesnq/" target="_blank" rel="noopener noreferrer">
             <svg className="card-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
               <polyline points="16 7 22 7 22 13"/>
