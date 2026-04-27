@@ -34,6 +34,7 @@ export default function PolitiqueConfidentialite() {
         <h3>Hébergeur</h3>
         <ul>
           <li>Cloudflare, Inc. (hébergement, CDN) — USA — couvert par le EU-US Data Privacy Framework</li>
+              <li>Fontshare / Indian Type Foundry (polices web) — Inde/USA — cdn.fontshare.com — adresse IP transmise à chaque chargement de page pour le rendu des polices</li>
         </ul>
 
         <h3>Vos droits (RGPD)</h3>
@@ -63,6 +64,7 @@ export default function PolitiqueConfidentialite() {
         <h3>Hosting</h3>
         <ul>
           <li>Cloudflare, Inc. (hosting, CDN) — USA — covered by the EU-US Data Privacy Framework</li>
+              <li>Fontshare / Indian Type Foundry (web fonts) — India/USA — cdn.fontshare.com — IP address transmitted on each page load for font rendering</li>
         </ul>
 
         <h3>Your Rights</h3>
