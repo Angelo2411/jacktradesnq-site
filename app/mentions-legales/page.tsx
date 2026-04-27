@@ -18,7 +18,7 @@ export default function MentionsLegales() {
         <p>
           <strong>Jack Chen</strong> — Entrepreneur individuel (EI)<br />
           Adresse : 65 rue du Faubourg du Temple, 75010 Paris, France<br />
-          Courriel : jacktradesnq@outlook.fr<br />
+          Courriel : contact@jacktradesnq.com<br />
           SIREN : 993 260 827<br />
           Directeur de la publication : Jack Chen
         </p>
@@ -46,7 +46,7 @@ export default function MentionsLegales() {
         <p>
           <strong>Jack Chen</strong> — Sole trader (Entrepreneur individuel)<br />
           Address: 65 rue du Faubourg du Temple, 75010 Paris, France<br />
-          Email: jacktradesnq@outlook.fr<br />
+          Email: contact@jacktradesnq.com<br />
           SIREN: 993 260 827
         </p>
 

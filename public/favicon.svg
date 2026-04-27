@@ -1,4 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="8" fill="#1a2340"/>
-  <text x="16" y="23" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-weight="800" font-size="15" fill="#b8c8e0">JT</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#C9961A"/>
+      <stop offset="100%" stop-color="#E8B547"/>
+    </linearGradient>
+  </defs>
+  <path d="M 78 48 L 178 48 L 178 64 L 158 64 C 152 64 148 68 148 76 L 148 168 C 148 192 134 208 110 208 C 92 208 78 198 72 184 L 90 174 C 94 184 100 190 110 190 C 122 190 128 182 128 168 L 128 76 C 128 68 124 64 118 64 L 98 64 Z" fill="url(#g)"/>
+  <circle cx="72" cy="184" r="9" fill="url(#g)"/>
 </svg>
