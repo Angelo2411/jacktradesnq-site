@@ -61,6 +61,16 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Group 3 — Discord partner Nefarious */}
+      <div className="group">
+        <p className="partner-tag">Discord partner</p>
+        <a className="card card-partner" href="https://discord.com/invite/Xug73qenBq" target="_blank" rel="noopener noreferrer">
+          <img className="card-thumb" src="/nefarious.png" alt="Nefarious" width={48} height={48} />
+          <span className="card-label">Nefarious</span>
+          <span className="card-arrow">↗</span>
+        </a>
+      </div>
+
       {/* Footer FR legal */}
       <footer className="footer">
         <div className="footer-row">
