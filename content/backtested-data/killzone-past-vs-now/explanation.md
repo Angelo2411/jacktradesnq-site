@@ -1,7 +1,11 @@
-Killzone analysis comparing past session data with current market conditions.
+The following PDF shows informations about the numbers of points each killzone had under different conditions.
 
-### Overview
+### Killzone hours (New York time, DST auto)
 
-This indicator overlays historical killzone statistics on your current chart to help identify high-probability setups.
+| Killzone | Hours (NY) |
+|----------|-----------|
+| Asia     | 18:00 → 00:00 |
+| London   | 02:00 → 05:00 |
+| NY AM    | 09:30 → 11:00 |
 
-Results based on 2000+ sessions of backtested data.
+Conditions cross-checked: weekday, news (red folder), and holiday (NYSE bank holiday).
