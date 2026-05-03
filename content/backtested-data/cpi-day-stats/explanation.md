@@ -1,6 +1,6 @@
-## Article 1 — NQ Move Statistics (173 Releases · 2016–2026)
+## Article 1 — CPI Points
 
-Source: monfxreplay, NQ 1m bars. Move Up/Down = max pts from release price over 30 min. Range = high − low.
+The PDF "CPI Points" shows every data related to CPI in terms of points from 2016 to 2026.
 
 ### Year-by-Year Averages
 
@@ -22,7 +22,7 @@ The average 30m range went from **8.8 pts** in 2016 to **113.6 pts** in 2025 —
 
 ### Manipulation Wick Analysis
 
-12.7% of releases (22/173) wick **both sides** — meaning NQ travels more than 15 pts up AND more than 15 pts down in the first 5 minutes before committing to a direction. Median manipulation depth is **24.3 pts**. Practical implication: straddle stops placed at 20 pts or less get hunted before the real move starts on roughly 1 in 8 releases.
+12.7% of releases (22/173) wick **both sides** — meaning NQ travels more than 15 pts up AND more than 15 pts down in the first 5 minutes before committing to a direction. Median manipulation depth is **24.3 pts**.
 
 | Metric | Value |
 |--------|-------|
@@ -31,13 +31,13 @@ The average 30m range went from **8.8 pts** in 2016 to **113.6 pts** in 2025 —
 | Median Manip Depth | 24.3 pts |
 | Max Manip Depth | 51.5 pts (2022-12-23) |
 
-<a class="bd-btn bd-btn-secondary" href="/downloads/backtested-data/cpi-day-stats.pdf" download>Download — NQ Move Statistics PDF</a>
+<a class="bd-btn bd-btn-secondary" href="/downloads/backtested-data/cpi-points.pdf" download>Download — CPI Points PDF</a>
 
 ---
 
-## Article 2 — CPI Straddle Backtest, Full-Port (173 Releases · 12 Combos)
+## Article 2 — CPI Fullport
 
-Buy stop X pts above price + sell stop X pts below, 1 minute before release. Force-close at 30 min. 12 Stop/TP combinations tested.
+These datas were my own tests to see which metrics are the best to fullport accounts. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 
 > **Pre-2020 caveat:** CPI was a non-event before the inflation regime. Stops ≥25 pts rarely filled in 2016–2019. Data kept for transparency — use **2022 onwards** as your baseline.
 
@@ -78,4 +78,4 @@ Best combo: **Stop 25 / TP 15** — highest TP hit rate (45%), positive avg PnL 
 
 2025 and 2026 are the cleanest years on record for this strategy — fill rate near 100%, TP hit rate 75–76%, and the avg P&L/event is climbing.
 
-<a class="bd-btn bd-btn-secondary" href="/downloads/backtested-data/cpi-straddle-backtest.pdf" download>Download — Straddle Backtest Full-Port PDF</a>
+<a class="bd-btn bd-btn-secondary" href="/downloads/backtested-data/cpi-fullport.pdf" download>Download — CPI Fullport PDF</a>

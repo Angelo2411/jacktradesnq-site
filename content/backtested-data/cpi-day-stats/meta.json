@@ -1,8 +1,8 @@
 {
-  "title": "CPI Day — NQ Statistics & Straddle Backtest",
+  "title": "CPI",
   "category": "data",
   "date": "2026-05-03",
   "excerpt": "173 CPI releases (2016–2026): NQ move stats + full-port straddle backtest across 12 Stop/TP combos.",
   "tradingviewUrl": "https://www.tradingview.com/u/jacktradesnq/",
-  "pdfFile": "cpi-day-stats.pdf"
+  "pdfFile": "cpi-points.pdf"
 }
