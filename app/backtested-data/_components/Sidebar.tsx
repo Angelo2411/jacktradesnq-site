@@ -1,0 +1,131 @@
+'use client';
+
+import { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import type { Entry } from '@/lib/backtested-data';
+import { IconSearch, IconChevDown, IconArrowUpRight } from './icons';
+
+const catLabel = (c: string) => (c === 'tradingview' ? 'TRADINGVIEW' : 'DATA');
+
+function SideSection({
+  label,
+  items,
+  currentSlug,
+}: {
+  label: string;
+  items: Entry[];
+  currentSlug: string | null;
+}) {
+  const [open, setOpen] = useState(true);
+  const listRef = useRef<HTMLUListElement>(null);
+  const [maxH, setMaxH] = useState<string>('none');
+
+  useEffect(() => {
+    if (!listRef.current) return;
+    const h = listRef.current.scrollHeight;
+    setMaxH(open ? h + 'px' : '0px');
+  }, [open, items]);
+
+  if (!items.length) return null;
+
+  return (
+    <div className="bd-side-section">
+      <button
+        className={'bd-side-toggle' + (open ? '' : ' collapsed')}
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+      >
+        <span className="bd-section-hd">{label}</span>
+        <IconChevDown className="chev" />
+      </button>
+      <div className="bd-side-list" style={{ maxHeight: maxH }}>
+        <ul ref={listRef}>
+          {items.map((it) => (
+            <li key={it.slug}>
+              <Link
+                href={`/backtested-data/${it.slug}/`}
+                className={'bd-side-item' + (currentSlug === it.slug ? ' active' : '')}
+              >
+                <span className="bd-side-item-title">{it.title}</span>
+                <span className="item-meta">{it.date}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+export default function Sidebar({
+  entries,
+  open,
+  onClose,
+}: {
+  entries: Entry[];
+  open: boolean;
+  onClose: () => void;
+}) {
+  const pathname = usePathname();
+  const [q, setQ] = useState('');
+  const norm = q.trim().toLowerCase();
+
+  const currentSlug = pathname.startsWith('/backtested-data/')
+    ? pathname.replace('/backtested-data/', '').replace(/\/$/, '')
+    : null;
+
+  const filtered = norm
+    ? entries.filter((e) => e.title.toLowerCase().includes(norm))
+    : entries;
+
+  const tv = filtered.filter((e) => e.category === 'tradingview');
+  const data = filtered.filter((e) => e.category === 'data');
+  const empty = norm !== '' && filtered.length === 0;
+
+  return (
+    <>
+      <div
+        className={'bd-scrim' + (open ? ' open' : '')}
+        onClick={onClose}
+        aria-hidden="true"
+      />
+      <aside className={'bd-side' + (open ? ' open' : '')} aria-label="Section navigation">
+        <div className="bd-side-search">
+          <div className="bd-search-wrap">
+            <IconSearch />
+            <input
+              type="text"
+              className="bd-search-input"
+              placeholder="Search..."
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              aria-label="Search entries"
+            />
+          </div>
+        </div>
+
+        <div className="bd-side-tv">
+          <a
+            className="bd-tv-link"
+            href="https://www.tradingview.com/u/jacktradesnq/"
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            Open on TradingView
+            <IconArrowUpRight />
+          </a>
+        </div>
+
+        {empty ? (
+          <div className="bd-empty-search">No entries match &ldquo;{q}&rdquo;.</div>
+        ) : (
+          <>
+            <SideSection label="Tradingview" items={tv} currentSlug={currentSlug} />
+            <SideSection label="Data" items={data} currentSlug={currentSlug} />
+          </>
+        )}
+      </aside>
+    </>
+  );
+}

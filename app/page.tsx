@@ -47,18 +47,16 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Group 2 — TradingView featured (animated gradient border) */}
+      {/* Group 2 — Internal pages */}
       <div className="group">
-        <div className="card-frame">
-          <a className="card card-featured" href="https://www.tradingview.com/u/jacktradesnq/" target="_blank" rel="noopener noreferrer">
-            <svg className="card-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
-              <polyline points="16 7 22 7 22 13"/>
-            </svg>
-            <span className="card-label">TradingView</span>
-            <span className="card-arrow">↗</span>
-          </a>
-        </div>
+        <Link className="card" href="/backtested-data">
+          <svg className="card-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 3v18h18"/>
+            <path d="M7 15l4-4 3 3 5-6"/>
+          </svg>
+          <span className="card-label">Backtested data</span>
+          <span className="card-arrow">→</span>
+        </Link>
       </div>
 
       {/* Group 3 — Discord partner Nefarious */}
