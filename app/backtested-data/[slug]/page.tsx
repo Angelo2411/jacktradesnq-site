@@ -54,23 +54,30 @@ export default async function BacktestedDetail({ params }: PageProps) {
       />
 
       <div className="bd-ctas">
-        <a
-          className="bd-btn bd-btn-primary"
-          href={entry.tradingviewUrl}
-          target="_blank"
-          rel="noreferrer noopener"
-        >
-          Open on TradingView
-          <IconArrowUpRight />
-        </a>
-        <a
-          className="bd-btn bd-btn-secondary"
-          href={`/downloads/backtested-data/${entry.pdfFile}`}
-          download
-        >
-          Download PDF
-          <IconDownload />
-        </a>
+        {entry.category === 'tradingview' && entry.tradingviewUrl ? (
+          <a
+            className="bd-btn bd-btn-primary"
+            href={entry.tradingviewUrl}
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            Open on TradingView
+            <IconArrowUpRight />
+          </a>
+        ) : null}
+        {entry.pdfFile ? (
+          <a
+            className={
+              'bd-btn ' +
+              (entry.category === 'tradingview' ? 'bd-btn-secondary' : 'bd-btn-primary')
+            }
+            href={`/downloads/backtested-data/${entry.pdfFile}`}
+            download
+          >
+            Download PDF
+            <IconDownload />
+          </a>
+        ) : null}
       </div>
 
       <div className="mt-16 max-w-[720px] border-t pt-6" style={{ borderColor: 'oklch(0.85 0.02 85)' }}>

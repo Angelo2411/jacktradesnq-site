@@ -2,23 +2,33 @@
 
 The PDF "CPI Points" shows every data related to CPI in terms of points from 2016 to 2026.
 
-### Year-by-Year Averages
+### Year-by-Year Averages — Release Candle (1m, 8:30 ET)
 
-| Year | Count | Avg Range 5m | Avg Range 30m | Max Range 30m | Avg Dir 15m |
-|------|-------|-------------|--------------|--------------|-------------|
-| 2016 | 8 | 5 pts | 8.8 pts | 16.5 pts | +0.4 |
-| 2017 | 11 | 5.3 pts | 13.3 pts | 51 pts | −5.5 |
-| 2018 | 12 | 16.8 pts | 27.5 pts | 60 pts | +5 |
-| 2019 | 12 | 10.5 pts | 17.3 pts | 27.5 pts | +3.1 |
-| 2020 | 11 | 26 pts | 46.6 pts | 79.5 pts | −9.2 |
-| 2021 | 19 | 34.8 pts | 54.3 pts | 145 pts | −0.7 |
-| 2022 | 24 | 57.1 pts | 90.7 pts | 280.5 pts | +6 |
-| 2023 | 24 | 39.4 pts | 59 pts | 151.3 pts | +12.9 |
-| 2024 | 23 | 58.4 pts | 82.4 pts | 360.8 pts | +4.7 |
-| 2025 | 21 | 84.1 pts | 113.6 pts | 334.8 pts | +38.2 |
-| 2026 | 8 | 59.1 pts | 101.9 pts | 143.3 pts | −3.3 |
+CPI volatility lives almost entirely inside the 1-minute release bar. The numbers below describe what NQ does on that single candle, year by year.
 
-The average 30m range went from **8.8 pts** in 2016 to **113.6 pts** in 2025 — a 13× expansion. CPI is not the same event it was pre-2020.
+**Column legend:**
+- **Count** — number of CPI releases in the year (12 monthly releases is the baseline; less means the print fell on a non-trading day or data was missing).
+- **Avg Range 1m** — average high − low in points on the 8:30 ET candle.
+- **Max Range 1m** — worst-case 1m range observed that year (single biggest outlier).
+- **Avg Move Up** — average distance from the candle open to the candle high (upside excursion before any reversal).
+- **Avg Move Down** — average distance from the candle open to the candle low (downside excursion).
+- **Avg Dir 1m** — average signed close − open on the 1m candle. Positive = candle closed bullish, negative = bearish. Useful to spot a structural bias in how CPI prints get faded or held.
+
+| Year | Count | Avg Range 1m | Max Range 1m | Avg Move Up | Avg Move Down | Avg Dir 1m |
+|------|-------|-------------|--------------|-------------|---------------|-----------|
+| 2016 | 8 | 3.2 pts | 7.2 pts | 1.8 pts | 1.4 pts | −0.4 |
+| 2017 | 11 | 2.0 pts | 5.2 pts | 0.4 pts | 1.6 pts | −1.1 |
+| 2018 | 12 | 12.1 pts | 44.2 pts | 9.0 pts | 3.1 pts | +6.1 |
+| 2019 | 12 | 7.6 pts | 25.0 pts | 3.2 pts | 4.5 pts | −1.9 |
+| 2020 | 11 | 11.7 pts | 30.5 pts | 3.5 pts | 8.2 pts | −3.4 |
+| 2021 | 19 | 20.2 pts | 86.2 pts | 9.8 pts | 10.4 pts | +0.8 |
+| 2022 | 24 | 38.3 pts | 197.5 pts | 16.7 pts | 21.6 pts | −1.4 |
+| 2023 | 24 | 28.5 pts | 148.2 pts | 15.0 pts | 13.5 pts | +5.4 |
+| 2024 | 23 | 40.6 pts | 246.2 pts | 23.7 pts | 16.9 pts | +5.1 |
+| 2025 | 21 | 66.5 pts | 224.5 pts | 54.2 pts | 12.2 pts | +37.7 |
+| 2026 | 8 | 42.1 pts | 103.8 pts | 28.9 pts | 13.2 pts | +11.3 |
+
+The average release-candle range went from **3.2 pts** in 2016 to **66.5 pts** in 2025 — a 21× expansion. CPI is not the same event it was pre-2020. 2025 also flips the structural bias hard upside (Avg Dir 1m **+37.7**) — releases tended to print and close bullish, not symmetrically.
 
 ### Manipulation Wick Analysis
 
