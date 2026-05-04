@@ -48,11 +48,14 @@ All values below in **NQ points** (1 pt ≈ $20 on 1 NQ contract / $2 on 1 MNQ).
 **Quick glossary:**
 - **Offset** — distance in points between the release price and where each pending stop order is placed.
 - **OCO** ("One Cancels Other") — the two pending stops are linked. Whichever gets touched first fills, the other auto-cancels.
-- **Worst PnL** — the single worst event in the sample: filled then held to m=30 close at maximum drawdown. The blow-up scenario fullport with no stop loss has to survive.
+- **Filled** — the market triggered one of your stops; you have an open position. Not filled = no position, PnL stays 0.
+- **Expired** — filled events where TP was never touched, so the trade closed at the 30-min cutoff. `Fill % = TP Hit % + Expired %`.
+- **Avg PnL/event** vs **Avg PnL filled** — the first averages over all events (No Fill counted as 0), the second averages only over events where you actually had a position.
+- **Worst PnL** — the single worst event in the sample: filled then held to 30-min close. The blow-up scenario fullport with no stop loss has to survive.
 
 ### Top 10 Combos (least bad) — Ranked by TP Hit Rate
 
-| Offset (pts) | TP (pts) | Fill % | TP Hit % | Exp % | Avg PnL/event (pts) | Avg PnL filled (pts) | Worst PnL (pts) |
+| Offset (pts) | TP (pts) | Fill % | TP Hit % | Expired % | Avg PnL/event (pts) | Avg PnL filled (pts) | Worst PnL (pts) |
 |-----|----|--------|----------|-------|-----------|------------------|-----------|
 | 45 | 20 | 54.39% | **34.21%** | 20.18% | −5.66  | −10.4  | −278.5 |
 | 50 | 20 | 51.75% | 33.33%     | 18.42% | −4.77  | −9.22  | −223.25 |
