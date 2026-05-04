@@ -41,7 +41,7 @@ The average release-candle range went from **3.2 pts** in 2016 to **66.5 pts** i
 
 These datas were my own tests to see which metrics are the best to fullport accounts. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 
-> **Pre-2020 caveat:** CPI was a non-event before the inflation regime. Stops ≥25 pts rarely filled in 2016–2019. Data kept for transparency — use **2022 onwards** as your baseline.
+> **Pre-2020 note:** CPI was a non-event before the inflation regime. Stops ≥25 pts rarely filled in 2016–2019. Data kept for transparency — use **2022 onwards** as your baseline.
 
 ### All Combos — Ranked by TP Hit Rate
 
