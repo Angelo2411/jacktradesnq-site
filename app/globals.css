@@ -894,6 +894,27 @@ a { color: inherit; text-decoration: none; }
 }
 .bd-prose strong { font-weight: 700; color: var(--c-ink); }
 .bd-prose em { font-style: italic; }
+.bd-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--s-5) 0;
+  font-family: var(--f-sans);
+  font-size: 0.9375rem;
+}
+.bd-prose thead th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--c-ink);
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--c-ink);
+  white-space: nowrap;
+}
+.bd-prose tbody td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--c-border);
+  color: var(--c-fg);
+}
+.bd-prose tbody tr:last-child td { border-bottom: none; }
 .bd-ctas {
   margin-top: var(--s-7);
   padding-top: var(--s-6);
