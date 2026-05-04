@@ -71,20 +71,20 @@ Best combo: **Offset 25 / TP 15** — highest TP hit rate (45%), positive avg Pn
 
 ### Year-by-Year — Offset 25 / TP 15
 
-| Year | Count | Fill % | TP Hit % | Avg PnL per event (pts) |
-|------|-------|--------|----------|-----------|
-| 2016 | 8 | 0% | 0% | 0 |
-| 2017 | 11 | 9.1% | 9.1% | +1.36 |
-| 2018 | 12 | 33.3% | 16.7% | +2.29 |
-| 2019 | 12 | 8.3% | 0% | −0.90 |
-| 2020 | 11 | 72.7% | 36.4% | −1.77 |
-| 2021 | 19 | 63.2% | 52.6% | +6.87 |
-| 2022 | 24 | 87.5% | 62.5% | −0.85 |
-| 2023 | 24 | 83.3% | 45.8% | +2.80 |
-| 2024 | 23 | 87.0% | 56.5% | +3.46 |
-| 2025 | 21 | 90.5% | **76.2%** | +8.83 |
-| 2026 | 8 | 100% | **75%** | +11.78 |
+| Year | Count | Fill % | TP Hit % |
+|------|-------|--------|----------|
+| 2016 | 8  | 0%      | 0%      |
+| 2017 | 11 | 9.1%    | 9.1%    |
+| 2018 | 12 | 33.3%   | 16.7%   |
+| 2019 | 12 | 8.3%    | 0%      |
+| 2020 | 11 | 72.7%   | 36.4%   |
+| 2021 | 19 | 63.2%   | 52.6%   |
+| 2022 | 24 | 87.5%   | 62.5%   |
+| 2023 | 24 | 83.3%   | 45.8%   |
+| 2024 | 23 | 87.0%   | 56.5%   |
+| 2025 | 21 | 90.5%   | **76.2%** |
+| 2026 | 8  | 100%    | **75%**   |
 
-2025 and 2026 are the cleanest years on record for this strategy — fill rate near 100%, TP hit rate 75–76%, and the avg PnL per event is climbing.
+2025 and 2026 are the cleanest years on record for this strategy — fill rate near 100%, TP hit rate 75–76%.
 
 <a class="bd-btn bd-btn-secondary" href="/downloads/backtested-data/cpi-fullport.pdf" download>Download — CPI Fullport PDF</a>
