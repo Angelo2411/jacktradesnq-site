@@ -2,23 +2,25 @@
 
 The PDF "NFP Points" shows every data related to NFP in terms of points from 2016 to 2026. Sample size: **114 releases** with valid 1-minute NQ bar data.
 
-### Year-by-Year Averages
+### Year-by-Year — Release Candle Range (1m, 8:30 ET)
 
-| Year | Events | Avg Range 5m | Median 5m | Max Range 5m | Avg Range 30m | Max Range 30m | Avg Dir 15m |
-|------|--------|-------------|-----------|--------------|--------------|--------------|-------------|
-| 2016 | 8  | 17.91 pts  | 18.25  | 25.50  | 21.56  | 31.25  | +2.88  |
-| 2017 | 12 | 12.67 pts  | 11.62  | 28.50  | 15.79  | 28.50  | +1.31  |
-| 2018 | 12 | 29.75 pts  | 26.75  | 63.50  | 38.52  | 69.50  | +4.17  |
-| 2019 | 12 | 31.90 pts  | 30.50  | 61.25  | 41.44  | 61.25  | +6.10  |
-| 2020 | 11 | 41.36 pts  | 34.75  | 90.25  | 62.66  | 121.00 | −0.80  |
-| 2021 | 12 | 69.21 pts  | 54.88  | 176.75 | 89.44  | 187.00 | +20.81 |
-| 2022 | 12 | 143.38 pts | 131.38 | 295.25 | 186.46 | 295.25 | −73.94 |
-| 2023 | 12 | 110.08 pts | 95.62  | 208.00 | 127.02 | 224.75 | +4.92  |
-| 2024 | 12 | 135.29 pts | 118.50 | 228.25 | 159.50 | 253.00 | +13.58 |
-| 2025 | 8  | 145.72 pts | 127.88 | 275.00 | 172.81 | 275.00 | +22.56 |
-| 2026 | 3  | 113.08 pts | 98.25  | 173.75 | 168.33 | 290.50 | −39.25 |
+NFP volatility lives almost entirely inside the 1-minute release bar. How many points NQ travels high-to-low on that single candle, year by year.
 
-NFP went from a **17 pt** avg range in 2016 to **145 pts** in 2025 — an 8× expansion. Like CPI, the inflation regime turned NFP into a violent event.
+| Year | Count | Avg Range 1m | Max Range 1m |
+|------|-------|-------------|--------------|
+| 2016 | 8  | 14.4 pts  | 25.5 pts  |
+| 2017 | 12 | 7.6 pts   | 13.8 pts  |
+| 2018 | 12 | 21.2 pts  | 45.0 pts  |
+| 2019 | 12 | 22.3 pts  | 45.5 pts  |
+| 2020 | 11 | 27.8 pts  | 52.2 pts  |
+| 2021 | 12 | 43.5 pts  | 87.0 pts  |
+| 2022 | 12 | 121.8 pts | 240.8 pts |
+| 2023 | 12 | 98.5 pts  | 187.5 pts |
+| 2024 | 12 | 118.3 pts | 199.8 pts |
+| 2025 | 8  | 127.6 pts | 249.8 pts |
+| 2026 | 3  | 107.7 pts | 173.8 pts |
+
+The average release-candle range went from **14.4 pts** in 2016 to **127.6 pts** in 2025 — a 9× expansion. Like CPI, the inflation regime turned NFP into a violent event.
 
 ### Top 10 Most Violent Releases (by 30m range)
 
