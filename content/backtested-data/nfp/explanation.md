@@ -40,7 +40,7 @@ Bilateral straddle, full-port, **no stop loss**:
 - Buy stop pending order at release price **+ Offset** (in NQ points)
 - Sell stop pending order at release price **− Offset** (OCO)
 - Take Profit at fill price **± TP**
-- If TP not hit by minute 30 → exit at the m=30 close
+- If TP is not hit within 30 min → position closed
 - Entry offsets tested in {45, 60, 80, 100, 120, 150}, TPs in {20, 30, 50, 75} → 24 combos
 
 All values below in **NQ points** (1 pt ≈ $20 on 1 NQ contract / $2 on 1 MNQ).
@@ -51,63 +51,16 @@ All values below in **NQ points** (1 pt ≈ $20 on 1 NQ contract / $2 on 1 MNQ).
 - **Filled** — the market triggered one of your stops; you have an open position. Not filled = no position, PnL stays 0.
 - **Worst PnL** — the single worst event in the sample: filled then held to 30-min close. The blow-up scenario fullport with no stop loss has to survive.
 
-### All 24 Combos — Ranked by Avg PnL per event
+### Where to place your stop and TP
 
-| Offset (pts) | TP (pts) | Fill % | TP Hit % | Avg PnL per event (pts) | Worst PnL (pts) |
-|-----|----|--------|----------|-----------|------------------|-----------|
-|80|75|31.58%|14.91%|**+4.45**|−140.5|
-|100|50|23.68%|14.91%|**+4.31**|−111.5|
-|100|30|23.68%|18.42%|**+3.85**|−107.0|
-|100|75|23.68%|11.40%|+3.54|−205.25|
-|80|50|31.58%|18.42%|+3.24|−140.5|
-|100|20|23.68%|19.30%|+2.18|−107.0|
-|120|30|19.30%|14.91%|+2.13|−131.5|
-|120|75|19.30%|7.89%|+2.01|−225.25|
-|120|20|19.30%|16.67%|+1.51|−131.5|
-|80|30|31.58%|21.05%|+0.29|−140.5|
-|150|75|14.91%|4.39%|+0.79|−255.25|
-|200|75|7.02%|0.88%|+0.19|−37.75|
-|80|20|31.58%|23.68%|−0.61|−140.5|
-|60|75|44.74%|17.54%|−1.44|−175.0|
-|150|30|14.91%|10.53%|−0.64|−255.25|
-|150|50|14.91%|7.02%|+0.23|−255.25|
-|60|50|44.74%|19.30%|−2.18|−175.0|
-|60|30|44.74%|24.56%|−3.14|−175.0|
-|60|20|44.74%|28.95%|−2.66|−175.0|
-|45|20|54.39%|**34.21%**|−5.66|−278.5|
-|45|30|54.39%|28.07%|−6.54|−278.5|
-|45|50|54.39%|18.42%|−8.73|−278.5|
-|45|75|54.39%|12.28%|−12.63|−278.5|
-|150|20|14.91%|12.28%|−1.26|−255.25|
+After testing 24 combos across 114 NFP releases:
 
-The 12 top combos (by Avg PnL per event) all use Offset ≥ 80 pts. Anything ≤ 75 pts gets caught by the manip wick and bleeds.
+- **Stop offset: 100 pts** — sits past the typical manip-wick range. Tighter offsets (≤75) get filled by the head-fake then bleed.
+- **Take profit: 50 pts** — large enough to clear the chop, tight enough to actually get hit.
 
-### Best Combo: Offset 100 / TP 50
+Fill rate ~24% — you skip the NFPs that don't reach ±100 pts in 60 seconds. When you do fill, you're entering on the real directional leg.
 
-- Avg PnL per event: **+4.31 pts** (positive expectancy)
-- Avg PnL when filled: **+18.18 pts**
-- Fill rate: 23.68% — you skip ~76% of NFPs (the ones that don't reach 100 pts)
-- TP hit rate among fills: 14.91%
-- Worst single event: **−111.5 pts**
-- Why it works: Offset 100 sits beyond the typical manip-wick range, so when you do get filled, the head-fake has already exhausted itself — you're entering on the real directional leg.
-
-### Year-by-Year — Offset 100 / TP 50
-
-| Year | Count | Fill % | TP Hit % | Avg PnL per event (pts) |
-|------|-------|--------|----------|-----------|
-| 2016 | 8  | 0.0%   | 0.0%   | 0     |
-| 2017 | 12 | 0.0%   | 0.0%   | 0     |
-| 2018 | 12 | 0.0%   | 0.0%   | 0     |
-| 2019 | 12 | 0.0%   | 0.0%   | 0     |
-| 2020 | 11 | 0.0%   | 0.0%   | 0     |
-| 2021 | 12 | 16.7%  | 8.3%   | −5.12 |
-| 2022 | 12 | 66.7%  | 41.7%  | **+13.31** |
-| 2023 | 12 | 33.3%  | 25.0%  | **+10.77** |
-| 2024 | 12 | 58.3%  | 33.3%  | +7.81 |
-| 2025 | 8  | 62.5%  | 37.5%  | **+15.06** |
-| 2026 | 3  | 33.3%  | 33.3%  | **+16.67** |
-
-Pre-2021 NFP rarely moved 100 pts in 60 seconds → no fills, no edge. The strategy is **only meaningful in the post-2021 inflation/volatility regime** (the era you'll actually trade in).
+The full 24-combo breakdown and year-by-year stats are in the PDF below.
 
 ### Why Offset Size Matters
 
