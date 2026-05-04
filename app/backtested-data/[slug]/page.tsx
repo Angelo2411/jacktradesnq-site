@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getAllEntries, getEntry } from '@/lib/backtested-data';
-import { IconArrowUpRight, IconDownload } from '../_components/icons';
+import { IconArrowUpRight } from '../_components/icons';
 
 const catLabel = (c: string) => (c === 'tradingview' ? 'TRADINGVIEW' : 'DATA');
 
@@ -63,19 +63,6 @@ export default async function BacktestedDetail({ params }: PageProps) {
           >
             Open on TradingView
             <IconArrowUpRight />
-          </a>
-        ) : null}
-        {entry.pdfFile ? (
-          <a
-            className={
-              'bd-btn ' +
-              (entry.category === 'tradingview' ? 'bd-btn-secondary' : 'bd-btn-primary')
-            }
-            href={`/downloads/backtested-data/${entry.pdfFile}`}
-            download
-          >
-            Download PDF
-            <IconDownload />
           </a>
         ) : null}
       </div>

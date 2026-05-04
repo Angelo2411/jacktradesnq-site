@@ -5,9 +5,12 @@ A **New Week Opening Gap (NWOG)** is the difference between NQ futures' Friday 1
 ### Methodology
 
 - Instrument: NQ continuous front-month futures
-- Period: 2018–2026 (10-year window, 1-minute bars)
+- Period: 10-year backtest window (2016–2026, 1-minute timeframe)
+- Sample shown: first qualifying gap hit 2018-12-02
 - Threshold: gap size ≥ 50 pts (absolute)
 - Total events meeting threshold: **58** (19 bull gaps, 39 bear gaps)
+
+Note: between 2016 and late 2018, NQ traded roughly between 4,000 and 7,500 — a 50-point gap on a 5,000 index is ~1%, which almost never happened in that low-vol regime. Pre-2018 simply had no events meeting the threshold.
 - Outcomes measured from Sunday 18:00 ET open:
   - **Direct fill** — gap closes within 30 minutes of the open
   - **Later fill** — gap closes after 30 min but before 00:00 ET (still Sunday night session)
@@ -27,8 +30,8 @@ Combined fill rate (direct + later): **81.0%** of all qualifying NWOGs fill befo
 
 Bear gaps hold more often than bull gaps — 23.1% vs 10.5%. Bull gaps fill at a higher direct rate (73.7% vs 64.1%), which makes sense: the path of least resistance on a bullish gap is simply to retrace back into Friday's range before Asia pushes higher.
 
-| Direction | N | Direct | Later | Held |
-|-----------|---|--------|-------|------|
+| Direction | Events | Direct | Later | Held |
+|-----------|--------|--------|-------|------|
 | Bull | 19 | 73.7% | 15.8% | 10.5% |
 | Bear | 39 | 64.1% | 12.8% | 23.1% |
 
@@ -36,8 +39,8 @@ Bear gaps hold more often than bull gaps — 23.1% vs 10.5%. Bull gaps fill at a
 
 Bigger gaps hold more often — a 150+ pt gap represents a macro shock and price doesn't always come back to fill it the same night.
 
-| Gap size | N | Direct | Later | Held |
-|----------|---|--------|-------|------|
+| Gap size | Events | Direct | Later | Held |
+|----------|--------|--------|-------|------|
 | 50–75 pts | 25 | 76.0% | 12.0% | 12.0% |
 | 75–100 pts | 13 | 69.2% | 15.4% | 15.4% |
 | 100–150 pts | 7 | 57.1% | 14.3% | 28.6% |
@@ -50,3 +53,5 @@ The 50–75 pt bucket is the cleanest: 76% direct fill, only 12% held. Once you'
 2025 is a notable outlier: direct fill rate dropped to ~53% vs a 91% direct fill rate in 2020. This lines up with the volatility expansion I see across all my NQ studies post-2024 — gaps that previously resolved fast are now sitting open longer or holding entirely. Use pre-2025 numbers as the long-run baseline but size expectations accordingly for the current regime.
 
 The full year-by-year breakdown and the complete 58-event list are in the PDF below.
+
+<a class="bd-btn bd-btn-primary" href="/downloads/backtested-data/asia-open.pdf" download>Download — Asia Open PDF</a>
