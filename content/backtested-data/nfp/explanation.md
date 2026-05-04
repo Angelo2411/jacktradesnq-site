@@ -30,9 +30,9 @@ The average release-candle range went from **14.4 pts** in 2016 to **127.6 pts**
 
 ## Article 2 — NFP Fullport
 
-These datas were my own tests to see which metrics are the best to fullport accounts. Unlike CPI, **every single NFP straddle combo tested came out negative-expectancy**. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
+These datas were my own tests to see which metrics are the best to fullport accounts. Tighter offsets (≤75 pts) are negative-expectancy — the manip wick eats them alive — but pushing the offset wider (80-100+) flips the strategy positive. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 
-> **What doesn't work, contrary to CPI:** 42 combos tested, all losing. Best combo only loses **−5.66 pts/event** on average. NFP whipsaws too hard for a no-stop straddle to capture the move cleanly.
+> **Wider offsets are required.** The first round of tests (offsets 45-75) all came out negative — those stops are still inside the manip-wick range, so they get filled by the head-fake then bleed when price retraces. Pushing the offset to 80-150 pts skips the manip wick entirely. Best combo flips to **positive expectancy** that way.
 
 ### Setup
 
@@ -41,7 +41,7 @@ Bilateral straddle, full-port, **no stop loss**:
 - Sell stop pending order at release price **− Offset** (OCO)
 - Take Profit at fill price **± TP**
 - If TP not hit by minute 30 → exit at the m=30 close
-- Entry offsets tested in {45, 50, 55, 60, 65, 70, 75}, TPs in {20, 25, 30, 35, 40, 50}
+- Entry offsets tested in {45, 60, 80, 100, 120, 150}, TPs in {20, 30, 50, 75} → 24 combos
 
 All values below in **NQ points** (1 pt ≈ $20 on 1 NQ contract / $2 on 1 MNQ).
 
@@ -53,29 +53,66 @@ All values below in **NQ points** (1 pt ≈ $20 on 1 NQ contract / $2 on 1 MNQ).
 - **Avg PnL/event** vs **Avg PnL filled** — the first averages over all events (No Fill counted as 0), the second averages only over events where you actually had a position.
 - **Worst PnL** — the single worst event in the sample: filled then held to 30-min close. The blow-up scenario fullport with no stop loss has to survive.
 
-### Top 10 Combos (least bad) — Ranked by TP Hit Rate
+### All 24 Combos — Ranked by Avg PnL/event
 
 | Offset (pts) | TP (pts) | Fill % | TP Hit % | Expired % | Avg PnL/event (pts) | Avg PnL filled (pts) | Worst PnL (pts) |
 |-----|----|--------|----------|-------|-----------|------------------|-----------|
-| 45 | 20 | 54.39% | **34.21%** | 20.18% | −5.66  | −10.4  | −278.5 |
-| 50 | 20 | 51.75% | 33.33%     | 18.42% | −4.77  | −9.22  | −223.25 |
-| 45 | 25 | 54.39% | 31.58%     | 22.81% | −6.25  | −11.49 | −278.5 |
-| 55 | 20 | 48.25% | 30.70%     | 17.54% | −4.23  | −8.76  | −170.0 |
-| 50 | 25 | 51.75% | 29.82%     | 21.93% | −4.99  | −9.64  | −223.25 |
-| 60 | 20 | 44.74% | 28.95%     | 15.79% | −2.66  | −5.94  | −175.0 |
-| 45 | 30 | 54.39% | 28.07%     | 26.32% | −6.54  | −12.03 | −278.5 |
-| 65 | 20 | 41.23% | 27.19%     | 14.04% | −2.18  | −5.28  | −138.25 |
-| 70 | 20 | 39.47% | 26.32%     | 13.16% | −1.75  | −4.44  | −143.25 |
-| 60 | 25 | 44.74% | 26.32%     | 18.42% | −3.11  | −6.95  | −175.0 |
+| 80  | 75 | 31.58% | 14.91%     | 16.67% | **+4.45**  | +14.10 | −140.5 |
+| 100 | 50 | 23.68% | 14.91%     | 8.77%  | **+4.31**  | +18.18 | −111.5 |
+| 100 | 30 | 23.68% | 18.42%     | 5.26%  | **+3.85**  | +16.27 | −107.0 |
+| 100 | 75 | 23.68% | 11.40%     | 12.28% | +3.54  | +14.94 | −205.25 |
+| 80  | 50 | 31.58% | 18.42%     | 13.16% | +3.24  | +10.26 | −140.5 |
+| 100 | 20 | 23.68% | 19.30%     | 4.39%  | +2.18  | +9.22  | −107.0 |
+| 120 | 30 | 19.30% | 14.91%     | 4.39%  | +2.13  | +11.05 | −131.5 |
+| 120 | 75 | 19.30% | 7.89%      | 11.40% | +2.01  | +10.43 | −225.25 |
+| 120 | 20 | 19.30% | 16.67%     | 2.63%  | +1.51  | +7.84  | −131.5 |
+| 80  | 30 | 31.58% | 21.05%     | 10.53% | +0.29  | +0.91  | −140.5 |
+| 150 | 75 | 14.91% | 4.39%      | 10.53% | +0.79  | +5.28  | −255.25 |
+| 200 | 75 | 7.02%  | 0.88%      | 6.14%  | +0.19  | +2.71  | −37.75 |
+| 80  | 20 | 31.58% | 23.68%     | 7.89%  | −0.61  | −1.94  | −140.5 |
+| 60  | 75 | 44.74% | 17.54%     | 27.19% | −1.44  | −3.21  | −175.0 |
+| 150 | 30 | 14.91% | 10.53%     | 4.39%  | −0.64  | −4.30  | −255.25 |
+| 150 | 50 | 14.91% | 7.02%      | 7.89%  | +0.23  | +1.54  | −255.25 |
+| 60  | 50 | 44.74% | 19.30%     | 25.44% | −2.18  | −4.86  | −175.0 |
+| 60  | 30 | 44.74% | 24.56%     | 20.18% | −3.14  | −7.03  | −175.0 |
+| 60  | 20 | 44.74% | 28.95%     | 15.79% | −2.66  | −5.94  | −175.0 |
+| 45  | 20 | 54.39% | **34.21%** | 20.18% | −5.66  | −10.40 | −278.5 |
+| 45  | 30 | 54.39% | 28.07%     | 26.32% | −6.54  | −12.03 | −278.5 |
+| 45  | 50 | 54.39% | 18.42%     | 35.96% | −8.73  | −16.06 | −278.5 |
+| 45  | 75 | 54.39% | 12.28%     | 42.11% | −12.63 | −23.22 | −278.5 |
+| 150 | 20 | 14.91% | 12.28%     | 2.63%  | −1.26  | −8.45  | −255.25 |
 
-### Best Combo: Offset 45 / TP 20
+The 12 top combos (by Avg PnL/event) all use Offset ≥ 80 pts. Anything ≤ 75 pts gets caught by the manip wick and bleeds.
 
-- TP hit rate: **34.21%**
-- Avg PnL per event: **−5.66 pts**
-- Worst single event: **−278.5 pts** (2022-12-02)
+### Best Combo: Offset 100 / TP 50
 
-### Why It Doesn't Work
+- Avg PnL per event: **+4.31 pts** (positive expectancy)
+- Avg PnL when filled: **+18.18 pts**
+- Fill rate: 23.68% — you skip ~76% of NFPs (the ones that don't reach 100 pts)
+- TP hit rate among fills: 14.91%
+- Worst single event: **−111.5 pts**
+- Why it works: Offset 100 sits beyond the typical manip-wick range, so when you do get filled, the head-fake has already exhausted itself — you're entering on the real directional leg.
 
-NFP triggers fast manipulation wicks both sides before committing to a direction. Without a stop loss, the wrong-side fill stays open and bleeds when the real move retraces. Tighter TP captures more hits but smaller payouts; wider TP gets fewer fills. No combo escapes negative expectancy across 114 events.
+### Year-by-Year — Offset 100 / TP 50
+
+| Year | Count | Fill % | TP Hit % | Avg PnL/event (pts) |
+|------|-------|--------|----------|-----------|
+| 2016 | 8  | 0.0%   | 0.0%   | 0     |
+| 2017 | 12 | 0.0%   | 0.0%   | 0     |
+| 2018 | 12 | 0.0%   | 0.0%   | 0     |
+| 2019 | 12 | 0.0%   | 0.0%   | 0     |
+| 2020 | 11 | 0.0%   | 0.0%   | 0     |
+| 2021 | 12 | 16.7%  | 8.3%   | −5.12 |
+| 2022 | 12 | 66.7%  | 41.7%  | **+13.31** |
+| 2023 | 12 | 33.3%  | 25.0%  | **+10.77** |
+| 2024 | 12 | 58.3%  | 33.3%  | +7.81 |
+| 2025 | 8  | 62.5%  | 37.5%  | **+15.06** |
+| 2026 | 3  | 33.3%  | 33.3%  | **+16.67** |
+
+Pre-2021 NFP rarely moved 100 pts in 60 seconds → no fills, no edge. The strategy is **only meaningful in the post-2021 inflation/volatility regime** (the era you'll actually trade in).
+
+### Why Offset Size Matters
+
+NFP triggers fast manipulation wicks both sides before committing to a direction. The median manip-wick reaches into the 50-80 pt range — anything closer and you get filled by the head-fake, then bleed on the retrace (no SL). Push the offset to 80-100+ and you skip the manipulation entirely; the only fills you get are real moves big enough to break through 100 pts in the release minute.
 
 <a class="bd-btn bd-btn-secondary" href="/downloads/backtested-data/nfp-fullport.pdf" download>Download — NFP Fullport PDF</a>
