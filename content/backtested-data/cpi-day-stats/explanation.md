@@ -6,6 +6,8 @@ The PDF "CPI Points" shows every data related to CPI in terms of points from 201
 
 CPI volatility lives almost entirely inside the 1-minute release bar. How many points NQ travels high-to-low on that single candle, year by year.
 
+**Range 1m** = the high minus the low (in NQ points) of the 8:30 ET candle — i.e. the full top-to-bottom travel during the 60 seconds of the release.
+
 | Year | Count | Avg Range 1m | Max Range 1m |
 |------|-------|-------------|--------------|
 | 2016 | 8 | 3.2 pts | 7.2 pts |
@@ -21,17 +23,6 @@ CPI volatility lives almost entirely inside the 1-minute release bar. How many p
 | 2026 | 8 | 42.1 pts | 103.8 pts |
 
 The average release-candle range went from **3.2 pts** in 2016 to **66.5 pts** in 2025 — a 21× expansion. CPI is not the same event it was pre-2020.
-
-### Manipulation Wick Analysis
-
-12.7% of releases (22/173) wick **both sides** — meaning NQ travels more than 15 pts up AND more than 15 pts down in the first 5 minutes before committing to a direction. Median manipulation depth is **24.3 pts**.
-
-| Metric | Value |
-|--------|-------|
-| % Wicked Both Sides | 12.7% (22/173) |
-| % Reversal 5m→15m | 1.7% (3/173) |
-| Median Manip Depth | 24.3 pts |
-| Max Manip Depth | 51.5 pts (2022-12-23) |
 
 <a class="bd-btn bd-btn-secondary" href="/downloads/backtested-data/cpi-points.pdf" download>Download — CPI Points PDF</a>
 

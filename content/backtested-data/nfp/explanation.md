@@ -6,6 +6,8 @@ The PDF "NFP Points" shows every data related to NFP in terms of points from 201
 
 NFP volatility lives almost entirely inside the 1-minute release bar. How many points NQ travels high-to-low on that single candle, year by year.
 
+**Range 1m** = the high minus the low (in NQ points) of the 8:30 ET candle — i.e. the full top-to-bottom travel during the 60 seconds of the release.
+
 | Year | Count | Avg Range 1m | Max Range 1m |
 |------|-------|-------------|--------------|
 | 2016 | 8  | 14.4 pts  | 25.5 pts  |
@@ -21,40 +23,6 @@ NFP volatility lives almost entirely inside the 1-minute release bar. How many p
 | 2026 | 3  | 107.7 pts | 173.8 pts |
 
 The average release-candle range went from **14.4 pts** in 2016 to **127.6 pts** in 2025 — a 9× expansion. Like CPI, the inflation regime turned NFP into a violent event.
-
-### Top 10 Most Violent Releases (by 30m range)
-
-| Date | Range 5m | Range 30m | Dir 15m | Max Up | Max Down |
-|------|---------|----------|---------|--------|----------|
-| 2022-12-02 | 295.25 | 295.25 | −238.25 | 4.25  | 291.00 |
-| 2026-03-06 | 173.75 | 290.50 | −172.00 | 35.00 | 255.50 |
-| 2025-01-10 | 275.00 | 275.00 | −146.25 | 18.00 | 257.00 |
-| 2022-11-04 | 204.50 | 262.50 | +22.00  | 105.50 | 157.00 |
-| 2024-08-02 | 228.25 | 253.00 | −171.00 | 52.00 | 201.00 |
-| 2022-10-07 | 208.50 | 243.50 | −180.00 | 0.00  | 243.50 |
-| 2024-09-06 | 199.75 | 238.25 | +105.00 | 181.00 | 57.25 |
-| 2025-03-07 | 212.25 | 235.75 | +56.50  | 166.25 | 69.50 |
-| 2022-08-05 | 169.75 | 229.50 | −173.75 | 4.75  | 224.75 |
-| 2023-10-06 | 208.00 | 224.75 | −185.00 | 2.50  | 222.25 |
-
-### Threshold Probabilities (range_5m, all 114 events)
-
-| Threshold | Count > | Pct > |
-|-----------|---------|-------|
-| > 30 pts  | 78 | 68.4% |
-| > 50 pts  | 58 | 50.9% |
-| > 80 pts  | 44 | 38.6% |
-| > 100 pts | 31 | 27.2% |
-| > 150 pts | 18 | 15.8% |
-
-### Direction Bias
-
-| Window  | Up        | Down      |
-|---------|-----------|-----------|
-| 5m  | 64 (56.1%) | 50 (43.9%) |
-| 15m | 63 (55.3%) | 51 (44.7%) |
-
-Slight upside skew, but essentially a coin flip on direction. The size of the move is the real story, not the sign.
 
 <a class="bd-btn bd-btn-secondary" href="/downloads/backtested-data/nfp-points.pdf" download>Download — NFP Points PDF</a>
 
