@@ -50,15 +50,41 @@ All values below are in **NQ points** (1 pt ≈ $20 on 1 NQ contract / $2 on 1 M
 
 > **Pre-2020 note:** CPI was a non-event before the inflation regime. Offsets ≥25 pts rarely filled in 2016–2019. Data kept for transparency — use **2022 onwards** as your baseline.
 
-### Where to place your stop and TP
+### All Combos — Ranked by TP Hit Rate
 
-After testing 12 combos across 173 CPI releases:
+| Offset (pts) | TP (pts) | Fill % | TP Hit % | No Fill % | Avg PnL per event (pts) | Worst PnL (pts) |
+|------|----|--------|----------|-----------|-----------|-----------|
+| 25 | 15 | 65.9% | **45.09%** | 34.1% | +3.17 | −159.75 |
+| 25 | 20 | 65.9% | 40.46% | 34.1% | +3.96 | −159.75 |
+| 30 | 15 | 59.0% | 39.88% | 41.0% | +1.96 | −164.75 |
+| 35 | 15 | 54.3% | 30.64% | 45.7% | +1.30 | −77.00 |
+| 25 | 25 | 65.9% | 30.64% | 34.1% | +3.87 | −159.75 |
+| 40 | 15 | 47.4% | 30.64% | 52.6% | +0.75 | −230.75 |
+| 30 | 20 | 59.0% | 30.06% | 41.0% | +1.84 | −164.75 |
+| 35 | 20 | 54.3% | 29.48% | 45.7% | +1.28 | −225.75 |
+| 40 | 20 | 47.4% | 28.90% | 52.6% | +1.59 | −230.75 |
+| 30 | 25 | 59.0% | 28.32% | 41.0% | +1.36 | −220.75 |
+| 35 | 25 | 54.3% | 27.75% | 45.7% | +2.07 | −225.75 |
+| 40 | 25 | 47.4% | 24.28% | 52.6% | +0.48 | −230.75 |
 
-- **Stop offset: 25 pts** — sits past most CPI manip-wicks (median manip ≈ 24 pts). Tighter offsets bleed on the head-fake; wider offsets miss too many fills.
-- **Take profit: 15 pts** — highest TP hit rate (45%) of any combo tested.
+Best combo: **Offset 25 / TP 15** — highest TP hit rate (45%), positive avg PnL across all 173 events. Worst single event = −159.75 pts (filled then held to 30-min close, no SL).
 
-Worst single event = **−159.75 pts** (filled, no SL, held to 30-min close). Recent years (2025-2026) hit TP on 75% of releases — the cleanest era for this setup.
+### Year-by-Year — Offset 25 / TP 15
 
-The full 12-combo breakdown and year-by-year stats are in the PDF below.
+| Year | Count | Fill % | TP Hit % | Avg PnL per event (pts) |
+|------|-------|--------|----------|-----------|
+| 2016 | 8 | 0% | 0% | 0 |
+| 2017 | 11 | 9.1% | 9.1% | +1.36 |
+| 2018 | 12 | 33.3% | 16.7% | +2.29 |
+| 2019 | 12 | 8.3% | 0% | −0.90 |
+| 2020 | 11 | 72.7% | 36.4% | −1.77 |
+| 2021 | 19 | 63.2% | 52.6% | +6.87 |
+| 2022 | 24 | 87.5% | 62.5% | −0.85 |
+| 2023 | 24 | 83.3% | 45.8% | +2.80 |
+| 2024 | 23 | 87.0% | 56.5% | +3.46 |
+| 2025 | 21 | 90.5% | **76.2%** | +8.83 |
+| 2026 | 8 | 100% | **75%** | +11.78 |
+
+2025 and 2026 are the cleanest years on record for this strategy — fill rate near 100%, TP hit rate 75–76%, and the avg PnL per event is climbing.
 
 <a class="bd-btn bd-btn-secondary" href="/downloads/backtested-data/cpi-fullport.pdf" download>Download — CPI Fullport PDF</a>
