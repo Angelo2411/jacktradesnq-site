@@ -68,11 +68,18 @@ These datas were my own tests to see which metrics are the best to fullport acco
 
 ### Setup
 
-Buy stop X pts above price + sell stop X pts below, 1 minute before release. **No stop loss** — position stays open until TP or 30-min expiry. Entry offsets in {45, 50, 55, 60, 65, 70, 75}, TPs in {20, 25, 30, 35, 40, 50}.
+Bilateral straddle, full-port, **no stop loss**:
+- Buy stop pending order at release price **+ Offset** (in NQ points)
+- Sell stop pending order at release price **− Offset** (OCO)
+- Take Profit at fill price **± TP**
+- If TP not hit by minute 30 → exit at the m=30 close
+- Entry offsets tested in {45, 50, 55, 60, 65, 70, 75}, TPs in {20, 25, 30, 35, 40, 50}
+
+All values below in **NQ points** (1 pt ≈ $20 on 1 NQ contract / $2 on 1 MNQ).
 
 ### Top 10 Combos (least bad) — Ranked by TP Hit Rate
 
-| Off | TP | Fill % | TP Hit % | Exp % | Avg PnL/ev | Avg PnL (filled) | Worst PnL |
+| Offset (pts) | TP (pts) | Fill % | TP Hit % | Exp % | Avg PnL/ev (pts) | Avg PnL filled (pts) | Worst PnL (pts) |
 |-----|----|--------|----------|-------|-----------|------------------|-----------|
 | 45 | 20 | 54.39% | **34.21%** | 20.18% | −5.66  | −10.4  | −278.5 |
 | 50 | 20 | 51.75% | 33.33%     | 18.42% | −4.77  | −9.22  | −223.25 |

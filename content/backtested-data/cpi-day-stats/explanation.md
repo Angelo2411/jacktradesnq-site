@@ -41,11 +41,21 @@ The average release-candle range went from **3.2 pts** in 2016 to **66.5 pts** i
 
 These datas were my own tests to see which metrics are the best to fullport accounts. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 
-> **Pre-2020 note:** CPI was a non-event before the inflation regime. Stops ≥25 pts rarely filled in 2016–2019. Data kept for transparency — use **2022 onwards** as your baseline.
+### Setup
+
+Bilateral straddle, full-port, **no stop loss**:
+- Buy stop pending order at release price **+ Offset** (in NQ points)
+- Sell stop pending order at release price **− Offset** (OCO with the buy stop — first touched fills, the other cancels)
+- Take Profit at fill price **± TP**
+- If TP not hit by minute 30 → exit at the m=30 close (no SL means no forced exit before that)
+
+All values below are in **NQ points** (1 pt ≈ $20 on 1 NQ contract / $2 on 1 MNQ).
+
+> **Pre-2020 note:** CPI was a non-event before the inflation regime. Offsets ≥25 pts rarely filled in 2016–2019. Data kept for transparency — use **2022 onwards** as your baseline.
 
 ### All Combos — Ranked by TP Hit Rate
 
-| Stop | TP | Fill % | TP Hit % | No Fill % | Avg PnL/ev | Worst PnL |
+| Offset (pts) | TP (pts) | Fill % | TP Hit % | No Fill % | Avg PnL/ev (pts) | Worst PnL (pts) |
 |------|----|--------|----------|-----------|-----------|-----------|
 | 25 | 15 | 65.9% | **45.09%** | 34.1% | +3.17 | −159.75 |
 | 25 | 20 | 65.9% | 40.46% | 34.1% | +3.96 | −159.75 |
@@ -60,11 +70,11 @@ These datas were my own tests to see which metrics are the best to fullport acco
 | 35 | 25 | 54.3% | 27.75% | 45.7% | +2.07 | −225.75 |
 | 40 | 25 | 47.4% | 24.28% | 52.6% | +0.48 | −230.75 |
 
-Best combo: **Stop 25 / TP 15** — highest TP hit rate (45%), positive avg PnL across all 173 events.
+Best combo: **Offset 25 / TP 15** — highest TP hit rate (45%), positive avg PnL across all 173 events. Worst single event = −159.75 pts (filled then held to m=30 close, no SL).
 
-### Year-by-Year — Stop 25 / TP 15
+### Year-by-Year — Offset 25 / TP 15
 
-| Year | Count | Fill % | TP Hit % | Avg PnL/ev | Worst DD |
+| Year | Count | Fill % | TP Hit % | Avg PnL/ev (pts) | Worst DD (pts) |
 |------|-------|--------|----------|-----------|---------|
 | 2016 | 8 | 0% | 0% | 0 | 0 |
 | 2017 | 11 | 9.1% | 9.1% | +1.36 | 3.75 |
@@ -78,6 +88,6 @@ Best combo: **Stop 25 / TP 15** — highest TP hit rate (45%), positive avg PnL 
 | 2025 | 21 | 90.5% | **76.2%** | +8.83 | 100.75 |
 | 2026 | 8 | 100% | **75%** | +11.78 | 47.5 |
 
-2025 and 2026 are the cleanest years on record for this strategy — fill rate near 100%, TP hit rate 75–76%, and the avg P&L/event is climbing.
+2025 and 2026 are the cleanest years on record for this strategy — fill rate near 100%, TP hit rate 75–76%, and the avg PnL/event is climbing.
 
 <a class="bd-btn bd-btn-secondary" href="/downloads/backtested-data/cpi-fullport.pdf" download>Download — CPI Fullport PDF</a>
