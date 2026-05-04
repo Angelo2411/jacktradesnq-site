@@ -52,7 +52,7 @@ All values below are in **NQ points** (1 pt ≈ $20 on 1 NQ contract / $2 on 1 M
 
 ### All Combos — Ranked by TP Hit Rate
 
-| Offset (pts) | TP (pts) | Fill % | TP Hit % | No Fill % | Avg PnL/event (pts) | Worst PnL (pts) |
+| Offset (pts) | TP (pts) | Fill % | TP Hit % | No Fill % | Avg PnL per event (pts) | Worst PnL (pts) |
 |------|----|--------|----------|-----------|-----------|-----------|
 | 25 | 15 | 65.9% | **45.09%** | 34.1% | +3.17 | −159.75 |
 | 25 | 20 | 65.9% | 40.46% | 34.1% | +3.96 | −159.75 |
@@ -71,7 +71,7 @@ Best combo: **Offset 25 / TP 15** — highest TP hit rate (45%), positive avg Pn
 
 ### Year-by-Year — Offset 25 / TP 15
 
-| Year | Count | Fill % | TP Hit % | Avg PnL/event (pts) |
+| Year | Count | Fill % | TP Hit % | Avg PnL per event (pts) |
 |------|-------|--------|----------|-----------|
 | 2016 | 8 | 0% | 0% | 0 |
 | 2017 | 11 | 9.1% | 9.1% | +1.36 |
@@ -85,6 +85,6 @@ Best combo: **Offset 25 / TP 15** — highest TP hit rate (45%), positive avg Pn
 | 2025 | 21 | 90.5% | **76.2%** | +8.83 |
 | 2026 | 8 | 100% | **75%** | +11.78 |
 
-2025 and 2026 are the cleanest years on record for this strategy — fill rate near 100%, TP hit rate 75–76%, and the avg PnL/event is climbing.
+2025 and 2026 are the cleanest years on record for this strategy — fill rate near 100%, TP hit rate 75–76%, and the avg PnL per event is climbing.
 
 <a class="bd-btn bd-btn-secondary" href="/downloads/backtested-data/cpi-fullport.pdf" download>Download — CPI Fullport PDF</a>

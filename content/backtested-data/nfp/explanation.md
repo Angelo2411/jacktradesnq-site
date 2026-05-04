@@ -51,9 +51,9 @@ All values below in **NQ points** (1 pt ≈ $20 on 1 NQ contract / $2 on 1 MNQ).
 - **Filled** — the market triggered one of your stops; you have an open position. Not filled = no position, PnL stays 0.
 - **Worst PnL** — the single worst event in the sample: filled then held to 30-min close. The blow-up scenario fullport with no stop loss has to survive.
 
-### All 24 Combos — Ranked by Avg PnL/event
+### All 24 Combos — Ranked by Avg PnL per event
 
-| Offset (pts) | TP (pts) | Fill % | TP Hit % | Avg PnL/event (pts) | Worst PnL (pts) |
+| Offset (pts) | TP (pts) | Fill % | TP Hit % | Avg PnL per event (pts) | Worst PnL (pts) |
 |-----|----|--------|----------|-----------|------------------|-----------|
 |80|75|31.58%|14.91%|**+4.45**|−140.5|
 |100|50|23.68%|14.91%|**+4.31**|−111.5|
@@ -80,7 +80,7 @@ All values below in **NQ points** (1 pt ≈ $20 on 1 NQ contract / $2 on 1 MNQ).
 |45|75|54.39%|12.28%|−12.63|−278.5|
 |150|20|14.91%|12.28%|−1.26|−255.25|
 
-The 12 top combos (by Avg PnL/event) all use Offset ≥ 80 pts. Anything ≤ 75 pts gets caught by the manip wick and bleeds.
+The 12 top combos (by Avg PnL per event) all use Offset ≥ 80 pts. Anything ≤ 75 pts gets caught by the manip wick and bleeds.
 
 ### Best Combo: Offset 100 / TP 50
 
@@ -93,7 +93,7 @@ The 12 top combos (by Avg PnL/event) all use Offset ≥ 80 pts. Anything ≤ 75 
 
 ### Year-by-Year — Offset 100 / TP 50
 
-| Year | Count | Fill % | TP Hit % | Avg PnL/event (pts) |
+| Year | Count | Fill % | TP Hit % | Avg PnL per event (pts) |
 |------|-------|--------|----------|-----------|
 | 2016 | 8  | 0.0%   | 0.0%   | 0     |
 | 2017 | 12 | 0.0%   | 0.0%   | 0     |
