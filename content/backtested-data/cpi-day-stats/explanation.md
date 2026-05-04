@@ -42,11 +42,16 @@ Bilateral straddle, full-port, **no stop loss**:
 
 All values below are in **NQ points** (1 pt ≈ $20 on 1 NQ contract / $2 on 1 MNQ).
 
+**Quick glossary:**
+- **Offset** — distance in points between the release price and where each pending stop order is placed. Offset 25 = buy stop 25 pts above, sell stop 25 pts below.
+- **OCO** ("One Cancels Other") — the two pending stops are linked. Whichever gets touched first fills, the other auto-cancels. You never end up with two opposite positions.
+- **Worst PnL** — the single worst event in the sample: the trade got filled, no TP, no SL, and held to m=30 close at maximum drawdown. This is the "blow-up" scenario that fullport with no stop loss has to survive.
+
 > **Pre-2020 note:** CPI was a non-event before the inflation regime. Offsets ≥25 pts rarely filled in 2016–2019. Data kept for transparency — use **2022 onwards** as your baseline.
 
 ### All Combos — Ranked by TP Hit Rate
 
-| Offset (pts) | TP (pts) | Fill % | TP Hit % | No Fill % | Avg PnL/ev (pts) | Worst PnL (pts) |
+| Offset (pts) | TP (pts) | Fill % | TP Hit % | No Fill % | Avg PnL/event (pts) | Worst PnL (pts) |
 |------|----|--------|----------|-----------|-----------|-----------|
 | 25 | 15 | 65.9% | **45.09%** | 34.1% | +3.17 | −159.75 |
 | 25 | 20 | 65.9% | 40.46% | 34.1% | +3.96 | −159.75 |
@@ -65,7 +70,7 @@ Best combo: **Offset 25 / TP 15** — highest TP hit rate (45%), positive avg Pn
 
 ### Year-by-Year — Offset 25 / TP 15
 
-| Year | Count | Fill % | TP Hit % | Avg PnL/ev (pts) | Worst DD (pts) |
+| Year | Count | Fill % | TP Hit % | Avg PnL/event (pts) | Worst Drawdown (pts) |
 |------|-------|--------|----------|-----------|---------|
 | 2016 | 8 | 0% | 0% | 0 | 0 |
 | 2017 | 11 | 9.1% | 9.1% | +1.36 | 3.75 |
