@@ -22,9 +22,9 @@ export default function BacktestedHub() {
           Backtested data<span className="bd-dot">.</span>
         </h1>
         <p className="bd-hub-sub">
-          A small, deliberate collection of strategies and data studies on the
-          NQ and adjacent index futures. Each one ships with the curve, the
-          parameters and the part where I admit what does not work.
+          Backtests run by AI on historical data. Numbers are indicative —
+          assumptions, fills and slippage can be wrong. Always re-verify before
+          risking capital.
         </p>
         <div className="bd-stats">
           <div className="bd-stat">
