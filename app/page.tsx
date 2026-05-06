@@ -49,7 +49,7 @@ export default function Home() {
 
       {/* Group 2 — Internal pages */}
       <div className="group">
-        <Link className="card" href="/backtested-data">
+        <Link className="card" href="/backtested-data/">
           <svg className="card-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
             <path d="M3 3v18h18"/>
             <path d="M7 15l4-4 3 3 5-6"/>
@@ -72,9 +72,9 @@ export default function Home() {
       {/* Footer FR legal */}
       <footer className="footer">
         <div className="footer-row">
-          <Link href="/mentions-legales">Mentions légales</Link>
+          <Link href="/mentions-legales/">Mentions légales</Link>
           <span className="sep">·</span>
-          <Link href="/politique-confidentialite">Politique de confidentialité</Link>
+          <Link href="/politique-confidentialite/">Politique de confidentialité</Link>
           <span className="sep">·</span>
           <span>© 2026 JackTradesNQ. All rights reserved.</span>
         </div>
