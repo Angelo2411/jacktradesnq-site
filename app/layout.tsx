@@ -11,12 +11,14 @@ export const metadata: Metadata = {
     title: 'JackTradesNQ — NQ Futures Trader',
     description: 'Free TradingView indicators and trading content on NQ Futures.',
     siteName: 'JackTradesNQ',
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'JackTradesNQ' }],
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     site: '@jacktradesnq',
     title: 'JackTradesNQ — NQ Futures Trader',
     description: 'Free TradingView indicators and trading content on NQ Futures.',
+    images: ['/og-image.png'],
   },
   icons: { icon: '/favicon.svg' },
 };
