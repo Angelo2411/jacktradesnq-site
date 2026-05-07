@@ -49,7 +49,6 @@ All values below in **NQ points** (1 pt ≈ $20 on 1 NQ contract / $2 on 1 MNQ).
 - **Offset** — distance in points between the release price and where each pending stop order is placed.
 - **OCO** ("One Cancels Other") — the two pending stops are linked. Whichever gets touched first fills, the other auto-cancels.
 - **Filled** — the market triggered one of your stops; you have an open position. Not filled = no position, PnL stays 0.
-- **Worst PnL** — the single worst event in the sample: filled then held to 30-min close. The blow-up scenario fullport with no stop loss has to survive.
 
 ### Where to place your stop and TP
 
@@ -61,6 +60,26 @@ After testing 24 combos across 114 NFP releases:
 Fill rate ~24% — you skip the NFPs that don't reach ±100 pts in 60 seconds. When you do fill, you're entering on the real directional leg.
 
 The full 24-combo breakdown and year-by-year stats are in the PDF below.
+
+### Year-by-Year — Best by TP Hit Rate (Offset 45 / TP 20)
+
+This is the highest-fill, highest-TP-hit combo — useful to read **how often** the trade actually wins.
+
+| Year | Count | Wins | Losses | No-Fill |
+|------|-------|------|--------|---------|
+| 2016 | 8  | 0  | 0 | 8  |
+| 2017 | 12 | 0  | 0 | 12 |
+| 2018 | 12 | 1  | 0 | 11 |
+| 2019 | 12 | 0  | 3 | 9  |
+| 2020 | 11 | 2  | 3 | 6  |
+| 2021 | 12 | 4  | 3 | 5  |
+| 2022 | 12 | 10 | 2 | 0  |
+| 2023 | 12 | 9  | 2 | 1  |
+| 2024 | 12 | 6  | 6 | 0  |
+| 2025 | 8  | 5  | 3 | 0  |
+| 2026 | 3  | 2  | 1 | 0  |
+
+**Wins** = TP hit before 30-min expiry. **Losses** = filled but TP not hit (held to expiry). **No-Fill** = neither stop triggered, flat at 0.
 
 ### Why Offset Size Matters
 
