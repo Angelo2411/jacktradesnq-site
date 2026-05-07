@@ -1,6 +1,6 @@
 ## Article 1 — NFP Points
 
-The PDF "NFP Points" shows every data related to NFP in terms of points from 2016 to 2026. Sample size: **114 releases** with valid 1-minute NQ bar data.
+The PDF "NFP Points" shows every data related to NFP in terms of points from 2016 to 2026. Sample size: **102 releases** with valid 1-minute NQ bar data.
 
 ### Year-by-Year — Release Candle Range (1m, 8:30 ET)
 
@@ -10,19 +10,19 @@ NFP volatility lives almost entirely inside the 1-minute release bar. How many p
 
 | Year | Count | Avg Range 1m | Max Range 1m |
 |------|-------|-------------|--------------|
-| 2016 | 8  | 14.4 pts  | 25.5 pts  |
-| 2017 | 12 | 7.6 pts   | 13.8 pts  |
-| 2018 | 12 | 21.2 pts  | 45.0 pts  |
-| 2019 | 12 | 22.3 pts  | 45.5 pts  |
-| 2020 | 11 | 27.8 pts  | 52.2 pts  |
-| 2021 | 12 | 43.5 pts  | 87.0 pts  |
-| 2022 | 12 | 121.8 pts | 240.8 pts |
-| 2023 | 12 | 98.5 pts  | 187.5 pts |
-| 2024 | 12 | 118.3 pts | 199.8 pts |
-| 2025 | 8  | 127.6 pts | 249.8 pts |
-| 2026 | 3  | 107.7 pts | 173.8 pts |
+| 2016 | 7  | 12.9 pts  | 22.8 pts  |
+| 2017 | 10 | 7.6 pts   | 13.8 pts  |
+| 2018 | 11 | 20.0 pts  | 45.0 pts  |
+| 2019 | 11 | 22.4 pts  | 45.5 pts  |
+| 2020 | 9  | 27.9 pts  | 52.2 pts  |
+| 2021 | 11 | 43.5 pts  | 87.0 pts  |
+| 2022 | 11 | 126.9 pts | 240.8 pts |
+| 2023 | 10 | 90.4 pts  | 187.5 pts |
+| 2024 | 11 | 118.5 pts | 199.8 pts |
+| 2025 | 7  | 110.1 pts | 187.5 pts |
+| 2026 | 4  | 106.8 pts | 173.8 pts |
 
-The average release-candle range went from **14.4 pts** in 2016 to **127.6 pts** in 2025 — a 9× expansion. Like CPI, the inflation regime turned NFP into a violent event.
+The average release-candle range went from **12.9 pts** in 2016 to **110.1 pts** in 2025 — an 8.5× expansion. Like CPI, the inflation regime turned NFP into a violent event.
 
 <a class="bd-btn bd-btn-secondary" href="/downloads/backtested-data/nfp-points.pdf" download>Download — NFP Points PDF</a>
 
@@ -52,7 +52,7 @@ All values below in **NQ points** (1 pt ≈ $20 on 1 NQ contract / $2 on 1 MNQ).
 
 ### Where to place your stop and TP
 
-After testing 24 combos across 114 NFP releases:
+After testing 24 combos across 102 NFP releases:
 
 - **Stop offset: 100 pts** — sits past the typical manip-wick range. Tighter offsets (≤75) get filled by the head-fake then bleed.
 - **Take profit: 50 pts** — large enough to clear the chop, tight enough to actually get hit.
@@ -67,17 +67,17 @@ This is the highest-fill, highest-TP-hit combo — useful to read **how often** 
 
 | Year | Count | Wins | Losses | No-Fill |
 |------|-------|------|--------|---------|
-| 2016 | 8  | 0  | 0 | 8  |
-| 2017 | 12 | 0  | 0 | 12 |
-| 2018 | 12 | 1  | 0 | 11 |
-| 2019 | 12 | 0  | 3 | 9  |
-| 2020 | 11 | 2  | 3 | 6  |
-| 2021 | 12 | 4  | 3 | 5  |
-| 2022 | 12 | 10 | 2 | 0  |
-| 2023 | 12 | 9  | 2 | 1  |
-| 2024 | 12 | 6  | 6 | 0  |
-| 2025 | 8  | 5  | 3 | 0  |
-| 2026 | 3  | 2  | 1 | 0  |
+| 2016 | 7  | 0 | 0 | 7  |
+| 2017 | 10 | 0 | 0 | 10 |
+| 2018 | 11 | 0 | 0 | 11 |
+| 2019 | 11 | 0 | 3 | 8  |
+| 2020 | 9  | 2 | 3 | 4  |
+| 2021 | 11 | 3 | 3 | 5  |
+| 2022 | 11 | 9 | 2 | 0  |
+| 2023 | 10 | 7 | 2 | 1  |
+| 2024 | 11 | 5 | 6 | 0  |
+| 2025 | 7  | 4 | 3 | 0  |
+| 2026 | 4  | 3 | 1 | 0  |
 
 **Wins** = TP hit before 30-min expiry. **Losses** = filled but TP not hit (held to expiry). **No-Fill** = neither stop triggered, flat at 0.
 
