@@ -15,15 +15,43 @@ The trade I'm backtesting:
 
 This is **strict IFVG** — no "close back inside" proxy, no "first reaction" entry. The 3-bar gap must form, get broken on a close, and then get retested.
 
-## The 54-variant grid
+## The 108-variant grid
 
-I tested every combination of three switches:
+I tested every combination of four switches:
 
 - **Break-even**: None / +3 / +5 / +8 / +10 / +15 pts (6)
 - **FVG timeframe**: 1m / 2m / 5m (3)
 - **Direction filter**: both / long-only / short-only (3)
+- **SMT external (NQ vs ES)**: off / on (2)
 
-54 variants total, run on 550 NQ red-folder events from April 2016 to December 2026.
+108 variants total, run on 550 NQ red-folder events from April 2016 to December 2026.
+
+## SMT external filter
+
+Smart Money Technique (SMT) external compares NQ to ES on the 3-min sweep window. The thesis: a "real" sweep is one futures index reaching for liquidity while the other does not. If both indices sweep together, it's broad index drift, not a stop hunt — so we skip.
+
+Rule:
+- **Sweep UP NQ valid only if** `max(ES.high[t0..t0+3min]) ≤ ES.pre_news_high` (ES did NOT sweep its own high)
+- **Sweep DOWN NQ valid only if** `min(ES.low[t0..t0+3min]) ≥ ES.pre_news_low`
+
+Result: SMT cuts ~82% of events. Mean trades per variant drops from ~104 to ~10 over 10 years.
+
+| Mode | Mean PF | Mean total pts | Mean trades | Events skipped (SMT) |
+|---|---|---|---|---|
+| SMT off (baseline) | 0.98 | −76.71 | 104 | — |
+| SMT on (NQ vs ES) | 2.79 | −5.17 | 9.8 | 450 / 550 (81.8%) |
+
+Top 5 SMT-on variants by PF — note the tiny samples:
+
+| Variant | PF | Total pts | WR | Trades |
+|---|---|---|---|---|
+| `be0_tf5_long_only_smt` | 8.13 | +14.25 | 71.4% | 7 |
+| `be3_tf5_long_only_smt` | 8.13 | +14.25 | 71.4% | 7 |
+| `be0_tf5_both_smt` | 7.44 | +14.50 | 70.0% | 10 |
+| `be3_tf5_both_smt` | 7.44 | +14.50 | 70.0% | 10 |
+| `be0_tf2_long_only_smt` | 4.17 | +14.25 | 75.0% | 8 |
+
+The PF lift is real but the sample sizes are statistically empty (n=7-10 over 10 years = ~1 trade/year). The SMT-off `be0_tf2_long_only` still wins on total pts (+207 over 70 trades) and remains the variant I'd actually trade. **SMT does not transform a marginal edge into a tradable one — it concentrates the high-quality cluster into a sample too thin to bank on.**
 
 ## Top 5 variants by profit factor
 
@@ -109,4 +137,4 @@ Every variant in the 6×3×3 grid is published — the unprofitable ones too. Se
 - Geometry guard skips events where price already moved past SL or TP at the moment of retest.
 - Past performance does not predict future results. Backtests are AI-assisted on historical 1m data; verify yourself before risking capital.
 
-Backtest engine: `strict_ifvg_v3_grid`. Source: `news_830_setup.py` + `run_news_830_grid.py` in the monfxreplay-python repo. Bars: NQ 1m parquets, April 2016 → December 2026.
+Backtest engine: `strict_ifvg_v3_grid` + SMT external. Source: `news_830_setup.py` + `run_news_830_grid.py` in the monfxreplay-python repo. Bars: NQ + ES 1m parquets, April 2016 → December 2026.
