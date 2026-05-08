@@ -6,92 +6,107 @@ The trade I'm backtesting:
 
 1. **Pre-news range** — high and low across the 5 1-minute bars before 8:30 ET.
 2. **Sweep** — the first bar within [8:30, 8:33] that breaks pre-news high (sweep UP) or pre-news low (sweep DOWN).
-3. **Wait for a 1-minute FVG** in the *opposite* direction to form after the sweep. After a sweep UP we want a bullish 3-bar FVG (low of bar 3 above high of bar 1). After a sweep DOWN, a bearish 3-bar FVG.
-4. **Wait for that FVG to break** — a 1-minute close back through the bar-1 edge. Once broken, it's an inverted FVG — IFVG — pointing in the trade direction.
+3. **Wait for a 3-bar FVG** in the *opposite* direction to form after the sweep, on the chosen FVG timeframe (1m / 2m / 5m).
+4. **Wait for that FVG to break** — a TF close back through the bar-1 edge. Once broken, it's an inverted FVG — IFVG — pointing in the trade direction.
 5. **Entry on first retest** of the IFVG zone. Sweep UP → SHORT at the bar-1 high. Sweep DOWN → LONG at the bar-1 low.
 6. **SL** = sweep price ± 1 NQ tick (0.25). **TP** = the opposite side of the pre-news range.
-7. If no IFVG broken-and-retested by 11:00 ET → no trade. If entered, resolve forward 1m bars until 16:00 ET.
+7. Optional **break-even** move: when MFE hits a chosen threshold, SL is moved to entry. Optional **direction filter** to take only longs or only shorts.
+8. If no IFVG broken-and-retested by 11:00 ET → no trade. If entered, resolve forward 1m bars until 16:00 ET.
 
 This is **strict IFVG** — no "close back inside" proxy, no "first reaction" entry. The 3-bar gap must form, get broken on a close, and then get retested.
 
-## Sample
+## The 54-variant grid
 
-550 events from April 2016 → December 2026 on NQ 1-minute bars. Filter: `time = 13:30 UTC AND impact = High` from the red-folder calendar.
+I tested every combination of three switches:
 
-After applying the structural rules, **205 events trigger a trade** (37% trigger rate). The other 345 are skipped because:
-- 43 had no sweep (price stayed inside pre-news range during the 3-min window)
-- 1 had a sweep but no IFVG broken-and-retested by 11:00 ET
-- 301 had a late retest where price had already moved past SL or TP — geometry guard skips them
+- **Break-even**: None / +3 / +5 / +8 / +10 / +15 pts (6)
+- **FVG timeframe**: 1m / 2m / 5m (3)
+- **Direction filter**: both / long-only / short-only (3)
 
-## Headline stats — 10y NQ
+54 variants total, run on 550 NQ red-folder events from April 2016 to December 2026.
+
+## Top 5 variants by profit factor
+
+| Variant | PF | Total pts | WR | Trades |
+|---|---|---|---|---|
+| `be8_tf1_long_only` | 1.71 | +118.75 | 34.4% | 96 |
+| `be15_tf1_long_only` | 1.67 | +137.50 | 37.5% | 96 |
+| `be3_tf5_long_only` | 1.59 | +144.50 | 47.7% | 65 |
+| `be5_tf5_long_only` | 1.59 | +144.50 | 47.7% | 65 |
+| `be3_tf5_both` | 1.58 | +188.50 | 46.2% | 106 |
+
+## Top 5 variants by total points
+
+| Variant | Total pts | PF | WR | Trades |
+|---|---|---|---|---|
+| `be0_tf2_long_only` | +207.25 | 1.44 | 52.2% | 70 |
+| `be3_tf5_both` | +188.50 | 1.58 | 46.2% | 106 |
+| `be5_tf5_both` | +188.50 | 1.58 | 46.2% | 106 |
+| `be0_tf1_long_only` (V1 long-only) | +175.00 | 1.52 | 43.2% | 96 |
+| `be0_tf5_long_only` | +163.00 | 1.55 | 53.1% | 65 |
+
+## Switch-by-switch impact
+
+Each cell averages over the 9 (or 18) other switch combos.
+
+**Break-even threshold**
+
+| BE | Mean PF | Mean total pts |
+|---|---|---|
+| None | 1.04 | −42.50 |
+| +3 | 0.98 | −55.50 |
+| +5 | 0.99 | −62.39 |
+| +8 | 0.97 | −90.89 |
+| +10 | 0.94 | −109.17 |
+| +15 | 0.99 | −99.83 |
+
+The grid average is dragged down by the short-only and tf2 combos. The headline: **forced break-even moves don't help**. Whatever you scrape on saved losses, you lose more often by giving up winners that retraced before TP.
+
+**Direction filter**
+
+| Direction | Mean PF | Mean total pts |
+|---|---|---|
+| Both | 0.93 | −115.07 |
+| Long only | 1.16 | +4.50 |
+| Short only | 0.86 | −119.57 |
+
+Strongest signal in the grid: **the long side does work, the short side bleeds**. Same as in V1 — buying liquidity sweeps below pre-news range pays roughly twice as well as fading sweeps above.
+
+**FVG timeframe**
+
+| TF | Mean PF | Mean total pts |
+|---|---|---|
+| 1m | 0.94 | −69.11 |
+| 2m | 0.62 | −244.89 |
+| 5m | 1.39 | +83.86 |
+
+The 2m TF is the worst — it forms FVGs slowly enough that by retest the structural geometry is gone. **5m is the best** because the 3-bar 5m FVG is a real 15-min consolidation, not noise. 1m sits in between.
+
+## Baseline V1 — what I shipped first
+
+The original V1 (`be0_tf1_both`) is in this grid as one specific variant:
 
 | Metric | Value |
 |---|---|
-| Events scanned | 550 |
-| Trades taken | 205 |
-| Wins / Losses / Timeouts | 76 / 129 / 1 |
-| Win rate (resolved) | 37.07% |
-| Profit factor | 1.16 |
-| Expectancy | +0.69 pts / event traded |
-| Total | +141.75 pts |
-| Avg win / Avg loss | +16.27 / −8.26 pts |
-| Avg trade duration | 11.1 min |
-| Best trade | +91 pts (2023-03-10 NFP, SHORT) |
-| Worst trade | −55.75 pts (2025-02-07 NFP, SHORT) |
-| Median planned RR | 2.29 |
+| Trades taken | 206 |
+| WR | 37.1% |
+| PF | 1.16 |
+| Total pts | +141.75 |
+| Expectancy | +0.69 pts / trade |
+| Avg W / Avg L | +16.27 / −8.26 |
+| Max DD | 420 pts |
 
-The win rate is below 50%, but the average win is roughly 2× the average loss, so the expectancy stays positive. PF of 1.16 over 205 trades is thin — not a print-money setup, but a workable framework you can refine with discretion (which event, which session context, which HTF bias).
+Several variants beat it on PF (long-only, 5m FVG) and on total pts (`be0_tf2_long_only`, +207). None of them are step-changes — they shift the curve, not transform it.
 
-## By event type (only ≥5 trades)
+## Honesty disclaimer
 
-| Event | Events | Trades | WR | PF | Total pts |
-|---|---|---|---|---|---|
-| JoblessClaims | 229 | 75 | 45.3% | 1.67 | +142.8 |
-| AvgHourlyEarnings | 43 | 21 | 38.1% | 1.52 | +82.8 |
-| UnemploymentRate | 43 | 21 | 38.1% | 1.52 | +82.8 |
-| GDP | 17 | 5 | 80.0% | 10.1 | +41.0 |
-| NFP | 31 | 14 | 42.9% | 1.26 | +27.2 |
-| ISM | 11 | 6 | 16.7% | 1.60 | +17.2 |
-| EmpireState | 40 | 14 | 35.7% | 1.00 | 0.0 |
-| PCE | 39 | 13 | 30.8% | 0.76 | −16.8 |
-| RetailSales | 22 | 10 | 10.0% | 0.20 | −48.2 |
-| CPI | 21 | 6 | 16.7% | 0.03 | −89.5 |
-| CoreRetailSales | 40 | 16 | 12.5% | 0.11 | −94.8 |
-
-The edge is concentrated in **labor-market data** — jobless claims, NFP, AHE, unemployment rate. Inflation prints (CPI, PCE, retail) bleed: the manip wick on CPI is huge and the IFVG retest often runs back through the sweep. The naive "trade every red-folder release" version is a bad idea — labor-only would be cleaner.
-
-## Sweep direction asymmetry
-
-| Sweep | Trades | WR | PF | Total pts |
-|---|---|---|---|---|
-| DOWN → LONG | 95 | 43.2% | 1.52 | +175.0 |
-| UP → SHORT | 110 | 31.8% | 0.95 | −33.2 |
-
-The setup performs roughly twice as well buying liquidity sweeps below pre-news range as it does selling sweeps above. Likely reflects the structural bid in the indices over this 10-year sample.
-
-## Year by year
-
-| Year | Events | Trades | W | L | WR | Total pts |
-|---|---|---|---|---|---|---|
-| 2016 | 27 | 2 | 0 | 2 | 0% | −1.0 |
-| 2017 | 57 | 12 | 3 | 9 | 25% | −12.8 |
-| 2018 | 51 | 19 | 4 | 15 | 21% | −32.5 |
-| 2019 | 46 | 18 | 10 | 8 | 56% | +29.8 |
-| 2020 | 51 | 16 | 6 | 10 | 38% | −14.8 |
-| 2021 | 47 | 19 | 8 | 11 | 42% | +41.0 |
-| 2022 | 50 | 13 | 7 | 6 | 54% | −63.5 |
-| 2023 | 56 | 29 | 12 | 17 | 41% | +245.0 |
-| 2024 | 60 | 38 | 13 | 25 | 34% | +99.2 |
-| 2025 | 56 | 27 | 10 | 17 | 37% | −125.0 |
-| 2026 | 49 | 12 | 3 | 9 | 25% | −23.8 |
-
-Equity curve is uneven. The big year was 2023; 2025 erased a third of the prior gains; 2026 (partial) is also negative. Without filters this is a "live with the variance" setup, not a clean uptrend.
+Every variant in the 6×3×3 grid is published — the unprofitable ones too. Several event types (CPI, CoreRetailSales, RetailSales) stay deeply negative across the entire grid: trying to fade a CPI release with this setup is structurally bad. The grid says so and I'm not removing those rows. The catastrophic variants (`be10_tf1_short_only`, PF 0.32, −348 pts) sit in the explorer alongside the best ones — pick whichever matches your hypothesis.
 
 ## Caveats
 
 - 1-minute fills assume mid-of-bar entry/exit at the IFVG zone edge. Real fills will differ — slippage on news releases is non-trivial.
-- "Worst case honest" rule: when a single 1-minute bar contains both SL and TP, we book it as a loss. This is conservative but realistic.
-- The geometry guard skips ~55% of events (entry past SL/TP). That's not a bug — it's the strict IFVG model honestly admitting that price often runs past structure before the retest.
+- "Worst case honest" rule: when a single 1-minute bar contains both SL and TP, we book it as a loss.
+- Geometry guard skips events where price already moved past SL or TP at the moment of retest.
 - Past performance does not predict future results. Backtests are AI-assisted on historical 1m data; verify yourself before risking capital.
 
-Backtest engine: `strict_ifvg_v2`. Source: `news_830_setup.py` in the monfxreplay-python repo. Bars: NQ 1m parquets, April 2016 → December 2026.
+Backtest engine: `strict_ifvg_v3_grid`. Source: `news_830_setup.py` + `run_news_830_grid.py` in the monfxreplay-python repo. Bars: NQ 1m parquets, April 2016 → December 2026.
