@@ -50,6 +50,72 @@ Profitable count (PF ≥ 1.0) per variant, across the 12 (symbol, killzone, side
 
 **London long dominates.** 4 of the 5 best setups are London, every single one is long, and the two highest PnL absolute (NQ London + NQ NY AM, both +1,000 pts over 10 years) are the v4_combo. The win-rate looks low on PDH/PDL variants (≈30%) — that's expected: the target is far, so most trades miss, but the ones that hit pay 4-5x the average loss.
 
+## Year-by-year — top 3 setups
+
+Aggregating 10 years hides the regime swings. The breakdown below shows how each year actually traded for the three best (symbol, killzone, side, variant) setups.
+
+### NQ — London — Long — v4_combo (best PnL absolute)
+
+| Year | Trades | WR | PnL | PF |
+|------|--------|----|----|----|
+| 2016 | 36 | 19% | −1 | 0.99 |
+| 2017 | 54 | 33% | +101 | 2.03 |
+| 2018 | 67 | 28% | −72 | 0.82 |
+| 2019 | 57 | 26% | +38 | 1.14 |
+| 2020 | 64 | 39% | +206 | 1.24 |
+| 2021 | 68 | 32% | **+583** | 1.77 |
+| 2022 | 70 | 29% | +39 | 1.03 |
+| 2023 | 71 | 34% | +348 | 1.54 |
+| 2024 | 64 | 23% | **−460** | 0.55 |
+| 2025 | 78 | 30% | +429 | 1.35 |
+| 2026 | 30 | 23% | −85 | 0.86 |
+
+Volatile. Big years (2021, 2023, 2025) carry the equity. 2024 was a flat-out bad year (−460 pts). 7/11 years profitable.
+
+### NQ — NY AM — Long — v4_combo
+
+| Year | Trades | WR | PnL | PF |
+|------|--------|----|----|----|
+| 2016 | 31 | 52% | −13 | 0.92 |
+| 2017 | 49 | 57% | +58 | 1.23 |
+| 2018 | 43 | 49% | +58 | 1.11 |
+| 2019 | 38 | 37% | −330 | 0.30 |
+| 2020 | 50 | 50% | −312 | 0.81 |
+| 2021 | 41 | 46% | +410 | 1.35 |
+| 2022 | 49 | 51% | −50 | 0.98 |
+| 2023 | 39 | 59% | +596 | 1.78 |
+| 2024 | 45 | 49% | −60 | 0.95 |
+| 2025 | 39 | 46% | **+736** | 1.47 |
+| 2026 | 14 | 43% | −78 | 0.88 |
+
+2025 is by far the best year here. 6/11 years profitable.
+
+### ES — London — Long — v2_ib_bias (most consistent)
+
+| Year | Trades | WR | PnL | PF |
+|------|--------|----|----|----|
+| 2016 | 57 | 46% | −4 | 0.91 |
+| 2017 | 82 | 52% | +2 | 1.06 |
+| 2018 | 98 | 59% | +32 | 1.28 |
+| 2019 | 80 | 54% | +19 | 1.25 |
+| 2020 | 87 | 51% | +23 | 1.07 |
+| 2021 | 108 | 53% | +28 | 1.16 |
+| 2022 | 93 | 56% | +79 | 1.33 |
+| 2023 | 93 | 58% | +31 | 1.24 |
+| 2024 | 83 | 54% | +32 | 1.23 |
+| 2025 | 103 | 52% | +83 | 1.36 |
+| 2026 | 36 | 53% | +35 | 1.36 |
+
+**9 out of 11 years profitable.** Boring numbers, no whale years, no disaster years. WR sits at 50-58% throughout. This is the kind of equity curve that keeps you sane through a drawdown — the opposite of the NQ "lottery" profile.
+
+### What the year-by-year says
+
+- **NQ runs hot-or-cold.** 2024 was a disaster year on NQ London (−460 pts) — the kind of year that breaks discipline. NQ NY AM had its own version with 2019 (−330) and 2020 (−312). If you'd live-traded these setups in those years, you'd have quit.
+- **2025 is exceptional on NQ.** NQ London +429, NQ NY AM +736 — both above 10y averages. Not surprising — bull market, persistent above-IB acceptance, PDH targets get hit.
+- **ES London is the boring winner.** Tiny per-year edges (+20 to +80 pts) but every year stays in the green or near it. Lower drawdown stress, lower payoffs.
+
+The honest read: if you can pick the right year, you do well. You can't. So either trade the boring (ES London v2) and accept small returns, or trade the volatile (NQ v4_combo variants) and prepare psychologically for years like 2024.
+
 ## What didn't work
 
 - **Shorts.** Almost every short combo stayed unprofitable across all 5 variants. Only one — NQ NY AM short v3_cross_confirm — squeezed a +147 pts edge (PF 1.012). On a 10-year bull-market sample this is consistent: the IB short setup faces persistent upward drift.
