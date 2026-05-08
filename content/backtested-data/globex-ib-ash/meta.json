@@ -1,0 +1,8 @@
+{
+  "title": "Globex IB — Ash_Trades / VClouette",
+  "category": "data",
+  "date": "2026-05-08",
+  "excerpt": "10-year NQ backtest of Ash_Trades' Globex Initial Balance setup, mechanical baseline (no HTF/news/SMT/FVG): IB50 PF 0.90 (1554 trades, −1265 pts), IB25 PF 1.07 (1467 trades, +587 pts).",
+  "tradingviewUrl": "https://www.tradingview.com/u/jacktradesnq/",
+  "pdfFile": ""
+}
