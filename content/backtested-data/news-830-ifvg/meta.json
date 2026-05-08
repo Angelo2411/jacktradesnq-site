@@ -1,8 +1,0 @@
-{
-  "title": "News 8:30 IFVG Setup — v2.0 (engine rewrite)",
-  "category": "data",
-  "date": "2026-05-08",
-  "excerpt": "Retracted v1 results. v2.0 rewrite of the 8:30 ET red-folder pre-news sweep + IFVG break setup, on 1013 unique NQ events (2016-2026). Five engine bugs fixed: 3-min sweep cap → full session, UTC-only-winter filter → EDT+EST, NFP/AHE/UR triple-count → dedupe by timestamp, retest entry → break-bar entry, silent zone-data loss → audit-visible. Baseline (no BE / 1m FVG / both) PF 2.08 / +1512 pts / 414 trades over 10y.",
-  "tradingviewUrl": "",
-  "pdfFile": ""
-}
