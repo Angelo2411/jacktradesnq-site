@@ -946,6 +946,26 @@ export default function PandaMascot() {
     // so a leaked petTimerRef no longer blocks this watchdog from firing.
     stuckCheckRef.current = setInterval(() => {
       if (!overriddenRef.current) return;
+
+      // Case A: drag actif + pointer frozen (curseur sorti hors window OS)
+      // pointermove/up ne firent plus mais pointerActiveRef reste true → fix dédié
+      if (isDraggingRef.current && pointerActiveRef.current) {
+        const idleMs = performance.now() - lastPointerMoveRef.current;
+        if (idleMs > 800) {
+          console.warn('[panda] event=watchdog state=drag-frozen-out-of-window idleMs=' + idleMs.toFixed(0));
+          isDraggingRef.current = false;
+          pointerActiveRef.current = false;
+          if (petTimerRef.current) { clearTimeout(petTimerRef.current); petTimerRef.current = null; }
+          stopPetting();
+          if (physStateRef.current) {
+            startWalkBack({ ...physStateRef.current.pos });
+          } else {
+            exitOverride();
+          }
+        }
+        return;
+      }
+
       if (isDraggingRef.current) return;
       if (pointerActiveRef.current) return;      // live pointer down — normal held state
       if (rafRef.current !== null) return;
@@ -981,6 +1001,24 @@ export default function PandaMascot() {
     };
     window.addEventListener('blur', handleWindowBlur);
 
+    // Mouseout safeguard: catches cursor leaving the OS window mid-drag
+    // (Chrome stops firing pointermove/up but keeps capture → panda freezes)
+    const handleDocumentMouseOut = (e: MouseEvent) => {
+      if (!isDraggingRef.current) return;
+      if (e.relatedTarget !== null) return; // moving between elements, not exiting window
+      console.debug('[panda] event=document-mouseout dragging=true → drop');
+      isDraggingRef.current = false;
+      pointerActiveRef.current = false;
+      if (petTimerRef.current) { clearTimeout(petTimerRef.current); petTimerRef.current = null; }
+      stopPetting();
+      if (physStateRef.current) {
+        startWalkBack({ ...physStateRef.current.pos });
+      } else {
+        exitOverride();
+      }
+    };
+    document.addEventListener('mouseout', handleDocumentMouseOut);
+
     function onVisibilityChange() {
       if (document.visibilityState === 'visible') {
         pausedRef.current = false;
@@ -1013,6 +1051,7 @@ export default function PandaMascot() {
     return () => {
       document.removeEventListener('visibilitychange', onVisibilityChange);
       window.removeEventListener('blur', handleWindowBlur);
+      document.removeEventListener('mouseout', handleDocumentMouseOut);
       if (stuckCheckRef.current)    clearInterval(stuckCheckRef.current);
       if (actionTimerRef.current)   clearTimeout(actionTimerRef.current);
       if (bubbleTimerRef.current)   clearTimeout(bubbleTimerRef.current);
