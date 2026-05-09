@@ -49,43 +49,10 @@ All values below are in **NQ points** (1 pt ≈ $20 on 1 NQ contract / $2 on 1 M
 
 > **Pre-2020 note:** CPI was a non-event before the inflation regime. Offsets ≥25 pts rarely filled in 2016–2019. Data kept for transparency — use **2022 onwards** as your baseline.
 
-### All Combos — Ranked by TP Hit Rate
+### Explore the data — your filters, your PDF
 
-| Offset (pts) | TP (pts) | Fill % | TP Hit % | No Fill % |
-|------|----|--------|----------|-----------|
-| 25 | 15 | 65.9% | **45.09%** | 34.1% |
-| 25 | 20 | 65.9% | 40.46% | 34.1% |
-| 30 | 15 | 59.0% | 39.88% | 41.0% |
-| 35 | 15 | 54.3% | 30.64% | 45.7% |
-| 25 | 25 | 65.9% | 30.64% | 34.1% |
-| 40 | 15 | 47.4% | 30.64% | 52.6% |
-| 30 | 20 | 59.0% | 30.06% | 41.0% |
-| 35 | 20 | 54.3% | 29.48% | 45.7% |
-| 40 | 20 | 47.4% | 28.90% | 52.6% |
-| 30 | 25 | 59.0% | 28.32% | 41.0% |
-| 35 | 25 | 54.3% | 27.75% | 45.7% |
-| 40 | 25 | 47.4% | 24.28% | 52.6% |
+Pick a year, stop offset, TP target and side; the table refreshes live and you can download a tailored PDF report.
 
-Best combo: **Offset 25 / TP 15** — highest TP hit rate (45%) across all 173 events.
-
-### Year-by-Year — Offset 25 / TP 15
-
-| Year | Count | Wins | Losses | No-Fill |
-|------|-------|------|--------|---------|
-| 2016 | 8  | 0  | 0 | 8  |
-| 2017 | 11 | 1  | 0 | 10 |
-| 2018 | 12 | 2  | 2 | 8  |
-| 2019 | 12 | 0  | 1 | 11 |
-| 2020 | 11 | 4  | 4 | 3  |
-| 2021 | 19 | 10 | 2 | 7  |
-| 2022 | 24 | 15 | 6 | 3  |
-| 2023 | 24 | 11 | 9 | 4  |
-| 2024 | 23 | 13 | 7 | 3  |
-| 2025 | 21 | 16 | 3 | 2  |
-| 2026 | 8  | 6  | 2 | 0  |
-
-**Wins** = TP hit before 30-min expiry. **Losses** = filled but TP not hit (held to expiry). **No-Fill** = neither stop triggered, flat at 0.
-
-2025 and 2026 are the cleanest years on record — 16/3 and 6/2 win-loss splits.
+<div data-explorer="cpi"></div>
 
 <a class="bd-btn bd-btn-secondary" href="/downloads/backtested-data/cpi-fullport.pdf" download>Download — CPI Fullport PDF</a>
