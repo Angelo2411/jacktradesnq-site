@@ -1039,3 +1039,164 @@ a { color: inherit; text-decoration: none; }
       );
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Interactive explorer (CPI / NFP) — filters, live table, PDF CTA.
+   Lives inside .bd-root scope.
+   ═════════════════════════════════════════════════════════════════ */
+.bd-explorer-loading {
+  font-family: var(--f-sans);
+  color: var(--c-muted);
+  padding: var(--s-7) 0;
+  text-align: center;
+  font-size: 0.95rem;
+}
+.bd-filters {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-3);
+  margin: var(--s-6) 0 var(--s-5);
+  padding: var(--s-4);
+  background: var(--c-surface-card);
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+}
+.bd-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.bd-filter-lbl {
+  font-family: var(--f-sans);
+  font-weight: 700;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--c-muted);
+}
+.bd-select {
+  font: inherit;
+  font-family: var(--f-sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--c-ink);
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 4px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: border-color 150ms ease, background 150ms ease;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+}
+.bd-select:hover { border-color: var(--c-accent); }
+.bd-select:focus-visible {
+  outline: none;
+  border-color: var(--c-accent);
+  box-shadow: 0 0 0 3px oklch(0.86 0.17 95 / 0.25);
+}
+.bd-explorer-note {
+  font-family: var(--f-sans);
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--c-muted);
+  margin: 0 0 var(--s-4);
+  padding: 8px 12px;
+  border-left: 2px solid var(--c-accent);
+  background: oklch(0.93 0.10 95 / 0.35);
+  border-radius: 0 4px 4px 0;
+}
+.bd-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-3);
+  margin-bottom: var(--s-5);
+}
+.bd-stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: var(--s-4);
+  background: var(--c-surface-card);
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+}
+.bd-stat-card-lbl {
+  font-family: var(--f-sans);
+  font-weight: 600;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--c-muted);
+}
+.bd-stat-card-num {
+  font-family: var(--f-serif);
+  font-weight: 700;
+  font-size: 1.75rem;
+  color: var(--c-ink);
+  letter-spacing: -0.015em;
+}
+.bd-stat-card-num-sm {
+  font-size: 1.15rem;
+}
+.bd-table-wrap {
+  margin-bottom: var(--s-5);
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+  overflow: auto;
+  max-height: 520px;
+  background: var(--c-surface-card);
+}
+.bd-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--f-sans);
+  font-size: 0.875rem;
+}
+.bd-data-table th,
+.bd-data-table td {
+  padding: 10px 12px;
+  text-align: right;
+  border-bottom: 1px solid var(--c-border);
+}
+.bd-data-table th:first-child,
+.bd-data-table td:first-child { text-align: left; }
+.bd-data-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--c-surface-raised);
+  font-weight: 700;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--c-muted);
+  z-index: 1;
+}
+.bd-data-table tbody tr:hover { background: var(--c-surface-hover); }
+.bd-data-table tbody tr:last-child td { border-bottom: 0; }
+.bd-btn-cta {
+  font-size: 0.95rem;
+  padding: 14px 28px;
+  cursor: pointer;
+}
+.bd-btn-cta:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.bd-explorer-disclaimer {
+  margin-top: var(--s-5);
+  font-family: var(--f-sans);
+  font-size: 0.78rem;
+  color: var(--c-muted);
+  font-style: italic;
+  max-width: 65ch;
+}
+@media (max-width: 720px) {
+  .bd-filters { grid-template-columns: repeat(2, 1fr); }
+  .bd-stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .bd-stat-card-num { font-size: 1.4rem; }
+}
