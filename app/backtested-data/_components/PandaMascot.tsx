@@ -243,6 +243,11 @@ export default function PandaMascot() {
   // Walk transition duration (set once per walk action, stable across renders)
   const walkTransitionMsRef = useRef<number>(5000);
 
+  // Last pointer-move timestamp (for held-state watchdog)
+  const lastPointerMoveRef  = useRef<number>(0);
+  // Last pointer-down active flag (set on down, cleared on up/cancel/lostcapture)
+  const pointerActiveRef    = useRef<boolean>(false);
+
   // ── Reduced-motion detection ──────────────────────────────────────────────
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -541,11 +546,14 @@ export default function PandaMascot() {
   const handlePointerDown = useCallback((e: React.PointerEvent<HTMLButtonElement>) => {
     e.preventDefault();
     btnRef.current?.setPointerCapture(e.pointerId);
+    console.debug('[panda] event=pointerdown state=' + visibleState + ' dragging=' + isDraggingRef.current + ' pos={' + e.clientX + ',' + e.clientY + '}');
 
     dragStartPosRef.current = { x: e.clientX, y: e.clientY };
     dragStartTimeRef.current = performance.now();
     isDraggingRef.current = false;
     pointerSamplesRef.current = [];
+    pointerActiveRef.current = true;
+    lastPointerMoveRef.current = performance.now();
 
     // Record grab offset: cursor relative to the panda's current absolute top-left
     const anchor = getAnchorPos();
@@ -572,9 +580,16 @@ export default function PandaMascot() {
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLButtonElement>) => {
     if (!btnRef.current?.hasPointerCapture(e.pointerId)) return;
 
+    lastPointerMoveRef.current = performance.now();
+
     const dx = e.clientX - dragStartPosRef.current.x;
     const dy = e.clientY - dragStartPosRef.current.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
+
+    // Throttled debug log: only every ~10th move event
+    if (Math.random() < 0.1) {
+      console.debug('[panda] event=pointermove state=' + visibleState + ' dragging=' + isDraggingRef.current + ' pos={' + e.clientX.toFixed(0) + ',' + e.clientY.toFixed(0) + '}');
+    }
 
     if (!isDraggingRef.current) {
       if (dist > PET_STILL_PX) {
@@ -589,6 +604,7 @@ export default function PandaMascot() {
         setVisibleState('held');
         stopBerserk();
         cancelRaf();
+        console.debug('[panda] event=enterOverride state=held dragging=true');
       } else {
         return;
       }
@@ -620,10 +636,13 @@ export default function PandaMascot() {
 
   const handlePointerUp = useCallback((e: React.PointerEvent<HTMLButtonElement>) => {
     btnRef.current?.releasePointerCapture(e.pointerId);
+    pointerActiveRef.current = false;
     stopPetting();
 
     const wasDragging = isDraggingRef.current;
     isDraggingRef.current = false;
+
+    console.debug('[panda] event=pointerup state=' + visibleState + ' wasDragging=' + wasDragging + ' pos={' + e.clientX + ',' + e.clientY + '}');
 
     if (!wasDragging) {
       // It's a click
@@ -663,10 +682,13 @@ export default function PandaMascot() {
 
     const currentPos = physStateRef.current?.pos ?? getAnchorPos();
 
+    console.debug('[panda] event=releaseVelocity speedPxMs=' + speedPxPerMs.toFixed(3) + ' vx=' + vx.toFixed(0) + ' vy=' + vy.toFixed(0) + ' samples=' + recent.length);
+
     if (speedPxPerMs > THROW_THRESHOLD && !prefersReducedRef.current) {
       // Throw!
       const rotVel = vx * 0.15;
       showBubble(pickFrom(THROW_PHRASES), 2000);
+      console.debug('[panda] event=startFlying pos={' + currentPos.x.toFixed(0) + ',' + currentPos.y.toFixed(0) + '}');
       startFlying({
         pos: { ...currentPos },
         vel: { x: vx, y: vy },
@@ -678,21 +700,108 @@ export default function PandaMascot() {
       exitOverride();
     } else {
       // Slow release: snap back
+      console.debug('[panda] event=startWalkBack from slow release pos={' + currentPos.x.toFixed(0) + ',' + currentPos.y.toFixed(0) + '}');
       startWalkBack({ ...currentPos });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showBubble, bump]);
 
-  const handlePointerCancel = useCallback(() => {
-    isDraggingRef.current = false;
+  // ── Lost pointer capture — fires when browser silently revokes capture ────
+  // This is the primary cause of stuck-in-held: pointerup never arrives, panda freezes.
+  const handleLostPointerCapture = useCallback(() => {
+    console.debug('[panda] event=lostpointercapture state=' + visibleState + ' dragging=' + isDraggingRef.current + ' pointerActive=' + pointerActiveRef.current);
+    if (!pointerActiveRef.current) return; // already cleaned up by pointerup
+    pointerActiveRef.current = false;
+
+    // Clear pet timer to unblock stuck watchdog check
+    if (petTimerRef.current) { clearTimeout(petTimerRef.current); petTimerRef.current = null; }
     stopPetting();
-    if (physStateRef.current) {
+
+    const wasDragging = isDraggingRef.current;
+    isDraggingRef.current = false;
+
+    if (!wasDragging) {
+      // Lost capture before drag started (just a click-hold) — exit cleanly
+      if (overriddenRef.current) exitOverride();
+      return;
+    }
+
+    // Was mid-drag: attempt throw if velocity exists, else walk back
+    const allSamples = pointerSamplesRef.current;
+    const releaseT = performance.now();
+    let recent = allSamples.filter((s) => releaseT - s.t <= VELOCITY_WINDOW_MS);
+    if (recent.length < 2 && allSamples.length >= 2) recent = allSamples.slice(-2);
+    let vx = 0, vy = 0;
+    if (recent.length >= 2) {
+      const oldest = recent[0]!;
+      const newest = recent[recent.length - 1]!;
+      const dtMs = newest.t - oldest.t;
+      if (dtMs > 0) {
+        vx = ((newest.pos.x - oldest.pos.x) / dtMs) * 1000;
+        vy = ((newest.pos.y - oldest.pos.y) / dtMs) * 1000;
+      }
+    }
+    const speedPxPerMs = Math.sqrt(vx * vx + vy * vy) / 1000;
+    const currentPos = physStateRef.current?.pos ?? getAnchorPos();
+    console.debug('[panda] event=lostcapture-recover speedPxMs=' + speedPxPerMs.toFixed(3) + ' samples=' + recent.length);
+
+    if (speedPxPerMs > THROW_THRESHOLD && !prefersReducedRef.current) {
+      showBubble(pickFrom(THROW_PHRASES), 2000);
+      console.debug('[panda] event=startFlying from lostcapture');
+      startFlying({ pos: { ...currentPos }, vel: { x: vx, y: vy }, rot: 0, rotVel: vx * 0.15 });
+    } else {
+      console.debug('[panda] event=startWalkBack from lostcapture');
+      startWalkBack({ ...currentPos });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visibleState, showBubble]);
+
+  const handlePointerCancel = useCallback(() => {
+    console.debug('[panda] event=pointercancel state=' + visibleState + ' dragging=' + isDraggingRef.current);
+    if (!pointerActiveRef.current) return; // already handled by lostpointercapture
+    pointerActiveRef.current = false;
+
+    // Clear pet timer to unblock stuck watchdog
+    if (petTimerRef.current) { clearTimeout(petTimerRef.current); petTimerRef.current = null; }
+    stopPetting();
+
+    const wasDragging = isDraggingRef.current;
+    isDraggingRef.current = false;
+
+    if (!wasDragging) {
+      if (overriddenRef.current) exitOverride();
+      return;
+    }
+
+    // Attempt throw on cancel if velocity is high enough (e.g. fast touch flick)
+    const allSamples = pointerSamplesRef.current;
+    const releaseT = performance.now();
+    let recent = allSamples.filter((s) => releaseT - s.t <= VELOCITY_WINDOW_MS);
+    if (recent.length < 2 && allSamples.length >= 2) recent = allSamples.slice(-2);
+    let vx = 0, vy = 0;
+    if (recent.length >= 2) {
+      const oldest = recent[0]!;
+      const newest = recent[recent.length - 1]!;
+      const dtMs = newest.t - oldest.t;
+      if (dtMs > 0) {
+        vx = ((newest.pos.x - oldest.pos.x) / dtMs) * 1000;
+        vy = ((newest.pos.y - oldest.pos.y) / dtMs) * 1000;
+      }
+    }
+    const speedPxPerMs = Math.sqrt(vx * vx + vy * vy) / 1000;
+    const currentPos = physStateRef.current?.pos ?? getAnchorPos();
+    console.debug('[panda] event=pointercancel-recover speedPxMs=' + speedPxPerMs.toFixed(3));
+
+    if (speedPxPerMs > THROW_THRESHOLD && !prefersReducedRef.current) {
+      showBubble(pickFrom(THROW_PHRASES), 2000);
+      startFlying({ pos: { ...currentPos }, vel: { x: vx, y: vy }, rot: 0, rotVel: vx * 0.15 });
+    } else if (physStateRef.current) {
       startWalkBack({ ...physStateRef.current.pos });
     } else {
       exitOverride();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [visibleState, showBubble]);
 
   // ── Click handler (not drag) ───────────────────────────────────────────────
   function handleClick() {
@@ -832,25 +941,37 @@ export default function PandaMascot() {
     actionTimerRef.current = setTimeout(() => scheduleNext(false), 2000);
 
     // Stuck-state watchdog: fires every 1500ms
-    // If override is active but no drag, no RAF, no pending timers → panda is frozen, force-clean
+    // If override is active but no drag, no RAF, no pending timers → panda is frozen, force-clean.
+    // NOTE: petTimerRef check intentionally removed — lostpointercapture handler now clears it,
+    // so a leaked petTimerRef no longer blocks this watchdog from firing.
     stuckCheckRef.current = setInterval(() => {
       if (!overriddenRef.current) return;
       if (isDraggingRef.current) return;
+      if (pointerActiveRef.current) return;      // live pointer down — normal held state
       if (rafRef.current !== null) return;
       if (walkBackRafRef.current !== null) return;
       if (bounceTimerRef.current !== null) return;
-      if (petTimerRef.current !== null) return;
       if (petIntervalRef.current !== null) return;
       if (berserkTimerRef.current !== null) return;
-      // Panda is stuck — force back to autonomous
-      console.warn('[PandaMascot] stuck-state detected, forcing exitOverride');
+
+      // Secondary check: held state with no pointer activity for >500ms → definitely stuck
+      const heldIdleMs = performance.now() - lastPointerMoveRef.current;
+      if (heldIdleMs < 500) return; // give normal drags some room
+
+      console.warn('[panda] event=watchdog state=stuck heldIdleMs=' + heldIdleMs.toFixed(0) + ' forcing exitOverride');
+      // Clear leaked pet timer before exit
+      if (petTimerRef.current) { clearTimeout(petTimerRef.current); petTimerRef.current = null; }
       exitOverride();
     }, 1500);
 
     // Window blur safeguard: catches alt-tab during drag where pointerup never fires
     const handleWindowBlur = () => {
-      if (isDraggingRef.current) {
+      console.debug('[panda] event=windowblur dragging=' + isDraggingRef.current + ' pointerActive=' + pointerActiveRef.current);
+      if (isDraggingRef.current || pointerActiveRef.current) {
         isDraggingRef.current = false;
+        pointerActiveRef.current = false;
+        if (petTimerRef.current) { clearTimeout(petTimerRef.current); petTimerRef.current = null; }
+        stopPetting();
         if (physStateRef.current) {
           startWalkBack({ ...physStateRef.current.pos });
         } else {
@@ -1135,6 +1256,7 @@ export default function PandaMascot() {
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
             onPointerCancel={handlePointerCancel}
+            onLostPointerCapture={handleLostPointerCapture}
           >
             <img
               src={getImgSrc()}
