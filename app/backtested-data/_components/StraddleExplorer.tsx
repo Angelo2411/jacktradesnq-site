@@ -596,11 +596,11 @@ export default function StraddleExplorer({
       <div className="bd-ctas">
         <button
           type="button"
-          className="bd-btn bd-btn-primary bd-btn-cta"
+          className="bd-btn bd-btn-secondary"
           onClick={downloadPdf}
           disabled={generating || rows.length === 0}
         >
-          {generating ? 'Generating…' : 'Download my PDF'}
+          {generating ? 'Generating…' : '↓ Download — Custom PDF (your filters)'}
         </button>
       </div>
 
