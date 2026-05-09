@@ -280,21 +280,30 @@ export default function StraddleExplorer({
           'Fill %',
           'TP Hit %',
           'No-Fill %',
-          'Avg PnL',
-          'Worst PnL',
+          'Wins',
+          'Losses',
+          'No-Fill',
         ],
       ];
-      const body = rows.map((r) => [
-        ...(isYearScoped ? [String(r.year ?? '')] : []),
-        String(r[config.offsetKey]),
-        String(r.tp_pts),
-        String(r.count ?? r.events_total),
-        fmtPct(r.fill_rate),
-        fmtPct(r.tp_hit_rate),
-        fmtPct(r.no_fill_rate),
-        fmtNum(r.avg_pnl_per_event),
-        fmtNum(r.worst_pnl),
-      ]);
+      const body = rows.map((r) => {
+        const n = r.count ?? r.events_total;
+        const wins = Math.round((r.tp_hit_rate / 100) * n);
+        const filled = Math.round((r.fill_rate / 100) * n);
+        const losses = filled - wins;
+        const noFill = Math.round((r.no_fill_rate / 100) * n);
+        return [
+          ...(isYearScoped ? [String(r.year ?? '')] : []),
+          String(r[config.offsetKey]),
+          String(r.tp_pts),
+          String(n),
+          fmtPct(r.fill_rate),
+          fmtPct(r.tp_hit_rate),
+          fmtPct(r.no_fill_rate),
+          String(wins),
+          String(losses),
+          String(noFill),
+        ];
+      });
 
       autoTable(doc, {
         head,
@@ -335,19 +344,28 @@ export default function StraddleExplorer({
                 'Fill %',
                 'TP Hit %',
                 'No-Fill %',
-                'Avg PnL',
-                'Worst PnL',
+                'Wins',
+                'Losses',
+                'No-Fill',
               ],
             ],
-            body: yearRows.map((r) => [
-              String(r.year),
-              String(r.count),
-              fmtPct(r.fill_rate),
-              fmtPct(r.tp_hit_rate),
-              fmtPct(r.no_fill_rate),
-              fmtNum(r.avg_pnl_per_event),
-              fmtNum(r.worst_pnl),
-            ]),
+            body: yearRows.map((r) => {
+              const n = r.count ?? r.events_total;
+              const wins = Math.round((r.tp_hit_rate / 100) * n);
+              const filled = Math.round((r.fill_rate / 100) * n);
+              const losses = filled - wins;
+              const noFill = Math.round((r.no_fill_rate / 100) * n);
+              return [
+                String(r.year),
+                String(n),
+                fmtPct(r.fill_rate),
+                fmtPct(r.tp_hit_rate),
+                fmtPct(r.no_fill_rate),
+                String(wins),
+                String(losses),
+                String(noFill),
+              ];
+            }),
             startY: 90,
             styles: { font: 'helvetica', fontSize: 10, cellPadding: 5 },
             headStyles: {
@@ -531,36 +549,45 @@ export default function StraddleExplorer({
               <th>Fill %</th>
               <th>TP Hit %</th>
               <th>No-Fill %</th>
-              <th>Avg PnL</th>
-              <th>Worst PnL</th>
+              <th>Wins</th>
+              <th>Losses</th>
+              <th>No-Fill</th>
             </tr>
           </thead>
           <tbody>
             {rows.length === 0 ? (
               <tr>
                 <td
-                  colSpan={isYearScoped ? 9 : 8}
+                  colSpan={isYearScoped ? 10 : 9}
                   style={{ textAlign: 'center', padding: 24, opacity: 0.6 }}
                 >
                   No rows match these filters.
                 </td>
               </tr>
             ) : (
-              rows.map((r, i) => (
-                <tr
-                  key={`${r.year ?? 'all'}-${r[config.offsetKey]}-${r.tp_pts}-${i}`}
-                >
-                  {isYearScoped ? <td>{r.year}</td> : null}
-                  <td>{r[config.offsetKey]}</td>
-                  <td>{r.tp_pts}</td>
-                  <td>{r.count ?? r.events_total}</td>
-                  <td>{fmtPct(r.fill_rate)}</td>
-                  <td>{fmtPct(r.tp_hit_rate)}</td>
-                  <td>{fmtPct(r.no_fill_rate)}</td>
-                  <td>{fmtNum(r.avg_pnl_per_event)}</td>
-                  <td>{fmtNum(r.worst_pnl)}</td>
-                </tr>
-              ))
+              rows.map((r, i) => {
+                const n = r.count ?? r.events_total;
+                const wins = Math.round((r.tp_hit_rate / 100) * n);
+                const filled = Math.round((r.fill_rate / 100) * n);
+                const losses = filled - wins;
+                const noFill = Math.round((r.no_fill_rate / 100) * n);
+                return (
+                  <tr
+                    key={`${r.year ?? 'all'}-${r[config.offsetKey]}-${r.tp_pts}-${i}`}
+                  >
+                    {isYearScoped ? <td>{r.year}</td> : null}
+                    <td>{r[config.offsetKey]}</td>
+                    <td>{r.tp_pts}</td>
+                    <td>{n}</td>
+                    <td>{fmtPct(r.fill_rate)}</td>
+                    <td>{fmtPct(r.tp_hit_rate)}</td>
+                    <td>{fmtPct(r.no_fill_rate)}</td>
+                    <td>{wins}</td>
+                    <td>{losses}</td>
+                    <td>{noFill}</td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>
