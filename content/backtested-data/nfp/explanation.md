@@ -59,27 +59,11 @@ After testing 24 combos across 102 NFP releases:
 
 Fill rate ~24% — you skip the NFPs that don't reach ±100 pts in 60 seconds. When you do fill, you're entering on the real directional leg.
 
-The full 24-combo breakdown and year-by-year stats are in the PDF below.
+### Explore the data — your filters, your PDF
 
-### Year-by-Year — Best by TP Hit Rate (Offset 45 / TP 20)
+Pick a year, entry offset, TP target and side; the table refreshes live and you can download a tailored PDF report.
 
-This is the highest-fill, highest-TP-hit combo — useful to read **how often** the trade actually wins.
-
-| Year | Count | Wins | Losses | No-Fill |
-|------|-------|------|--------|---------|
-| 2016 | 7  | 0 | 0 | 7  |
-| 2017 | 10 | 0 | 0 | 10 |
-| 2018 | 11 | 0 | 0 | 11 |
-| 2019 | 11 | 0 | 3 | 8  |
-| 2020 | 9  | 2 | 3 | 4  |
-| 2021 | 11 | 3 | 3 | 5  |
-| 2022 | 11 | 9 | 2 | 0  |
-| 2023 | 10 | 7 | 2 | 1  |
-| 2024 | 11 | 5 | 6 | 0  |
-| 2025 | 7  | 4 | 3 | 0  |
-| 2026 | 4  | 3 | 1 | 0  |
-
-**Wins** = TP hit before 30-min expiry. **Losses** = filled but TP not hit (held to expiry). **No-Fill** = neither stop triggered, flat at 0.
+<div data-explorer="nfp"></div>
 
 ### Why Offset Size Matters
 
