@@ -1253,39 +1253,41 @@ export default function PandaMascot() {
         }
         .panda-walk-layered .body {
           z-index: 3;
-          animation: pandaWalkBody 800ms ease-in-out infinite;
+          animation: pandaWalkBody 1100ms ease-in-out infinite;
         }
         .panda-walk-layered .leg-front-near {
           z-index: 4;
           transform-origin: 70% 60%;
-          animation: pandaWalkPawA 800ms ease-in-out infinite;
-        }
-        .panda-walk-layered .leg-back-far {
-          z-index: 1;
-          transform-origin: 45% 65%;
-          animation: pandaWalkPawA 800ms ease-in-out infinite;
-        }
-        .panda-walk-layered .leg-front-far {
-          z-index: 2;
-          transform-origin: 55% 65%;
-          animation: pandaWalkPawB 800ms ease-in-out infinite;
+          animation: pandaWalkPawA 1100ms ease-in-out infinite;
         }
         .panda-walk-layered .leg-back-near {
           z-index: 2;
           transform-origin: 35% 65%;
-          animation: pandaWalkPawB 800ms ease-in-out infinite;
+          animation: pandaWalkPawA 1100ms ease-in-out infinite;
+        }
+        .panda-walk-layered .leg-front-far {
+          z-index: 2;
+          transform-origin: 55% 65%;
+          animation: pandaWalkPawB 1100ms ease-in-out infinite;
+        }
+        .panda-walk-layered .leg-back-far {
+          z-index: 1;
+          transform-origin: 45% 65%;
+          animation: pandaWalkPawB 1100ms ease-in-out infinite;
         }
         @keyframes pandaWalkBody {
-          0%, 100% { transform: translateY(0); }
-          25%, 75% { transform: translateY(-2px); }
+          0%, 100% { transform: translateX(0) translateY(0); }
+          25%      { transform: translateX(-1.5px) translateY(-1px); }
+          50%      { transform: translateX(0) translateY(0); }
+          75%      { transform: translateX(1.5px) translateY(-1px); }
         }
         @keyframes pandaWalkPawA {
           0%, 50%, 100% { transform: rotate(0); }
-          25%           { transform: rotate(-14deg) translateY(-2px); }
+          25%           { transform: rotate(-8deg) translateY(-1px); }
         }
         @keyframes pandaWalkPawB {
           0%, 50%, 100% { transform: rotate(0); }
-          75%           { transform: rotate(-14deg) translateY(-2px); }
+          75%           { transform: rotate(-8deg) translateY(-1px); }
         }
         .panda-walk-layered.reduced .layer {
           animation: none !important;
