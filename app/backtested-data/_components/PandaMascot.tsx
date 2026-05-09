@@ -247,6 +247,10 @@ export default function PandaMascot() {
   const lastPointerMoveRef  = useRef<number>(0);
   // Last pointer-down active flag (set on down, cleared on up/cancel/lostcapture)
   const pointerActiveRef    = useRef<boolean>(false);
+  // Active pointerId (so non-React handlers can release capture)
+  const activePointerIdRef  = useRef<number | null>(null);
+  // Drop-pending: cursor exited window mid-drag, ignore pending pointer events
+  const dropPendingRef      = useRef<boolean>(false);
 
   // ── Reduced-motion detection ──────────────────────────────────────────────
   useEffect(() => {
@@ -546,6 +550,8 @@ export default function PandaMascot() {
   const handlePointerDown = useCallback((e: React.PointerEvent<HTMLButtonElement>) => {
     e.preventDefault();
     btnRef.current?.setPointerCapture(e.pointerId);
+    activePointerIdRef.current = e.pointerId;
+    dropPendingRef.current = false;
     console.debug('[panda] event=pointerdown state=' + visibleState + ' dragging=' + isDraggingRef.current + ' pos={' + e.clientX + ',' + e.clientY + '}');
 
     dragStartPosRef.current = { x: e.clientX, y: e.clientY };
@@ -579,6 +585,7 @@ export default function PandaMascot() {
 
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLButtonElement>) => {
     if (!btnRef.current?.hasPointerCapture(e.pointerId)) return;
+    if (dropPendingRef.current) return; // mouseout already triggered drop, ignore re-entry events
 
     lastPointerMoveRef.current = performance.now();
 
@@ -637,7 +644,16 @@ export default function PandaMascot() {
   const handlePointerUp = useCallback((e: React.PointerEvent<HTMLButtonElement>) => {
     btnRef.current?.releasePointerCapture(e.pointerId);
     pointerActiveRef.current = false;
+    activePointerIdRef.current = null;
     stopPetting();
+
+    if (dropPendingRef.current) {
+      // mouseout already handled the drop; just consume this event
+      dropPendingRef.current = false;
+      isDraggingRef.current = false;
+      console.debug('[panda] event=pointerup absorbed (drop already triggered by mouseout)');
+      return;
+    }
 
     const wasDragging = isDraggingRef.current;
     isDraggingRef.current = false;
@@ -710,8 +726,9 @@ export default function PandaMascot() {
   // This is the primary cause of stuck-in-held: pointerup never arrives, panda freezes.
   const handleLostPointerCapture = useCallback(() => {
     console.debug('[panda] event=lostpointercapture state=' + visibleState + ' dragging=' + isDraggingRef.current + ' pointerActive=' + pointerActiveRef.current);
-    if (!pointerActiveRef.current) return; // already cleaned up by pointerup
+    if (!pointerActiveRef.current) return; // already cleaned up by pointerup/mouseout
     pointerActiveRef.current = false;
+    activePointerIdRef.current = null;
 
     // Clear pet timer to unblock stuck watchdog check
     if (petTimerRef.current) { clearTimeout(petTimerRef.current); petTimerRef.current = null; }
@@ -953,10 +970,16 @@ export default function PandaMascot() {
         const idleMs = performance.now() - lastPointerMoveRef.current;
         if (idleMs > 800) {
           console.warn('[panda] event=watchdog state=drag-frozen-out-of-window idleMs=' + idleMs.toFixed(0));
+          dropPendingRef.current = true;
           isDraggingRef.current = false;
           pointerActiveRef.current = false;
           if (petTimerRef.current) { clearTimeout(petTimerRef.current); petTimerRef.current = null; }
           stopPetting();
+          const pid = activePointerIdRef.current;
+          if (pid !== null && btnRef.current?.hasPointerCapture(pid)) {
+            btnRef.current.releasePointerCapture(pid);
+          }
+          activePointerIdRef.current = null;
           if (physStateRef.current) {
             startWalkBack({ ...physStateRef.current.pos });
           } else {
@@ -1007,10 +1030,18 @@ export default function PandaMascot() {
       if (!isDraggingRef.current) return;
       if (e.relatedTarget !== null) return; // moving between elements, not exiting window
       console.debug('[panda] event=document-mouseout dragging=true → drop');
+      // Set flags FIRST so lostpointercapture (fired sync by releasePointerCapture) is a no-op
+      dropPendingRef.current = true;
       isDraggingRef.current = false;
       pointerActiveRef.current = false;
       if (petTimerRef.current) { clearTimeout(petTimerRef.current); petTimerRef.current = null; }
       stopPetting();
+      // Now release capture (will fire lostpointercapture, which sees pointerActive=false → returns early)
+      const pid = activePointerIdRef.current;
+      if (pid !== null && btnRef.current?.hasPointerCapture(pid)) {
+        btnRef.current.releasePointerCapture(pid);
+      }
+      activePointerIdRef.current = null;
       if (physStateRef.current) {
         startWalkBack({ ...physStateRef.current.pos });
       } else {
