@@ -585,7 +585,32 @@ export default function PandaMascot() {
 
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLButtonElement>) => {
     if (!btnRef.current?.hasPointerCapture(e.pointerId)) return;
-    if (dropPendingRef.current) return; // mouseout already triggered drop, ignore re-entry events
+    if (dropPendingRef.current) return; // already triggered drop, ignore re-entry events
+
+    // Out-of-viewport detection: if cursor leaves window during capture, drop immediately
+    if (
+      isDraggingRef.current &&
+      (e.clientX < 0 || e.clientY < 0 ||
+        e.clientX > window.innerWidth || e.clientY > window.innerHeight)
+    ) {
+      console.debug('[panda] event=pointermove-out-of-viewport pos={' + e.clientX.toFixed(0) + ',' + e.clientY.toFixed(0) + '} → drop');
+      dropPendingRef.current = true;
+      isDraggingRef.current = false;
+      pointerActiveRef.current = false;
+      if (petTimerRef.current) { clearTimeout(petTimerRef.current); petTimerRef.current = null; }
+      stopPetting();
+      const pid = activePointerIdRef.current;
+      if (pid !== null && btnRef.current?.hasPointerCapture(pid)) {
+        btnRef.current.releasePointerCapture(pid);
+      }
+      activePointerIdRef.current = null;
+      if (physStateRef.current) {
+        startWalkBack({ ...physStateRef.current.pos });
+      } else {
+        exitOverride();
+      }
+      return;
+    }
 
     lastPointerMoveRef.current = performance.now();
 
