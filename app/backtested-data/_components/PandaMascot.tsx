@@ -236,6 +236,9 @@ export default function PandaMascot() {
   // Walking-back animation
   const walkBackRafRef     = useRef<number | null>(null);
 
+  // Stuck-state watchdog interval
+  const stuckCheckRef      = useRef<ReturnType<typeof setInterval> | null>(null);
+
   // Walk transition duration (set once per walk action, stable across renders)
   const walkTransitionMsRef = useRef<number>(5000);
 
@@ -816,6 +819,35 @@ export default function PandaMascot() {
 
     actionTimerRef.current = setTimeout(() => scheduleNext(false), 2000);
 
+    // Stuck-state watchdog: fires every 1500ms
+    // If override is active but no drag, no RAF, no pending timers → panda is frozen, force-clean
+    stuckCheckRef.current = setInterval(() => {
+      if (!overriddenRef.current) return;
+      if (isDraggingRef.current) return;
+      if (rafRef.current !== null) return;
+      if (walkBackRafRef.current !== null) return;
+      if (bounceTimerRef.current !== null) return;
+      if (petTimerRef.current !== null) return;
+      if (petIntervalRef.current !== null) return;
+      if (berserkTimerRef.current !== null) return;
+      // Panda is stuck — force back to autonomous
+      console.warn('[PandaMascot] stuck-state detected, forcing exitOverride');
+      exitOverride();
+    }, 1500);
+
+    // Window blur safeguard: catches alt-tab during drag where pointerup never fires
+    const handleWindowBlur = () => {
+      if (isDraggingRef.current) {
+        isDraggingRef.current = false;
+        if (physStateRef.current) {
+          startWalkBack({ ...physStateRef.current.pos });
+        } else {
+          exitOverride();
+        }
+      }
+    };
+    window.addEventListener('blur', handleWindowBlur);
+
     function onVisibilityChange() {
       if (document.visibilityState === 'visible') {
         pausedRef.current = false;
@@ -847,6 +879,8 @@ export default function PandaMascot() {
 
     return () => {
       document.removeEventListener('visibilitychange', onVisibilityChange);
+      window.removeEventListener('blur', handleWindowBlur);
+      if (stuckCheckRef.current)    clearInterval(stuckCheckRef.current);
       if (actionTimerRef.current)   clearTimeout(actionTimerRef.current);
       if (bubbleTimerRef.current)   clearTimeout(bubbleTimerRef.current);
       if (bounceTimerRef.current)   clearTimeout(bounceTimerRef.current);
