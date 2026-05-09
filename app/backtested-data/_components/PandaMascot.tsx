@@ -552,7 +552,6 @@ export default function PandaMascot() {
     btnRef.current?.setPointerCapture(e.pointerId);
     activePointerIdRef.current = e.pointerId;
     dropPendingRef.current = false;
-    console.debug('[panda] event=pointerdown state=' + visibleState + ' dragging=' + isDraggingRef.current + ' pos={' + e.clientX + ',' + e.clientY + '}');
 
     dragStartPosRef.current = { x: e.clientX, y: e.clientY };
     dragStartTimeRef.current = performance.now();
@@ -593,7 +592,6 @@ export default function PandaMascot() {
       (e.clientX < 0 || e.clientY < 0 ||
         e.clientX > window.innerWidth || e.clientY > window.innerHeight)
     ) {
-      console.debug('[panda] event=pointermove-out-of-viewport pos={' + e.clientX.toFixed(0) + ',' + e.clientY.toFixed(0) + '} → drop');
       dropPendingRef.current = true;
       isDraggingRef.current = false;
       pointerActiveRef.current = false;
@@ -620,7 +618,6 @@ export default function PandaMascot() {
 
     // Throttled debug log: only every ~10th move event
     if (Math.random() < 0.1) {
-      console.debug('[panda] event=pointermove state=' + visibleState + ' dragging=' + isDraggingRef.current + ' pos={' + e.clientX.toFixed(0) + ',' + e.clientY.toFixed(0) + '}');
     }
 
     if (!isDraggingRef.current) {
@@ -636,7 +633,6 @@ export default function PandaMascot() {
         setVisibleState('held');
         stopBerserk();
         cancelRaf();
-        console.debug('[panda] event=enterOverride state=held dragging=true');
       } else {
         return;
       }
@@ -676,14 +672,12 @@ export default function PandaMascot() {
       // mouseout already handled the drop; just consume this event
       dropPendingRef.current = false;
       isDraggingRef.current = false;
-      console.debug('[panda] event=pointerup absorbed (drop already triggered by mouseout)');
       return;
     }
 
     const wasDragging = isDraggingRef.current;
     isDraggingRef.current = false;
 
-    console.debug('[panda] event=pointerup state=' + visibleState + ' wasDragging=' + wasDragging + ' pos={' + e.clientX + ',' + e.clientY + '}');
 
     if (!wasDragging) {
       // It's a click
@@ -723,13 +717,11 @@ export default function PandaMascot() {
 
     const currentPos = physStateRef.current?.pos ?? getAnchorPos();
 
-    console.debug('[panda] event=releaseVelocity speedPxMs=' + speedPxPerMs.toFixed(3) + ' vx=' + vx.toFixed(0) + ' vy=' + vy.toFixed(0) + ' samples=' + recent.length);
 
     if (speedPxPerMs > THROW_THRESHOLD && !prefersReducedRef.current) {
       // Throw!
       const rotVel = vx * 0.15;
       showBubble(pickFrom(THROW_PHRASES), 2000);
-      console.debug('[panda] event=startFlying pos={' + currentPos.x.toFixed(0) + ',' + currentPos.y.toFixed(0) + '}');
       startFlying({
         pos: { ...currentPos },
         vel: { x: vx, y: vy },
@@ -741,7 +733,6 @@ export default function PandaMascot() {
       exitOverride();
     } else {
       // Slow release: snap back
-      console.debug('[panda] event=startWalkBack from slow release pos={' + currentPos.x.toFixed(0) + ',' + currentPos.y.toFixed(0) + '}');
       startWalkBack({ ...currentPos });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -750,7 +741,6 @@ export default function PandaMascot() {
   // ── Lost pointer capture — fires when browser silently revokes capture ────
   // This is the primary cause of stuck-in-held: pointerup never arrives, panda freezes.
   const handleLostPointerCapture = useCallback(() => {
-    console.debug('[panda] event=lostpointercapture state=' + visibleState + ' dragging=' + isDraggingRef.current + ' pointerActive=' + pointerActiveRef.current);
     if (!pointerActiveRef.current) return; // already cleaned up by pointerup/mouseout
     pointerActiveRef.current = false;
     activePointerIdRef.current = null;
@@ -785,21 +775,17 @@ export default function PandaMascot() {
     }
     const speedPxPerMs = Math.sqrt(vx * vx + vy * vy) / 1000;
     const currentPos = physStateRef.current?.pos ?? getAnchorPos();
-    console.debug('[panda] event=lostcapture-recover speedPxMs=' + speedPxPerMs.toFixed(3) + ' samples=' + recent.length);
 
     if (speedPxPerMs > THROW_THRESHOLD && !prefersReducedRef.current) {
       showBubble(pickFrom(THROW_PHRASES), 2000);
-      console.debug('[panda] event=startFlying from lostcapture');
       startFlying({ pos: { ...currentPos }, vel: { x: vx, y: vy }, rot: 0, rotVel: vx * 0.15 });
     } else {
-      console.debug('[panda] event=startWalkBack from lostcapture');
       startWalkBack({ ...currentPos });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visibleState, showBubble]);
 
   const handlePointerCancel = useCallback(() => {
-    console.debug('[panda] event=pointercancel state=' + visibleState + ' dragging=' + isDraggingRef.current);
     if (!pointerActiveRef.current) return; // already handled by lostpointercapture
     pointerActiveRef.current = false;
 
@@ -832,7 +818,6 @@ export default function PandaMascot() {
     }
     const speedPxPerMs = Math.sqrt(vx * vx + vy * vy) / 1000;
     const currentPos = physStateRef.current?.pos ?? getAnchorPos();
-    console.debug('[panda] event=pointercancel-recover speedPxMs=' + speedPxPerMs.toFixed(3));
 
     if (speedPxPerMs > THROW_THRESHOLD && !prefersReducedRef.current) {
       showBubble(pickFrom(THROW_PHRASES), 2000);
@@ -1034,7 +1019,6 @@ export default function PandaMascot() {
 
     // Window blur safeguard: catches alt-tab during drag where pointerup never fires
     const handleWindowBlur = () => {
-      console.debug('[panda] event=windowblur dragging=' + isDraggingRef.current + ' pointerActive=' + pointerActiveRef.current);
       if (isDraggingRef.current || pointerActiveRef.current) {
         isDraggingRef.current = false;
         pointerActiveRef.current = false;
@@ -1054,7 +1038,6 @@ export default function PandaMascot() {
     const handleDocumentMouseOut = (e: MouseEvent) => {
       if (!isDraggingRef.current) return;
       if (e.relatedTarget !== null) return; // moving between elements, not exiting window
-      console.debug('[panda] event=document-mouseout dragging=true → drop');
       // Set flags FIRST so lostpointercapture (fired sync by releasePointerCapture) is a no-op
       dropPendingRef.current = true;
       isDraggingRef.current = false;
