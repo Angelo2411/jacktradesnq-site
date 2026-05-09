@@ -94,7 +94,8 @@ const WANDER_MAX_X = 0;
 const PANDA_SIZE = 128;      // px
 const GRAVITY = 1500;        // px/s²
 const BOUNCE_ENERGY = 0.7;
-const THROW_THRESHOLD = 0.4; // px/ms
+const THROW_THRESHOLD = 0.3; // px/ms
+const VELOCITY_WINDOW_MS = 100; // only samples within this window count for throw velocity
 const SETTLE_SPEED = 80;     // px/s — below this, land
 const MAX_FLIGHT_MS = 5000;  // watchdog: force-settle after this duration
 const DRAG_CLICK_MAX_DIST = 5;
@@ -359,7 +360,12 @@ export default function PandaMascot() {
       // ease-out cubic
       const ease = 1 - Math.pow(1 - t, 3);
       const curX = fromAbsPos.x + (anchor.x - fromAbsPos.x) * ease;
-      const curY = fromAbsPos.y + (anchor.y - fromAbsPos.y) * ease;
+      const baseY = fromAbsPos.y + (anchor.y - fromAbsPos.y) * ease;
+      // Y-bobbing: 2 full cycles, amplitude 7px, disabled when prefers-reduced-motion
+      const bobAmplitude = 7;
+      const bobCycles = 2;
+      const bob = prefersReducedRef.current ? 0 : -Math.abs(Math.sin(t * Math.PI * bobCycles * 2)) * bobAmplitude;
+      const curY = baseY + bob;
       setPhysPos({ x: curX, y: curY });
       setPhysRot(0);
       if (t < 1) {
@@ -633,12 +639,18 @@ export default function PandaMascot() {
       return;
     }
 
-    // Compute release velocity from recent samples
-    const samples = pointerSamplesRef.current;
+    // Compute release velocity from samples within VELOCITY_WINDOW_MS of release
+    const allSamples = pointerSamplesRef.current;
+    const releaseT = performance.now();
+    let recent = allSamples.filter((s) => releaseT - s.t <= VELOCITY_WINDOW_MS);
+    if (recent.length < 2 && allSamples.length >= 2) {
+      // Fallback: last two samples regardless of age
+      recent = allSamples.slice(-2);
+    }
     let vx = 0, vy = 0;
-    if (samples.length >= 2) {
-      const oldest = samples[0]!;
-      const newest = samples[samples.length - 1]!;
+    if (recent.length >= 2) {
+      const oldest = recent[0]!;
+      const newest = recent[recent.length - 1]!;
       const dtMs = newest.t - oldest.t;
       if (dtMs > 0) {
         vx = ((newest.pos.x - oldest.pos.x) / dtMs) * 1000; // px/s
