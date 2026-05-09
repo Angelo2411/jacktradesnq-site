@@ -2,6 +2,30 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getAllEntries, getEntry } from '@/lib/backtested-data';
 import { IconArrowUpRight } from '../_components/icons';
+import StraddleExplorer, { type ExplorerConfig } from '../_components/StraddleExplorer';
+
+const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
+  cpi: {
+    eventType: 'CPI',
+    title: 'CPI straddle — interactive explorer',
+    subtitle:
+      'Pick filters → live stats refresh → download a tailored PDF report.',
+    dataUrl: '/data/cpi-straddle.json',
+    offsetKey: 'stop_pts',
+    offsetLabel: 'Stop offset',
+  },
+  nfp: {
+    eventType: 'NFP',
+    title: 'NFP straddle — interactive explorer',
+    subtitle:
+      'Pick filters → live stats refresh → download a tailored PDF report.',
+    dataUrl: '/data/nfp-straddle.json',
+    offsetKey: 'entry_offset',
+    offsetLabel: 'Entry offset',
+  },
+};
+
+const EXPLORER_RE = /<div data-explorer="(cpi|nfp)">\s*<\/div>/i;
 
 const catLabel = (c: string) => (c === 'tradingview' ? 'TRADINGVIEW' : 'DATA');
 
@@ -26,6 +50,14 @@ export default async function BacktestedDetail({ params }: PageProps) {
   const wordCount = entry.explanationHtml.replace(/<[^>]*>/g, ' ').split(/\s+/).filter(Boolean).length;
   const readMin = Math.max(1, Math.ceil(wordCount / 200));
 
+  const match = entry.explanationHtml.match(EXPLORER_RE);
+  const explorerKey = match ? match[1].toLowerCase() : null;
+  const explorerConfig =
+    explorerKey && EXPLORER_CONFIGS[explorerKey] ? EXPLORER_CONFIGS[explorerKey] : null;
+  const [htmlBefore, htmlAfter] = explorerConfig
+    ? entry.explanationHtml.split(EXPLORER_RE).filter((_, i) => i !== 1)
+    : [entry.explanationHtml, ''];
+
   return (
     <article className="bd-article">
       <Link
@@ -48,10 +80,24 @@ export default async function BacktestedDetail({ params }: PageProps) {
 
       <p className="bd-article-lede">{entry.excerpt}</p>
 
-      <div
-        className="bd-prose"
-        dangerouslySetInnerHTML={{ __html: entry.explanationHtml }}
-      />
+      {explorerConfig ? (
+        <>
+          <div
+            className="bd-prose"
+            dangerouslySetInnerHTML={{ __html: htmlBefore }}
+          />
+          <StraddleExplorer config={explorerConfig} embedded />
+          <div
+            className="bd-prose"
+            dangerouslySetInnerHTML={{ __html: htmlAfter }}
+          />
+        </>
+      ) : (
+        <div
+          className="bd-prose"
+          dangerouslySetInnerHTML={{ __html: entry.explanationHtml }}
+        />
+      )}
 
       <div className="bd-ctas">
         {entry.category === 'tradingview' && entry.tradingviewUrl ? (
