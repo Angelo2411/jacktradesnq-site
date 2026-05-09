@@ -192,6 +192,7 @@ export default function PandaMascot() {
   const walkFrameTimerRef  = useRef<ReturnType<typeof setInterval> | null>(null);
   const bubbleTimerRef     = useRef<ReturnType<typeof setTimeout> | null>(null);
   const bounceTimerRef     = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const squishTimerRef     = useRef<ReturnType<typeof setTimeout> | null>(null);
   const xOffsetRef         = useRef(0);
   const lastPhraseRef      = useRef('');
   const prefersReducedRef  = useRef(false);
@@ -234,6 +235,9 @@ export default function PandaMascot() {
 
   // Walking-back animation
   const walkBackRafRef     = useRef<number | null>(null);
+
+  // Walk transition duration (set once per walk action, stable across renders)
+  const walkTransitionMsRef = useRef<number>(5000);
 
   // ── Reduced-motion detection ──────────────────────────────────────────────
   useEffect(() => {
@@ -391,7 +395,7 @@ export default function PandaMascot() {
         setVisibleState('landing');
         setIsSquishing(true);
         if (!prefersReducedRef.current) {
-          bounceTimerRef.current = setTimeout(() => setIsSquishing(false), 220);
+          squishTimerRef.current = setTimeout(() => setIsSquishing(false), 220);
         } else {
           setIsSquishing(false);
         }
@@ -432,7 +436,7 @@ export default function PandaMascot() {
           setVisibleState('landing');
           setIsSquishing(true);
           if (!prefersReducedRef.current) {
-            bounceTimerRef.current = setTimeout(() => setIsSquishing(false), 220);
+            squishTimerRef.current = setTimeout(() => setIsSquishing(false), 220);
           } else {
             setIsSquishing(false);
           }
@@ -620,6 +624,8 @@ export default function PandaMascot() {
       const dist = Math.sqrt(dx * dx + dy * dy);
       if (dist <= DRAG_CLICK_MAX_DIST && elapsed <= DRAG_CLICK_MAX_MS) {
         handleClick();
+      } else if (overriddenRef.current) {
+        exitOverride();
       }
       return;
     }
@@ -778,6 +784,7 @@ export default function PandaMascot() {
       const targetX = clamp(rawTarget, WANDER_MIN_X, WANDER_MAX_X);
       const actualLeft = targetX < currentX;
 
+      walkTransitionMsRef.current = randBetween(3000, 7000);
       setFacingLeft(actualLeft);
       setVisibleState('walk');
 
@@ -843,6 +850,7 @@ export default function PandaMascot() {
       if (actionTimerRef.current)   clearTimeout(actionTimerRef.current);
       if (bubbleTimerRef.current)   clearTimeout(bubbleTimerRef.current);
       if (bounceTimerRef.current)   clearTimeout(bounceTimerRef.current);
+      if (squishTimerRef.current)   clearTimeout(squishTimerRef.current);
       if (berserkTimerRef.current)  clearTimeout(berserkTimerRef.current);
       if (berserkTickRef.current)   clearInterval(berserkTickRef.current);
       if (petTimerRef.current)      clearTimeout(petTimerRef.current);
@@ -873,7 +881,7 @@ export default function PandaMascot() {
   // ── Derive transform for the mover wrapper ────────────────────────────────
   const walkTransition =
     visibleState === 'walk' && !prefersReduced && !isOverridden
-      ? `transform ${randBetween(3000, 7000)}ms linear`
+      ? `transform ${walkTransitionMsRef.current}ms linear`
       : 'none';
 
   // Override position: absolute coords → convert to translate from anchor
@@ -1011,7 +1019,8 @@ export default function PandaMascot() {
           font-size: var(--fs-sm, 0.875rem);
           color: var(--fg, oklch(0.20 0.02 270));
           box-shadow: var(--shadow-md, 0 4px 16px oklch(0.20 0.02 270 / 0.12));
-          white-space: nowrap;
+          white-space: normal;
+          max-width: min(220px, 70vw);
           pointer-events: none;
           opacity: 0;
           z-index: 51;
