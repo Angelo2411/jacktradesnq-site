@@ -6,7 +6,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 
 type PandaState =
   | 'idle' | 'walk' | 'pause' | 'eat' | 'sleep' | 'wave' | 'yawn' | 'surprised'
-  | 'held' | 'flying' | 'landing' | 'walking-back' | 'petting' | 'berserk';
+  | 'held' | 'flying' | 'landing' | 'walking-back' | 'petting';
 
 interface Action {
   type: PandaState;
@@ -47,7 +47,6 @@ const STATE_TO_IMG: Record<PandaState, string> = {
   landing:       'surprised',
   'walking-back':'idle',
   petting:       'sleep',
-  berserk:       'surprised',
 };
 
 const FULL_ACTIONS: Action[] = [
@@ -67,8 +66,7 @@ const REDUCED_ACTIONS: Action[] = [
   { type: 'wave',  weight: 10, minMs: 1500, maxMs:  2500 },
 ];
 
-const BERSERK_STATES: Array<'wave' | 'surprised' | 'eat'> = ['wave', 'surprised', 'eat'];
-const BERSERK_PHRASES = ['ok!', 'ok ok!', 'stop!', 'haha!', 'wait!', 'hey!!', 'oof!'];
+const ANNOYED_PHRASES = ['ok ok!', 'stop!', 'wait!', 'hey!!', 'oof!'];
 const PET_PHRASES = ['ahhh', 'ok ok', 'more please', 'purr 🎋', '...zzz', 'mmm yes'];
 const LAND_PHRASES = ['oof', 'ouch', 'that hurt', 'whoa', '!!'];
 const THROW_PHRASES = ['WHEEE', 'AHHH', 'I can fly??', 'help'];
@@ -102,9 +100,9 @@ const DRAG_CLICK_MAX_DIST = 5;
 const DRAG_CLICK_MAX_MS = 200;
 const PET_HOLD_MS = 500;
 const PET_STILL_PX = 5;
-const BERSERK_CLICKS = 5;
-const BERSERK_WINDOW_MS = 1000;
-const BERSERK_DURATION_MS = 4000;
+const ANNOYED_CLICKS = 5;
+const ANNOYED_WINDOW_MS = 1000;
+const ANNOYED_DURATION_MS = 1500;
 
 const HAPPINESS_KEY = 'panda_happiness';
 const HAPPINESS_MILESTONES: Array<{ at: number; msg: string }> = [
@@ -219,11 +217,10 @@ export default function PandaMascot() {
   const petIntervalRef     = useRef<ReturnType<typeof setInterval> | null>(null);
   const petTickRef         = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Berserk
+  // Annoyed (5+ rapid clicks)
   const clickTimesRef      = useRef<number[]>([]);
-  const berserkTimerRef    = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const berserkTickRef     = useRef<ReturnType<typeof setInterval> | null>(null);
-  const berserkStateIdxRef = useRef(0);
+  const annoyedTimerRef    = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [isJumping, setIsJumping] = useState(false);
 
   // Happy counter
   const milestonesHitRef   = useRef<Set<number>>(new Set());
@@ -494,32 +491,28 @@ export default function PandaMascot() {
     rafRef.current = requestAnimationFrame(loop);
   }
 
-  // ── Berserk mode ──────────────────────────────────────────────────────────
-  function startBerserk() {
-    enterOverride();
-    setVisibleState('berserk');
-    berserkStateIdxRef.current = 0;
+  // ── Annoyed (5+ rapid clicks) ─────────────────────────────────────────────
+  // One-shot: surprised sprite + bubble + jump animation, then resume autonomous.
+  function startAnnoyed() {
+    if (actionTimerRef.current) clearTimeout(actionTimerRef.current);
+    if (annoyedTimerRef.current) clearTimeout(annoyedTimerRef.current);
+    stopWalkFrames();
 
-    const cycleStates = ['wave', 'surprised', 'eat'] as const;
-    berserkTickRef.current = setInterval(() => {
-      berserkStateIdxRef.current = (berserkStateIdxRef.current + 1) % cycleStates.length;
-      setVisibleState(cycleStates[berserkStateIdxRef.current]!);
-      const p = pickFrom(BERSERK_PHRASES);
-      showBubble(p, 600);
-    }, 200);
+    xOffsetRef.current = 0;
+    setXOffset(0);
+    setFacingLeft(false);
+    setVisibleState('surprised');
+    showBubble(pickFrom(ANNOYED_PHRASES), 1500);
 
-    berserkTimerRef.current = setTimeout(() => {
-      if (berserkTickRef.current) clearInterval(berserkTickRef.current);
-      berserkTickRef.current = null;
-      exitOverride();
-    }, BERSERK_DURATION_MS);
-  }
+    if (!prefersReducedRef.current) {
+      setIsJumping(true);
+      setTimeout(() => setIsJumping(false), 500);
+    }
 
-  function stopBerserk() {
-    if (berserkTickRef.current)  clearInterval(berserkTickRef.current);
-    if (berserkTimerRef.current) clearTimeout(berserkTimerRef.current);
-    berserkTickRef.current  = null;
-    berserkTimerRef.current = null;
+    annoyedTimerRef.current = setTimeout(() => {
+      annoyedTimerRef.current = null;
+      if (!pausedRef.current && !overriddenRef.current) scheduleNext(false);
+    }, ANNOYED_DURATION_MS);
   }
 
   // ── Petting mode ──────────────────────────────────────────────────────────
@@ -576,7 +569,6 @@ export default function PandaMascot() {
     // Schedule petting check
     petTimerRef.current = setTimeout(() => {
       if (isDraggingRef.current) return; // moved too much
-      if (overriddenRef.current && visibleState === 'berserk') return;
       startPetting();
     }, PET_HOLD_MS);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -631,7 +623,10 @@ export default function PandaMascot() {
         enterOverride();
         setZTop(true);
         setVisibleState('held');
-        stopBerserk();
+        if (annoyedTimerRef.current) {
+          clearTimeout(annoyedTimerRef.current);
+          annoyedTimerRef.current = null;
+        }
         cancelRaf();
       } else {
         return;
@@ -834,19 +829,18 @@ export default function PandaMascot() {
   function handleClick() {
     bump(1);
 
-    // Track for berserk
+    // Track rapid clicks for "annoyed" reaction
     const now = performance.now();
     clickTimesRef.current = [...clickTimesRef.current, now].filter(
-      (t) => now - t <= BERSERK_WINDOW_MS
+      (t) => now - t <= ANNOYED_WINDOW_MS
     );
 
-    if (clickTimesRef.current.length >= BERSERK_CLICKS && !overriddenRef.current) {
+    if (clickTimesRef.current.length >= ANNOYED_CLICKS && !overriddenRef.current) {
       clickTimesRef.current = [];
-      startBerserk();
+      startAnnoyed();
       return;
     }
 
-    // Normal click — if already in berserk, just count
     if (overriddenRef.current) return;
 
     // Interrupt current action
@@ -1005,7 +999,7 @@ export default function PandaMascot() {
       if (walkBackRafRef.current !== null) return;
       if (bounceTimerRef.current !== null) return;
       if (petIntervalRef.current !== null) return;
-      if (berserkTimerRef.current !== null) return;
+      if (annoyedTimerRef.current !== null) return;
 
       // Secondary check: held state with no pointer activity for >500ms → definitely stuck
       const heldIdleMs = performance.now() - lastPointerMoveRef.current;
@@ -1096,8 +1090,7 @@ export default function PandaMascot() {
       if (bubbleTimerRef.current)   clearTimeout(bubbleTimerRef.current);
       if (bounceTimerRef.current)   clearTimeout(bounceTimerRef.current);
       if (squishTimerRef.current)   clearTimeout(squishTimerRef.current);
-      if (berserkTimerRef.current)  clearTimeout(berserkTimerRef.current);
-      if (berserkTickRef.current)   clearInterval(berserkTickRef.current);
+      if (annoyedTimerRef.current)  clearTimeout(annoyedTimerRef.current);
       if (petTimerRef.current)      clearTimeout(petTimerRef.current);
       if (petIntervalRef.current)   clearInterval(petIntervalRef.current);
       if (petTickRef.current)       clearInterval(petTickRef.current);
@@ -1141,11 +1134,6 @@ export default function PandaMascot() {
       ? 'scale(0.95, 1.1)'
       : '';
 
-  // Berserk jitter rotation (reduced: none)
-  const berserkJitter =
-    visibleState === 'berserk' && !prefersReduced
-      ? `rotate(${(Math.random() * 20 - 10).toFixed(1)}deg)`
-      : '';
 
   return (
     <>
@@ -1244,12 +1232,15 @@ export default function PandaMascot() {
           0%,100% { transform: scale(1); }
           50%     { transform: scale(0.95, 1.05); }
         }
-        .panda-berserk {
-          animation: pandaBerserk 0.2s ease-in-out infinite;
+        .panda-jump {
+          animation: pandaJump 500ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
-        @keyframes pandaBerserk {
-          0%,100% { transform: scale(1) rotate(-5deg); }
-          50%     { transform: scale(1.06) rotate(5deg); }
+        @keyframes pandaJump {
+          0%   { transform: translateY(0)    scale(1); }
+          25%  { transform: translateY(-22px) scale(1.05, 0.95); }
+          55%  { transform: translateY(-32px) scale(0.95, 1.08); }
+          80%  { transform: translateY(0)    scale(1.10, 0.88); }
+          100% { transform: translateY(0)    scale(1); }
         }
         .panda-bubble {
           position: absolute;
@@ -1303,7 +1294,7 @@ export default function PandaMascot() {
           .panda-bounce   { animation: none !important; }
           .panda-squish   { animation: none !important; }
           .panda-pet      { animation: none !important; }
-          .panda-berserk  { animation: none !important; }
+          .panda-jump     { animation: none !important; }
           .panda-bubble   { transition: none !important; }
           .panda-img      { transition: none !important; }
         }
@@ -1343,10 +1334,10 @@ export default function PandaMascot() {
                 'panda-img',
                 facingLeft && !isOverridden ? 'facing-left' : '',
                 visibleState === 'petting' ? 'panda-pet' : '',
-                visibleState === 'berserk' ? 'panda-berserk' : '',
+                isJumping ? 'panda-jump' : '',
               ].filter(Boolean).join(' ')}
               style={{
-                transform: imgExtraTransform || berserkJitter || undefined,
+                transform: imgExtraTransform || undefined,
               }}
               width={128}
               height={128}
