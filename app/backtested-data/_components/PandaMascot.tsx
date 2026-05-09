@@ -701,10 +701,6 @@ export default function PandaMascot() {
     setFacingLeft(false);
     setVisibleState('surprised');
 
-    const p = pickPhrase(lastPhraseRef.current);
-    lastPhraseRef.current = p;
-    showBubble(p);
-
     if (!prefersReducedRef.current) {
       setBouncing(true);
       bounceTimerRef.current = setTimeout(() => setBouncing(false), 220);
@@ -773,11 +769,6 @@ export default function PandaMascot() {
 
     const duration = randBetween(action.minMs, action.maxMs);
 
-    if (Math.random() < 0.15) {
-      const p = pickPhrase(lastPhraseRef.current);
-      lastPhraseRef.current = p;
-      showBubble(p);
-    }
 
     if (action.type === 'walk') {
       const dir = Math.random() < 0.5 ? 'left' : 'right';
