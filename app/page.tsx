@@ -78,7 +78,7 @@ export default function Home() {
           <span className="sep">·</span>
           <span>© 2026 JackTradesNQ. All rights reserved.</span>
         </div>
-        <p className="footer-disclaimer">
+        <p className="footer-disclaimer" lang="fr">
           Disclaimer — Conformément à l&apos;article D.321-1 du Code monétaire et financier,
           les contenus publiés sur ce site sont fournis à titre informatif uniquement
           et ne constituent pas des conseils en investissement. JackTradesNQ n&apos;est pas
