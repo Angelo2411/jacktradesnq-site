@@ -71,18 +71,21 @@ function fmtPct(v: number): string {
   return `${(v * 100).toFixed(1)}%`;
 }
 
-function fmtPf(v: number): string {
-  if (!isFinite(v) || v === 0) return '—';
+function fmtPf(v: number | null | undefined): string {
+  if (v == null || !isFinite(v) || v === 0) return '—';
   return v.toFixed(2);
 }
 
-function fmtPts(v: number): string {
+function fmtPts(v: number | null | undefined): string {
+  if (v == null || !isFinite(v)) return '—';
   const sign = v > 0 ? '+' : '';
   return `${sign}${v.toFixed(1)} pts`;
 }
 
-function fmtAvg(win: number, loss: number): string {
-  return `+${win.toFixed(1)} / ${loss.toFixed(1)}`;
+function fmtAvg(win: number | null | undefined, loss: number | null | undefined): string {
+  const w = win == null || !isFinite(win) ? '—' : `+${win.toFixed(1)}`;
+  const l = loss == null || !isFinite(loss) ? '—' : loss.toFixed(1);
+  return `${w} / ${l}`;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
