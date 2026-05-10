@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getAllEntries, getEntry } from '@/lib/backtested-data';
 import { IconArrowUpRight } from '../_components/icons';
 import StraddleExplorer, { type ExplorerConfig } from '../_components/StraddleExplorer';
+import News830Explorer from '../_components/News830Explorer';
 
 const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
   cpi: {
@@ -25,7 +26,7 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
   },
 };
 
-const EXPLORER_RE = /<div data-explorer="(cpi|nfp)">\s*<\/div>/i;
+const EXPLORER_RE = /<div data-explorer="(cpi|nfp|nfp-ifvg-smt|cpi-ifvg-smt)">\s*<\/div>/i;
 
 const catLabel = (c: string) => (c === 'tradingview' ? 'TRADINGVIEW' : 'DATA');
 
@@ -50,11 +51,18 @@ export default async function BacktestedDetail({ params }: PageProps) {
   const wordCount = entry.explanationHtml.replace(/<[^>]*>/g, ' ').split(/\s+/).filter(Boolean).length;
   const readMin = Math.max(1, Math.ceil(wordCount / 200));
 
+  const NEWS830_CONFIGS: Record<string, { dataUrl: string; pdfTitle: string }> = {
+    'nfp-ifvg-smt': { dataUrl: '/data/nfp-ifvg-smt.json', pdfTitle: 'NFP IFVG + ES SMT' },
+    'cpi-ifvg-smt': { dataUrl: '/data/cpi-ifvg-smt.json', pdfTitle: 'CPI IFVG + ES SMT' },
+  };
+
   const match = entry.explanationHtml.match(EXPLORER_RE);
   const explorerKey = match ? match[1].toLowerCase() : null;
   const explorerConfig =
     explorerKey && EXPLORER_CONFIGS[explorerKey] ? EXPLORER_CONFIGS[explorerKey] : null;
-  const [htmlBefore, htmlAfter] = explorerConfig
+  const news830Config = explorerKey && NEWS830_CONFIGS[explorerKey] ? NEWS830_CONFIGS[explorerKey] : null;
+  const isNews830 = news830Config !== null;
+  const [htmlBefore, htmlAfter] = (explorerConfig || isNews830)
     ? entry.explanationHtml.split(EXPLORER_RE).filter((_, i) => i !== 1)
     : [entry.explanationHtml, ''];
 
@@ -87,6 +95,18 @@ export default async function BacktestedDetail({ params }: PageProps) {
             dangerouslySetInnerHTML={{ __html: htmlBefore }}
           />
           <StraddleExplorer config={explorerConfig} embedded />
+          <div
+            className="bd-prose"
+            dangerouslySetInnerHTML={{ __html: htmlAfter }}
+          />
+        </>
+      ) : isNews830 ? (
+        <>
+          <div
+            className="bd-prose"
+            dangerouslySetInnerHTML={{ __html: htmlBefore }}
+          />
+          <News830Explorer dataUrl={news830Config!.dataUrl} pdfTitle={news830Config!.pdfTitle} />
           <div
             className="bd-prose"
             dangerouslySetInnerHTML={{ __html: htmlAfter }}
