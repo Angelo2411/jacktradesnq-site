@@ -49,14 +49,16 @@ export default function Home() {
 
       {/* Group 2 — Internal pages */}
       <div className="group">
-        <Link className="card" href="/backtested-data/">
-          <svg className="card-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M3 3v18h18"/>
-            <path d="M7 15l4-4 3 3 5-6"/>
-          </svg>
-          <span className="card-label">Backtested data</span>
-          <span className="card-arrow">→</span>
-        </Link>
+        <div className="card-frame">
+          <Link className="card card-featured" href="/backtested-data/">
+            <svg className="card-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 3v18h18"/>
+              <path d="M7 15l4-4 3 3 5-6"/>
+            </svg>
+            <span className="card-label">Backtested data</span>
+            <span className="card-arrow">→</span>
+          </Link>
+        </div>
       </div>
 
       {/* Group 3 — Discord partner Nefarious */}
