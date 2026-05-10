@@ -1232,65 +1232,19 @@ export default function PandaMascot() {
           0%,100% { transform: scale(1); }
           50%     { transform: scale(0.95, 1.05); }
         }
-        .panda-walk-layered {
-          position: relative;
-          width: 100%;
-          height: 100%;
-          display: block;
+        .panda-glide {
+          animation: pandaGlide 700ms ease-in-out infinite;
         }
-        .panda-walk-layered.facing-left {
-          transform: scaleX(-1);
+        @keyframes pandaGlide {
+          0%, 100% { transform: translateY(0)    rotate(-1.2deg); }
+          50%      { transform: translateY(-3px) rotate(1.2deg); }
         }
-        .panda-walk-layered .layer {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-          object-fit: contain;
-          user-select: none;
-          -webkit-user-drag: none;
-          pointer-events: none;
+        .panda-glide.facing-left {
+          animation-name: pandaGlideLeft;
         }
-        .panda-walk-layered .body {
-          z-index: 3;
-          animation: pandaWalkBody 1100ms ease-in-out infinite;
-        }
-        .panda-walk-layered .leg-front-near {
-          z-index: 4;
-          transform-origin: 70% 60%;
-          animation: pandaWalkPawA 1100ms ease-in-out infinite;
-        }
-        .panda-walk-layered .leg-back-near {
-          z-index: 2;
-          transform-origin: 35% 65%;
-          animation: pandaWalkPawA 1100ms ease-in-out infinite;
-        }
-        .panda-walk-layered .leg-front-far {
-          z-index: 2;
-          transform-origin: 55% 65%;
-          animation: pandaWalkPawB 1100ms ease-in-out infinite;
-        }
-        .panda-walk-layered .leg-back-far {
-          z-index: 1;
-          transform-origin: 45% 65%;
-          animation: pandaWalkPawB 1100ms ease-in-out infinite;
-        }
-        @keyframes pandaWalkBody {
-          0%, 100% { transform: translateX(0) translateY(0); }
-          25%      { transform: translateX(-1.5px) translateY(-1px); }
-          50%      { transform: translateX(0) translateY(0); }
-          75%      { transform: translateX(1.5px) translateY(-1px); }
-        }
-        @keyframes pandaWalkPawA {
-          0%, 50%, 100% { transform: rotate(0); }
-          25%           { transform: rotate(-8deg) translateY(-1px); }
-        }
-        @keyframes pandaWalkPawB {
-          0%, 50%, 100% { transform: rotate(0); }
-          75%           { transform: rotate(-8deg) translateY(-1px); }
-        }
-        .panda-walk-layered.reduced .layer {
-          animation: none !important;
+        @keyframes pandaGlideLeft {
+          0%, 100% { transform: scaleX(-1) translateY(0)    rotate(1.2deg); }
+          50%      { transform: scaleX(-1) translateY(-3px) rotate(-1.2deg); }
         }
         .panda-jump {
           animation: pandaJump 500ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
@@ -1355,6 +1309,7 @@ export default function PandaMascot() {
           .panda-squish   { animation: none !important; }
           .panda-pet      { animation: none !important; }
           .panda-jump     { animation: none !important; }
+          .panda-glide    { animation: none !important; }
           .panda-bubble   { transition: none !important; }
           .panda-img      { transition: none !important; }
         }
@@ -1387,42 +1342,25 @@ export default function PandaMascot() {
             onPointerCancel={handlePointerCancel}
             onLostPointerCapture={handleLostPointerCapture}
           >
-            {(visibleState === 'walk' || visibleState === 'walking-back') ? (
-              <div
-                className={[
-                  'panda-walk-layered',
-                  facingLeft && !isOverridden ? 'facing-left' : '',
-                  prefersReduced ? 'reduced' : '',
-                ].filter(Boolean).join(' ')}
-                aria-label={`Panda mascot — ${visibleState}`}
-                role="img"
-              >
-                <img className="layer leg-back-far"   src="/mascot/walk_layers/leg_back_far.png"   alt="" draggable={false} />
-                <img className="layer leg-back-near"  src="/mascot/walk_layers/leg_back_near.png"  alt="" draggable={false} />
-                <img className="layer body"           src="/mascot/walk_layers/body.png"           alt="" draggable={false} />
-                <img className="layer leg-front-far"  src="/mascot/walk_layers/leg_front_far.png"  alt="" draggable={false} />
-                <img className="layer leg-front-near" src="/mascot/walk_layers/leg_front_near.png" alt="" draggable={false} />
-              </div>
-            ) : (
-              <img
-                src={getImgSrc()}
-                alt={`Panda mascot — ${visibleState}`}
-                className={[
-                  'panda-img',
-                  facingLeft && !isOverridden ? 'facing-left' : '',
-                  visibleState === 'petting' ? 'panda-pet' : '',
-                  isJumping ? 'panda-jump' : '',
-                ].filter(Boolean).join(' ')}
-                style={{
-                  transform: imgExtraTransform || undefined,
-                }}
-                width={128}
-                height={128}
-                loading="lazy"
-                draggable={false}
-                onError={handleImgError}
-              />
-            )}
+            <img
+              src={getImgSrc()}
+              alt={`Panda mascot — ${visibleState}`}
+              className={[
+                'panda-img',
+                facingLeft && !isOverridden ? 'facing-left' : '',
+                visibleState === 'petting' ? 'panda-pet' : '',
+                (visibleState === 'walk' || visibleState === 'walking-back') && !prefersReduced ? 'panda-glide' : '',
+                isJumping ? 'panda-jump' : '',
+              ].filter(Boolean).join(' ')}
+              style={{
+                transform: imgExtraTransform || undefined,
+              }}
+              width={128}
+              height={128}
+              loading="lazy"
+              draggable={false}
+              onError={handleImgError}
+            />
           </button>
         </div>
       </div>
