@@ -924,9 +924,13 @@ export default function PandaMascot() {
 
 
     if (action.type === 'walk') {
-      const dir = Math.random() < 0.5 ? 'left' : 'right';
-      const dist = randBetween(100, 400);
       const currentX = xOffsetRef.current;
+      const EDGE = 50;
+      const dir =
+        currentX <= WANDER_MIN_X + EDGE ? 'right' :
+        currentX >= WANDER_MAX_X - EDGE ? 'left'  :
+        Math.random() < 0.5 ? 'left' : 'right';
+      const dist = randBetween(100, 400);
       const rawTarget = dir === 'left' ? currentX - dist : currentX + dist;
       const targetX = clamp(rawTarget, WANDER_MIN_X, WANDER_MAX_X);
       const actualLeft = targetX < currentX;
