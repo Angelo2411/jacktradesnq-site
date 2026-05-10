@@ -6,39 +6,16 @@ Mark out the data high/low (range price was trading in right before 8:30 ET). Wa
 
 ### ES SMT Confirmation Filter
 
-Take the trade **only if ES (E-mini S&P 500) also sweeps its target side** during the same 8:30→11:00 window.
+A trade is kept **only if ES (E-mini S&P 500) also reaches the same target** within 2h30 after the release.
 
 - NQ SHORT (sweep UP) → ES must sweep its low
 - NQ LONG (sweep DOWN) → ES must sweep its high
 
-If ES doesn't follow → fakeout, skip the trade.
+If ES never reaches its target by 11:00 ET → trade was a one-sided NQ move, excluded from the SMT-filtered stats.
 
-### Year-by-Year — Strategy Performance (MNQ 7y)
+### Performance — MNQ 7y
 
-| Year | Trades | W | L | WR | PF | Net (MNQ pts) |
-|------|--------|---|---|-----|------|---------------|
-| **Baseline (no SMT filter)** |  |  |  |  |  |  |
-| 2019 | 5  | 3 | 2  | 60% | 4.32 | +18.2  |
-| 2020 | 5  | 2 | 3  | 40% | 0.46 | -8.8   |
-| 2021 | 7  | 3 | 4  | 42% | 0.58 | -25.2  |
-| 2022 | 14 | 5 | 9  | 35% | 2.31 | +175.2 |
-| 2023 | 12 | 2 | 10 | 16% | 0.71 | -47.5  |
-| 2024 | 14 | 3 | 11 | 21% | 0.76 | -55.2  |
-| 2025 | 11 | 2 | 9  | 18% | 0.59 | -89.8  |
-| 2026 | 7  | 4 | 3  | 57% | 1.23 | +19.5  |
-| **Total** | **75** | **24** | **51** | **32%** | **0.98** | **-13.5** |
-| **+ ES SMT confirmation** |  |  |  |  |  |  |
-| 2019 | 4  | 2 | 2 | 50% | 3.27 | +12.5  |
-| 2020 | 5  | 2 | 3 | 40% | 0.46 | -8.8   |
-| 2021 | 5  | 3 | 2 | 60% | 0.81 | -8.2   |
-| 2022 | 10 | 4 | 6 | 40% | 2.68 | +169.0 |
-| 2023 | 7  | 2 | 5 | 28% | 1.96 | +55.8  |
-| 2024 | 7  | 3 | 4 | 42% | 2.55 | +108.2 |
-| 2025 | 7  | 2 | 5 | 28% | 3.87 | +97.0  |
-| 2026 | 6  | 4 | 2 | 66% | 1.38 | +28.5  |
-| **Total** | **51** | **22** | **29** | **43%** | **2.13** | **+454.0** |
-
-Baseline alone has no edge (PF 0.98, slightly losing). The ES SMT filter is what carries it: cuts 24 setups, PF jumps 0.98 → 2.13, net -13.5 → +454 MNQ points across 75 CPI events.
+Without SMT: 75 trades, PF 0.98, net -13 MNQ pts (no edge). With SMT: 51 trades remain, PF 2.13, net +454 MNQ pts. Year-by-year breakdown in the explorer below + Full PDF download.
 
 ### Why It Works
 

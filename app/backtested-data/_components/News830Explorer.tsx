@@ -202,12 +202,15 @@ export default function News830Explorer({ dataUrl, pdfTitle }: News830ExplorerPr
 
   const yearBreakdownRows: News830Row[] = useMemo(() => {
     if (!data) return [];
-    return YEAR_OPTIONS.filter((y) => y !== 'ALL').map((y) =>
+    const years = year === 'ALL'
+      ? YEAR_OPTIONS.filter((y) => y !== 'ALL')
+      : [year];
+    return years.map((y) =>
       data.rows.find(
         (r) => r.year === y && r.variant === variant && r.smt === smt && r.side === side,
       )
     ).filter((r): r is News830Row => r !== undefined);
-  }, [data, variant, smt, side]);
+  }, [data, variant, smt, side, year]);
 
   /* ── human-readable filter summary ─────────────────────────────────────── */
 
@@ -355,7 +358,7 @@ export default function News830Explorer({ dataUrl, pdfTitle }: News830ExplorerPr
       doc.setFont('times', 'bold');
       doc.setFontSize(26);
       doc.setTextColor(20);
-      doc.text(`${pdfTitle} — All Totals`, 40, 80);
+      doc.text(`${pdfTitle} — Full Report`, 40, 80);
 
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(11);
@@ -374,7 +377,7 @@ export default function News830Explorer({ dataUrl, pdfTitle }: News830ExplorerPr
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(11);
       doc.text(`• ${data.meta.n_events_total} events in window ${data.meta.date_from} -> ${data.meta.date_to}`, 50, 178);
-      doc.text(`• 108 combos: 3 variants × 2 SMT × 3 sides × 6 years`, 50, 196);
+      doc.text(`• 162 combos: 3 variants × 2 SMT × 3 sides × 9 buckets (2019-2026 + ALL)`, 50, 196);
       doc.text(`• Source: ${data.meta.source}`, 50, 214);
 
       // 6 tables: one per variant × SMT combo. First table sits on cover page.
@@ -445,7 +448,7 @@ export default function News830Explorer({ dataUrl, pdfTitle }: News830ExplorerPr
       }
 
       const slugifiedTitle = pdfTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-      doc.save(`${slugifiedTitle}-all-totals-${today}.pdf`);
+      doc.save(`${slugifiedTitle}-full-${today}.pdf`);
     } catch (e) {
       console.error('PDF generation failed', e);
       alert(`Could not generate PDF: ${e instanceof Error ? e.message : 'unknown error'}`);
@@ -722,11 +725,52 @@ export default function News830Explorer({ dataUrl, pdfTitle }: News830ExplorerPr
         .n8-year-table tr[data-highlighted="true"]:hover td {
           background: oklch(0.89 0.07 75);
         }
+        .n8-downloads {
+          margin-top: 32px;
+          padding: 20px 0 4px;
+          border-top: 1px solid oklch(0.85 0.02 85);
+        }
+        .n8-downloads-label {
+          font-family: var(--f-sans);
+          font-size: 0.7rem;
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 0.12em;
+          color: var(--c-muted);
+          margin-bottom: 12px;
+        }
         .n8-pdf-btns {
-          margin-top: 20px;
           display: flex;
           gap: 12px;
           flex-wrap: wrap;
+        }
+        .n8-pdf-btns button.bd-btn {
+          height: 44px;
+          padding: 0 22px;
+          border-radius: 999px;
+          cursor: pointer;
+        }
+        .n8-pdf-btns button.bd-btn-primary {
+          background: var(--c-accent);
+          color: oklch(0.20 0.02 70);
+          border: 1px solid var(--c-accent);
+        }
+        .n8-pdf-btns button.bd-btn-primary:hover:not(:disabled) {
+          background: var(--c-accent-deep);
+          border-color: var(--c-accent-deep);
+        }
+        .n8-pdf-btns button.bd-btn-secondary {
+          background: transparent;
+          color: var(--c-accent-deep);
+          border: 1.5px solid var(--c-accent);
+        }
+        .n8-pdf-btns button.bd-btn-secondary:hover:not(:disabled) {
+          background: var(--c-accent);
+          color: oklch(0.20 0.02 70);
+        }
+        .n8-pdf-btns button.bd-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
         }
       `}</style>
 
@@ -884,23 +928,26 @@ export default function News830Explorer({ dataUrl, pdfTitle }: News830ExplorerPr
       )}
 
       {/* ── download buttons ──────────────────────────────────────────── */}
-      <div className="n8-pdf-btns">
-        <button
-          type="button"
-          className="bd-btn bd-btn-secondary"
-          onClick={downloadCustomPdf}
-          disabled={generatingCustom || !row}
-        >
-          {generatingCustom ? 'Generating…' : '↓ Download — Custom (your filters)'}
-        </button>
-        <button
-          type="button"
-          className="bd-btn bd-btn-secondary"
-          onClick={downloadAllPdf}
-          disabled={generatingAll || !data}
-        >
-          {generatingAll ? 'Generating…' : '↓ Download — All totals PDF'}
-        </button>
+      <div className="n8-downloads">
+        <div className="n8-downloads-label">Downloads</div>
+        <div className="n8-pdf-btns">
+          <button
+            type="button"
+            className="bd-btn bd-btn-primary"
+            onClick={downloadCustomPdf}
+            disabled={generatingCustom || !row}
+          >
+            {generatingCustom ? 'Generating…' : '↓ Custom PDF (your filters)'}
+          </button>
+          <button
+            type="button"
+            className="bd-btn bd-btn-secondary"
+            onClick={downloadAllPdf}
+            disabled={generatingAll || !data}
+          >
+            {generatingAll ? 'Generating…' : '↓ Full PDF (all variants)'}
+          </button>
+        </div>
       </div>
 
       <p className="n8-disclaimer">
