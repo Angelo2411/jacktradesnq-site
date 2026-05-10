@@ -1,14 +1,14 @@
 ## 8:30 News Model — NFP IFVG + ES SMT
 
-ICT post-news IFVG entry on the 8:30 ET NFP releases, with optional **ES SMT confirmation filter**. Window: 2022-09 → 2026-04, BLS-confirmed dates, NQ continuous (Databento).
+ICT post-news IFVG entry on the 8:30 ET NFP releases, with optional **ES SMT confirmation filter**. Window: 2022-09 → 2026-04, official US Bureau of Labor Statistics release dates, NQ continuous (Databento).
 
 ### Setup Logic
 
-1. **Pre-news range** = high/low of the 5 bars before 8:30 ET
-2. **Sweep** = first bar 8:30→11:00 ET that breaks pre-high or pre-low
-3. **Side** = opposite of sweep (sweep UP → SHORT setup, sweep DOWN → LONG setup)
-4. **Entry** = bar where price closes back inside (Inversion FVG break), filled at close
-5. **SL** = 1 tick beyond the sweep extreme — for SHORT, 1 tick above sweep high; for LONG, 1 tick below sweep low
+1. **Pre-news range** = high/low of the 5 bars before 8:30 ET (the box price was trading in just before the news drops)
+2. **Sweep** = first 1-minute bar between 8:30 and 11:00 ET where price pokes ABOVE the pre-news high, or BELOW the pre-news low. This is the initial spike reaction to the news, grabbing liquidity (stops) from one side of the pre-news box.
+3. **Side** = trade in the OPPOSITE direction of the sweep. Sweep UP (high taken) → SHORT setup. Sweep DOWN (low taken) → LONG setup. The logic: the first move is usually a fakeout, the real move is the reverse.
+4. **Entry** = bar where price closes back INSIDE the pre-news range (Inversion FVG break — confirms the fakeout). Fill at the close of that bar.
+5. **SL** = 1 tick beyond the sweep extreme (for SHORT, 1 tick above the sweep high; for LONG, 1 tick below the sweep low)
 6. **TP** = opposite side of the pre-news range (SHORT targets pre-low, LONG targets pre-high)
 
 ### ES SMT Confirmation Filter

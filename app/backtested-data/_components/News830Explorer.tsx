@@ -233,7 +233,7 @@ export default function News830Explorer({ dataUrl, pdfTitle }: News830ExplorerPr
       doc.setFont('times', 'bold');
       doc.setFontSize(26);
       doc.setTextColor(20);
-      doc.text('8:30 News Model — Custom Report', 40, 80);
+      doc.text(`${pdfTitle} — Custom Report`, 40, 80);
 
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(11);
@@ -318,13 +318,14 @@ export default function News830Explorer({ dataUrl, pdfTitle }: News830ExplorerPr
         doc.setFontSize(8);
         doc.setTextColor(120);
         doc.text(
-          `jacktradesnq.com  ·  8:30 news model interactive explorer  ·  ${today}  ·  Page ${p}/${pageCount}`,
+          `jacktradesnq.com  ·  ${pdfTitle.toLowerCase()} interactive explorer  ·  ${today}  ·  Page ${p}/${pageCount}`,
           40,
           doc.internal.pageSize.getHeight() - 24,
         );
       }
 
-      const filename = `8-30-news-model-custom-${variant}-${smt ? 'smtON' : 'smtOFF'}-${side}-${year}-${today}.pdf`;
+      const slugifiedTitle = pdfTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      const filename = `${slugifiedTitle}-custom-${variant}-${smt ? 'smtON' : 'smtOFF'}-${side}-${year}-${today}.pdf`;
       doc.save(filename);
     } catch (e) {
       console.error('PDF generation failed', e);
@@ -354,7 +355,7 @@ export default function News830Explorer({ dataUrl, pdfTitle }: News830ExplorerPr
       doc.setFont('times', 'bold');
       doc.setFontSize(26);
       doc.setTextColor(20);
-      doc.text('8:30 News Model — All Totals', 40, 80);
+      doc.text(`${pdfTitle} — All Totals`, 40, 80);
 
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(11);
@@ -427,13 +428,14 @@ export default function News830Explorer({ dataUrl, pdfTitle }: News830ExplorerPr
         doc.setFontSize(8);
         doc.setTextColor(120);
         doc.text(
-          `jacktradesnq.com  ·  8:30 news model interactive explorer  ·  ${today}  ·  Page ${p}/${pageCount}`,
+          `jacktradesnq.com  ·  ${pdfTitle.toLowerCase()} interactive explorer  ·  ${today}  ·  Page ${p}/${pageCount}`,
           40,
           doc.internal.pageSize.getHeight() - 24,
         );
       }
 
-      doc.save(`8-30-news-model-all-totals-${today}.pdf`);
+      const slugifiedTitle = pdfTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      doc.save(`${slugifiedTitle}-all-totals-${today}.pdf`);
     } catch (e) {
       console.error('PDF generation failed', e);
       alert(`Could not generate PDF: ${e instanceof Error ? e.message : 'unknown error'}`);
