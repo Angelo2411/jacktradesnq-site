@@ -5,7 +5,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type PandaState =
-  | 'idle' | 'walk' | 'pause' | 'eat' | 'sleep' | 'wave' | 'yawn' | 'surprised'
+  | 'idle' | 'idle_face' | 'walk' | 'pause' | 'eat' | 'sleep' | 'wave' | 'yawn' | 'surprised'
   | 'held' | 'flying' | 'landing' | 'walking-back' | 'petting';
 
 interface Action {
@@ -31,10 +31,11 @@ interface PhysicsState {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const WALK_FRAMES = ['walk1', 'walk2', 'walk3', 'walk4'] as const;
+const WALK_FRAMES = ['walk1', 'walk2', 'walk3', 'walk4', 'walk5', 'walk6', 'walk7', 'walk8'] as const;
 
 const STATE_TO_IMG: Record<PandaState, string> = {
   idle:          'idle',
+  idle_face:     'idle_face',
   walk:          'idle',
   pause:         'idle',
   eat:           'eat',
@@ -50,13 +51,14 @@ const STATE_TO_IMG: Record<PandaState, string> = {
 };
 
 const FULL_ACTIONS: Action[] = [
-  { type: 'idle',  weight: 30, minMs: 3000, maxMs: 8000 },
-  { type: 'walk',  weight: 25, minMs: 3000, maxMs: 7000 },
-  { type: 'pause', weight: 15, minMs: 1000, maxMs: 3000 },
-  { type: 'eat',   weight: 10, minMs: 2000, maxMs: 4000 },
-  { type: 'sleep', weight: 10, minMs: 4000, maxMs: 8000 },
-  { type: 'wave',  weight:  5, minMs: 1500, maxMs: 2500 },
-  { type: 'yawn',  weight:  5, minMs: 1500, maxMs: 2500 },
+  { type: 'idle',      weight: 30, minMs: 3000, maxMs: 8000 },
+  { type: 'walk',      weight: 25, minMs: 3000, maxMs: 7000 },
+  { type: 'pause',     weight: 15, minMs: 1000, maxMs: 3000 },
+  { type: 'eat',       weight: 10, minMs: 2000, maxMs: 4000 },
+  { type: 'sleep',     weight: 10, minMs: 4000, maxMs: 8000 },
+  { type: 'wave',      weight:  5, minMs: 1500, maxMs: 2500 },
+  { type: 'yawn',      weight:  5, minMs: 1500, maxMs: 2500 },
+  { type: 'idle_face', weight: 15, minMs: 1500, maxMs: 2800 },
 ];
 
 const REDUCED_ACTIONS: Action[] = [
@@ -922,9 +924,13 @@ export default function PandaMascot() {
 
 
     if (action.type === 'walk') {
-      const dir = Math.random() < 0.5 ? 'left' : 'right';
-      const dist = randBetween(100, 400);
       const currentX = xOffsetRef.current;
+      const EDGE = 50;
+      const dir =
+        currentX <= WANDER_MIN_X + EDGE ? 'right' :
+        currentX >= WANDER_MAX_X - EDGE ? 'left'  :
+        Math.random() < 0.5 ? 'left' : 'right';
+      const dist = randBetween(100, 400);
       const rawTarget = dir === 'left' ? currentX - dist : currentX + dist;
       const targetX = clamp(rawTarget, WANDER_MIN_X, WANDER_MAX_X);
       const actualLeft = targetX < currentX;
@@ -1232,6 +1238,20 @@ export default function PandaMascot() {
           0%,100% { transform: scale(1); }
           50%     { transform: scale(0.95, 1.05); }
         }
+        .panda-glide {
+          animation: pandaGlide 700ms ease-in-out infinite;
+        }
+        @keyframes pandaGlide {
+          0%, 100% { transform: translateY(0)    rotate(-1.2deg); }
+          50%      { transform: translateY(-3px) rotate(1.2deg); }
+        }
+        .panda-glide.facing-left {
+          animation-name: pandaGlideLeft;
+        }
+        @keyframes pandaGlideLeft {
+          0%, 100% { transform: scaleX(-1) translateY(0)    rotate(1.2deg); }
+          50%      { transform: scaleX(-1) translateY(-3px) rotate(-1.2deg); }
+        }
         .panda-jump {
           animation: pandaJump 500ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
@@ -1295,6 +1315,7 @@ export default function PandaMascot() {
           .panda-squish   { animation: none !important; }
           .panda-pet      { animation: none !important; }
           .panda-jump     { animation: none !important; }
+          .panda-glide    { animation: none !important; }
           .panda-bubble   { transition: none !important; }
           .panda-img      { transition: none !important; }
         }
@@ -1334,6 +1355,7 @@ export default function PandaMascot() {
                 'panda-img',
                 facingLeft && !isOverridden ? 'facing-left' : '',
                 visibleState === 'petting' ? 'panda-pet' : '',
+                (visibleState === 'walk' || visibleState === 'walking-back') && !prefersReduced ? 'panda-glide' : '',
                 isJumping ? 'panda-jump' : '',
               ].filter(Boolean).join(' ')}
               style={{
