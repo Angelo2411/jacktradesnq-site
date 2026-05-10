@@ -58,7 +58,7 @@ const FULL_ACTIONS: Action[] = [
   { type: 'sleep',     weight: 10, minMs: 4000, maxMs: 8000 },
   { type: 'wave',      weight:  5, minMs: 1500, maxMs: 2500 },
   { type: 'yawn',      weight:  5, minMs: 1500, maxMs: 2500 },
-  { type: 'idle_face', weight:  5, minMs: 1500, maxMs: 2800 },
+  { type: 'idle_face', weight: 15, minMs: 1500, maxMs: 2800 },
 ];
 
 const REDUCED_ACTIONS: Action[] = [
