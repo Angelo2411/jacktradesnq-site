@@ -1,6 +1,10 @@
 ## CPI IFVG + ES SMT — 8:30 News Model
 
-ICT post-news IFVG entry on 8:30 ET CPI releases, with optional **ES SMT confirmation filter**. Window: 2022-09 → 2026-04, official US Bureau of Labor Statistics release dates, NQ continuous (Databento).
+ICT post-news IFVG entry on 8:30 ET CPI releases, with optional **ES SMT confirmation filter**. Window: 2019-05 → 2026-05 (7 years), official US Bureau of Labor Statistics release dates, **MNQ.c.0 continuous (Databento) — native micro-futures, 7-year history**.
+
+### Cross-validate on TradingView
+
+Open `MNQ1!` 1-minute on TradingView and load the Pine `news_cpi_ifvg_strategy` (in `~/pine-indicators/ict/`). MNQ1! ticker has matching 7-year history on TV — backtest results should align with the table below.
 
 ### Setup Logic
 
@@ -20,26 +24,32 @@ Take the trade **only if ES (E-mini S&P 500) also reaches its target side** duri
 
 If ES doesn't follow → fakeout, skip the trade.
 
-### Year-by-Year — Strategy Performance
+### Year-by-Year — Strategy Performance (MNQ 7y)
 
-| Year | Trades | W | L | WR | PF | Net (NQ pts) |
-|------|--------|---|---|-----|------|--------------|
+| Year | Trades | W | L | WR | PF | Net (MNQ pts) |
+|------|--------|---|---|-----|------|---------------|
 | **Baseline (no SMT filter)** |  |  |  |  |  |  |
-| 2022 | 3  | 1 | 2 | 33% | 0.36 | -81.5  |
-| 2023 | 10 | 4 | 6 | 40% | 0.99 | -1.25  |
-| 2024 | 12 | 4 | 8 | 33% | 1.01 | +1.0   |
-| 2025 | 10 | 4 | 6 | 40% | 1.81 | +123.5 |
-| 2026 | 4  | 2 | 2 | 50% | 6.17 | +140.8 |
-| **Total** | **39** | **15** | **24** | **38%** | **1.30** | **+182.5** |
+| 2019 | 4  | 3 | 1 | 75% | 4.43 | +12.0  |
+| 2020 | 4  | 1 | 3 | 25% | 0.83 | -1.2   |
+| 2021 | 4  | 2 | 2 | 50% | 0.33 | -65.0  |
+| 2022 | 9  | 4 | 5 | 44% | 1.33 | +46.0  |
+| 2023 | 10 | 4 | 6 | 40% | 1.25 | +32.2  |
+| 2024 | 11 | 5 | 6 | 45% | 1.43 | +67.5  |
+| 2025 | 11 | 5 | 6 | 45% | 1.82 | +138.5 |
+| 2026 | 5  | 2 | 3 | 40% | 1.11 | +9.5   |
+| **Total** | **58** | **26** | **32** | **45%** | **1.30** | **+239.5** |
 | **+ ES SMT confirmation** |  |  |  |  |  |  |
-| 2022 | 1  | 1 | 0 | 100% | —    | +45.3  |
-| 2023 | 10 | 4 | 6 | 40%  | 0.99 | -1.25  |
-| 2024 | 9  | 4 | 5 | 44%  | 2.13 | +86.0  |
-| 2025 | 8  | 3 | 5 | 38%  | 2.16 | +79.75 |
-| 2026 | 4  | 2 | 2 | 50%  | 6.17 | +140.8 |
-| **Total** | **32** | **14** | **18** | **44%** | **2.08** | **+350.5** |
+| 2019 | 3  | 3 | 0 | 100% | —    | +15.5  |
+| 2020 | 4  | 1 | 3 | 25%  | 0.83 | -1.2   |
+| 2021 | 2  | 1 | 1 | 50%  | 0.77 | -6.5   |
+| 2022 | 7  | 4 | 3 | 57%  | 4.28 | +141.8 |
+| 2023 | 9  | 4 | 5 | 44%  | 1.40 | +45.8  |
+| 2024 | 9  | 5 | 4 | 56%  | 2.94 | +149.0 |
+| 2025 | 9  | 4 | 5 | 44%  | 2.09 | +93.0  |
+| 2026 | 5  | 2 | 3 | 40%  | 1.11 | +9.5   |
+| **Total** | **48** | **24** | **24** | **50%** | **2.00** | **+446.8** |
 
-The ES SMT filter cut **7 setups (2022: 2, 2024: 3, 2025: 2)** — PF moves from 1.30 → 2.08, net from +182.5 to +350.5 NQ points on 85 CPI events.
+The ES SMT filter cuts **10 setups** — PF moves from 1.30 → 2.00, net from +239.5 to +446.8 MNQ points across 58 CPI events over 7 years.
 
 ### Why It Works
 
@@ -47,6 +57,6 @@ CPI is a high-correlation event — NQ and ES move in lockstep. When only NQ tak
 
 ### Disclaimer
 
-Backtest on NQ continuous (Databento). Results vary by data feed (TV continuous adjustment differs from Databento). Sample size 39 trades is statistically thin; treat as indicative not predictive.
+Backtest on MNQ.c.0 continuous (Databento). Results vary by data feed (TV continuous adjustment differs from Databento). Sample size 58 trades is statistically thin; treat as indicative not predictive. AI-assisted analysis — not financial advice.
 
 <div data-explorer="cpi-ifvg-smt"></div>

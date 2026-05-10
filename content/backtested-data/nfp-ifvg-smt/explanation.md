@@ -1,6 +1,10 @@
 ## 8:30 News Model — NFP IFVG + ES SMT
 
-ICT post-news IFVG entry on the 8:30 ET NFP releases, with optional **ES SMT confirmation filter**. Window: 2022-09 → 2026-04, official US Bureau of Labor Statistics release dates, NQ continuous (Databento).
+ICT post-news IFVG entry on the 8:30 ET NFP releases, with optional **ES SMT confirmation filter**. Window: 2019-05 → 2026-05 (7 years), official US Bureau of Labor Statistics release dates, **MNQ.c.0 continuous (Databento) — native micro-futures, 7-year history**.
+
+### Cross-validate on TradingView
+
+Open `MNQ1!` 1-minute on TradingView and load the Pine `news_nfp_ifvg_strategy` (in `~/pine-indicators/ict/`). MNQ1! ticker has matching 7-year history on TV — backtest results should align with the table below.
 
 ### Setup Logic
 
@@ -20,26 +24,32 @@ Take the trade **only if ES (E-mini S&P 500) also reaches its target side** duri
 
 If ES doesn't follow → fakeout, skip the trade.
 
-### Year-by-Year — Strategy Performance
+### Year-by-Year — Strategy Performance (MNQ 7y)
 
-| Year | Trades | W | L | WR | PF | Net (NQ pts) |
-|------|--------|---|---|-----|------|--------------|
+| Year | Trades | W | L | WR | PF | Net (MNQ pts) |
+|------|--------|---|---|-----|------|---------------|
 | **Baseline (no SMT filter)** |  |  |  |  |  |  |
-| 2022 | 2  | 0 | 2 | 0%  | 0.00 | -20.5  |
-| 2023 | 11 | 3 | 8 | 27% | 0.96 | -6.0   |
-| 2024 | 4  | 3 | 1 | 75% | 0.92 | -3.8   |
-| 2025 | 9  | 4 | 5 | 44% | 1.46 | +61.3  |
-| 2026 | 2  | 1 | 1 | 50% | 0.62 | -2.3   |
-| **Total** | **28** | **11** | **17** | **39%** | **1.08** | **+28.8** |
+| 2019 | 6  | 2 | 4 | 33% | 0.94 | -2.0   |
+| 2020 | 8  | 5 | 3 | 63% | 1.61 | +17.5  |
+| 2021 | 6  | 4 | 2 | 67% | 1.50 | +8.5   |
+| 2022 | 5  | 1 | 4 | 20% | 1.42 | +21.0  |
+| 2023 | 10 | 2 | 8 | 20% | 0.32 | -115.2 |
+| 2024 | 4  | 3 | 1 | 75% | 0.95 | -2.5   |
+| 2025 | 11 | 3 | 8 | 27% | 0.83 | -34.2  |
+| 2026 | 3  | 2 | 1 | 67% | 16.00| +63.8  |
+| **Total** | **53** | **22** | **31** | **42%** | **0.92** | **-43.2** |
 | **+ ES SMT confirmation** |  |  |  |  |  |  |
-| 2022 | 1  | 0 | 1 | 0%  | 0.00 | -13.8  |
-| 2023 | 9  | 3 | 6 | 33% | 1.65 | +57.8  |
-| 2024 | 4  | 3 | 1 | 75% | 0.92 | -3.8   |
-| 2025 | 5  | 4 | 1 | 80% | 3.16 | +133.0 |
-| 2026 | 2  | 1 | 1 | 50% | 0.62 | -2.3   |
-| **Total** | **21** | **11** | **10** | **52%** | **1.79** | **+171.0** |
+| 2019 | 4  | 2 | 2 | 50%  | 1.19 | +5.2   |
+| 2020 | 6  | 4 | 2 | 67%  | 2.07 | +22.0  |
+| 2021 | 6  | 4 | 2 | 67%  | 1.50 | +8.5   |
+| 2022 | 4  | 1 | 3 | 25%  | 1.64 | +27.8  |
+| 2023 | 9  | 2 | 7 | 22%  | 0.34 | -105.0 |
+| 2024 | 4  | 3 | 1 | 75%  | 0.95 | -2.5   |
+| 2025 | 6  | 3 | 3 | 50%  | 1.37 | +44.2  |
+| 2026 | 3  | 2 | 1 | 67%  | 16.00| +63.8  |
+| **Total** | **42** | **21** | **21** | **50%** | **1.15** | **+64.0** |
 
-The ES SMT filter cut **7 LOSSES, 0 WINS** — all 7 skips were trades where NQ swept but ES never reached its target. PF moves from 1.08 → 1.79, net from +29 to +171 NQ points over 7 years.
+The ES SMT filter cuts **11 setups** — WR moves from 42% → 50%, PF from 0.92 → 1.15, net from -43 to +64 MNQ points across 53 NFP events over 7 years. 2023 is a clear outlier drag — even with SMT, that year alone cost -105 pts and dominates the long-run net.
 
 ### Why It Works
 
@@ -47,6 +57,6 @@ NFP is a high-correlation event — NQ and ES move in lockstep. When only NQ tak
 
 ### Disclaimer
 
-Backtest on NQ continuous (Databento). Results vary by data feed (TV continuous adjustment differs from Databento). Sample size 28 trades is statistically thin; treat as indicative not predictive.
+Backtest on MNQ.c.0 continuous (Databento). Results vary by data feed (TV continuous adjustment differs from Databento). Sample size 53 trades is statistically thin; 2023 single-year drawdown shows the strategy is not robust without further filters. Treat as indicative not predictive. AI-assisted analysis — not financial advice.
 
 <div data-explorer="nfp-ifvg-smt"></div>
