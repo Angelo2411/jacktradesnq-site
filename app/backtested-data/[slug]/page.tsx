@@ -4,6 +4,7 @@ import { getAllEntries, getEntry } from '@/lib/backtested-data';
 import { IconArrowUpRight } from '../_components/icons';
 import StraddleExplorer, { type ExplorerConfig } from '../_components/StraddleExplorer';
 import News830Explorer from '../_components/News830Explorer';
+import MobileTabs, { type MobileTab } from '../_components/MobileTabs';
 
 const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
   cpi: {
@@ -66,6 +67,35 @@ export default async function BacktestedDetail({ params }: PageProps) {
     ? entry.explanationHtml.split(EXPLORER_RE).filter((_, i) => i !== 1)
     : [entry.explanationHtml, ''];
 
+  const mobileHasExplorer = !!(entry.mobileHtml && EXPLORER_RE.test(entry.mobileHtml));
+  const [mobileBefore, mobileAfter] = mobileHasExplorer
+    ? entry.mobileHtml!.split(EXPLORER_RE).filter((_, i) => i !== 1)
+    : [entry.mobileHtml ?? '', ''];
+
+  const mobileH2Count = entry.mobileHtml ? (entry.mobileHtml.match(/<h2[\s>]/g) ?? []).length : 0;
+  const useMobileTabs = mobileH2Count >= 2;
+  const mobileTabs: MobileTab[] = [];
+  if (useMobileTabs && entry.mobileHtml) {
+    const parts = entry.mobileHtml.split(/(?=<h2[\s>])/);
+    for (const part of parts) {
+      const labelMatch = part.match(/<h2[^>]*>([\s\S]*?)<\/h2>/);
+      if (!labelMatch) continue;
+      const label = labelMatch[1].replace(/<[^>]+>/g, '').replace(/^Article\s+\d+\s*[—-]\s*/i, '').trim();
+      const body = part.replace(/<h2[^>]*>[\s\S]*?<\/h2>/, '').trim();
+      const expMatch = body.match(EXPLORER_RE);
+      if (expMatch) {
+        const [hb, ha] = body.split(EXPLORER_RE).filter((_, i) => i !== 1);
+        const key = expMatch[1].toLowerCase();
+        let explorerNode = null;
+        if (EXPLORER_CONFIGS[key]) explorerNode = <StraddleExplorer config={EXPLORER_CONFIGS[key]} embedded />;
+        else if (NEWS830_CONFIGS[key]) explorerNode = <News830Explorer dataUrl={NEWS830_CONFIGS[key].dataUrl} pdfTitle={NEWS830_CONFIGS[key].pdfTitle} />;
+        mobileTabs.push({ label, htmlBefore: hb, explorer: explorerNode, htmlAfter: ha });
+      } else {
+        mobileTabs.push({ label, htmlBefore: body });
+      }
+    }
+  }
+
   return (
     <article className="bd-article">
       <Link
@@ -89,10 +119,28 @@ export default async function BacktestedDetail({ params }: PageProps) {
       <p className="bd-article-lede">{entry.excerpt}</p>
 
       {entry.mobileHtml ? (
-        <div
-          className="bd-prose bd-show-mobile"
-          dangerouslySetInnerHTML={{ __html: entry.mobileHtml }}
-        />
+        useMobileTabs ? (
+          <div className="bd-show-mobile">
+            <MobileTabs tabs={mobileTabs} />
+          </div>
+        ) : mobileHasExplorer && explorerConfig ? (
+          <div className="bd-show-mobile">
+            <div className="bd-prose" dangerouslySetInnerHTML={{ __html: mobileBefore }} />
+            <StraddleExplorer config={explorerConfig} embedded />
+            <div className="bd-prose" dangerouslySetInnerHTML={{ __html: mobileAfter }} />
+          </div>
+        ) : mobileHasExplorer && isNews830 ? (
+          <div className="bd-show-mobile">
+            <div className="bd-prose" dangerouslySetInnerHTML={{ __html: mobileBefore }} />
+            <News830Explorer dataUrl={news830Config!.dataUrl} pdfTitle={news830Config!.pdfTitle} />
+            <div className="bd-prose" dangerouslySetInnerHTML={{ __html: mobileAfter }} />
+          </div>
+        ) : (
+          <div
+            className="bd-prose bd-show-mobile"
+            dangerouslySetInnerHTML={{ __html: entry.mobileHtml }}
+          />
+        )
       ) : null}
 
       <div className={entry.mobileHtml ? 'bd-show-desktop' : undefined}>
