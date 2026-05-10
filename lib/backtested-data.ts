@@ -23,6 +23,7 @@ export interface Entry extends EntryMeta {
 export interface EntryDetail extends EntryMeta {
   slug: string;
   explanationHtml: string;
+  mobileHtml?: string;
 }
 
 export function getAllEntries(): Entry[] {
@@ -59,5 +60,10 @@ export function getEntry(slug: string): EntryDetail | null {
     ? marked.parse(fs.readFileSync(mdPath, 'utf-8')) as string
     : '';
 
-  return { slug, ...meta, explanationHtml };
+  const mobilePath = path.join(entryDir, 'mobile.md');
+  const mobileHtml = fs.existsSync(mobilePath)
+    ? (marked.parse(fs.readFileSync(mobilePath, 'utf-8')) as string)
+    : undefined;
+
+  return { slug, ...meta, explanationHtml, mobileHtml };
 }

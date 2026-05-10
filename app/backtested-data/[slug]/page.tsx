@@ -88,36 +88,45 @@ export default async function BacktestedDetail({ params }: PageProps) {
 
       <p className="bd-article-lede">{entry.excerpt}</p>
 
-      {explorerConfig ? (
-        <>
-          <div
-            className="bd-prose"
-            dangerouslySetInnerHTML={{ __html: htmlBefore }}
-          />
-          <StraddleExplorer config={explorerConfig} embedded />
-          <div
-            className="bd-prose"
-            dangerouslySetInnerHTML={{ __html: htmlAfter }}
-          />
-        </>
-      ) : isNews830 ? (
-        <>
-          <div
-            className="bd-prose"
-            dangerouslySetInnerHTML={{ __html: htmlBefore }}
-          />
-          <News830Explorer dataUrl={news830Config!.dataUrl} pdfTitle={news830Config!.pdfTitle} />
-          <div
-            className="bd-prose"
-            dangerouslySetInnerHTML={{ __html: htmlAfter }}
-          />
-        </>
-      ) : (
+      {entry.mobileHtml ? (
         <div
-          className="bd-prose"
-          dangerouslySetInnerHTML={{ __html: entry.explanationHtml }}
+          className="bd-prose bd-show-mobile"
+          dangerouslySetInnerHTML={{ __html: entry.mobileHtml }}
         />
-      )}
+      ) : null}
+
+      <div className={entry.mobileHtml ? 'bd-show-desktop' : undefined}>
+        {explorerConfig ? (
+          <>
+            <div
+              className="bd-prose"
+              dangerouslySetInnerHTML={{ __html: htmlBefore }}
+            />
+            <StraddleExplorer config={explorerConfig} embedded />
+            <div
+              className="bd-prose"
+              dangerouslySetInnerHTML={{ __html: htmlAfter }}
+            />
+          </>
+        ) : isNews830 ? (
+          <>
+            <div
+              className="bd-prose"
+              dangerouslySetInnerHTML={{ __html: htmlBefore }}
+            />
+            <News830Explorer dataUrl={news830Config!.dataUrl} pdfTitle={news830Config!.pdfTitle} />
+            <div
+              className="bd-prose"
+              dangerouslySetInnerHTML={{ __html: htmlAfter }}
+            />
+          </>
+        ) : (
+          <div
+            className="bd-prose"
+            dangerouslySetInnerHTML={{ __html: entry.explanationHtml }}
+          />
+        )}
+      </div>
 
       <div className="bd-ctas">
         {entry.category === 'tradingview' && entry.tradingviewUrl ? (
