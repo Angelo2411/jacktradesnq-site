@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getAllEntries, getEntry } from '@/lib/backtested-data';
 import { IconArrowUpRight } from '../_components/icons';
 import StraddleExplorer, { type ExplorerConfig } from '../_components/StraddleExplorer';
+import News830Explorer from '../_components/News830Explorer';
 
 const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
   cpi: {
@@ -25,7 +26,7 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
   },
 };
 
-const EXPLORER_RE = /<div data-explorer="(cpi|nfp)">\s*<\/div>/i;
+const EXPLORER_RE = /<div data-explorer="(cpi|nfp|news-830-model)">\s*<\/div>/i;
 
 const catLabel = (c: string) => (c === 'tradingview' ? 'TRADINGVIEW' : 'DATA');
 
@@ -54,7 +55,8 @@ export default async function BacktestedDetail({ params }: PageProps) {
   const explorerKey = match ? match[1].toLowerCase() : null;
   const explorerConfig =
     explorerKey && EXPLORER_CONFIGS[explorerKey] ? EXPLORER_CONFIGS[explorerKey] : null;
-  const [htmlBefore, htmlAfter] = explorerConfig
+  const isNews830 = explorerKey === 'news-830-model';
+  const [htmlBefore, htmlAfter] = (explorerConfig || isNews830)
     ? entry.explanationHtml.split(EXPLORER_RE).filter((_, i) => i !== 1)
     : [entry.explanationHtml, ''];
 
@@ -87,6 +89,18 @@ export default async function BacktestedDetail({ params }: PageProps) {
             dangerouslySetInnerHTML={{ __html: htmlBefore }}
           />
           <StraddleExplorer config={explorerConfig} embedded />
+          <div
+            className="bd-prose"
+            dangerouslySetInnerHTML={{ __html: htmlAfter }}
+          />
+        </>
+      ) : isNews830 ? (
+        <>
+          <div
+            className="bd-prose"
+            dangerouslySetInnerHTML={{ __html: htmlBefore }}
+          />
+          <News830Explorer />
           <div
             className="bd-prose"
             dangerouslySetInnerHTML={{ __html: htmlAfter }}

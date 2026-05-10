@@ -48,3 +48,5 @@ NFP is a high-correlation event — NQ and ES move in lockstep. When only NQ tak
 ### Disclaimer
 
 Backtest on Databento NQ continuous (NQ.c.0). Results vary by data feed (TV continuous adjustment differs from Databento). Sample size 28 trades is statistically thin; treat as indicative not predictive.
+
+<div data-explorer="news-830-model"></div>
