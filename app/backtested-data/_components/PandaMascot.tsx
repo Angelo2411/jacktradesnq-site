@@ -5,7 +5,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type PandaState =
-  | 'idle' | 'walk' | 'pause' | 'eat' | 'sleep' | 'wave' | 'yawn' | 'surprised'
+  | 'idle' | 'idle_face' | 'walk' | 'pause' | 'eat' | 'sleep' | 'wave' | 'yawn' | 'surprised'
   | 'held' | 'flying' | 'landing' | 'walking-back' | 'petting';
 
 interface Action {
@@ -35,6 +35,7 @@ const WALK_FRAMES = ['walk1', 'walk2', 'walk3', 'walk4'] as const;
 
 const STATE_TO_IMG: Record<PandaState, string> = {
   idle:          'idle',
+  idle_face:     'idle_face',
   walk:          'idle',
   pause:         'idle',
   eat:           'eat',
@@ -50,13 +51,14 @@ const STATE_TO_IMG: Record<PandaState, string> = {
 };
 
 const FULL_ACTIONS: Action[] = [
-  { type: 'idle',  weight: 30, minMs: 3000, maxMs: 8000 },
-  { type: 'walk',  weight: 25, minMs: 3000, maxMs: 7000 },
-  { type: 'pause', weight: 15, minMs: 1000, maxMs: 3000 },
-  { type: 'eat',   weight: 10, minMs: 2000, maxMs: 4000 },
-  { type: 'sleep', weight: 10, minMs: 4000, maxMs: 8000 },
-  { type: 'wave',  weight:  5, minMs: 1500, maxMs: 2500 },
-  { type: 'yawn',  weight:  5, minMs: 1500, maxMs: 2500 },
+  { type: 'idle',      weight: 30, minMs: 3000, maxMs: 8000 },
+  { type: 'walk',      weight: 25, minMs: 3000, maxMs: 7000 },
+  { type: 'pause',     weight: 15, minMs: 1000, maxMs: 3000 },
+  { type: 'eat',       weight: 10, minMs: 2000, maxMs: 4000 },
+  { type: 'sleep',     weight: 10, minMs: 4000, maxMs: 8000 },
+  { type: 'wave',      weight:  5, minMs: 1500, maxMs: 2500 },
+  { type: 'yawn',      weight:  5, minMs: 1500, maxMs: 2500 },
+  { type: 'idle_face', weight:  5, minMs: 1500, maxMs: 2800 },
 ];
 
 const REDUCED_ACTIONS: Action[] = [
