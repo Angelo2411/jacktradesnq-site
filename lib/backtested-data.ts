@@ -13,6 +13,7 @@ export interface EntryMeta {
   excerpt: string;
   tradingviewUrl: string;
   pdfFile: string;
+  group?: string;
 }
 
 export interface Entry extends EntryMeta {

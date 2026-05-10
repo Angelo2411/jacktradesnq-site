@@ -160,7 +160,7 @@ export default function News830Explorer() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch('/data/news-830-model.json')
+    fetch('/data/nfp-ifvg-smt.json')
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json() as Promise<News830Data>;

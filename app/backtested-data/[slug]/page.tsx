@@ -26,7 +26,7 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
   },
 };
 
-const EXPLORER_RE = /<div data-explorer="(cpi|nfp|news-830-model)">\s*<\/div>/i;
+const EXPLORER_RE = /<div data-explorer="(cpi|nfp|nfp-ifvg-smt)">\s*<\/div>/i;
 
 const catLabel = (c: string) => (c === 'tradingview' ? 'TRADINGVIEW' : 'DATA');
 
@@ -55,7 +55,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
   const explorerKey = match ? match[1].toLowerCase() : null;
   const explorerConfig =
     explorerKey && EXPLORER_CONFIGS[explorerKey] ? EXPLORER_CONFIGS[explorerKey] : null;
-  const isNews830 = explorerKey === 'news-830-model';
+  const isNews830 = explorerKey === 'nfp-ifvg-smt';
   const [htmlBefore, htmlAfter] = (explorerConfig || isNews830)
     ? entry.explanationHtml.split(EXPLORER_RE).filter((_, i) => i !== 1)
     : [entry.explanationHtml, ''];
