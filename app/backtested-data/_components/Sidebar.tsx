@@ -35,7 +35,7 @@ function SideGroup({
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
       >
-        <span className="bd-section-hd bd-group-label">{label}</span>
+        <span className="bd-group-label">{label}</span>
         <IconChevDown className="chev" />
       </button>
       <div className="bd-side-list" style={{ maxHeight: maxH }}>
