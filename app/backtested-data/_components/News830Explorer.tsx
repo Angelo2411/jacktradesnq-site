@@ -145,7 +145,12 @@ const SIDE_OPTIONS: SegOption<Side>[] = [
 const YEAR_OPTIONS = ['ALL', '2022', '2023', '2024', '2025', '2026'] as const;
 type Year = (typeof YEAR_OPTIONS)[number];
 
-export default function News830Explorer() {
+interface News830ExplorerProps {
+  dataUrl: string;
+  pdfTitle: string;
+}
+
+export default function News830Explorer({ dataUrl, pdfTitle }: News830ExplorerProps) {
   const [data, setData]       = useState<News830Data | null>(null);
   const [loading, setLoading] = useState(true);
   const [usingMock, setUsingMock] = useState(false);
@@ -160,7 +165,7 @@ export default function News830Explorer() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch('/data/nfp-ifvg-smt.json')
+    fetch(dataUrl)
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json() as Promise<News830Data>;
