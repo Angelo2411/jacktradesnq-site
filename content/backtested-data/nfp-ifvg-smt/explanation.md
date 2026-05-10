@@ -1,5 +1,3 @@
-## 8:30 News Model — NFP IFVG + ES SMT
-
 ICT post-news IFVG entry on 8:30 ET NFP releases, with optional **ES SMT confirmation filter**. Tested 2019 → 2026 on MNQ 1m.
 
 ### Setup Logic
@@ -44,7 +42,7 @@ Baseline alone has no edge (PF 0.92, slight loss). The ES SMT filter is what car
 
 ### Why It Works
 
-NFP is a high-correlation event — NQ and ES move in lockstep. When only NQ takes the level and ES refuses, the move is one-sided liquidity grab on NQ alone. ES not following = no broad index momentum = fakeout high probability.
+NQ and ES are highly correlated indices. When NQ reaches the target side but ES doesn't follow during the same window, the move is a one-sided drift — likely a fakeout for the broader market. Filtering for ES confirmation keeps only setups where both indices participate in the reversal.
 
 ### Disclaimer
 
