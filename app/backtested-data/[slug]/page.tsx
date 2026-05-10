@@ -86,7 +86,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
         {entry.title}<span className="bd-dot">.</span>
       </h1>
 
-      <p className="bd-article-lede">{entry.excerpt}</p>
+      {entry.excerpt ? <p className="bd-article-lede">{entry.excerpt}</p> : null}
 
       {explorerConfig ? (
         <>
