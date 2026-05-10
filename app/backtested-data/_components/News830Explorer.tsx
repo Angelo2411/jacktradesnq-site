@@ -142,7 +142,7 @@ const SIDE_OPTIONS: SegOption<Side>[] = [
   { value: 'SHORT', label: 'Short' },
 ];
 
-const YEAR_OPTIONS = ['ALL', '2022', '2023', '2024', '2025', '2026'] as const;
+const YEAR_OPTIONS = ['ALL', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'] as const;
 type Year = (typeof YEAR_OPTIONS)[number];
 
 interface News830ExplorerProps {
@@ -381,7 +381,7 @@ export default function News830Explorer({ dataUrl, pdfTitle }: News830ExplorerPr
       const variants: Variant[] = ['no_be', 'be_50', 'tp1_be'];
       const smtValues: [boolean, string][] = [[false, 'SMT Off'], [true, 'SMT On']];
       const sides: Side[] = ['BOTH', 'LONG', 'SHORT'];
-      const years = ['2022', '2023', '2024', '2025', '2026', 'ALL'];
+      const years = ['2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026', 'ALL'];
 
       let isFirst = true;
       for (const v of variants) {
