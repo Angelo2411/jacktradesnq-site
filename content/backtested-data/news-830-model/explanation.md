@@ -1,15 +1,15 @@
 ## 8:30 News Model — NFP IFVG + ES SMT
 
-ICT post-news IFVG entry on the 8:30 ET NFP releases, with **ES SMT confirmation filter**. Sample: **28 NFP releases** (2022-09 → 2026-04, BLS-confirmed dates), NQ Databento continuous (NQ.c.0).
+ICT post-news IFVG entry on the 8:30 ET NFP releases, with optional **ES SMT confirmation filter**. Window: 2022-09 → 2026-04, BLS-confirmed dates, NQ continuous (Databento).
 
 ### Setup Logic
 
-1. **Pre-news range** = high/low of 5 bars before 8:30 ET
+1. **Pre-news range** = high/low of the 5 bars before 8:30 ET
 2. **Sweep** = first bar 8:30→11:00 ET that breaks pre-high or pre-low
-3. **Side** = opposite of sweep (sweep UP → SHORT, sweep DOWN → LONG)
+3. **Side** = opposite of sweep (sweep UP → SHORT setup, sweep DOWN → LONG setup)
 4. **Entry** = bar where price closes back inside (Inversion FVG break), filled at close
-5. **SL** = sweep price ± 1 tick / **TP** = opposite side of pre-news range
-6. **No BE move** — BE@50% killed the strategy on this asymmetric R:R (-71 pts drag)
+5. **SL** = 1 tick beyond the sweep extreme — for SHORT, 1 tick above sweep high; for LONG, 1 tick below sweep low
+6. **TP** = opposite side of the pre-news range (SHORT targets pre-low, LONG targets pre-high)
 
 ### ES SMT Confirmation Filter
 
@@ -47,6 +47,6 @@ NFP is a high-correlation event — NQ and ES move in lockstep. When only NQ tak
 
 ### Disclaimer
 
-Backtest on Databento NQ continuous (NQ.c.0). Results vary by data feed (TV continuous adjustment differs from Databento). Sample size 28 trades is statistically thin; treat as indicative not predictive.
+Backtest on NQ continuous (Databento). Results vary by data feed (TV continuous adjustment differs from Databento). Sample size 28 trades is statistically thin; treat as indicative not predictive.
 
 <div data-explorer="news-830-model"></div>

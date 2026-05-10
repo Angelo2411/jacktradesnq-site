@@ -40,7 +40,7 @@ interface News830Data {
 
 const MOCK: News830Data = {
   meta: {
-    source: 'Databento NQ.c.0 + ES.c.0',
+    source: 'NQ + ES continuous (Databento)',
     date_from: '2022-09-01',
     date_to: '2026-05-09',
     n_events_total: 46,
@@ -63,7 +63,7 @@ const MOCK: News830Data = {
 
 const VARIANT_LABELS: Record<string, string> = {
   no_be:   'No BE',
-  be_50:   'BE@50%',
+  be_50:   'BE 50%',
   tp1_be:  'TP1 50% + BE',
 };
 
@@ -124,13 +124,16 @@ function SegControl<T extends string | boolean>({
    Main widget
    ───────────────────────────────────────────────────────────────────────── */
 
-const VARIANT_OPTIONS: SegOption<'no_be' | 'be_50' | 'tp1_be'>[] = [
+type Variant = 'no_be' | 'be_50' | 'tp1_be';
+type Side = 'BOTH' | 'LONG' | 'SHORT';
+
+const VARIANT_OPTIONS: SegOption<Variant>[] = [
   { value: 'no_be',  label: 'No BE' },
-  { value: 'be_50',  label: 'BE@50%' },
+  { value: 'be_50',  label: 'BE 50%' },
   { value: 'tp1_be', label: 'TP1 50% + BE' },
 ];
 
-const SIDE_OPTIONS: SegOption<'BOTH' | 'LONG' | 'SHORT'>[] = [
+const SIDE_OPTIONS: SegOption<Side>[] = [
   { value: 'BOTH',  label: 'Both' },
   { value: 'LONG',  label: 'Long' },
   { value: 'SHORT', label: 'Short' },
@@ -427,55 +430,57 @@ export default function News830Explorer() {
       </div>
 
       {/* ── filters ───────────────────────────────────────────────────── */}
-      <div className="n8-filter-grid">
-        <div className="n8-filter-row">
-          <span className="n8-filter-lbl">Variant</span>
-          <SegControl
-            options={VARIANT_OPTIONS}
-            value={variant}
-            onChange={(v) => {
-              setVariant(v);
-            }}
-          />
-        </div>
-
-        <div className="n8-filter-row">
-          <span className="n8-filter-lbl">ES SMT confirmation</span>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={smt}
-            aria-label="ES SMT confirmation"
-            className={`n8-switch${smt ? ' n8-switch--on' : ''}`}
-            onClick={() => setSmt(!smt)}
-          >
-            <span className="n8-switch-thumb" />
-          </button>
-        </div>
-
-        <div className="n8-filter-row">
-          <span className="n8-filter-lbl">Side</span>
-          <SegControl
-            options={SIDE_OPTIONS}
-            value={side}
-            onChange={setSide}
-          />
-        </div>
-
-        <div className="n8-filter-row">
-          <span className="n8-filter-lbl">Year</span>
+      <div className="bd-filters">
+        <label className="bd-filter">
+          <span className="bd-filter-lbl">Variant</span>
           <select
-            className="n8-year-select"
+            className="bd-select"
+            value={variant}
+            onChange={(e) => setVariant(e.target.value as Variant)}
+          >
+            {VARIANT_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
+        </label>
+
+        <label className="bd-filter">
+          <span className="bd-filter-lbl">ES SMT</span>
+          <select
+            className="bd-select"
+            value={smt ? 'on' : 'off'}
+            onChange={(e) => setSmt(e.target.value === 'on')}
+          >
+            <option value="off">Off</option>
+            <option value="on">On</option>
+          </select>
+        </label>
+
+        <label className="bd-filter">
+          <span className="bd-filter-lbl">Side</span>
+          <select
+            className="bd-select"
+            value={side}
+            onChange={(e) => setSide(e.target.value as Side)}
+          >
+            {SIDE_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
+        </label>
+
+        <label className="bd-filter">
+          <span className="bd-filter-lbl">Year</span>
+          <select
+            className="bd-select"
             value={year}
             onChange={(e) => setYear(e.target.value as Year)}
           >
             {YEAR_OPTIONS.map((y) => (
-              <option key={y} value={y}>
-                {y === 'ALL' ? 'All years' : y}
-              </option>
+              <option key={y} value={y}>{y === 'ALL' ? 'All years' : y}</option>
             ))}
           </select>
-        </div>
+        </label>
       </div>
 
       {/* ── active filter summary ──────────────────────────────────────── */}
@@ -525,7 +530,7 @@ export default function News830Explorer() {
       )}
 
       <p className="n8-disclaimer">
-        Backtest on Databento NQ continuous (NQ.c.0). Past performance does not
+        Backtest on NQ continuous (Databento). Past performance does not
         predict future results. Sample sizes are small — treat as indicative
         only, not financial advice.
       </p>
