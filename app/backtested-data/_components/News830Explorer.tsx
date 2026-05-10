@@ -251,32 +251,34 @@ export default function News830Explorer() {
         .n8-seg {
           display: inline-flex;
           border: 1px solid var(--c-border);
-          border-radius: 6px;
-          overflow: hidden;
+          border-radius: 999px;
+          padding: 3px;
           background: var(--c-surface);
+          gap: 2px;
         }
         .n8-seg-btn {
           flex: 1;
-          padding: 6px 10px;
+          padding: 7px 14px;
           font-family: var(--f-sans);
           font-size: 0.8rem;
           font-weight: 500;
           color: var(--c-muted);
           background: transparent;
           border: none;
-          border-right: 1px solid var(--c-border);
+          border-radius: 999px;
           cursor: pointer;
-          transition: background 140ms ease, color 140ms ease;
+          transition: background 180ms ease, color 180ms ease, box-shadow 180ms ease;
           white-space: nowrap;
         }
-        .n8-seg-btn:last-child { border-right: none; }
-        .n8-seg-btn:hover { background: var(--c-surface-hover); color: var(--c-ink); }
+        .n8-seg-btn:hover { color: var(--c-ink); }
         .n8-seg-btn--active {
-          background: var(--c-accent);
-          color: oklch(0.18 0.01 60);
+          background: oklch(0.99 0.005 90);
+          color: var(--c-ink);
           font-weight: 700;
+          box-shadow: 0 1px 2px oklch(0.18 0.01 60 / 0.10), 0 2px 6px oklch(0.18 0.01 60 / 0.06);
         }
-        .n8-seg-btn--active:hover { background: var(--c-accent-deep); }
+        .n8-seg-btn--active:hover { background: oklch(0.99 0.005 90); }
+        .n8-seg-btn:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
         .n8-switch {
           position: relative;
           width: 44px;
