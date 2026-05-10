@@ -277,30 +277,33 @@ export default function News830Explorer() {
           font-weight: 700;
         }
         .n8-seg-btn--active:hover { background: var(--c-accent-deep); }
-        .n8-smt-toggle {
-          display: inline-flex;
-          border: 1px solid var(--c-border);
+        .n8-switch {
+          position: relative;
+          width: 44px;
+          height: 24px;
           border-radius: 999px;
-          overflow: hidden;
+          border: 1px solid var(--c-border);
           background: var(--c-surface);
-        }
-        .n8-smt-btn {
-          padding: 6px 16px;
-          font-family: var(--f-sans);
-          font-size: 0.8rem;
-          font-weight: 500;
-          color: var(--c-muted);
-          background: transparent;
-          border: none;
           cursor: pointer;
-          transition: background 140ms ease, color 140ms ease;
+          padding: 0;
+          transition: background 180ms ease, border-color 180ms ease;
         }
-        .n8-smt-btn:hover { background: var(--c-surface-hover); color: var(--c-ink); }
-        .n8-smt-btn--active {
-          background: var(--c-accent);
-          color: oklch(0.18 0.01 60);
-          font-weight: 700;
+        .n8-switch:hover { background: var(--c-surface-hover); }
+        .n8-switch--on { background: var(--c-accent); border-color: var(--c-accent); }
+        .n8-switch--on:hover { background: var(--c-accent-deep); border-color: var(--c-accent-deep); }
+        .n8-switch-thumb {
+          position: absolute;
+          top: 2px;
+          left: 2px;
+          width: 18px;
+          height: 18px;
+          border-radius: 999px;
+          background: oklch(0.99 0.005 90);
+          box-shadow: 0 1px 2px oklch(0.18 0.01 60 / 0.20);
+          transition: transform 180ms cubic-bezier(0.34, 1.4, 0.64, 1);
         }
+        .n8-switch--on .n8-switch-thumb { transform: translateX(20px); }
+        .n8-switch:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
         .n8-year-select {
           font: inherit;
           font-family: var(--f-sans);
@@ -436,24 +439,16 @@ export default function News830Explorer() {
 
         <div className="n8-filter-row">
           <span className="n8-filter-lbl">ES SMT confirmation</span>
-          <div className="n8-smt-toggle" role="group">
-            <button
-              type="button"
-              className={`n8-smt-btn${!smt ? ' n8-smt-btn--active' : ''}`}
-              onClick={() => setSmt(false)}
-              aria-pressed={!smt}
-            >
-              Off
-            </button>
-            <button
-              type="button"
-              className={`n8-smt-btn${smt ? ' n8-smt-btn--active' : ''}`}
-              onClick={() => setSmt(true)}
-              aria-pressed={smt}
-            >
-              On
-            </button>
-          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={smt}
+            aria-label="ES SMT confirmation"
+            className={`n8-switch${smt ? ' n8-switch--on' : ''}`}
+            onClick={() => setSmt(!smt)}
+          >
+            <span className="n8-switch-thumb" />
+          </button>
         </div>
 
         <div className="n8-filter-row">

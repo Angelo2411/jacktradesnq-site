@@ -7,13 +7,13 @@
 - CSS pur dans app/globals.css (tokens OKLCH + import Fontshare)
 - Animations : Framer Motion (reveal) + GSAP ScrollTrigger (parallax scroll)
 - Déploiement Cloudflare Pages via GitHub Actions (npm run build → deploy out/)
-- Client Components isolés pour JS interactif (GhibliBackground, HeroReveal)
+- Client Components isolés pour JS interactif (prairieBackground, HeroReveal)
 - jsPDF + jspdf-autotable pour export PDF côté client
 - `marked` pour parser les explanation.md backtested-data
 
 ## Direction esthétique déclarée (ne PAS dévier)
-**Ghibli-organic editorial** — paysage prairie peint main + typographie magazine.
-- Mood : Kazuo Oga, Studio Ghibli backgrounds, aquarelle chaude
+**warm-editorial** — paysage prairie peint main + typographie magazine.
+- Mood : Kazuo Oga, warm hand-painted backgrounds, aquarelle chaude
 - Ton : chill, nostalgique, zéro agressif corporate
 - Point mémorable : duo image peinte + serif éditorial chaud
 
@@ -71,7 +71,7 @@ Tout en anglais SAUF footer légal FR (mentions légales + disclaimer AMF D.321-
 ## Features livrées (DO NOT re-implement)
 
 ### Site core
-- Home page (app/page.tsx) avec hero Ghibli, section backtested-data card full-width (commit `0dd0319`)
+- Home page (app/page.tsx) avec hero prairie, section backtested-data card full-width (commit `0dd0319`)
 - Layout global (app/layout.tsx) : nav + hamburger mobile wired (commit `3fac707`), theme-color + apple-touch-icon (commit `b591231`)
 - OG image 1200x630 (public/og-image.png, commit `6854b17`)
 - Fonts self-hosted Fraunces + Satoshi (public/fonts/, commit `67af186`)
