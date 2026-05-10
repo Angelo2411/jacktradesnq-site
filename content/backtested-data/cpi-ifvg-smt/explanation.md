@@ -1,52 +1,28 @@
-## CPI IFVG + ES SMT — 8:30 News Model
-
-ICT post-news IFVG entry on 8:30 ET CPI releases, with optional **ES SMT confirmation filter**. Window: 2022-09 → 2026-04, official US Bureau of Labor Statistics release dates, NQ continuous (Databento).
+ICT post-news IFVG entry on 8:30 ET CPI releases, with optional **ES SMT confirmation filter**. Tested 2019 → 2026 on MNQ 1m.
 
 ### Setup Logic
 
-1. **Pre-news range** = high/low of the 5 bars before 8:30 ET (the box price was trading in just before the news drops)
-2. **Sweep** = first 1-minute bar between 8:30 and 11:00 ET where price pokes ABOVE the pre-news high, or BELOW the pre-news low. This is the initial spike reaction to the news, grabbing liquidity (stops) from one side of the pre-news box.
-3. **Side** = trade in the OPPOSITE direction of the sweep. Sweep UP (high taken) → SHORT setup. Sweep DOWN (low taken) → LONG setup. The logic: the first move is usually a fakeout, the real move is the reverse.
-4. **Entry** = bar where price closes back INSIDE the pre-news range (Inversion FVG break — confirms the fakeout). Fill at the close of that bar.
-5. **SL** = 1 tick beyond the sweep extreme (for SHORT, 1 tick above the sweep high; for LONG, 1 tick below the sweep low)
-6. **TP** = opposite side of the pre-news range (SHORT targets pre-low, LONG targets pre-high)
+Mark out the data high/low (range price was trading in right before 8:30 ET). Wait for price to sweep one side, then wait for an FVG to form on the rejection. Entry on the IFVG break (close back inside the range). SL on the sweep extreme. TP on the opposite liquidity.
 
 ### ES SMT Confirmation Filter
 
-Take the trade **only if ES (E-mini S&P 500) also reaches its target side** during the same 8:30→11:00 window.
+A trade is kept **only if ES (E-mini S&P 500) also reaches the same target** within 2h30 after the release.
 
-- NQ SHORT (sweep UP) → ES must sweep its pre-news low at some point
-- NQ LONG (sweep DOWN) → ES must sweep its pre-news high
+- NQ SHORT (sweep UP) → ES must sweep its low
+- NQ LONG (sweep DOWN) → ES must sweep its high
 
-If ES doesn't follow → fakeout, skip the trade.
+If ES never reaches its target by 11:00 ET → trade was a one-sided NQ move, excluded from the SMT-filtered stats.
 
-### Year-by-Year — Strategy Performance
+### Performance — MNQ 7y
 
-| Year | Trades | W | L | WR | PF | Net (NQ pts) |
-|------|--------|---|---|-----|------|--------------|
-| **Baseline (no SMT filter)** |  |  |  |  |  |  |
-| 2022 | 3  | 1 | 2 | 33% | 0.36 | -81.5  |
-| 2023 | 10 | 4 | 6 | 40% | 0.99 | -1.25  |
-| 2024 | 12 | 4 | 8 | 33% | 1.01 | +1.0   |
-| 2025 | 10 | 4 | 6 | 40% | 1.81 | +123.5 |
-| 2026 | 4  | 2 | 2 | 50% | 6.17 | +140.8 |
-| **Total** | **39** | **15** | **24** | **38%** | **1.30** | **+182.5** |
-| **+ ES SMT confirmation** |  |  |  |  |  |  |
-| 2022 | 1  | 1 | 0 | 100% | —    | +45.3  |
-| 2023 | 10 | 4 | 6 | 40%  | 0.99 | -1.25  |
-| 2024 | 9  | 4 | 5 | 44%  | 2.13 | +86.0  |
-| 2025 | 8  | 3 | 5 | 38%  | 2.16 | +79.75 |
-| 2026 | 4  | 2 | 2 | 50%  | 6.17 | +140.8 |
-| **Total** | **32** | **14** | **18** | **44%** | **2.08** | **+350.5** |
-
-The ES SMT filter cut **7 setups (2022: 2, 2024: 3, 2025: 2)** — PF moves from 1.30 → 2.08, net from +182.5 to +350.5 NQ points on 85 CPI events.
+Without SMT: 75 trades, PF 0.98, net -13 MNQ pts (no edge). With SMT: 51 trades remain, PF 2.13, net +454 MNQ pts. Year-by-year breakdown in the explorer below + Full PDF download.
 
 ### Why It Works
 
-CPI is a high-correlation event — NQ and ES move in lockstep. When only NQ takes the level and ES refuses, the move is a one-sided liquidity grab on NQ alone. ES not following = no broad index momentum = fakeout high probability.
+NQ and ES are highly correlated indices. When NQ reaches the target side but ES doesn't follow during the same window, the move is a one-sided drift — likely a fakeout for the broader market. Filtering for ES confirmation keeps only setups where both indices participate in the reversal.
 
 ### Disclaimer
 
-Backtest on NQ continuous (Databento). Results vary by data feed (TV continuous adjustment differs from Databento). Sample size 39 trades is statistically thin; treat as indicative not predictive.
+Sample size 51 SMT-filtered trades is statistically thin; treat as indicative not predictive. AI-assisted analysis — not financial advice.
 
 <div data-explorer="cpi-ifvg-smt"></div>
