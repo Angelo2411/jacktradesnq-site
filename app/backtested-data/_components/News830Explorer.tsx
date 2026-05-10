@@ -368,19 +368,15 @@ export default function News830Explorer() {
       const sides: Side[] = ['BOTH', 'LONG', 'SHORT'];
       const years = ['2022', '2023', '2024', '2025', '2026', 'ALL'];
 
-      let firstTable = true;
-
+      // Each variant×SMT section gets its own page (cover stays alone on page 1)
       for (const v of variants) {
         for (const [smtVal, smtLabel] of smtValues) {
-          if (!firstTable) {
-            doc.addPage();
-          }
-          firstTable = false;
+          doc.addPage();
 
           doc.setFont('times', 'bold');
-          doc.setFontSize(16);
+          doc.setFontSize(18);
           doc.setTextColor(20);
-          doc.text(`${VARIANT_LABELS[v]} — ${smtLabel}`, 40, 56);
+          doc.text(`${VARIANT_LABELS[v]} — ${smtLabel}`, 40, 64);
 
           const head = [['Year', 'Side', 'N', 'W', 'L', 'BE', 'WR', 'PF', 'Net (pts)']];
           const body: string[][] = [];
@@ -409,7 +405,7 @@ export default function News830Explorer() {
           autoTable(doc, {
             head,
             body,
-            startY: 72,
+            startY: 92,
             styles: { font: 'helvetica', fontSize: 9, cellPadding: 4 },
             headStyles: { fillColor: [30, 30, 30], textColor: 255, fontStyle: 'bold' },
             alternateRowStyles: { fillColor: [248, 246, 240] },
