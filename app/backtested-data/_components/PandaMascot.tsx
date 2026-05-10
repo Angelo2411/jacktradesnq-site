@@ -31,7 +31,7 @@ interface PhysicsState {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const WALK_FRAMES = ['walk1', 'walk2', 'walk3', 'walk4'] as const;
+const WALK_FRAMES = ['walk1', 'walk2', 'walk3', 'walk4', 'walk5', 'walk6', 'walk7', 'walk8'] as const;
 
 const STATE_TO_IMG: Record<PandaState, string> = {
   idle:          'idle',
