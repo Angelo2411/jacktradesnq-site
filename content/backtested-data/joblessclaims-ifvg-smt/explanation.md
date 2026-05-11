@@ -1,4 +1,4 @@
-ICT post-news IFVG entry on 8:30 ET CPI releases, with optional **ES SMT confirmation filter**. Tested 2016 → 2026 on NQ 1m.
+ICT post-news IFVG entry on 8:30 ET Jobless Claims releases, with optional **ES SMT confirmation filter**. Tested 2016 → 2026 on NQ 1m.
 
 ### Setup Logic
 
@@ -17,7 +17,7 @@ If ES never reaches its target by 11:00 ET → trade was a one-sided NQ move, ex
 
 ### Performance — NQ 10y
 
-Without SMT: 54 trades, PF 0.60, net -338 NQ pts. With SMT: 32 trades remain, PF 1.54, net +175 NQ pts. Year-by-year breakdown in the explorer below + Full PDF download.
+Without SMT: 159 trades, PF 1.00, net +1 NQ pts. With SMT: 122 trades remain, PF 2.35, net +406 NQ pts. Year-by-year breakdown in the explorer below + Full PDF download.
 
 ### Why It Works
 
@@ -25,6 +25,6 @@ NQ and ES are highly correlated indices. When NQ reaches the target side but ES 
 
 ### Disclaimer
 
-Sample size 32 SMT-filtered trades is statistically thin; treat as indicative not predictive. AI-assisted analysis — not financial advice.
+Sample size 122 SMT-filtered trades is statistically thin; treat as indicative not predictive. AI-assisted analysis — not financial advice.
 
-<div data-explorer="cpi-ifvg-smt"></div>
+<div data-explorer="joblessclaims-ifvg-smt"></div>
