@@ -1111,7 +1111,7 @@ a { color: inherit; text-decoration: none; }
 }
 .bd-filters {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: var(--s-3);
   margin: var(--s-6) 0 var(--s-5);
   padding: var(--s-4);
@@ -1255,6 +1255,7 @@ a { color: inherit; text-decoration: none; }
 }
 @media (max-width: 720px) {
   .bd-filters { grid-template-columns: repeat(2, 1fr); }
+  .bd-view-toggle { height: 36px; }
   .bd-stat-grid { grid-template-columns: repeat(2, 1fr); }
   .bd-stat-card-num { font-size: 1.4rem; }
   .bd-stats { flex-wrap: wrap; row-gap: var(--s-3); gap: var(--s-4); }
@@ -1262,4 +1263,68 @@ a { color: inherit; text-decoration: none; }
   .bd-entry-excerpt { display: none; }
   .bd-hub-sub { font-size: 0.95rem; max-width: 100%; }
   .bd-entry { margin: 0; padding-left: 0; padding-right: 0; }
+}
+
+/* Straddle ranking */
+.bd-view-toggle {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--c-border);
+  border-radius: 4px;
+  overflow: hidden;
+  height: 38px;
+}
+.bd-view-btn {
+  flex: 1;
+  font-family: var(--f-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--c-muted);
+  background: var(--c-surface);
+  border: 0;
+  padding: 0 12px;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+  white-space: nowrap;
+}
+.bd-view-btn + .bd-view-btn {
+  border-left: 1px solid var(--c-border);
+}
+.bd-view-btn:hover {
+  background: var(--c-surface-hover);
+  color: var(--c-ink);
+}
+.bd-view-btn-active {
+  background: var(--c-accent);
+  color: var(--c-surface);
+  font-weight: 700;
+}
+.bd-ranking-wrap {
+  margin-bottom: var(--s-5);
+}
+.bd-ranking-caption {
+  font-family: var(--f-sans);
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--c-muted);
+  margin-bottom: var(--s-2);
+}
+.bd-ranking-top3 {
+  border-left: 3px solid var(--c-accent);
+}
+.bd-ranking-top3 td:first-child {
+  padding-left: 13px;
+}
+.bd-ranking-rank {
+  font-family: var(--f-serif);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--c-ink);
+  text-align: left !important;
+}
+.bd-ranking-pos {
+  color: oklch(0.45 0.14 145);
+}
+.bd-ranking-neg {
+  color: oklch(0.45 0.18 25);
 }

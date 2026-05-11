@@ -48,6 +48,7 @@ export interface ExplorerConfig {
 
 const ALL = 'ALL' as const;
 type Side = 'BOTH' | 'LONG' | 'SHORT';
+type ViewMode = 'TABLE' | 'RANKING';
 
 function uniqSorted<T>(arr: T[]): T[] {
   return Array.from(new Set(arr)).sort((a, b) => {
@@ -82,6 +83,7 @@ export default function StraddleExplorer({
   const [offset, setOffset] = useState<string>(ALL);
   const [tp, setTp] = useState<string>(ALL);
   const [side, setSide] = useState<Side>('BOTH');
+  const [view, setView] = useState<ViewMode>('TABLE');
   const [generating, setGenerating] = useState(false);
 
   useEffect(() => {
@@ -190,6 +192,68 @@ export default function StraddleExplorer({
       noFill,
     };
   }, [rows]);
+
+  /* ── ranking rows ───────────────────────────────────────────────────── */
+
+  interface RankingRow {
+    rank: number;
+    offsetVal: number;
+    tp_pts: number;
+    count: number;
+    fills: number;
+    wins: number;
+    losses: number;
+    noFill: number;
+    winPct: number;
+    avgPnlPerEvent: number;
+  }
+
+  const rankingRows: RankingRow[] = useMemo(() => {
+    if (!data) return [];
+    const yearAll = year === ALL;
+    const offAll = offset === ALL;
+    const tpAll = tp === ALL;
+
+    let base: Row[];
+    if (yearAll) {
+      base = data.ranked as Row[];
+    } else {
+      base = data.by_year.filter((r) => r.year === Number(year)) as Row[];
+    }
+    if (!offAll) {
+      base = base.filter((r) => Number(r[config.offsetKey]) === Number(offset));
+    }
+    if (!tpAll) {
+      base = base.filter((r) => r.tp_pts === Number(tp));
+    }
+
+    const sorted = [...base].sort((a, b) => {
+      const nA = a.count ?? a.events_total;
+      const nB = b.count ?? b.events_total;
+      const fillsA = (a.fill_rate / 100) * nA;
+      const fillsB = (b.fill_rate / 100) * nB;
+      if (fillsB !== fillsA) return fillsB - fillsA;
+      return b.tp_hit_rate - a.tp_hit_rate;
+    });
+
+    return sorted.map((r, i) => {
+      const n = r.count ?? r.events_total;
+      const fills = Math.round((r.fill_rate / 100) * n);
+      const wins = Math.round((r.tp_hit_rate / 100) * n);
+      return {
+        rank: i + 1,
+        offsetVal: Number(r[config.offsetKey]),
+        tp_pts: r.tp_pts,
+        count: n,
+        fills,
+        wins,
+        losses: fills - wins,
+        noFill: n - fills,
+        winPct: r.tp_hit_rate,
+        avgPnlPerEvent: r.avg_pnl_per_event,
+      };
+    });
+  }, [data, year, offset, tp, config.offsetKey]);
 
   /* ── PDF generation ──────────────────────────────────────────────────── */
 
@@ -504,6 +568,26 @@ export default function StraddleExplorer({
             <option value="SHORT">Short only</option>
           </select>
         </label>
+
+        <div className="bd-filter">
+          <span className="bd-filter-lbl">View</span>
+          <div className="bd-view-toggle">
+            <button
+              type="button"
+              className={`bd-view-btn${view === 'TABLE' ? ' bd-view-btn-active' : ''}`}
+              onClick={() => setView('TABLE')}
+            >
+              Table
+            </button>
+            <button
+              type="button"
+              className={`bd-view-btn${view === 'RANKING' ? ' bd-view-btn-active' : ''}`}
+              onClick={() => setView('RANKING')}
+            >
+              Ranking
+            </button>
+          </div>
+        </div>
       </div>
 
       {side !== 'BOTH' ? (
@@ -538,60 +622,124 @@ export default function StraddleExplorer({
       </div>
 
       {/* Live table */}
-      <div className="bd-table-wrap">
-        <table className="bd-data-table">
-          <thead>
-            <tr>
-              {isYearScoped ? <th>Year</th> : null}
-              <th>{config.offsetLabel}</th>
-              <th>TP</th>
-              <th>Events</th>
-              <th>Fill %</th>
-              <th>TP Hit %</th>
-              <th>No-Fill %</th>
-              <th>Wins</th>
-              <th>Losses</th>
-              <th>No-Fill</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.length === 0 ? (
+      {view === 'TABLE' && (
+        <div className="bd-table-wrap">
+          <table className="bd-data-table">
+            <thead>
               <tr>
-                <td
-                  colSpan={isYearScoped ? 10 : 9}
-                  style={{ textAlign: 'center', padding: 24, opacity: 0.6 }}
-                >
-                  No rows match these filters.
-                </td>
+                {isYearScoped ? <th>Year</th> : null}
+                <th>{config.offsetLabel}</th>
+                <th>TP</th>
+                <th>Events</th>
+                <th>Fill %</th>
+                <th>TP Hit %</th>
+                <th>No-Fill %</th>
+                <th>Wins</th>
+                <th>Losses</th>
+                <th>No-Fill</th>
               </tr>
-            ) : (
-              rows.map((r, i) => {
-                const n = r.count ?? r.events_total;
-                const wins = Math.round((r.tp_hit_rate / 100) * n);
-                const filled = Math.round((r.fill_rate / 100) * n);
-                const losses = filled - wins;
-                const noFill = Math.round((r.no_fill_rate / 100) * n);
-                return (
-                  <tr
-                    key={`${r.year ?? 'all'}-${r[config.offsetKey]}-${r.tp_pts}-${i}`}
+            </thead>
+            <tbody>
+              {rows.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={isYearScoped ? 10 : 9}
+                    style={{ textAlign: 'center', padding: 24, opacity: 0.6 }}
                   >
-                    {isYearScoped ? <td>{r.year}</td> : null}
-                    <td>{r[config.offsetKey]}</td>
-                    <td>{r.tp_pts}</td>
-                    <td>{n}</td>
-                    <td>{fmtPct(r.fill_rate)}</td>
-                    <td>{fmtPct(r.tp_hit_rate)}</td>
-                    <td>{fmtPct(r.no_fill_rate)}</td>
-                    <td>{wins}</td>
-                    <td>{losses}</td>
-                    <td>{noFill}</td>
+                    No rows match these filters.
+                  </td>
+                </tr>
+              ) : (
+                rows.map((r, i) => {
+                  const n = r.count ?? r.events_total;
+                  const wins = Math.round((r.tp_hit_rate / 100) * n);
+                  const filled = Math.round((r.fill_rate / 100) * n);
+                  const losses = filled - wins;
+                  const noFill = Math.round((r.no_fill_rate / 100) * n);
+                  return (
+                    <tr
+                      key={`${r.year ?? 'all'}-${r[config.offsetKey]}-${r.tp_pts}-${i}`}
+                    >
+                      {isYearScoped ? <td>{r.year}</td> : null}
+                      <td>{r[config.offsetKey]}</td>
+                      <td>{r.tp_pts}</td>
+                      <td>{n}</td>
+                      <td>{fmtPct(r.fill_rate)}</td>
+                      <td>{fmtPct(r.tp_hit_rate)}</td>
+                      <td>{fmtPct(r.no_fill_rate)}</td>
+                      <td>{wins}</td>
+                      <td>{losses}</td>
+                      <td>{noFill}</td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Ranking view */}
+      {view === 'RANKING' && (
+        <div className="bd-ranking-wrap">
+          <p className="bd-ranking-caption">
+            Ranked by total fills{year !== ALL ? ` in ${year}` : ' (all years)'}
+          </p>
+          <div className="bd-table-wrap">
+            <table className="bd-data-table">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>{config.offsetLabel}</th>
+                  <th>TP</th>
+                  <th>Fills</th>
+                  <th>Wins</th>
+                  <th>Losses</th>
+                  <th>No-Fill</th>
+                  <th>Win %</th>
+                  <th>Avg PnL / event</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rankingRows.length === 0 ? (
+                  <tr>
+                    <td colSpan={9} style={{ textAlign: 'center', padding: 24, opacity: 0.6 }}>
+                      No rows match these filters.
+                    </td>
                   </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
-      </div>
+                ) : (
+                  rankingRows.map((r) => (
+                    <tr
+                      key={`rank-${r.offsetVal}-${r.tp_pts}`}
+                      className={r.rank <= 3 ? 'bd-ranking-top3' : undefined}
+                    >
+                      <td className="bd-ranking-rank">{r.rank}</td>
+                      <td>{r.offsetVal}</td>
+                      <td>{r.tp_pts}</td>
+                      <td>{r.fills}</td>
+                      <td>{r.wins}</td>
+                      <td>{r.losses}</td>
+                      <td>{r.noFill}</td>
+                      <td>{fmtPct(r.winPct)}</td>
+                      <td
+                        className={
+                          r.avgPnlPerEvent > 0
+                            ? 'bd-ranking-pos'
+                            : r.avgPnlPerEvent < 0
+                            ? 'bd-ranking-neg'
+                            : undefined
+                        }
+                      >
+                        {fmtNum(r.avgPnlPerEvent)}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       <div className="bd-ctas">
         <button
