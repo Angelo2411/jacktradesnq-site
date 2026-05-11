@@ -142,7 +142,7 @@ const SIDE_OPTIONS: SegOption<Side>[] = [
   { value: 'SHORT', label: 'Short' },
 ];
 
-const YEAR_OPTIONS = ['ALL', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'] as const;
+const YEAR_OPTIONS = ['ALL', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'] as const;
 type Year = (typeof YEAR_OPTIONS)[number];
 
 interface News830ExplorerProps {
@@ -377,14 +377,14 @@ export default function News830Explorer({ dataUrl, pdfTitle }: News830ExplorerPr
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(11);
       doc.text(`• ${data.meta.n_events_total} events in window ${data.meta.date_from} -> ${data.meta.date_to}`, 50, 178);
-      doc.text(`• 162 combos: 3 variants × 2 SMT × 3 sides × 9 buckets (2019-2026 + ALL)`, 50, 196);
+      doc.text(`• 216 combos: 3 variants × 2 SMT × 3 sides × 12 buckets (2016-2026 + ALL)`, 50, 196);
       doc.text(`• Source: ${data.meta.source}`, 50, 214);
 
       // 6 tables: one per variant × SMT combo. First table sits on cover page.
       const variants: Variant[] = ['no_be', 'be_50', 'tp1_be'];
       const smtValues: [boolean, string][] = [[false, 'SMT Off'], [true, 'SMT On']];
       const sides: Side[] = ['BOTH', 'LONG', 'SHORT'];
-      const years = ['2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026', 'ALL'];
+      const years = ['2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026', 'ALL'];
 
       let isFirst = true;
       for (const v of variants) {

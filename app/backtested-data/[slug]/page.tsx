@@ -27,7 +27,7 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
   },
 };
 
-const EXPLORER_RE = /<div data-explorer="(cpi|nfp|nfp-ifvg-smt|cpi-ifvg-smt)">\s*<\/div>/i;
+const EXPLORER_RE = /<div data-explorer="(cpi|nfp|nfp-ifvg-smt|cpi-ifvg-smt|ppi-ifvg-smt|retailsales-ifvg-smt|pce-ifvg-smt|gdp-ifvg-smt|joblessclaims-ifvg-smt|empirestate-ifvg-smt|employmentcostindex-ifvg-smt)">\s*<\/div>/i;
 
 const catLabel = (c: string) => (c === 'tradingview' ? 'TRADINGVIEW' : 'DATA');
 
@@ -55,6 +55,13 @@ export default async function BacktestedDetail({ params }: PageProps) {
   const NEWS830_CONFIGS: Record<string, { dataUrl: string; pdfTitle: string }> = {
     'nfp-ifvg-smt': { dataUrl: '/data/nfp-ifvg-smt.json', pdfTitle: 'NFP IFVG + ES SMT' },
     'cpi-ifvg-smt': { dataUrl: '/data/cpi-ifvg-smt.json', pdfTitle: 'CPI IFVG + ES SMT' },
+    'ppi-ifvg-smt': { dataUrl: '/data/ppi-ifvg-smt.json', pdfTitle: 'PPI IFVG + ES SMT' },
+    'retailsales-ifvg-smt': { dataUrl: '/data/retailsales-ifvg-smt.json', pdfTitle: 'Retail Sales IFVG + ES SMT' },
+    'pce-ifvg-smt': { dataUrl: '/data/pce-ifvg-smt.json', pdfTitle: 'PCE IFVG + ES SMT' },
+    'gdp-ifvg-smt': { dataUrl: '/data/gdp-ifvg-smt.json', pdfTitle: 'GDP IFVG + ES SMT' },
+    'joblessclaims-ifvg-smt': { dataUrl: '/data/joblessclaims-ifvg-smt.json', pdfTitle: 'Jobless Claims IFVG + ES SMT' },
+    'empirestate-ifvg-smt': { dataUrl: '/data/empirestate-ifvg-smt.json', pdfTitle: 'Empire State IFVG + ES SMT' },
+    'employmentcostindex-ifvg-smt': { dataUrl: '/data/employmentcostindex-ifvg-smt.json', pdfTitle: 'ECI IFVG + ES SMT' },
   };
 
   const match = entry.explanationHtml.match(EXPLORER_RE);
