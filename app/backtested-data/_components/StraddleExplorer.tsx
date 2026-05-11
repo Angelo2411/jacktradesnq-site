@@ -48,6 +48,7 @@ export interface ExplorerConfig {
 
 const ALL = 'ALL' as const;
 type Side = 'BOTH' | 'LONG' | 'SHORT';
+type ViewMode = 'TABLE' | 'RANKING' | 'BEST';
 
 function uniqSorted<T>(arr: T[]): T[] {
   return Array.from(new Set(arr)).sort((a, b) => {
@@ -82,7 +83,9 @@ export default function StraddleExplorer({
   const [offset, setOffset] = useState<string>(ALL);
   const [tp, setTp] = useState<string>(ALL);
   const [side, setSide] = useState<Side>('BOTH');
+  const [view, setView] = useState<ViewMode>('TABLE');
   const [generating, setGenerating] = useState(false);
+  const [showAllRanking, setShowAllRanking] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -156,40 +159,155 @@ export default function StraddleExplorer({
 
   const summary = useMemo(() => {
     if (rows.length === 0) {
-      return { events: 0, fill: 0, tpHit: 0, wins: 0, losses: 0, noFill: 0 };
+      return { events: 0, fill: 0, tpHit: 0, wins: 0, losses: 0, noFill: 0, combos: 0 };
     }
-    // Weighted average by sample size (use `count` if year-scoped, else events_total)
-    let totalEvents = 0;
+    // All rows for the same (year, offset, tp) scope share the same event pool.
+    // Use max(count) as the true distinct event count — avoids double-counting
+    // when multiple combos are in scope.
+    const realEvents = Math.max(...rows.map((r) => r.count ?? r.events_total ?? 0));
+    // Weighted averages: each row weighted by its own n (same n for same year scope,
+    // varies across years when year=ALL). Total weight = sum of n across rows.
+    let weightSum = 0;
     let fillSum = 0;
     let tpHitSum = 0;
     let expiredFilledSum = 0;
     for (const r of rows) {
       const n = r.count ?? r.events_total ?? 0;
-      totalEvents += n;
+      weightSum += n;
       fillSum += (r.fill_rate / 100) * n;
       tpHitSum += (r.tp_hit_rate / 100) * n;
       expiredFilledSum += (r.expired_filled_rate / 100) * n;
     }
-    const fillPct = totalEvents > 0 ? (fillSum / totalEvents) * 100 : 0;
-    const tpHitPct = totalEvents > 0 ? (tpHitSum / totalEvents) * 100 : 0;
-    const expiredFilledPct =
-      totalEvents > 0 ? (expiredFilledSum / totalEvents) * 100 : 0;
+    const fillPct = weightSum > 0 ? (fillSum / weightSum) * 100 : 0;
+    const tpHitPct = weightSum > 0 ? (tpHitSum / weightSum) * 100 : 0;
+    const expiredFilledPct = weightSum > 0 ? (expiredFilledSum / weightSum) * 100 : 0;
 
-    // Approximate counts (across the filtered scope)
-    const wins = Math.round((tpHitPct / 100) * totalEvents);
-    const filledTotal = Math.round((fillPct / 100) * totalEvents);
+    // Wins/losses only meaningful for a single combo
+    const wins = Math.round((tpHitPct / 100) * realEvents);
+    const filledTotal = Math.round((fillPct / 100) * realEvents);
     const losses = Math.max(0, filledTotal - wins);
-    const noFill = totalEvents - filledTotal;
+    const noFill = realEvents - filledTotal;
     return {
-      events: totalEvents,
+      events: realEvents,
       fill: fillPct,
       tpHit: tpHitPct,
       expiredFilled: expiredFilledPct,
       wins,
       losses,
       noFill,
+      combos: rows.length,
     };
   }, [rows]);
+
+  /* ── best combo ─────────────────────────────────────────────────────── */
+
+  interface BestCombo {
+    offsetVal: number;
+    tp_pts: number;
+    netPnl: number;
+    avgPnlPerEvent: number;
+    count: number;
+    fills: number;
+    wins: number;
+    losses: number;
+    noFill: number;
+    fillRate: number;
+    tpHitRate: number;
+    totalCombos: number;
+  }
+
+  const bestCombo: BestCombo | null = useMemo(() => {
+    if (rows.length === 0) return null;
+    const sorted = [...rows].sort((a, b) => {
+      const nA = a.count ?? a.events_total;
+      const nB = b.count ?? b.events_total;
+      const netA = a.avg_pnl_per_event * nA;
+      const netB = b.avg_pnl_per_event * nB;
+      if (netB !== netA) return netB - netA;
+      if (b.tp_pts !== a.tp_pts) return b.tp_pts - a.tp_pts;
+      return b.fill_rate - a.fill_rate;
+    });
+    const r = sorted[0];
+    const n = r.count ?? r.events_total;
+    const fills = Math.round((r.fill_rate / 100) * n);
+    const wins = Math.round((r.tp_hit_rate / 100) * n);
+    return {
+      offsetVal: Number(r[config.offsetKey]),
+      tp_pts: r.tp_pts,
+      netPnl: r.avg_pnl_per_event * n,
+      avgPnlPerEvent: r.avg_pnl_per_event,
+      count: n,
+      fills,
+      wins,
+      losses: fills - wins,
+      noFill: n - fills,
+      fillRate: r.fill_rate,
+      tpHitRate: r.tp_hit_rate,
+      totalCombos: rows.length,
+    };
+  }, [rows, config.offsetKey]);
+
+  /* ── ranking rows ───────────────────────────────────────────────────── */
+
+  interface RankingRow {
+    rank: number;
+    offsetVal: number;
+    tp_pts: number;
+    count: number;
+    fills: number;
+    wins: number;
+    losses: number;
+    noFill: number;
+    winPct: number;
+    avgPnlPerEvent: number;
+  }
+
+  const rankingRows: RankingRow[] = useMemo(() => {
+    if (!data) return [];
+    const yearAll = year === ALL;
+    const offAll = offset === ALL;
+    const tpAll = tp === ALL;
+
+    let base: Row[];
+    if (yearAll) {
+      base = data.ranked as Row[];
+    } else {
+      base = data.by_year.filter((r) => r.year === Number(year)) as Row[];
+    }
+    if (!offAll) {
+      base = base.filter((r) => Number(r[config.offsetKey]) === Number(offset));
+    }
+    if (!tpAll) {
+      base = base.filter((r) => r.tp_pts === Number(tp));
+    }
+
+    const sorted = [...base].sort((a, b) => {
+      const nA = a.count ?? a.events_total;
+      const nB = b.count ?? b.events_total;
+      const fillsA = (a.fill_rate / 100) * nA;
+      const fillsB = (b.fill_rate / 100) * nB;
+      if (fillsB !== fillsA) return fillsB - fillsA;
+      return b.tp_hit_rate - a.tp_hit_rate;
+    });
+
+    return sorted.map((r, i) => {
+      const n = r.count ?? r.events_total;
+      const fills = Math.round((r.fill_rate / 100) * n);
+      const wins = Math.round((r.tp_hit_rate / 100) * n);
+      return {
+        rank: i + 1,
+        offsetVal: Number(r[config.offsetKey]),
+        tp_pts: r.tp_pts,
+        count: n,
+        fills,
+        wins,
+        losses: fills - wins,
+        noFill: n - fills,
+        winPct: r.tp_hit_rate,
+        avgPnlPerEvent: r.avg_pnl_per_event,
+      };
+    });
+  }, [data, year, offset, tp, config.offsetKey]);
 
   /* ── PDF generation ──────────────────────────────────────────────────── */
 
@@ -504,6 +622,33 @@ export default function StraddleExplorer({
             <option value="SHORT">Short only</option>
           </select>
         </label>
+
+        <div className="bd-filter">
+          <span className="bd-filter-lbl">View</span>
+          <div className="bd-view-toggle">
+            <button
+              type="button"
+              className={`bd-view-btn${view === 'TABLE' ? ' bd-view-btn-active' : ''}`}
+              onClick={() => setView('TABLE')}
+            >
+              Table
+            </button>
+            <button
+              type="button"
+              className={`bd-view-btn${view === 'RANKING' ? ' bd-view-btn-active' : ''}`}
+              onClick={() => setView('RANKING')}
+            >
+              Ranking
+            </button>
+            <button
+              type="button"
+              className={`bd-view-btn${view === 'BEST' ? ' bd-view-btn-active' : ''}`}
+              onClick={() => setView('BEST')}
+            >
+              Best
+            </button>
+          </div>
+        </div>
       </div>
 
       {side !== 'BOTH' ? (
@@ -530,68 +675,220 @@ export default function StraddleExplorer({
           <span className="bd-stat-card-num">{fmtPct(summary.tpHit)}</span>
         </div>
         <div className="bd-stat-card">
-          <span className="bd-stat-card-lbl">Wins / Losses / No-Fill</span>
-          <span className="bd-stat-card-num bd-stat-card-num-sm">
-            {summary.wins} / {summary.losses} / {summary.noFill}
-          </span>
+          {summary.combos === 1 ? (
+            <>
+              <span className="bd-stat-card-lbl">Wins / Losses / No-Fill</span>
+              <span className="bd-stat-card-num bd-stat-card-num-sm">
+                {summary.wins} / {summary.losses} / {summary.noFill}
+              </span>
+            </>
+          ) : (
+            <>
+              <span className="bd-stat-card-lbl">Combos in scope</span>
+              <span className="bd-stat-card-num">{summary.combos}</span>
+            </>
+          )}
         </div>
       </div>
 
       {/* Live table */}
-      <div className="bd-table-wrap">
-        <table className="bd-data-table">
-          <thead>
-            <tr>
-              {isYearScoped ? <th>Year</th> : null}
-              <th>{config.offsetLabel}</th>
-              <th>TP</th>
-              <th>Events</th>
-              <th>Fill %</th>
-              <th>TP Hit %</th>
-              <th>No-Fill %</th>
-              <th>Wins</th>
-              <th>Losses</th>
-              <th>No-Fill</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.length === 0 ? (
+      {view === 'TABLE' && (
+        <div className="bd-table-wrap">
+          <table className="bd-data-table">
+            <thead>
               <tr>
-                <td
-                  colSpan={isYearScoped ? 10 : 9}
-                  style={{ textAlign: 'center', padding: 24, opacity: 0.6 }}
-                >
-                  No rows match these filters.
-                </td>
+                {isYearScoped ? <th>Year</th> : null}
+                <th>{config.offsetLabel}</th>
+                <th>TP</th>
+                <th>Events</th>
+                <th>Fill %</th>
+                <th>TP Hit %</th>
+                <th>No-Fill %</th>
+                <th>Wins</th>
+                <th>Losses</th>
+                <th>No-Fill</th>
               </tr>
-            ) : (
-              rows.map((r, i) => {
-                const n = r.count ?? r.events_total;
-                const wins = Math.round((r.tp_hit_rate / 100) * n);
-                const filled = Math.round((r.fill_rate / 100) * n);
-                const losses = filled - wins;
-                const noFill = Math.round((r.no_fill_rate / 100) * n);
-                return (
-                  <tr
-                    key={`${r.year ?? 'all'}-${r[config.offsetKey]}-${r.tp_pts}-${i}`}
+            </thead>
+            <tbody>
+              {rows.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={isYearScoped ? 10 : 9}
+                    style={{ textAlign: 'center', padding: 24, opacity: 0.6 }}
                   >
-                    {isYearScoped ? <td>{r.year}</td> : null}
-                    <td>{r[config.offsetKey]}</td>
-                    <td>{r.tp_pts}</td>
-                    <td>{n}</td>
-                    <td>{fmtPct(r.fill_rate)}</td>
-                    <td>{fmtPct(r.tp_hit_rate)}</td>
-                    <td>{fmtPct(r.no_fill_rate)}</td>
-                    <td>{wins}</td>
-                    <td>{losses}</td>
-                    <td>{noFill}</td>
+                    No rows match these filters.
+                  </td>
+                </tr>
+              ) : (
+                rows.map((r, i) => {
+                  const n = r.count ?? r.events_total;
+                  const wins = Math.round((r.tp_hit_rate / 100) * n);
+                  const filled = Math.round((r.fill_rate / 100) * n);
+                  const losses = filled - wins;
+                  const noFill = Math.round((r.no_fill_rate / 100) * n);
+                  return (
+                    <tr
+                      key={`${r.year ?? 'all'}-${r[config.offsetKey]}-${r.tp_pts}-${i}`}
+                    >
+                      {isYearScoped ? <td>{r.year}</td> : null}
+                      <td>{r[config.offsetKey]}</td>
+                      <td>{r.tp_pts}</td>
+                      <td>{n}</td>
+                      <td>{fmtPct(r.fill_rate)}</td>
+                      <td>{fmtPct(r.tp_hit_rate)}</td>
+                      <td>{fmtPct(r.no_fill_rate)}</td>
+                      <td>{wins}</td>
+                      <td>{losses}</td>
+                      <td>{noFill}</td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Ranking view */}
+      {view === 'RANKING' && (
+        <div className="bd-ranking-wrap">
+          <p className="bd-ranking-caption">
+            Ranked by total fills{year !== ALL ? ` in ${year}` : ' (all years)'}
+          </p>
+          <div className="bd-table-wrap">
+            <table className="bd-data-table">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>{config.offsetLabel}</th>
+                  <th>TP</th>
+                  <th>Fills</th>
+                  <th>Wins</th>
+                  <th>Losses</th>
+                  <th>No-Fill</th>
+                  <th>Win %</th>
+                  <th>Avg PnL / event</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rankingRows.length === 0 ? (
+                  <tr>
+                    <td colSpan={9} style={{ textAlign: 'center', padding: 24, opacity: 0.6 }}>
+                      No rows match these filters.
+                    </td>
                   </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
-      </div>
+                ) : (
+                  (showAllRanking ? rankingRows : rankingRows.slice(0, 3)).map((r) => (
+                    <tr
+                      key={`rank-${r.offsetVal}-${r.tp_pts}`}
+                      className={r.rank <= 3 ? 'bd-ranking-top3' : undefined}
+                    >
+                      <td className="bd-ranking-rank">{r.rank}</td>
+                      <td>{r.offsetVal}</td>
+                      <td>{r.tp_pts}</td>
+                      <td>{r.fills}</td>
+                      <td>{r.wins}</td>
+                      <td>{r.losses}</td>
+                      <td>{r.noFill}</td>
+                      <td>{fmtPct(r.winPct)}</td>
+                      <td
+                        className={
+                          r.avgPnlPerEvent > 0
+                            ? 'bd-ranking-pos'
+                            : r.avgPnlPerEvent < 0
+                            ? 'bd-ranking-neg'
+                            : undefined
+                        }
+                      >
+                        {fmtNum(r.avgPnlPerEvent)}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+          {rankingRows.length > 3 && (
+            <button
+              type="button"
+              className="bd-ranking-toggle"
+              onClick={() => setShowAllRanking((v) => !v)}
+            >
+              {showAllRanking
+                ? 'Show top 3 only'
+                : `Show all ${rankingRows.length} combos`}
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Best combo view */}
+      {view === 'BEST' && (
+        <div className="bd-best-wrap">
+          {bestCombo === null ? (
+            <p className="bd-best-empty">No combos match these filters.</p>
+          ) : (
+            <>
+              <div className="bd-best-hero">
+                <p className="bd-best-hero-headline">
+                  {config.offsetLabel} {bestCombo.offsetVal} pts
+                  <span className="bd-best-hero-sep"> · </span>
+                  TP {bestCombo.tp_pts} pts
+                </p>
+                <p className="bd-best-hero-subline">
+                  Best Net PnL across {bestCombo.totalCombos} combo{bestCombo.totalCombos !== 1 ? 's' : ''}{' '}
+                  {year !== ALL ? `in ${year}` : 'across all years'}
+                  {side !== 'BOTH' ? ` · ${side === 'LONG' ? 'Long' : 'Short'} filter` : ''}
+                </p>
+                <div className="bd-stat-grid bd-best-hero-stats">
+                  <div className="bd-stat-card">
+                    <span className="bd-stat-card-lbl">Net PnL</span>
+                    <span
+                      className={`bd-stat-card-num bd-stat-card-num-sm ${bestCombo.netPnl > 0 ? 'bd-ranking-pos' : bestCombo.netPnl < 0 ? 'bd-ranking-neg' : ''}`}
+                    >
+                      {bestCombo.netPnl >= 0 ? '+' : ''}{fmtNum(bestCombo.netPnl)} pts
+                    </span>
+                  </div>
+                  <div className="bd-stat-card">
+                    <span className="bd-stat-card-lbl">Avg PnL / event</span>
+                    <span
+                      className={`bd-stat-card-num bd-stat-card-num-sm ${bestCombo.avgPnlPerEvent > 0 ? 'bd-ranking-pos' : bestCombo.avgPnlPerEvent < 0 ? 'bd-ranking-neg' : ''}`}
+                    >
+                      {bestCombo.avgPnlPerEvent >= 0 ? '+' : ''}{fmtNum(bestCombo.avgPnlPerEvent)} pts
+                    </span>
+                  </div>
+                  <div className="bd-stat-card">
+                    <span className="bd-stat-card-lbl">Win rate</span>
+                    <span className="bd-stat-card-num bd-stat-card-num-sm">
+                      {fmtPct(bestCombo.tpHitRate)}
+                    </span>
+                    <span className="bd-best-sub">
+                      {bestCombo.wins}W / {bestCombo.losses}L / {bestCombo.noFill}NF
+                    </span>
+                  </div>
+                  <div className="bd-stat-card">
+                    <span className="bd-stat-card-lbl">Events fired</span>
+                    <span className="bd-stat-card-num bd-stat-card-num-sm">
+                      {bestCombo.count}
+                    </span>
+                    <span className="bd-best-sub">{fmtPct(bestCombo.fillRate)} fill</span>
+                  </div>
+                </div>
+              </div>
+              <div className="bd-best-footer">
+                {side !== 'BOTH' && (
+                  <p className="bd-best-note">
+                    Side filter is informational — bilateral dataset, long/short outcomes not split per event.
+                  </p>
+                )}
+                <p className="bd-best-caption">
+                  Selected from {bestCombo.totalCombos} combo{bestCombo.totalCombos !== 1 ? 's' : ''} in the current scope, ranked by total points earned.
+                </p>
+              </div>
+            </>
+          )}
+        </div>
+      )}
 
       <div className="bd-ctas">
         <button
