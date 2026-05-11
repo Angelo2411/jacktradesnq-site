@@ -85,6 +85,7 @@ export default function StraddleExplorer({
   const [side, setSide] = useState<Side>('BOTH');
   const [view, setView] = useState<ViewMode>('TABLE');
   const [generating, setGenerating] = useState(false);
+  const [showAllRanking, setShowAllRanking] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -158,38 +159,43 @@ export default function StraddleExplorer({
 
   const summary = useMemo(() => {
     if (rows.length === 0) {
-      return { events: 0, fill: 0, tpHit: 0, wins: 0, losses: 0, noFill: 0 };
+      return { events: 0, fill: 0, tpHit: 0, wins: 0, losses: 0, noFill: 0, combos: 0 };
     }
-    // Weighted average by sample size (use `count` if year-scoped, else events_total)
-    let totalEvents = 0;
+    // All rows for the same (year, offset, tp) scope share the same event pool.
+    // Use max(count) as the true distinct event count — avoids double-counting
+    // when multiple combos are in scope.
+    const realEvents = Math.max(...rows.map((r) => r.count ?? r.events_total ?? 0));
+    // Weighted averages: each row weighted by its own n (same n for same year scope,
+    // varies across years when year=ALL). Total weight = sum of n across rows.
+    let weightSum = 0;
     let fillSum = 0;
     let tpHitSum = 0;
     let expiredFilledSum = 0;
     for (const r of rows) {
       const n = r.count ?? r.events_total ?? 0;
-      totalEvents += n;
+      weightSum += n;
       fillSum += (r.fill_rate / 100) * n;
       tpHitSum += (r.tp_hit_rate / 100) * n;
       expiredFilledSum += (r.expired_filled_rate / 100) * n;
     }
-    const fillPct = totalEvents > 0 ? (fillSum / totalEvents) * 100 : 0;
-    const tpHitPct = totalEvents > 0 ? (tpHitSum / totalEvents) * 100 : 0;
-    const expiredFilledPct =
-      totalEvents > 0 ? (expiredFilledSum / totalEvents) * 100 : 0;
+    const fillPct = weightSum > 0 ? (fillSum / weightSum) * 100 : 0;
+    const tpHitPct = weightSum > 0 ? (tpHitSum / weightSum) * 100 : 0;
+    const expiredFilledPct = weightSum > 0 ? (expiredFilledSum / weightSum) * 100 : 0;
 
-    // Approximate counts (across the filtered scope)
-    const wins = Math.round((tpHitPct / 100) * totalEvents);
-    const filledTotal = Math.round((fillPct / 100) * totalEvents);
+    // Wins/losses only meaningful for a single combo
+    const wins = Math.round((tpHitPct / 100) * realEvents);
+    const filledTotal = Math.round((fillPct / 100) * realEvents);
     const losses = Math.max(0, filledTotal - wins);
-    const noFill = totalEvents - filledTotal;
+    const noFill = realEvents - filledTotal;
     return {
-      events: totalEvents,
+      events: realEvents,
       fill: fillPct,
       tpHit: tpHitPct,
       expiredFilled: expiredFilledPct,
       wins,
       losses,
       noFill,
+      combos: rows.length,
     };
   }, [rows]);
 
@@ -614,10 +620,19 @@ export default function StraddleExplorer({
           <span className="bd-stat-card-num">{fmtPct(summary.tpHit)}</span>
         </div>
         <div className="bd-stat-card">
-          <span className="bd-stat-card-lbl">Wins / Losses / No-Fill</span>
-          <span className="bd-stat-card-num bd-stat-card-num-sm">
-            {summary.wins} / {summary.losses} / {summary.noFill}
-          </span>
+          {summary.combos === 1 ? (
+            <>
+              <span className="bd-stat-card-lbl">Wins / Losses / No-Fill</span>
+              <span className="bd-stat-card-num bd-stat-card-num-sm">
+                {summary.wins} / {summary.losses} / {summary.noFill}
+              </span>
+            </>
+          ) : (
+            <>
+              <span className="bd-stat-card-lbl">Combos in scope</span>
+              <span className="bd-stat-card-num">{summary.combos}</span>
+            </>
+          )}
         </div>
       </div>
 
@@ -708,7 +723,7 @@ export default function StraddleExplorer({
                     </td>
                   </tr>
                 ) : (
-                  rankingRows.map((r) => (
+                  (showAllRanking ? rankingRows : rankingRows.slice(0, 3)).map((r) => (
                     <tr
                       key={`rank-${r.offsetVal}-${r.tp_pts}`}
                       className={r.rank <= 3 ? 'bd-ranking-top3' : undefined}
@@ -738,6 +753,17 @@ export default function StraddleExplorer({
               </tbody>
             </table>
           </div>
+          {rankingRows.length > 3 && (
+            <button
+              type="button"
+              className="bd-ranking-toggle"
+              onClick={() => setShowAllRanking((v) => !v)}
+            >
+              {showAllRanking
+                ? 'Show top 3 only'
+                : `Show all ${rankingRows.length} combos`}
+            </button>
+          )}
         </div>
       )}
 
