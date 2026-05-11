@@ -48,7 +48,7 @@ export interface ExplorerConfig {
 
 const ALL = 'ALL' as const;
 type Side = 'BOTH' | 'LONG' | 'SHORT';
-type ViewMode = 'TABLE' | 'RANKING';
+type ViewMode = 'TABLE' | 'RANKING' | 'BEST';
 
 function uniqSorted<T>(arr: T[]): T[] {
   return Array.from(new Set(arr)).sort((a, b) => {
@@ -198,6 +198,54 @@ export default function StraddleExplorer({
       combos: rows.length,
     };
   }, [rows]);
+
+  /* ── best combo ─────────────────────────────────────────────────────── */
+
+  interface BestCombo {
+    offsetVal: number;
+    tp_pts: number;
+    netPnl: number;
+    avgPnlPerEvent: number;
+    count: number;
+    fills: number;
+    wins: number;
+    losses: number;
+    noFill: number;
+    fillRate: number;
+    tpHitRate: number;
+    totalCombos: number;
+  }
+
+  const bestCombo: BestCombo | null = useMemo(() => {
+    if (rows.length === 0) return null;
+    const sorted = [...rows].sort((a, b) => {
+      const nA = a.count ?? a.events_total;
+      const nB = b.count ?? b.events_total;
+      const netA = a.avg_pnl_per_event * nA;
+      const netB = b.avg_pnl_per_event * nB;
+      if (netB !== netA) return netB - netA;
+      if (b.tp_pts !== a.tp_pts) return b.tp_pts - a.tp_pts;
+      return b.fill_rate - a.fill_rate;
+    });
+    const r = sorted[0];
+    const n = r.count ?? r.events_total;
+    const fills = Math.round((r.fill_rate / 100) * n);
+    const wins = Math.round((r.tp_hit_rate / 100) * n);
+    return {
+      offsetVal: Number(r[config.offsetKey]),
+      tp_pts: r.tp_pts,
+      netPnl: r.avg_pnl_per_event * n,
+      avgPnlPerEvent: r.avg_pnl_per_event,
+      count: n,
+      fills,
+      wins,
+      losses: fills - wins,
+      noFill: n - fills,
+      fillRate: r.fill_rate,
+      tpHitRate: r.tp_hit_rate,
+      totalCombos: rows.length,
+    };
+  }, [rows, config.offsetKey]);
 
   /* ── ranking rows ───────────────────────────────────────────────────── */
 
@@ -592,6 +640,13 @@ export default function StraddleExplorer({
             >
               Ranking
             </button>
+            <button
+              type="button"
+              className={`bd-view-btn${view === 'BEST' ? ' bd-view-btn-active' : ''}`}
+              onClick={() => setView('BEST')}
+            >
+              Best
+            </button>
           </div>
         </div>
       </div>
@@ -763,6 +818,74 @@ export default function StraddleExplorer({
                 ? 'Show top 3 only'
                 : `Show all ${rankingRows.length} combos`}
             </button>
+          )}
+        </div>
+      )}
+
+      {/* Best combo view */}
+      {view === 'BEST' && (
+        <div className="bd-best-wrap">
+          {bestCombo === null ? (
+            <p className="bd-best-empty">No combos match these filters.</p>
+          ) : (
+            <>
+              <div className="bd-best-hero">
+                <p className="bd-best-hero-headline">
+                  {config.offsetLabel} {bestCombo.offsetVal} pts
+                  <span className="bd-best-hero-sep"> · </span>
+                  TP {bestCombo.tp_pts} pts
+                </p>
+                <p className="bd-best-hero-subline">
+                  Best Net PnL across {bestCombo.totalCombos} combo{bestCombo.totalCombos !== 1 ? 's' : ''}{' '}
+                  {year !== ALL ? `in ${year}` : 'across all years'}
+                  {side !== 'BOTH' ? ` · ${side === 'LONG' ? 'Long' : 'Short'} filter` : ''}
+                </p>
+                <div className="bd-stat-grid bd-best-hero-stats">
+                  <div className="bd-stat-card">
+                    <span className="bd-stat-card-lbl">Net PnL</span>
+                    <span
+                      className={`bd-stat-card-num bd-stat-card-num-sm ${bestCombo.netPnl > 0 ? 'bd-ranking-pos' : bestCombo.netPnl < 0 ? 'bd-ranking-neg' : ''}`}
+                    >
+                      {bestCombo.netPnl >= 0 ? '+' : ''}{fmtNum(bestCombo.netPnl)} pts
+                    </span>
+                  </div>
+                  <div className="bd-stat-card">
+                    <span className="bd-stat-card-lbl">Avg PnL / event</span>
+                    <span
+                      className={`bd-stat-card-num bd-stat-card-num-sm ${bestCombo.avgPnlPerEvent > 0 ? 'bd-ranking-pos' : bestCombo.avgPnlPerEvent < 0 ? 'bd-ranking-neg' : ''}`}
+                    >
+                      {bestCombo.avgPnlPerEvent >= 0 ? '+' : ''}{fmtNum(bestCombo.avgPnlPerEvent)} pts
+                    </span>
+                  </div>
+                  <div className="bd-stat-card">
+                    <span className="bd-stat-card-lbl">Win rate</span>
+                    <span className="bd-stat-card-num bd-stat-card-num-sm">
+                      {fmtPct(bestCombo.tpHitRate)}
+                    </span>
+                    <span className="bd-best-sub">
+                      {bestCombo.wins}W / {bestCombo.losses}L / {bestCombo.noFill}NF
+                    </span>
+                  </div>
+                  <div className="bd-stat-card">
+                    <span className="bd-stat-card-lbl">Events fired</span>
+                    <span className="bd-stat-card-num bd-stat-card-num-sm">
+                      {bestCombo.count}
+                    </span>
+                    <span className="bd-best-sub">{fmtPct(bestCombo.fillRate)} fill</span>
+                  </div>
+                </div>
+              </div>
+              <div className="bd-best-footer">
+                {side !== 'BOTH' && (
+                  <p className="bd-best-note">
+                    Side filter is informational — bilateral dataset, long/short outcomes not split per event.
+                  </p>
+                )}
+                <p className="bd-best-caption">
+                  Selected from {bestCombo.totalCombos} combo{bestCombo.totalCombos !== 1 ? 's' : ''} in the current scope, ranked by total points earned.
+                </p>
+              </div>
+            </>
           )}
         </div>
       )}
