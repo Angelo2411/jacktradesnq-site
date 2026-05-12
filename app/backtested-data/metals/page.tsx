@@ -72,31 +72,28 @@ export default function MetalsVibePage() {
       </header>
 
       <div className="bd-asset-scope" data-asset={active}>
-        <section className="bd-asset-stage" aria-live="polite">
-          <div
-            className="bd-asset-switch"
-            role="tablist"
-            aria-label="Asset selector"
-          >
-            {ASSETS.map((a) => (
-              <button
-                key={a.key}
-                role="tab"
-                type="button"
-                aria-selected={active === a.key}
-                onClick={() => setActive(a.key)}
-                className="bd-asset-switch-btn"
-              >
-                <span
-                  className="bd-asset-tab-glyph"
-                  style={{ ['--tab-color' as string]: a.dot }}
-                />
-                {a.ticker}
-              </button>
-            ))}
-            <span className="bd-asset-switch-thumb" data-pos={active} />
-          </div>
+        <div
+          className="bd-asset-switch"
+          role="tablist"
+          aria-label="Asset selector"
+        >
+          {ASSETS.map((a, i) => (
+            <button
+              key={a.key}
+              role="tab"
+              type="button"
+              aria-selected={active === a.key}
+              onClick={() => setActive(a.key)}
+              className="bd-asset-switch-btn"
+              style={{ ['--btn-dot' as string]: a.dot }}
+            >
+              {a.label}
+              {i === 0 ? <span className="bd-asset-switch-sep" aria-hidden="true">/</span> : null}
+            </button>
+          ))}
+        </div>
 
+        <section className="bd-asset-stage" aria-live="polite">
           <div className="bd-asset-eyebrow">{asset.eyebrow}</div>
           <h2 className="bd-asset-headline">
             {asset.headlineA} <em>{asset.headlineEm}</em> {asset.headlineB}

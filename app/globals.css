@@ -1485,60 +1485,50 @@ a { color: inherit; text-decoration: none; }
 }
 
 .bd-asset-switch {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 2;
-  display: inline-flex;
-  align-items: center;
-  padding: 4px;
-  border-radius: 999px;
-  background: oklch(1 0 0 / 0.7);
-  border: 1px solid var(--c-border);
-  backdrop-filter: blur(10px);
-  box-shadow:
-    0 1px 2px oklch(0.20 0.02 270 / 0.06),
-    0 6px 18px oklch(0.20 0.02 270 / 0.08);
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: var(--s-4);
+  font-family: var(--f-serif);
+  font-style: italic;
 }
 .bd-asset-switch-btn {
   position: relative;
-  z-index: 1;
-  display: inline-flex; align-items: center; gap: 8px;
-  height: 32px;
-  padding: 0 16px;
-  border-radius: 999px;
-  font-family: var(--f-sans);
+  display: inline-flex; align-items: baseline;
+  padding: 0;
+  font-family: var(--f-serif);
+  font-style: italic;
   font-weight: 700;
-  font-size: 0.78rem;
-  letter-spacing: 0.06em;
+  font-size: 1.5rem;
+  line-height: 1;
+  letter-spacing: -0.01em;
   color: var(--c-muted);
   background: transparent;
   cursor: pointer;
-  transition: color 220ms ease;
+  transition: color 240ms ease;
 }
 .bd-asset-switch-btn:hover { color: var(--c-ink); }
 .bd-asset-switch-btn[aria-selected="true"] {
   color: var(--asset-ink-accent);
 }
-.bd-asset-switch-thumb {
-  position: absolute;
-  top: 4px; bottom: 4px;
-  width: calc(50% - 4px);
-  border-radius: 999px;
-  background: var(--asset-accent);
-  box-shadow: 0 1px 2px oklch(0.20 0.02 270 / 0.10);
-  transition: transform 320ms cubic-bezier(0.32, 0.72, 0.24, 1),
-              background 380ms ease;
-  z-index: 0;
-}
-.bd-asset-switch-thumb[data-pos="nq"] { transform: translateX(4px); }
-.bd-asset-switch-thumb[data-pos="gc"] { transform: translateX(calc(100% + 4px)); }
-.bd-asset-tab-glyph {
+.bd-asset-switch-btn[aria-selected="true"]::before {
+  content: "";
   display: inline-block;
   width: 8px; height: 8px;
   border-radius: 50%;
-  background: var(--tab-color, var(--c-muted));
-  box-shadow: 0 0 0 1.5px oklch(1 0 0 / 0.7);
+  background: var(--btn-dot, var(--asset-accent));
+  margin-right: 10px;
+  transform: translateY(-3px);
+  box-shadow: 0 0 0 3px oklch(1 0 0 / 0.7);
+}
+.bd-asset-switch-sep {
+  color: var(--c-border);
+  font-weight: 400;
+  font-style: normal;
+  font-size: 1.25rem;
+  line-height: 1;
+  pointer-events: none;
+  margin-left: 14px;
 }
 
 .bd-asset-eyebrow {
