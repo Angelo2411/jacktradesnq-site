@@ -617,7 +617,7 @@ export default function StraddleExplorer({
             value={side}
             onChange={(e) => setSide(e.target.value as Side)}
           >
-            <option value="BOTH">Both (bilateral)</option>
+            <option value="BOTH">Both</option>
             <option value="LONG">Long only</option>
             <option value="SHORT">Short only</option>
           </select>
