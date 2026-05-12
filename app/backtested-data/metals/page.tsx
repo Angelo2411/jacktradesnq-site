@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-type AssetKey = 'nq' | 'gc' | 'si';
+type AssetKey = 'nq' | 'gc';
 
 type Asset = {
   key: AssetKey;
@@ -27,9 +27,9 @@ const ASSETS: Asset[] = [
     headlineEm: 'Nasdaq',
     headlineB: 'tape — chill, fast, mean.',
     sub:
-      'Most of the backtests run on this site live on NQ. Warm yellow stays — it is the house tone for the index book.',
+      'Most of the backtests on this site live on NQ. Warm yellow stays — it is the house tone for the index book.',
     metrics: [
-      { label: 'Studies live', value: '08', foot: 'across IB / news / killzone' },
+      { label: 'Studies live', value: '08', foot: 'IB / news / killzone' },
       { label: 'Best edge', value: 'PF 2.41', foot: 'Stacked EMA v3, 10y' },
       { label: 'Sample', value: '3.46M', foot: 'M1 bars, 2016 → 2026' },
     ],
@@ -52,23 +52,6 @@ const ASSETS: Asset[] = [
     ],
     dot: 'oklch(0.74 0.16 78)',
   },
-  {
-    key: 'si',
-    label: 'Silver',
-    ticker: 'SI',
-    eyebrow: 'Precious metal · COMEX',
-    headlineA: 'Silver',
-    headlineEm: 'cools',
-    headlineB: 'the room — quieter, sharper.',
-    sub:
-      'Cool grey-blue accent for the silver book. Keeps the family resemblance, signals you have left the gold side without breaking the brand.',
-    metrics: [
-      { label: 'Studies live', value: '02', foot: 'IB50 + news 8:30' },
-      { label: 'Best edge', value: 'PF 1.64', foot: 'SI IB50 London, 10y' },
-      { label: 'Sample', value: '63K', foot: 'M1 bars, Databento pull' },
-    ],
-    dot: 'oklch(0.78 0.025 230)',
-  },
 ];
 
 export default function MetalsVibePage() {
@@ -83,41 +66,37 @@ export default function MetalsVibePage() {
           Asset accents<span className="bd-dot">.</span>
         </h1>
         <p className="bd-hub-sub">
-          Same warm-editorial system, three different temperatures. Switch
-          between NQ, Gold and Silver — only the accent token moves, the
-          structure stays.
+          Same warm-editorial system, two temperatures. Switch between NQ and
+          Gold — only the accent token moves, the structure stays.
         </p>
       </header>
 
       <div className="bd-asset-scope" data-asset={active}>
-        <div
-          className="bd-asset-tabs"
-          role="tablist"
-          aria-label="Asset selector"
-          style={{ marginBottom: 24 }}
-        >
-          {ASSETS.map((a) => (
-            <button
-              key={a.key}
-              role="tab"
-              type="button"
-              aria-selected={active === a.key}
-              onClick={() => setActive(a.key)}
-              className="bd-asset-tab"
-            >
-              <span
-                className="bd-asset-tab-glyph"
-                style={{ ['--tab-color' as string]: a.dot }}
-              />
-              <span>{a.label}</span>
-              <span style={{ opacity: 0.55, fontWeight: 500 }}>
-                {a.ticker}
-              </span>
-            </button>
-          ))}
-        </div>
-
         <section className="bd-asset-stage" aria-live="polite">
+          <div
+            className="bd-asset-switch"
+            role="tablist"
+            aria-label="Asset selector"
+          >
+            {ASSETS.map((a) => (
+              <button
+                key={a.key}
+                role="tab"
+                type="button"
+                aria-selected={active === a.key}
+                onClick={() => setActive(a.key)}
+                className="bd-asset-switch-btn"
+              >
+                <span
+                  className="bd-asset-tab-glyph"
+                  style={{ ['--tab-color' as string]: a.dot }}
+                />
+                {a.ticker}
+              </button>
+            ))}
+            <span className="bd-asset-switch-thumb" data-pos={active} />
+          </div>
+
           <div className="bd-asset-eyebrow">{asset.eyebrow}</div>
           <h2 className="bd-asset-headline">
             {asset.headlineA} <em>{asset.headlineEm}</em> {asset.headlineB}
