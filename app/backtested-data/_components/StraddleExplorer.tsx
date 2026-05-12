@@ -67,6 +67,21 @@ function fmtNum(v: number | undefined | null, digits = 2): string {
   return v.toFixed(digits);
 }
 
+async function loadImageBase64(url: string): Promise<string | null> {
+  try {
+    const resp = await fetch(url);
+    if (!resp.ok) return null;
+    const blob = await resp.blob();
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return null;
+  }
+}
+
 export default function StraddleExplorer({
   config,
   embedded = false,
@@ -385,6 +400,29 @@ export default function StraddleExplorer({
         doc.text(line, 50, sy + 22 + i * 18);
       });
 
+      // ── Concept chart page ──
+      const conceptUrl = `/data/straddle_charts/concept_cpi.png`;
+      const conceptImg = await loadImageBase64(conceptUrl);
+      if (conceptImg) {
+        doc.addPage();
+        doc.setFont('times', 'bold');
+        doc.setFontSize(16);
+        doc.setTextColor(20);
+        doc.text('How the Straddle Works', 40, 50);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        doc.setTextColor(80);
+        doc.text(
+          'Buy stop above + Sell stop below the release bar. First side filled, OCO cancels the other.',
+          40,
+          68,
+        );
+        // Image: 16:9, fit landscape in portrait page
+        const imgW = pageW - 80;
+        const imgH = imgW * (9 / 16);
+        doc.addImage(conceptImg, 'PNG', 40, 82, imgW, imgH);
+      }
+
       // ── Table page ──
       const tableStartY = sy + 22 + summaryLines.length * 18 + 28;
 
@@ -494,6 +532,84 @@ export default function StraddleExplorer({
             alternateRowStyles: { fillColor: [248, 246, 240] },
             margin: { left: 40, right: 40 },
           });
+        }
+      }
+
+      // ── Combo chart pages ──
+      const evType = config.eventType.toLowerCase();
+      const outcomes = ['tp_hit', 'manip', 'no_fill'];
+      for (const r of rows) {
+        const offVal = r[config.offsetKey];
+        const tpVal = r.tp_pts;
+        const comboKey = `X${offVal}_Y${tpVal}`;
+
+        // Load 3 chart images
+        const imgs: (string | null)[] = await Promise.all(
+          outcomes.map((o) =>
+            loadImageBase64(`/data/straddle_charts/${evType}/${comboKey}_${o}.png`),
+          ),
+        );
+        const validImgs = imgs.filter(Boolean) as string[];
+        if (validImgs.length === 0) continue;
+
+        doc.addPage();
+
+        // Page title
+        doc.setFont('times', 'bold');
+        doc.setFontSize(16);
+        doc.setTextColor(20);
+        doc.text(
+          `${config.eventType}  —  ${config.offsetLabel} ${offVal} pts  /  TP ${tpVal} pts`,
+          40,
+          50,
+        );
+
+        // Layout: 2+1 grid
+        const margin = 40;
+        const gap = 14;
+        const availW = pageW - margin * 2;
+
+        if (validImgs.length >= 2) {
+          // Top row: 2 images side by side
+          const topW = (availW - gap) / 2;
+          const topH = topW * (9 / 16);
+
+          doc.addImage(validImgs[0], 'PNG', margin, 66, topW, topH);
+          const topX2 = margin + topW + gap;
+          if (validImgs.length >= 2) {
+            doc.addImage(validImgs[1], 'PNG', topX2, 66, topW, topH);
+          }
+
+          // Bottom row: 1 image centered
+          if (validImgs.length >= 3) {
+            const botW = availW * 0.65;
+            const botH = botW * (9 / 16);
+            const botX = margin + (availW - botW) / 2;
+            const botY = 66 + topH + gap;
+            doc.addImage(validImgs[2], 'PNG', botX, botY, botW, botH);
+          }
+        } else {
+          // Single image full width
+          const imgW = availW;
+          const imgH = imgW * (9 / 16);
+          doc.addImage(validImgs[0], 'PNG', margin, 66, imgW, imgH);
+        }
+
+        // Outcome labels under each chart
+        const topH = ((availW - gap) / 2) * (9 / 16);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.setTextColor(100);
+        if (validImgs.length >= 2) {
+          doc.text('TP Hit', margin + ((availW - gap) / 2) / 2 - 15, 66 + topH + 10, { align: 'center' });
+          doc.text('Manip / Expired', margin + (availW - gap) / 2 + gap + ((availW - gap) / 2) / 2 - 22, 66 + topH + 10, { align: 'center' });
+        }
+        if (validImgs.length >= 3) {
+          const botW = availW * 0.65;
+          const botX = margin + (availW - botW) / 2;
+          const botH = botW * (9 / 16);
+          const botY = 66 + topH + gap;
+          doc.text('No Fill', botX + botW / 2 - 15, botY + botH + 10, { align: 'center' });
         }
       }
 
