@@ -1421,3 +1421,194 @@ a { color: inherit; text-decoration: none; }
   .bd-best-hero { padding: 24px 20px; }
   .bd-best-hero-headline { font-size: 1.5rem; }
 }
+
+/* ----- asset vibe shifter (NQ / GC / Silver) ------------------------- */
+.bd-asset-scope {
+  --asset-accent:      var(--p-gold);
+  --asset-accent-deep: var(--p-gold-deep);
+  --asset-tint-1:      oklch(0.94 0.05 88);
+  --asset-tint-2:      oklch(0.97 0.02 85);
+  --asset-ink-accent:  oklch(0.22 0.04 70);
+  transition: --asset-accent 380ms ease,
+              --asset-accent-deep 380ms ease,
+              --asset-tint-1 380ms ease,
+              --asset-tint-2 380ms ease,
+              --asset-ink-accent 380ms ease;
+}
+.bd-asset-scope[data-asset="nq"] {
+  --asset-accent:      oklch(0.86 0.16 95);    /* warm yellow */
+  --asset-accent-deep: oklch(0.72 0.17 88);
+  --asset-tint-1:      oklch(0.96 0.06 92);
+  --asset-tint-2:      oklch(0.985 0.02 90);
+  --asset-ink-accent:  oklch(0.30 0.05 80);
+}
+.bd-asset-scope[data-asset="gc"] {
+  --asset-accent:      oklch(0.74 0.16 78);    /* deep saturated gold */
+  --asset-accent-deep: oklch(0.58 0.14 65);
+  --asset-tint-1:      oklch(0.92 0.07 78);
+  --asset-tint-2:      oklch(0.96 0.04 80);
+  --asset-ink-accent:  oklch(0.28 0.07 60);
+}
+.bd-asset-scope[data-asset="si"] {
+  --asset-accent:      oklch(0.78 0.025 230);  /* cool silver */
+  --asset-accent-deep: oklch(0.55 0.04 240);
+  --asset-tint-1:      oklch(0.94 0.012 230);
+  --asset-tint-2:      oklch(0.975 0.005 230);
+  --asset-ink-accent:  oklch(0.28 0.03 240);
+}
+
+.bd-asset-stage {
+  position: relative;
+  border-radius: 18px;
+  padding: 56px 48px 48px;
+  background:
+    radial-gradient(ellipse 900px 520px at 85% -10%, var(--asset-tint-1), transparent 65%),
+    radial-gradient(ellipse 600px 400px at 5% 110%, var(--asset-tint-1), transparent 60%),
+    var(--asset-tint-2);
+  border: 1px solid var(--c-border);
+  box-shadow:
+    0 1px 2px oklch(0.20 0.02 270 / 0.04),
+    0 14px 38px oklch(0.20 0.02 270 / 0.08);
+  overflow: hidden;
+  transition: background 380ms ease;
+}
+.bd-asset-stage::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(135deg,
+    var(--asset-accent) 0%,
+    transparent 18%,
+    transparent 82%,
+    var(--asset-accent-deep) 100%);
+  opacity: 0.32;
+  mix-blend-mode: multiply;
+  mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+  -webkit-mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  padding: 1px;
+}
+
+.bd-asset-tabs {
+  display: inline-flex;
+  gap: 4px;
+  padding: 6px;
+  border-radius: 999px;
+  background: oklch(1 0 0 / 0.55);
+  border: 1px solid var(--c-border);
+  backdrop-filter: blur(8px);
+}
+.bd-asset-tab {
+  display: inline-flex; align-items: center; gap: 10px;
+  height: 40px;
+  padding: 0 22px;
+  border-radius: 999px;
+  font-family: var(--f-sans);
+  font-weight: 600;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  color: var(--c-muted);
+  transition: color 200ms ease, background 200ms ease;
+  cursor: pointer;
+}
+.bd-asset-tab:hover { color: var(--c-ink); }
+.bd-asset-tab[aria-selected="true"] {
+  background: var(--asset-accent);
+  color: var(--asset-ink-accent);
+  box-shadow: 0 1px 2px oklch(0.20 0.02 270 / 0.10);
+}
+.bd-asset-tab-glyph {
+  display: inline-block;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--tab-color, var(--c-muted));
+  box-shadow: 0 0 0 2px oklch(1 0 0 / 0.6);
+}
+
+.bd-asset-eyebrow {
+  font-family: var(--f-sans);
+  font-weight: 700;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--asset-accent-deep);
+  margin-bottom: var(--s-3);
+  transition: color 380ms ease;
+}
+.bd-asset-headline {
+  font-family: var(--f-serif);
+  font-weight: 700;
+  font-style: italic;
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  color: var(--c-ink);
+  margin-bottom: var(--s-4);
+}
+.bd-asset-headline em {
+  font-style: italic;
+  color: var(--asset-accent-deep);
+  transition: color 380ms ease;
+}
+.bd-asset-sub {
+  font-family: var(--f-sans);
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--c-muted);
+  max-width: 56ch;
+  margin-bottom: var(--s-6);
+}
+
+.bd-asset-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-4);
+  margin-top: var(--s-5);
+}
+.bd-asset-metric {
+  padding: 18px 20px;
+  border-radius: 12px;
+  background: oklch(1 0 0 / 0.6);
+  border: 1px solid var(--c-border);
+  backdrop-filter: blur(4px);
+}
+.bd-asset-metric-label {
+  font-family: var(--f-sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+  margin-bottom: 6px;
+}
+.bd-asset-metric-value {
+  font-family: var(--f-serif);
+  font-weight: 700;
+  font-size: 1.75rem;
+  line-height: 1;
+  color: var(--asset-ink-accent);
+  transition: color 380ms ease;
+}
+.bd-asset-metric-foot {
+  font-family: var(--f-sans);
+  font-size: 0.72rem;
+  color: var(--c-muted);
+  margin-top: 6px;
+}
+
+.bd-asset-rule {
+  height: 1px;
+  background: linear-gradient(to right,
+    transparent, var(--asset-accent), transparent);
+  margin: var(--s-6) 0 var(--s-5);
+  opacity: 0.7;
+  transition: background 380ms ease;
+}
+
+@media (max-width: 720px) {
+  .bd-asset-stage { padding: 36px 24px 32px; }
+  .bd-asset-metrics { grid-template-columns: 1fr; }
+}
