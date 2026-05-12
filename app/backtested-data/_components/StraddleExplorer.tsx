@@ -401,7 +401,7 @@ export default function StraddleExplorer({
       });
 
       // ── Concept chart page ──
-      const conceptUrl = `/data/straddle_charts/concept_cpi.png`;
+      const conceptUrl = `/data/straddle_charts/concept_cpi.jpg`;
       const conceptImg = await loadImageBase64(conceptUrl);
       if (conceptImg) {
         doc.addPage();
@@ -420,7 +420,7 @@ export default function StraddleExplorer({
         // Image: 16:9, fit landscape in portrait page
         const imgW = pageW - 80;
         const imgH = imgW * (9 / 16);
-        doc.addImage(conceptImg, 'PNG', 40, 82, imgW, imgH);
+        doc.addImage(conceptImg, 'JPEG', 40, 82, imgW, imgH, undefined, 'FAST');
       }
 
       // ── Table page ──
@@ -546,7 +546,7 @@ export default function StraddleExplorer({
         // Load 3 chart images
         const imgs: (string | null)[] = await Promise.all(
           outcomes.map((o) =>
-            loadImageBase64(`/data/straddle_charts/${evType}/${comboKey}_${o}.png`),
+            loadImageBase64(`/data/straddle_charts/${evType}/${comboKey}_${o}.jpg`),
           ),
         );
         const validImgs = imgs.filter(Boolean) as string[];
@@ -564,52 +564,26 @@ export default function StraddleExplorer({
           50,
         );
 
-        // Layout: 2+1 grid
-        const margin = 40;
-        const gap = 14;
-        const availW = pageW - margin * 2;
-
-        if (validImgs.length >= 2) {
-          // Top row: 2 images side by side
-          const topW = (availW - gap) / 2;
-          const topH = topW * (9 / 16);
-
-          doc.addImage(validImgs[0], 'PNG', margin, 66, topW, topH);
-          const topX2 = margin + topW + gap;
-          if (validImgs.length >= 2) {
-            doc.addImage(validImgs[1], 'PNG', topX2, 66, topW, topH);
-          }
-
-          // Bottom row: 1 image centered
-          if (validImgs.length >= 3) {
-            const botW = availW * 0.65;
-            const botH = botW * (9 / 16);
-            const botX = margin + (availW - botW) / 2;
-            const botY = 66 + topH + gap;
-            doc.addImage(validImgs[2], 'PNG', botX, botY, botW, botH);
-          }
-        } else {
-          // Single image full width
-          const imgW = availW;
+        // One landscape page per outcome chart
+        const LABELS: Record<string, string> = { tp_hit: 'TP Hit', manip: 'Manip → SL', no_fill: 'No Fill' };
+        for (let i = 0; i < outcomes.length; i++) {
+          const img = imgs[i];
+          if (!img) continue;
+          doc.addPage('a4', 'landscape');
+          doc.setFont('times', 'bold');
+          doc.setFontSize(14);
+          doc.setTextColor(20);
+          doc.text(
+            `${config.eventType} — SL ${offVal} / TP ${tpVal} — ${LABELS[outcomes[i]]}`,
+            40, 40,
+          );
+          const pageW = doc.internal.pageSize.getWidth();
+          const pageH = doc.internal.pageSize.getHeight();
+          const margin = 40;
+          const imgW = pageW - margin * 2;
           const imgH = imgW * (9 / 16);
-          doc.addImage(validImgs[0], 'PNG', margin, 66, imgW, imgH);
-        }
-
-        // Outcome labels under each chart
-        const topH = ((availW - gap) / 2) * (9 / 16);
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(9);
-        doc.setTextColor(100);
-        if (validImgs.length >= 2) {
-          doc.text('TP Hit', margin + ((availW - gap) / 2) / 2 - 15, 66 + topH + 10, { align: 'center' });
-          doc.text('Manip / Expired', margin + (availW - gap) / 2 + gap + ((availW - gap) / 2) / 2 - 22, 66 + topH + 10, { align: 'center' });
-        }
-        if (validImgs.length >= 3) {
-          const botW = availW * 0.65;
-          const botX = margin + (availW - botW) / 2;
-          const botH = botW * (9 / 16);
-          const botY = 66 + topH + gap;
-          doc.text('No Fill', botX + botW / 2 - 15, botY + botH + 10, { align: 'center' });
+          const imgY = (pageH - imgH) / 2 + 10;
+          doc.addImage(img, 'JPEG', margin, imgY, imgW, imgH, undefined, 'FAST');
         }
       }
 
