@@ -59,19 +59,8 @@ export default function MetalsVibePage() {
   const asset = ASSETS.find((a) => a.key === active)!;
 
   return (
-    <div>
-      <header className="bd-hub-head">
-        <span className="bd-meta">Demo · vibe shifter</span>
-        <h1 className="bd-h1" style={{ marginTop: 8 }}>
-          Asset accents<span className="bd-dot">.</span>
-        </h1>
-        <p className="bd-hub-sub">
-          Same warm-editorial system, two temperatures. Switch between NQ and
-          Gold — only the accent token moves, the structure stays.
-        </p>
-      </header>
-
-      <div className="bd-asset-scope" data-asset={active}>
+    <div className="bd-asset-scope" data-asset={active}>
+      <div className="bd-asset-topbar">
         <div
           className="bd-asset-switch"
           role="tablist"
@@ -92,7 +81,20 @@ export default function MetalsVibePage() {
             </button>
           ))}
         </div>
+      </div>
 
+      <header className="bd-hub-head">
+        <span className="bd-meta">Demo · vibe shifter</span>
+        <h1 className="bd-h1" style={{ marginTop: 8 }}>
+          Asset accents<span className="bd-dot">.</span>
+        </h1>
+        <p className="bd-hub-sub">
+          Same warm-editorial system, two temperatures. Switch between NQ and
+          Gold — only the accent token moves, the structure stays.
+        </p>
+      </header>
+
+      <div>
         <section className="bd-asset-stage" aria-live="polite">
           <div className="bd-asset-eyebrow">{asset.eyebrow}</div>
           <h2 className="bd-asset-headline">
