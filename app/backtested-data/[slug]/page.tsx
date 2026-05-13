@@ -3,6 +3,9 @@ import { notFound } from 'next/navigation';
 import { getAllEntries, getEntry } from '@/lib/backtested-data';
 import { IconArrowUpRight } from '../_components/icons';
 import StraddleExplorer, { type ExplorerConfig } from '../_components/StraddleExplorer';
+import StraddleSwitcher from '../_components/StraddleSwitcher';
+import KillzoneSwitcher from '../_components/KillzoneSwitcher';
+import NwogSwitcher from '../_components/NwogSwitcher';
 import News830Explorer from '../_components/News830Explorer';
 import MobileTabs, { type MobileTab } from '../_components/MobileTabs';
 
@@ -27,7 +30,32 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
   },
 };
 
+const GC_EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
+  cpi: {
+    eventType: 'CPI',
+    title: 'CPI straddle (Gold) — interactive explorer',
+    subtitle:
+      'Pick filters → live stats refresh → download a tailored PDF report.',
+    dataUrl: '/data/cpi-straddle-gc.json',
+    offsetKey: 'stop_pts',
+    offsetLabel: 'Stop offset ($/oz)',
+  },
+  nfp: {
+    eventType: 'NFP',
+    title: 'NFP straddle (Gold) — interactive explorer',
+    subtitle:
+      'Pick filters → live stats refresh → download a tailored PDF report.',
+    dataUrl: '/data/nfp-straddle-gc.json',
+    offsetKey: 'entry_offset',
+    offsetLabel: 'Entry offset ($/oz)',
+  },
+};
+
 const EXPLORER_RE = /<div data-explorer="(cpi|nfp|nfp-ifvg-smt|cpi-ifvg-smt|ppi-ifvg-smt|retailsales-ifvg-smt|pce-ifvg-smt|gdp-ifvg-smt|joblessclaims-ifvg-smt|empirestate-ifvg-smt|employmentcostindex-ifvg-smt)">\s*<\/div>/i;
+
+const SWITCHER_SLUGS = new Set(['cpi-day-stats', 'nfp']);
+const KILLZONE_SLUG = 'killzone-past-vs-now';
+const NWOG_SLUG = 'asia-open';
 
 const catLabel = (c: string) => (c === 'tradingview' ? 'TRADINGVIEW' : 'DATA');
 
@@ -64,13 +92,21 @@ export default async function BacktestedDetail({ params }: PageProps) {
     'employmentcostindex-ifvg-smt': { dataUrl: '/data/employmentcostindex-ifvg-smt.json', pdfTitle: 'ECI IFVG + ES SMT' },
   };
 
+  // Determine rendering mode
+  const isStraddleSwitcher = SWITCHER_SLUGS.has(slug);
+  const isKillzone = slug === KILLZONE_SLUG;
+  const isNwog = slug === NWOG_SLUG;
+
   const match = entry.explanationHtml.match(EXPLORER_RE);
   const explorerKey = match ? match[1].toLowerCase() : null;
   const explorerConfig =
     explorerKey && EXPLORER_CONFIGS[explorerKey] ? EXPLORER_CONFIGS[explorerKey] : null;
   const news830Config = explorerKey && NEWS830_CONFIGS[explorerKey] ? NEWS830_CONFIGS[explorerKey] : null;
   const isNews830 = news830Config !== null;
-  const [htmlBefore, htmlAfter] = (explorerConfig || isNews830)
+
+  // For straddle switcher slugs, split HTML around the explorer div
+  const hasSplit = isStraddleSwitcher && !!explorerKey;
+  const [htmlBefore, htmlAfter] = (hasSplit || explorerConfig || isNews830)
     ? entry.explanationHtml.split(EXPLORER_RE).filter((_, i) => i !== 1)
     : [entry.explanationHtml, ''];
 
@@ -94,14 +130,43 @@ export default async function BacktestedDetail({ params }: PageProps) {
         const [hb, ha] = body.split(EXPLORER_RE).filter((_, i) => i !== 1);
         const key = expMatch[1].toLowerCase();
         let explorerNode = null;
-        if (EXPLORER_CONFIGS[key]) explorerNode = <StraddleExplorer config={EXPLORER_CONFIGS[key]} embedded />;
-        else if (NEWS830_CONFIGS[key]) explorerNode = <News830Explorer dataUrl={NEWS830_CONFIGS[key].dataUrl} pdfTitle={NEWS830_CONFIGS[key].pdfTitle} />;
+        if (SWITCHER_SLUGS.has(slug) && EXPLORER_CONFIGS[key] && GC_EXPLORER_CONFIGS[key]) {
+          explorerNode = (
+            <StraddleSwitcher
+              nqConfig={EXPLORER_CONFIGS[key]}
+              gcConfig={GC_EXPLORER_CONFIGS[key]}
+            />
+          );
+        } else if (EXPLORER_CONFIGS[key]) {
+          explorerNode = <StraddleExplorer config={EXPLORER_CONFIGS[key]} embedded />;
+        } else if (NEWS830_CONFIGS[key]) {
+          explorerNode = <News830Explorer dataUrl={NEWS830_CONFIGS[key].dataUrl} pdfTitle={NEWS830_CONFIGS[key].pdfTitle} />;
+        }
         mobileTabs.push({ label, htmlBefore: hb, explorer: explorerNode, htmlAfter: ha });
       } else {
         mobileTabs.push({ label, htmlBefore: body });
       }
     }
   }
+
+  // Build desktop explorer node
+  let desktopExplorerNode: React.ReactNode = null;
+  if (isStraddleSwitcher && explorerKey && EXPLORER_CONFIGS[explorerKey] && GC_EXPLORER_CONFIGS[explorerKey]) {
+    desktopExplorerNode = (
+      <StraddleSwitcher
+        nqConfig={EXPLORER_CONFIGS[explorerKey]}
+        gcConfig={GC_EXPLORER_CONFIGS[explorerKey]}
+      />
+    );
+  } else if (explorerConfig) {
+    desktopExplorerNode = <StraddleExplorer config={explorerConfig} embedded />;
+  } else if (isNews830) {
+    desktopExplorerNode = (
+      <News830Explorer dataUrl={news830Config!.dataUrl} pdfTitle={news830Config!.pdfTitle} />
+    );
+  }
+
+  const hasDesktopSplit = desktopExplorerNode !== null;
 
   return (
     <article className="bd-article">
@@ -125,21 +190,20 @@ export default async function BacktestedDetail({ params }: PageProps) {
 
       {entry.excerpt ? <p className="bd-article-lede">{entry.excerpt}</p> : null}
 
+      {/* Killzone switcher — topbar above article prose */}
+      {isKillzone ? <KillzoneSwitcher /> : null}
+      {/* NWOG switcher — topbar above article prose */}
+      {isNwog ? <NwogSwitcher /> : null}
+
       {entry.mobileHtml ? (
         useMobileTabs ? (
           <div className="bd-show-mobile">
             <MobileTabs tabs={mobileTabs} />
           </div>
-        ) : mobileHasExplorer && explorerConfig ? (
+        ) : mobileHasExplorer && hasDesktopSplit ? (
           <div className="bd-show-mobile">
             <div className="bd-prose" dangerouslySetInnerHTML={{ __html: mobileBefore }} />
-            <StraddleExplorer config={explorerConfig} embedded />
-            <div className="bd-prose" dangerouslySetInnerHTML={{ __html: mobileAfter }} />
-          </div>
-        ) : mobileHasExplorer && isNews830 ? (
-          <div className="bd-show-mobile">
-            <div className="bd-prose" dangerouslySetInnerHTML={{ __html: mobileBefore }} />
-            <News830Explorer dataUrl={news830Config!.dataUrl} pdfTitle={news830Config!.pdfTitle} />
+            {desktopExplorerNode}
             <div className="bd-prose" dangerouslySetInnerHTML={{ __html: mobileAfter }} />
           </div>
         ) : (
@@ -151,25 +215,13 @@ export default async function BacktestedDetail({ params }: PageProps) {
       ) : null}
 
       <div className={entry.mobileHtml ? 'bd-show-desktop' : undefined}>
-        {explorerConfig ? (
+        {hasDesktopSplit ? (
           <>
             <div
               className="bd-prose"
               dangerouslySetInnerHTML={{ __html: htmlBefore }}
             />
-            <StraddleExplorer config={explorerConfig} embedded />
-            <div
-              className="bd-prose"
-              dangerouslySetInnerHTML={{ __html: htmlAfter }}
-            />
-          </>
-        ) : isNews830 ? (
-          <>
-            <div
-              className="bd-prose"
-              dangerouslySetInnerHTML={{ __html: htmlBefore }}
-            />
-            <News830Explorer dataUrl={news830Config!.dataUrl} pdfTitle={news830Config!.pdfTitle} />
+            {desktopExplorerNode}
             <div
               className="bd-prose"
               dangerouslySetInnerHTML={{ __html: htmlAfter }}
