@@ -46,6 +46,31 @@ interface Props {
   onReady?: () => void;
 }
 
+function forwardFillBars(bars: Bar[]): Bar[] {
+  if (bars.length < 2) return bars;
+  const barByM = new Map(bars.map((b) => [b.m, b]));
+  const minM = Math.min(...bars.map((b) => b.m));
+  const maxM = Math.max(...bars.map((b) => b.m));
+  const filled: Bar[] = [];
+  let lastC = barByM.get(minM)?.c ?? bars[0].c;
+  for (let m = minM; m <= maxM; m++) {
+    const exist = barByM.get(m);
+    if (exist) {
+      filled.push(exist);
+      lastC = exist.c;
+    } else {
+      filled.push({ m, o: lastC, h: lastC, l: lastC, c: lastC });
+    }
+  }
+  return filled;
+}
+
+function remapSimIdx(origBars: Bar[], filledBars: Bar[], idx: number | null): number | null {
+  if (idx === null || idx < 0 || idx >= origBars.length) return null;
+  const m = origBars[idx].m;
+  return filledBars.findIndex((b) => b.m === m);
+}
+
 // Build a synthetic UTC timestamp per bar so lightweight-charts can render time axis.
 // We anchor at 08:30 UTC purely so the axis displays "08:30" — actual release is 8:30 ET.
 function barsToCandles(bars: Bar[], dateISO: string): CandlestickData<UTCTimestamp>[] {
@@ -69,7 +94,16 @@ function barsToCandles(bars: Bar[], dateISO: string): CandlestickData<UTCTimesta
 export default function TradeChart({ eventLabel, date, bars, sim, onReady }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const candles = useMemo(() => barsToCandles(bars, date), [bars, date]);
+  const filled = useMemo(() => forwardFillBars(bars), [bars]);
+  const candles = useMemo(() => barsToCandles(filled, date), [filled, date]);
+  const simAdj = useMemo(
+    () => ({
+      ...sim,
+      fillBarIdx: remapSimIdx(bars, filled, sim.fillBarIdx),
+      exitBarIdx: remapSimIdx(bars, filled, sim.exitBarIdx),
+    }),
+    [bars, filled, sim],
+  );
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -163,8 +197,8 @@ export default function TradeChart({ eventLabel, date, bars, sim, onReady }: Pro
 
     // Markers for fill / exit
     const markers: SeriesMarker<UTCTimestamp>[] = [];
-    // Release-bar marker (m=0): find bar index
-    const releaseIdx = bars.findIndex((b) => b.m === 0);
+    // Release-bar marker (m=0): find bar index in filled bars
+    const releaseIdx = filled.findIndex((b) => b.m === 0);
     if (releaseIdx >= 0) {
       markers.push({
         time: candles[releaseIdx].time,
@@ -174,18 +208,18 @@ export default function TradeChart({ eventLabel, date, bars, sim, onReady }: Pro
         text: 'Release 8:30 ET',
       });
     }
-    if (sim.fillBarIdx !== null && sim.side) {
+    if (simAdj.fillBarIdx !== null && sim.side) {
       markers.push({
-        time: candles[sim.fillBarIdx].time,
+        time: candles[simAdj.fillBarIdx].time,
         position: sim.side === 'long' ? 'belowBar' : 'aboveBar',
         color: sim.side === 'long' ? cUp : cDown,
         shape: sim.side === 'long' ? 'arrowUp' : 'arrowDown',
         text: `Fill ${sim.fillPrice?.toFixed(2)}`,
       });
     }
-    if (sim.exitBarIdx !== null && sim.side && sim.outcome !== 'no_fill') {
+    if (simAdj.exitBarIdx !== null && sim.side && sim.outcome !== 'no_fill') {
       markers.push({
-        time: candles[sim.exitBarIdx].time,
+        time: candles[simAdj.exitBarIdx].time,
         position: sim.side === 'long' ? 'aboveBar' : 'belowBar',
         color: sim.outcome === 'tp' ? cYellow : cInkDim,
         shape: 'circle',
@@ -211,7 +245,7 @@ export default function TradeChart({ eventLabel, date, bars, sim, onReady }: Pro
       ro.disconnect();
       chart.remove();
     };
-  }, [candles, bars, sim, onReady]);
+  }, [candles, filled, sim, simAdj, onReady]);
 
   // Outcome badge color
   const badgeClass =
