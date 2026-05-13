@@ -13,4 +13,3 @@ The following PDF shows informations about the numbers of points each killzone h
 
 Conditions cross-checked: weekday, news (red folder), and holiday (NYSE bank holiday).
 
-<a class="bd-btn bd-btn-primary" href="/downloads/backtested-data/killzone-past-vs-now.pdf" download>Download — Killzone Range PDF</a>

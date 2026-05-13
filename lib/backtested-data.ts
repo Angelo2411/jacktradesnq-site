@@ -28,6 +28,8 @@ export interface EntryDetail extends EntryMeta {
   explanationHtml: string;
   explanationHtmlNq: string;
   explanationHtmlGc: string;
+  pdfFileNq: string;
+  pdfFileGc: string;
   mobileHtml?: string;
 }
 

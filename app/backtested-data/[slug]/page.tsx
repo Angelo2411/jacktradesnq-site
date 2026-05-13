@@ -8,6 +8,8 @@ import KillzoneSwitcher from '../_components/KillzoneSwitcher';
 import NwogSwitcher from '../_components/NwogSwitcher';
 import News830Explorer from '../_components/News830Explorer';
 import MobileTabs, { type MobileTab } from '../_components/MobileTabs';
+import BilingualProse from '../_components/BilingualProse';
+import BilingualPdfLink from '../_components/BilingualPdfLink';
 
 const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
   cpi: {
@@ -97,7 +99,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
   const isKillzone = slug === KILLZONE_SLUG;
   const isNwog = slug === NWOG_SLUG;
 
-  const match = entry.explanationHtml.match(EXPLORER_RE);
+  const match = entry.explanationHtmlNq.match(EXPLORER_RE);
   const explorerKey = match ? match[1].toLowerCase() : null;
   const explorerConfig =
     explorerKey && EXPLORER_CONFIGS[explorerKey] ? EXPLORER_CONFIGS[explorerKey] : null;
@@ -106,9 +108,12 @@ export default async function BacktestedDetail({ params }: PageProps) {
 
   // For straddle switcher slugs, split HTML around the explorer div
   const hasSplit = isStraddleSwitcher && !!explorerKey;
-  const [htmlBefore, htmlAfter] = (hasSplit || explorerConfig || isNews830)
-    ? entry.explanationHtml.split(EXPLORER_RE).filter((_, i) => i !== 1)
-    : [entry.explanationHtml, ''];
+  const splitter = (html: string) =>
+    (hasSplit || explorerConfig || isNews830)
+      ? html.split(EXPLORER_RE).filter((_, i) => i !== 1)
+      : [html, ''];
+  const [htmlBeforeNq, htmlAfterNq] = splitter(entry.explanationHtmlNq);
+  const [htmlBeforeGc, htmlAfterGc] = splitter(entry.explanationHtmlGc);
 
   const mobileHasExplorer = !!(entry.mobileHtml && EXPLORER_RE.test(entry.mobileHtml));
   const [mobileBefore, mobileAfter] = mobileHasExplorer
@@ -217,21 +222,12 @@ export default async function BacktestedDetail({ params }: PageProps) {
       <div className={entry.mobileHtml ? 'bd-show-desktop' : undefined}>
         {hasDesktopSplit ? (
           <>
-            <div
-              className="bd-prose"
-              dangerouslySetInnerHTML={{ __html: htmlBefore }}
-            />
+            <BilingualProse htmlNq={htmlBeforeNq} htmlGc={htmlBeforeGc} />
             {desktopExplorerNode}
-            <div
-              className="bd-prose"
-              dangerouslySetInnerHTML={{ __html: htmlAfter }}
-            />
+            <BilingualProse htmlNq={htmlAfterNq} htmlGc={htmlAfterGc} />
           </>
         ) : (
-          <div
-            className="bd-prose"
-            dangerouslySetInnerHTML={{ __html: entry.explanationHtml }}
-          />
+          <BilingualProse htmlNq={entry.explanationHtmlNq} htmlGc={entry.explanationHtmlGc} />
         )}
       </div>
 
@@ -247,6 +243,11 @@ export default async function BacktestedDetail({ params }: PageProps) {
             <IconArrowUpRight />
           </a>
         ) : null}
+        <BilingualPdfLink
+          pdfFileNq={entry.pdfFileNq}
+          pdfFileGc={entry.pdfFileGc}
+          pdfLabel={entry.pdfLabel ?? `Download — ${entry.title} PDF`}
+        />
       </div>
 
       <div className="mt-16 max-w-[720px] border-t pt-6" style={{ borderColor: 'oklch(0.85 0.02 85)' }}>
