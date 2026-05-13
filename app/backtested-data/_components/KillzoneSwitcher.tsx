@@ -37,7 +37,6 @@ export default function KillzoneSwitcher() {
             }}
           >
             Gold (GC) — killzone range stats ($/oz), 10-year backtest 2016–2026.
-            Both NQ and Gold backtested — toggle via the NQ/GC buttons in the nav bar.
           </p>
           <table
             style={{
@@ -79,7 +78,7 @@ export default function KillzoneSwitcher() {
             marginTop: 16,
           }}
         >
-          Showing NQ data — see PDF below for full breakdown. Switch to Gold via the NQ/GC buttons in the nav bar.
+          Showing NQ data — see PDF below for full breakdown.
         </p>
       )}
     </div>

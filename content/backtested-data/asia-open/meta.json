@@ -2,7 +2,7 @@
   "title": "NWOG fill study",
   "category": "data",
   "date": "2026-05-04",
-  "excerpt": "New Week Opening Gap fill rates on NQ (58 events ≥50 pts) and Gold (155 events ≥2 pts) — both backtested 2016–2026.",
+  "excerpt": "New Week Opening Gap fill rates — first 30 min vs later vs held, segmented by direction.",
   "tradingviewUrl": "https://www.tradingview.com/u/jacktradesnq/",
   "pdfFile": "asia-open.pdf"
 }

@@ -28,7 +28,7 @@ function SummaryTable({ data, unit }: { data: typeof NQ_SUMMARY; unit: string })
   return (
     <div aria-live="polite" style={{ marginTop: 16 }}>
       <p style={{ fontFamily: 'var(--f-sans)', fontSize: '0.875rem', color: 'var(--c-muted)', marginBottom: 12 }}>
-        {data.totalEvents} events · gap ≥{data.gapMinPoints} {unit} · Both NQ and Gold backtested — toggle via the NQ/GC buttons in the nav bar.
+        {data.totalEvents} events · gap ≥{data.gapMinPoints} {unit}.
       </p>
       <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'var(--f-sans)', fontSize: '0.875rem' }}>
         <thead>
