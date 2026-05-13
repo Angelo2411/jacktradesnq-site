@@ -25,9 +25,27 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
     offsetKey: 'entry_offset',
     offsetLabel: 'Entry offset',
   },
+  'cpi-gc': {
+    eventType: 'CPI',
+    title: 'CPI straddle (Gold) — interactive explorer',
+    subtitle:
+      'Pick filters → live stats refresh → download a tailored PDF report.',
+    dataUrl: '/data/cpi-straddle-gc.json',
+    offsetKey: 'stop_pts',
+    offsetLabel: 'Stop offset ($/oz)',
+  },
+  'nfp-gc': {
+    eventType: 'NFP',
+    title: 'NFP straddle (Gold) — interactive explorer',
+    subtitle:
+      'Pick filters → live stats refresh → download a tailored PDF report.',
+    dataUrl: '/data/nfp-straddle-gc.json',
+    offsetKey: 'entry_offset',
+    offsetLabel: 'Entry offset ($/oz)',
+  },
 };
 
-const EXPLORER_RE = /<div data-explorer="(cpi|nfp|nfp-ifvg-smt|cpi-ifvg-smt|ppi-ifvg-smt|retailsales-ifvg-smt|pce-ifvg-smt|gdp-ifvg-smt|joblessclaims-ifvg-smt|empirestate-ifvg-smt|employmentcostindex-ifvg-smt)">\s*<\/div>/i;
+const EXPLORER_RE = /<div data-explorer="(cpi|nfp|cpi-gc|nfp-gc|nfp-ifvg-smt|cpi-ifvg-smt|ppi-ifvg-smt|retailsales-ifvg-smt|pce-ifvg-smt|gdp-ifvg-smt|joblessclaims-ifvg-smt|empirestate-ifvg-smt|employmentcostindex-ifvg-smt)">\s*<\/div>/i;
 
 const catLabel = (c: string) => (c === 'tradingview' ? 'TRADINGVIEW' : 'DATA');
 
