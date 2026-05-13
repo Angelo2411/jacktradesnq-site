@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef } from 'react';
 import {
   createChart,
-  createSeriesMarkers,
   CandlestickSeries,
   CrosshairMode,
   LineSeries,
@@ -11,7 +10,6 @@ import {
   type ISeriesApi,
   type UTCTimestamp,
   type CandlestickData,
-  type SeriesMarker,
 } from 'lightweight-charts';
 
 export interface Bar {
@@ -107,7 +105,7 @@ export default function TradeChart({ eventLabel, date, bars, sim, onReady }: Pro
 
     const chart: IChartApi = createChart(el, {
       width: el.clientWidth,
-      height: 380,
+      height: 600,
       layout: {
         background: { color: cPaper },
         textColor: cInkDim,
@@ -185,6 +183,25 @@ export default function TradeChart({ eventLabel, date, bars, sim, onReady }: Pro
     addLine(sim.tpSell, tpSellColor, 'TP short', 'solid');
 
     // Markers removed — price lines (buy/sell stop + TP) are sufficient
+
+    // Force Y-range to include entry_ref ± offset (buy/sell stops only — TP can clip outside viewport)
+    const stopLevels = [sim.buyStop, sim.sellStop];
+    const allHighs = candles.map((c) => c.high);
+    const allLows = candles.map((c) => c.low);
+    const fullMin = Math.min(...allLows, ...stopLevels);
+    const fullMax = Math.max(...allHighs, ...stopLevels);
+    const pad = Math.max((fullMax - fullMin) * 0.08, 3);
+    const rangeSeries = chart.addSeries(LineSeries, {
+      color: '#00000000',
+      lineWidth: 1,
+      lastValueVisible: false,
+      priceLineVisible: false,
+      crosshairMarkerVisible: false,
+    });
+    rangeSeries.setData([
+      { time: candles[0].time, value: fullMin - pad },
+      { time: candles[candles.length - 1].time, value: fullMax + pad },
+    ]);
 
     chart.timeScale().fitContent();
 
