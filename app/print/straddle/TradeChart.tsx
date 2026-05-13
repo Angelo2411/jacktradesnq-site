@@ -66,14 +66,6 @@ function forwardFillBars(bars: Bar[]): Bar[] {
   return filled;
 }
 
-function remapSimIdx(origBars: Bar[], filledBars: Bar[], idx: number | null): number | null {
-  if (idx === null || idx < 0 || idx >= origBars.length) return null;
-  const m = origBars[idx].m;
-  return filledBars.findIndex((b) => b.m === m);
-}
-
-// Build a synthetic UTC timestamp per bar so lightweight-charts can render time axis.
-// We anchor at 08:30 UTC purely so the axis displays "08:30" — actual release is 8:30 ET.
 function barsToCandles(bars: Bar[], dateISO: string): CandlestickData<UTCTimestamp>[] {
   const baseUtc = Date.UTC(
     Number(dateISO.slice(0, 4)),
@@ -97,14 +89,6 @@ export default function TradeChart({ eventLabel, date, bars, sim, onReady }: Pro
 
   const filled = useMemo(() => forwardFillBars(bars), [bars]);
   const candles = useMemo(() => barsToCandles(filled, date), [filled, date]);
-  const simAdj = useMemo(
-    () => ({
-      ...sim,
-      fillBarIdx: remapSimIdx(bars, filled, sim.fillBarIdx),
-      exitBarIdx: remapSimIdx(bars, filled, sim.exitBarIdx),
-    }),
-    [bars, filled, sim],
-  );
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -112,7 +96,6 @@ export default function TradeChart({ eventLabel, date, bars, sim, onReady }: Pro
 
     // Lightweight Charts cannot parse oklch(...) — convert design tokens to hex/rgb upfront.
     // Hex values eyeballed-equivalent to OKLCH tokens defined in app/globals.css.
-    const cInk = '#1f1c2c';        // --c-ink ≈ oklch(0.20 0.02 270)
     const cInkDim = '#5b5868';     // --c-ink-dim
     const cInkQuiet = '#7d7a86';   // --c-ink-quiet
     const cPaper = '#faf6ee';      // --c-paper
@@ -121,7 +104,6 @@ export default function TradeChart({ eventLabel, date, bars, sim, onReady }: Pro
     const cDown = '#c97558';       // warm terracotta ≈ oklch(0.55 0.13 30)
     const cUpAccent = '#4a8c3f';   // saturated green (filled long)
     const cDownAccent = '#b8452a'; // saturated red (filled short)
-    const cYellow = '#c8a13a';     // --c-yellow-deep ≈ oklch(0.72 0.18 90)
 
     const chart: IChartApi = createChart(el, {
       width: el.clientWidth,
@@ -202,57 +184,7 @@ export default function TradeChart({ eventLabel, date, bars, sim, onReady }: Pro
     addLine(sim.tpBuy, tpBuyColor, 'TP long', 'solid');
     addLine(sim.tpSell, tpSellColor, 'TP short', 'solid');
 
-    // Force Y-range to include all 4 straddle levels
-    const allLevels = [sim.buyStop, sim.sellStop, sim.tpBuy, sim.tpSell];
-    const allHighs = candles.map((c) => c.high);
-    const allLows = candles.map((c) => c.low);
-    const fullMin = Math.min(...allLows, ...allLevels);
-    const fullMax = Math.max(...allHighs, ...allLevels);
-    const pad = Math.max((fullMax - fullMin) * 0.08, 3);
-    const rangeSeries = chart.addSeries(LineSeries, {
-      color: '#00000000',
-      lineWidth: 1,
-      lastValueVisible: false,
-      priceLineVisible: false,
-      crosshairMarkerVisible: false,
-    });
-    rangeSeries.setData([
-      { time: candles[0].time, value: fullMin - pad },
-      { time: candles[candles.length - 1].time, value: fullMax + pad },
-    ]);
-
-    // Markers for fill / exit
-    const markers: SeriesMarker<UTCTimestamp>[] = [];
-    // Release-bar marker (m=0): find bar index in filled bars
-    const releaseIdx = filled.findIndex((b) => b.m === 0);
-    if (releaseIdx >= 0) {
-      markers.push({
-        time: candles[releaseIdx].time,
-        position: 'aboveBar',
-        color: cInkDim,
-        shape: 'arrowDown',
-        text: 'Release 8:30 ET',
-      });
-    }
-    if (simAdj.fillBarIdx !== null && sim.side) {
-      markers.push({
-        time: candles[simAdj.fillBarIdx].time,
-        position: sim.side === 'long' ? 'belowBar' : 'aboveBar',
-        color: sim.side === 'long' ? cUpAccent : cDownAccent,
-        shape: sim.side === 'long' ? 'arrowUp' : 'arrowDown',
-        text: `Fill ${sim.fillPrice?.toFixed(2)}`,
-      });
-    }
-    if (simAdj.exitBarIdx !== null && sim.side && sim.outcome !== 'no_fill') {
-      markers.push({
-        time: candles[simAdj.exitBarIdx].time,
-        position: sim.side === 'long' ? 'aboveBar' : 'belowBar',
-        color: sim.outcome === 'tp' ? cYellow : cInkDim,
-        shape: 'circle',
-        text: sim.outcome === 'tp' ? `TP ${sim.exitPrice?.toFixed(2)}` : `Exit ${sim.exitPrice?.toFixed(2)}`,
-      });
-    }
-    createSeriesMarkers(candleSeries, markers);
+    // Markers removed — price lines (buy/sell stop + TP) are sufficient
 
     chart.timeScale().fitContent();
 
@@ -271,7 +203,7 @@ export default function TradeChart({ eventLabel, date, bars, sim, onReady }: Pro
       ro.disconnect();
       chart.remove();
     };
-  }, [candles, filled, sim, simAdj, onReady]);
+  }, [candles, filled, sim, onReady]);
 
   // Outcome badge color
   const badgeClass =
@@ -377,7 +309,7 @@ export default function TradeChart({ eventLabel, date, bars, sim, onReady }: Pro
         }
         .trade-chart {
           width: 100%;
-          height: 380px;
+          height: 600px;
           border-radius: 12px;
           overflow: hidden;
           background: var(--c-paper);
