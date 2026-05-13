@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { Entry } from '@/lib/backtested-data';
 import { IconSearch, IconChevDown, IconArrowUpRight } from './icons';
-import { useAsset } from './AssetContext';
 
 const catLabel = (c: string) => (c === 'tradingview' ? 'TRADINGVIEW' : 'DATA');
 
@@ -146,7 +145,6 @@ export default function Sidebar({
   onClose: () => void;
 }) {
   const pathname = usePathname();
-  const { asset } = useAsset();
   const [q, setQ] = useState('');
   const norm = q.trim().toLowerCase();
 
@@ -158,12 +156,8 @@ export default function Sidebar({
     ? entries.filter((e) => e.title.toLowerCase().includes(norm))
     : entries;
 
-  const assetFiltered = filtered.filter((e) =>
-    e.group === 'Metals: Gold' ? asset === 'gc' : true,
-  );
-
-  const tv = assetFiltered.filter((e) => e.category === 'tradingview');
-  const data = assetFiltered.filter((e) => e.category === 'data');
+  const tv = filtered.filter((e) => e.category === 'tradingview');
+  const data = filtered.filter((e) => e.category === 'data');
   const empty = norm !== '' && filtered.length === 0;
 
   return (
