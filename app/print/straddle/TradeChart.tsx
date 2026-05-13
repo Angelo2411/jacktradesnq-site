@@ -6,6 +6,7 @@ import {
   createSeriesMarkers,
   CandlestickSeries,
   CrosshairMode,
+  LineSeries,
   type IChartApi,
   type ISeriesApi,
   type UTCTimestamp,
@@ -118,6 +119,8 @@ export default function TradeChart({ eventLabel, date, bars, sim, onReady }: Pro
     const cPaperEdge = '#ece5d3';  // --c-paper-edge
     const cUp = '#7da274';         // warm sage green ≈ oklch(0.62 0.10 145)
     const cDown = '#c97558';       // warm terracotta ≈ oklch(0.55 0.13 30)
+    const cUpAccent = '#4a8c3f';   // saturated green (filled long)
+    const cDownAccent = '#b8452a'; // saturated red (filled short)
     const cYellow = '#c8a13a';     // --c-yellow-deep ≈ oklch(0.72 0.18 90)
 
     const chart: IChartApi = createChart(el, {
@@ -184,16 +187,39 @@ export default function TradeChart({ eventLabel, date, bars, sim, onReady }: Pro
 
     // Entry reference (release-bar close)
     addLine(sim.entry, cInkQuiet, 'Entry ref', 'dotted');
-    // Stop entries
-    addLine(sim.buyStop, cUp, `Buy stop ${sim.buyStop.toFixed(2)}`, 'dashed');
-    addLine(sim.sellStop, cDown, `Sell stop ${sim.sellStop.toFixed(2)}`, 'dashed');
 
-    // TP target only on filled side
-    if (sim.side === 'long') {
-      addLine(sim.tpBuy, cYellow, `TP ${sim.tpBuy.toFixed(2)}`, 'solid');
-    } else if (sim.side === 'short') {
-      addLine(sim.tpSell, cYellow, `TP ${sim.tpSell.toFixed(2)}`, 'solid');
-    }
+    // 4 straddle levels — always visible
+    const isLong = sim.side === 'long';
+    const isShort = sim.side === 'short';
+
+    const buyStopColor = isLong ? cUpAccent : cUp;
+    const sellStopColor = isShort ? cDownAccent : cDown;
+    const tpBuyColor = isLong ? cUpAccent : cUp;
+    const tpSellColor = isShort ? cDownAccent : cDown;
+
+    addLine(sim.buyStop, buyStopColor, 'Buy stop', 'dashed');
+    addLine(sim.sellStop, sellStopColor, 'Sell stop', 'dashed');
+    addLine(sim.tpBuy, tpBuyColor, 'TP long', 'solid');
+    addLine(sim.tpSell, tpSellColor, 'TP short', 'solid');
+
+    // Force Y-range to include all 4 straddle levels
+    const allLevels = [sim.buyStop, sim.sellStop, sim.tpBuy, sim.tpSell];
+    const allHighs = candles.map((c) => c.high);
+    const allLows = candles.map((c) => c.low);
+    const fullMin = Math.min(...allLows, ...allLevels);
+    const fullMax = Math.max(...allHighs, ...allLevels);
+    const pad = Math.max((fullMax - fullMin) * 0.08, 3);
+    const rangeSeries = chart.addSeries(LineSeries, {
+      color: '#00000000',
+      lineWidth: 1,
+      lastValueVisible: false,
+      priceLineVisible: false,
+      crosshairMarkerVisible: false,
+    });
+    rangeSeries.setData([
+      { time: candles[0].time, value: fullMin - pad },
+      { time: candles[candles.length - 1].time, value: fullMax + pad },
+    ]);
 
     // Markers for fill / exit
     const markers: SeriesMarker<UTCTimestamp>[] = [];
@@ -212,7 +238,7 @@ export default function TradeChart({ eventLabel, date, bars, sim, onReady }: Pro
       markers.push({
         time: candles[simAdj.fillBarIdx].time,
         position: sim.side === 'long' ? 'belowBar' : 'aboveBar',
-        color: sim.side === 'long' ? cUp : cDown,
+        color: sim.side === 'long' ? cUpAccent : cDownAccent,
         shape: sim.side === 'long' ? 'arrowUp' : 'arrowDown',
         text: `Fill ${sim.fillPrice?.toFixed(2)}`,
       });
