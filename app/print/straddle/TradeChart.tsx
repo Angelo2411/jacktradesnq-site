@@ -31,7 +31,7 @@ export interface TradeSim {
   fillBarIdx: number | null;
   exitPrice: number | null;
   exitBarIdx: number | null;
-  outcome: 'tp' | 'expired' | 'no_fill';
+  outcome: 'tp' | 'sl' | 'expired' | 'no_fill';
   pnl: number;
   stopPts: number;
   tpPts: number;
@@ -171,9 +171,10 @@ export default function TradeChart({ eventLabel, date, bars, sim, onReady }: Pro
     // 4 straddle levels — always visible
     const isLong = sim.side === 'long';
     const isShort = sim.side === 'short';
+    const isSl = sim.outcome === 'sl';
 
-    const buyStopColor = isLong ? cUpAccent : cUp;
-    const sellStopColor = isShort ? cDownAccent : cDown;
+    const buyStopColor = isLong ? cUpAccent : (isSl && isShort ? cUpAccent : cUp);
+    const sellStopColor = isShort ? cDownAccent : (isSl && isLong ? cDownAccent : cDown);
     const tpBuyColor = isLong ? cUpAccent : cUp;
     const tpSellColor = isShort ? cDownAccent : cDown;
 
@@ -224,9 +225,9 @@ export default function TradeChart({ eventLabel, date, bars, sim, onReady }: Pro
 
   // Outcome badge color
   const badgeClass =
-    sim.outcome === 'tp' ? 'badge badge-tp' : sim.outcome === 'expired' ? 'badge badge-expired' : 'badge badge-nofill';
+    sim.outcome === 'tp' ? 'badge badge-tp' : sim.outcome === 'sl' ? 'badge badge-sl' : sim.outcome === 'expired' ? 'badge badge-expired' : 'badge badge-nofill';
   const badgeLabel =
-    sim.outcome === 'tp' ? 'TP Hit' : sim.outcome === 'expired' ? 'Expired filled' : 'No fill';
+    sim.outcome === 'tp' ? 'TP Hit' : sim.outcome === 'sl' ? 'SL Hit' : sim.outcome === 'expired' ? 'Expired filled' : 'No fill';
 
   const sideLabel = sim.side === 'long' ? 'Long' : sim.side === 'short' ? 'Short' : '—';
 
@@ -319,6 +320,10 @@ export default function TradeChart({ eventLabel, date, bars, sim, onReady }: Pro
         .badge-expired {
           background: var(--c-down-soft);
           color: oklch(0.32 0.13 30);
+        }
+        .badge-sl {
+          background: oklch(0.55 0.18 25 / 0.12);
+          color: oklch(0.55 0.18 25);
         }
         .badge-nofill {
           background: var(--c-paper-edge);

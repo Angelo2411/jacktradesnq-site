@@ -39,7 +39,7 @@ function simulate(
   let fillBarIdx: number | null = null;
   let exitPrice: number | null = null;
   let exitBarIdx: number | null = null;
-  let outcome: 'tp' | 'expired' | 'no_fill' = 'no_fill';
+  let outcome: 'tp' | 'sl' | 'expired' | 'no_fill' = 'no_fill';
 
   const lastClose = ev.bars[ev.bars.length - 1].c;
 
@@ -70,20 +70,32 @@ function simulate(
     }
 
     if (filled === 'long' && fillPrice !== null) {
-      if (b.h >= tpBuy) {
-        outcome = 'tp';
-        exitPrice = tpBuy;
-        exitBarIdx = i;
-        filled = 'done';
-        break;
+      const sameBar = i === fillBarIdx;
+      if (sameBar) {
+        if (b.c >= b.o) {
+          if (b.h >= tpBuy) { outcome = 'tp'; exitPrice = tpBuy; exitBarIdx = i; filled = 'done'; break; }
+          if (b.l <= sellStop) { outcome = 'sl'; exitPrice = sellStop; exitBarIdx = i; filled = 'done'; break; }
+        } else {
+          if (b.l <= sellStop) { outcome = 'sl'; exitPrice = sellStop; exitBarIdx = i; filled = 'done'; break; }
+          if (b.h >= tpBuy) { outcome = 'tp'; exitPrice = tpBuy; exitBarIdx = i; filled = 'done'; break; }
+        }
+      } else {
+        if (b.h >= tpBuy) { outcome = 'tp'; exitPrice = tpBuy; exitBarIdx = i; filled = 'done'; break; }
+        if (b.l <= sellStop) { outcome = 'sl'; exitPrice = sellStop; exitBarIdx = i; filled = 'done'; break; }
       }
     } else if (filled === 'short' && fillPrice !== null) {
-      if (b.l <= tpSell) {
-        outcome = 'tp';
-        exitPrice = tpSell;
-        exitBarIdx = i;
-        filled = 'done';
-        break;
+      const sameBar = i === fillBarIdx;
+      if (sameBar) {
+        if (b.c >= b.o) {
+          if (b.h >= buyStop) { outcome = 'sl'; exitPrice = buyStop; exitBarIdx = i; filled = 'done'; break; }
+          if (b.l <= tpSell) { outcome = 'tp'; exitPrice = tpSell; exitBarIdx = i; filled = 'done'; break; }
+        } else {
+          if (b.l <= tpSell) { outcome = 'tp'; exitPrice = tpSell; exitBarIdx = i; filled = 'done'; break; }
+          if (b.h >= buyStop) { outcome = 'sl'; exitPrice = buyStop; exitBarIdx = i; filled = 'done'; break; }
+        }
+      } else {
+        if (b.l <= tpSell) { outcome = 'tp'; exitPrice = tpSell; exitBarIdx = i; filled = 'done'; break; }
+        if (b.h >= buyStop) { outcome = 'sl'; exitPrice = buyStop; exitBarIdx = i; filled = 'done'; break; }
       }
     }
   }
@@ -99,6 +111,7 @@ function simulate(
 
   let pnl = 0;
   if (outcome === 'tp') pnl = tp;
+  else if (outcome === 'sl') pnl = -(2 * stop);
   else if (outcome === 'expired' && fillPrice !== null && exitPrice !== null) {
     pnl = filled === 'long' ? exitPrice - fillPrice : fillPrice - exitPrice;
   }
@@ -201,6 +214,7 @@ export default function PrintReport() {
   const eventLabel = event.toUpperCase();
   const today = new Date().toISOString().slice(0, 10);
   const wins = trades.filter((t) => t.sim.outcome === 'tp').length;
+  const slHits = trades.filter((t) => t.sim.outcome === 'sl').length;
   const losses = trades.filter((t) => t.sim.outcome === 'expired').length;
   const noFills = trades.filter((t) => t.sim.outcome === 'no_fill').length;
   const totalPnl = trades.reduce((s, t) => s + t.sim.pnl, 0);
@@ -228,6 +242,10 @@ export default function PrintReport() {
           <div className="stat">
             <span className="stat-num">{wins}</span>
             <span className="stat-label">TP hits</span>
+          </div>
+          <div className="stat">
+            <span className="stat-num">{slHits}</span>
+            <span className="stat-label">SL hits</span>
           </div>
           <div className="stat">
             <span className="stat-num">{losses}</span>
@@ -323,7 +341,7 @@ export default function PrintReport() {
         }
         .cover-grid {
           display: grid;
-          grid-template-columns: repeat(4, 1fr);
+          grid-template-columns: repeat(5, 1fr);
           gap: 16px;
           margin-bottom: 48px;
         }
@@ -336,7 +354,7 @@ export default function PrintReport() {
           gap: 6px;
         }
         .cover-grid .stat-wide {
-          grid-column: span 4;
+          grid-column: span 5;
           background: oklch(0.93 0.10 95);
         }
         .cover-grid .stat-num {
