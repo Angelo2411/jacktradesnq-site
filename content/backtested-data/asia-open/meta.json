@@ -2,7 +2,7 @@
   "title": "NWOG fill study",
   "category": "data",
   "date": "2026-05-04",
-  "excerpt": "58 New Week Opening Gaps ≥50 pts on NQ (2018-2026): how often the Sunday 18:00 ET gap fills directly within 30 min, fills later in the session, or holds through the night.",
+  "excerpt": "New Week Opening Gap fill rates on NQ (58 events ≥50 pts) and Gold (155 events ≥2 pts) — both backtested 2016–2026.",
   "tradingviewUrl": "https://www.tradingview.com/u/jacktradesnq/",
   "pdfFile": "asia-open.pdf"
 }

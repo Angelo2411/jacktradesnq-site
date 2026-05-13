@@ -2,7 +2,7 @@
   "title": "NFP",
   "category": "data",
   "date": "2026-05-04",
-  "excerpt": "114 NFP releases (2016–2026): NQ move stats + full-port straddle backtest across 42 Offset/TP combos.",
+  "excerpt": "114 NFP releases (2016–2026): NQ + Gold straddle backtest across Offset/TP combos — toggle between assets.",
   "tradingviewUrl": "https://www.tradingview.com/u/jacktradesnq/",
   "pdfFile": "nfp-points.pdf"
 }
