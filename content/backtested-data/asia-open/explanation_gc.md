@@ -4,7 +4,7 @@ A **New Week Opening Gap (NWOG)** is the difference between GC futures' Friday 1
 
 ### Methodology
 
-- Instrument: GC continuous front-month futures (Databento `.n.0`, forward-filled)
+- Instrument: GC continuous front-month futures
 - Period: 10-year backtest window (2016–2026, 1-minute timeframe)
 - First qualifying gap: 2016-02-14 (2.2 pt bear gap, held)
 - Threshold: gap size ≥ 2 pts (absolute)
