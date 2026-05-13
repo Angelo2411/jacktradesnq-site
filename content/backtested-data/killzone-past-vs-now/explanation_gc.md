@@ -1,4 +1,4 @@
-The following PDF shows informations about the numbers of points each killzone had under different conditions.
+The following PDF shows informations about the killzone ranges for Gold (GC) futures under different conditions — measured in $/oz, sourced from Databento `.n.0` continuous front-month data (forward-filled). GC tick = 0.10 ($10/contract).
 
 ### Killzone hours (New York time, DST auto)
 
@@ -12,5 +12,3 @@ The following PDF shows informations about the numbers of points each killzone h
 *DST = Daylight Saving Time (auto-adjusts for US summer/winter time).*
 
 Conditions cross-checked: weekday, news (red folder), and holiday (NYSE bank holiday).
-
-<a class="bd-btn bd-btn-primary" href="/downloads/backtested-data/killzone-past-vs-now.pdf" download>Download — Killzone Range PDF</a>

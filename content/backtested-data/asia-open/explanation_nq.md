@@ -54,4 +54,3 @@ The 50–75 pt bucket is the cleanest: 76% direct fill, only 12% held. Once you'
 
 The full year-by-year breakdown and the complete 58-event list are in the PDF below.
 
-<a class="bd-btn bd-btn-primary" href="/downloads/backtested-data/asia-open.pdf" download>Download — Asia Open PDF</a>

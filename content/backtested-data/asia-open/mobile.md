@@ -12,4 +12,3 @@ A **New Week Opening Gap (NWOG)** is the difference between NQ futures' Friday 1
 
 Full results — fill rates, bull vs bear breakdown, by gap size, 2025 regime shift — are in the PDF.
 
-<a class="bd-btn bd-btn-primary" href="/downloads/backtested-data/asia-open.pdf" download>Download — Asia Open PDF</a>
