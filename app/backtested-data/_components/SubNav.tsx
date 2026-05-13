@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { IconMenu } from './icons';
+import AssetSwitch from './AssetSwitch';
 
 export default function SubNav({ onMenu }: { onMenu?: () => void }) {
   return (
@@ -17,6 +18,7 @@ export default function SubNav({ onMenu }: { onMenu?: () => void }) {
         <Link className="bd-logo" href="/" aria-label="jacktradesnq home" title="jacktradesnq">
           J
         </Link>
+        <AssetSwitch />
       </div>
       <div className="bd-nav-center">
         <span className="bd-nav-title">
