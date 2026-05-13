@@ -24,8 +24,14 @@ function SideGroup({
 
   useEffect(() => {
     if (!listRef.current) return;
-    const h = listRef.current.scrollHeight;
-    setMaxH(open ? h + 'px' : '0px');
+    if (!open) {
+      const h = listRef.current.scrollHeight;
+      setMaxH(h + 'px');
+      // after getting the height, animate to 0
+      requestAnimationFrame(() => setMaxH('0px'));
+    } else {
+      setMaxH('none');
+    }
   }, [open, items]);
 
   return (
@@ -68,6 +74,7 @@ function SideSection({
 }) {
   const [open, setOpen] = useState(true);
   const listRef = useRef<HTMLUListElement>(null);
+  // Keep 'none' when open so inner groups can expand freely
   const [maxH, setMaxH] = useState<string>('none');
 
   // Separate ungrouped vs grouped
@@ -83,8 +90,13 @@ function SideSection({
 
   useEffect(() => {
     if (!listRef.current) return;
-    const h = listRef.current.scrollHeight;
-    setMaxH(open ? h + 'px' : '0px');
+    if (!open) {
+      const h = listRef.current.scrollHeight;
+      setMaxH(h + 'px');
+      requestAnimationFrame(() => setMaxH('0px'));
+    } else {
+      setMaxH('none');
+    }
   }, [open, items]);
 
   if (!items.length) return null;
