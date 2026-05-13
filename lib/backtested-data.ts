@@ -13,6 +13,9 @@ export interface EntryMeta {
   excerpt: string;
   tradingviewUrl: string;
   pdfFile: string;
+  pdfLabel?: string;
+  pdfFileNq?: string;
+  pdfFileGc?: string;
   group?: string;
 }
 
@@ -23,6 +26,8 @@ export interface Entry extends EntryMeta {
 export interface EntryDetail extends EntryMeta {
   slug: string;
   explanationHtml: string;
+  explanationHtmlNq: string;
+  explanationHtmlGc: string;
   mobileHtml?: string;
 }
 
@@ -55,15 +60,41 @@ export function getEntry(slug: string): EntryDetail | null {
   const rawMeta = fs.readFileSync(metaPath, 'utf-8');
   const meta = JSON.parse(rawMeta) as EntryMeta;
 
-  const mdPath = path.join(entryDir, 'explanation.md');
-  const explanationHtml = fs.existsSync(mdPath)
-    ? marked.parse(fs.readFileSync(mdPath, 'utf-8')) as string
-    : '';
+  // Bilingual explanation: use explanation_nq.md + explanation_gc.md if both exist
+  const mdNqPath = path.join(entryDir, 'explanation_nq.md');
+  const mdGcPath = path.join(entryDir, 'explanation_gc.md');
+  const hasBilingualMd = fs.existsSync(mdNqPath) && fs.existsSync(mdGcPath);
+
+  const explanationHtmlNq = hasBilingualMd
+    ? (marked.parse(fs.readFileSync(mdNqPath, 'utf-8')) as string)
+    : (() => {
+        const mdPath = path.join(entryDir, 'explanation.md');
+        return fs.existsSync(mdPath)
+          ? (marked.parse(fs.readFileSync(mdPath, 'utf-8')) as string)
+          : '';
+      })();
+
+  const explanationHtmlGc = hasBilingualMd
+    ? (marked.parse(fs.readFileSync(mdGcPath, 'utf-8')) as string)
+    : explanationHtmlNq;
+
+  // Bilingual PDF file: use pdfFileNq + pdfFileGc from meta if both present
+  const pdfFileNq = meta.pdfFileNq ?? meta.pdfFile;
+  const pdfFileGc = meta.pdfFileGc ?? meta.pdfFile;
 
   const mobilePath = path.join(entryDir, 'mobile.md');
   const mobileHtml = fs.existsSync(mobilePath)
     ? (marked.parse(fs.readFileSync(mobilePath, 'utf-8')) as string)
     : undefined;
 
-  return { slug, ...meta, explanationHtml, mobileHtml };
+  return {
+    slug,
+    ...meta,
+    explanationHtml: explanationHtmlNq,
+    explanationHtmlNq,
+    explanationHtmlGc,
+    pdfFileNq,
+    pdfFileGc,
+    mobileHtml,
+  };
 }
