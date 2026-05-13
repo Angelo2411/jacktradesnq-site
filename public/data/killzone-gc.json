@@ -1,0 +1,631 @@
+{
+  "symbol": "GC",
+  "dateRange": {
+    "from": "2016-01-01",
+    "to": "2026-12-31"
+  },
+  "killzones": [
+    {
+      "label": "Asia",
+      "hoursNY": "18:00 \u2192 00:00"
+    },
+    {
+      "label": "London",
+      "hoursNY": "02:00 \u2192 05:00"
+    },
+    {
+      "label": "NY AM",
+      "hoursNY": "09:30 \u2192 11:00"
+    },
+    {
+      "label": "NY PM",
+      "hoursNY": "14:00 \u2192 16:10"
+    }
+  ],
+  "overall": [
+    {
+      "killzone": "Asia",
+      "n": 2671,
+      "avgRange": 13.2,
+      "medRange": 7.7,
+      "p25": 5.0,
+      "p75": 12.5,
+      "avgMove": 0.8
+    },
+    {
+      "killzone": "London",
+      "n": 2669,
+      "avgRange": 10.2,
+      "medRange": 7.2,
+      "p25": 4.6,
+      "p75": 11.5,
+      "avgMove": 0.2
+    },
+    {
+      "killzone": "NY AM",
+      "n": 2670,
+      "avgRange": 12.9,
+      "medRange": 9.2,
+      "p25": 5.5,
+      "p75": 14.9,
+      "avgMove": -0.2
+    },
+    {
+      "killzone": "NY PM",
+      "n": 2618,
+      "avgRange": 7.4,
+      "medRange": 4.5,
+      "p25": 2.8,
+      "p75": 7.4,
+      "avgMove": 0.1
+    }
+  ],
+  "byDow": {
+    "Asia": [
+      {
+        "dow": "Mon",
+        "n": 539,
+        "avgRange": 12.1,
+        "medRange": 7.6
+      },
+      {
+        "dow": "Tue",
+        "n": 536,
+        "avgRange": 12.3,
+        "medRange": 7.2
+      },
+      {
+        "dow": "Wed",
+        "n": 538,
+        "avgRange": 12.5,
+        "medRange": 7.5
+      },
+      {
+        "dow": "Thu",
+        "n": 525,
+        "avgRange": 12.5,
+        "medRange": 7.1
+      },
+      {
+        "dow": "Fri",
+        "n": 0,
+        "avgRange": 0.0,
+        "medRange": 0.0
+      },
+      {
+        "dow": "Sat",
+        "n": 0,
+        "avgRange": 0.0,
+        "medRange": 0.0
+      },
+      {
+        "dow": "Sun",
+        "n": 533,
+        "avgRange": 16.5,
+        "medRange": 9.3
+      }
+    ],
+    "London": [
+      {
+        "dow": "Mon",
+        "n": 533,
+        "avgRange": 10.4,
+        "medRange": 7.2
+      },
+      {
+        "dow": "Tue",
+        "n": 538,
+        "avgRange": 10.6,
+        "medRange": 7.5
+      },
+      {
+        "dow": "Wed",
+        "n": 536,
+        "avgRange": 9.8,
+        "medRange": 6.7
+      },
+      {
+        "dow": "Thu",
+        "n": 538,
+        "avgRange": 10.3,
+        "medRange": 7.3
+      },
+      {
+        "dow": "Fri",
+        "n": 524,
+        "avgRange": 10.0,
+        "medRange": 7.1
+      },
+      {
+        "dow": "Sat",
+        "n": 0,
+        "avgRange": 0.0,
+        "medRange": 0.0
+      },
+      {
+        "dow": "Sun",
+        "n": 0,
+        "avgRange": 0.0,
+        "medRange": 0.0
+      }
+    ],
+    "NY AM": [
+      {
+        "dow": "Mon",
+        "n": 533,
+        "avgRange": 11.4,
+        "medRange": 8.0
+      },
+      {
+        "dow": "Tue",
+        "n": 538,
+        "avgRange": 13.5,
+        "medRange": 9.6
+      },
+      {
+        "dow": "Wed",
+        "n": 536,
+        "avgRange": 12.1,
+        "medRange": 9.1
+      },
+      {
+        "dow": "Thu",
+        "n": 538,
+        "avgRange": 13.7,
+        "medRange": 9.4
+      },
+      {
+        "dow": "Fri",
+        "n": 525,
+        "avgRange": 14.0,
+        "medRange": 9.9
+      },
+      {
+        "dow": "Sat",
+        "n": 0,
+        "avgRange": 0.0,
+        "medRange": 0.0
+      },
+      {
+        "dow": "Sun",
+        "n": 0,
+        "avgRange": 0.0,
+        "medRange": 0.0
+      }
+    ],
+    "NY PM": [
+      {
+        "dow": "Mon",
+        "n": 506,
+        "avgRange": 6.3,
+        "medRange": 3.9
+      },
+      {
+        "dow": "Tue",
+        "n": 534,
+        "avgRange": 6.6,
+        "medRange": 4.2
+      },
+      {
+        "dow": "Wed",
+        "n": 534,
+        "avgRange": 10.2,
+        "medRange": 5.9
+      },
+      {
+        "dow": "Thu",
+        "n": 529,
+        "avgRange": 7.1,
+        "medRange": 4.5
+      },
+      {
+        "dow": "Fri",
+        "n": 515,
+        "avgRange": 6.6,
+        "medRange": 4.5
+      },
+      {
+        "dow": "Sat",
+        "n": 0,
+        "avgRange": 0.0,
+        "medRange": 0.0
+      },
+      {
+        "dow": "Sun",
+        "n": 0,
+        "avgRange": 0.0,
+        "medRange": 0.0
+      }
+    ]
+  },
+  "byNews": [
+    {
+      "killzone": "Asia",
+      "type": "no-news",
+      "n": 1583,
+      "avgRange": 13.9,
+      "medRange": 8.0
+    },
+    {
+      "killzone": "Asia",
+      "type": "news",
+      "n": 1088,
+      "avgRange": 12.1,
+      "medRange": 7.2
+    },
+    {
+      "killzone": "London",
+      "type": "no-news",
+      "n": 1267,
+      "avgRange": 10.7,
+      "medRange": 7.3
+    },
+    {
+      "killzone": "London",
+      "type": "news",
+      "n": 1402,
+      "avgRange": 9.8,
+      "medRange": 7.1
+    },
+    {
+      "killzone": "NY AM",
+      "type": "no-news",
+      "n": 1268,
+      "avgRange": 12.6,
+      "medRange": 8.7
+    },
+    {
+      "killzone": "NY AM",
+      "type": "news",
+      "n": 1402,
+      "avgRange": 13.2,
+      "medRange": 9.7
+    },
+    {
+      "killzone": "NY PM",
+      "type": "no-news",
+      "n": 1222,
+      "avgRange": 7.0,
+      "medRange": 4.3
+    },
+    {
+      "killzone": "NY PM",
+      "type": "news",
+      "n": 1396,
+      "avgRange": 7.7,
+      "medRange": 4.7
+    }
+  ],
+  "byHoliday": [
+    {
+      "killzone": "Asia",
+      "type": "no-holiday",
+      "n": 2572,
+      "avgRange": 13.2,
+      "medRange": 7.6
+    },
+    {
+      "killzone": "Asia",
+      "type": "holiday",
+      "n": 99,
+      "avgRange": 11.8,
+      "medRange": 8.3
+    },
+    {
+      "killzone": "London",
+      "type": "no-holiday",
+      "n": 2581,
+      "avgRange": 10.3,
+      "medRange": 7.2
+    },
+    {
+      "killzone": "London",
+      "type": "holiday",
+      "n": 88,
+      "avgRange": 7.7,
+      "medRange": 6.0
+    },
+    {
+      "killzone": "NY AM",
+      "type": "no-holiday",
+      "n": 2582,
+      "avgRange": 13.2,
+      "medRange": 9.3
+    },
+    {
+      "killzone": "NY AM",
+      "type": "holiday",
+      "n": 88,
+      "avgRange": 6.4,
+      "medRange": 4.3
+    },
+    {
+      "killzone": "NY PM",
+      "type": "no-holiday",
+      "n": 2567,
+      "avgRange": 7.4,
+      "medRange": 4.5
+    },
+    {
+      "killzone": "NY PM",
+      "type": "holiday",
+      "n": 51,
+      "avgRange": 3.9,
+      "medRange": 2.7
+    }
+  ],
+  "byYear": {
+    "Asia": [
+      {
+        "year": 2016,
+        "n": 258,
+        "avgRange": 8.2,
+        "medRange": 6.4
+      },
+      {
+        "year": 2017,
+        "n": 257,
+        "avgRange": 5.0,
+        "medRange": 4.3
+      },
+      {
+        "year": 2018,
+        "n": 258,
+        "avgRange": 4.9,
+        "medRange": 4.4
+      },
+      {
+        "year": 2019,
+        "n": 258,
+        "avgRange": 6.0,
+        "medRange": 4.8
+      },
+      {
+        "year": 2020,
+        "n": 258,
+        "avgRange": 13.3,
+        "medRange": 10.9
+      },
+      {
+        "year": 2021,
+        "n": 258,
+        "avgRange": 9.0,
+        "medRange": 7.9
+      },
+      {
+        "year": 2022,
+        "n": 258,
+        "avgRange": 9.5,
+        "medRange": 8.1
+      },
+      {
+        "year": 2023,
+        "n": 257,
+        "avgRange": 8.5,
+        "medRange": 6.9
+      },
+      {
+        "year": 2024,
+        "n": 259,
+        "avgRange": 12.8,
+        "medRange": 10.4
+      },
+      {
+        "year": 2025,
+        "n": 258,
+        "avgRange": 30.5,
+        "medRange": 25.1
+      },
+      {
+        "year": 2026,
+        "n": 92,
+        "avgRange": 81.2,
+        "medRange": 61.4
+      }
+    ],
+    "London": [
+      {
+        "year": 2016,
+        "n": 258,
+        "avgRange": 5.9,
+        "medRange": 5.0
+      },
+      {
+        "year": 2017,
+        "n": 257,
+        "avgRange": 4.2,
+        "medRange": 3.7
+      },
+      {
+        "year": 2018,
+        "n": 258,
+        "avgRange": 4.6,
+        "medRange": 4.2
+      },
+      {
+        "year": 2019,
+        "n": 258,
+        "avgRange": 5.3,
+        "medRange": 4.6
+      },
+      {
+        "year": 2020,
+        "n": 258,
+        "avgRange": 11.7,
+        "medRange": 10.2
+      },
+      {
+        "year": 2021,
+        "n": 258,
+        "avgRange": 8.3,
+        "medRange": 7.5
+      },
+      {
+        "year": 2022,
+        "n": 258,
+        "avgRange": 9.5,
+        "medRange": 8.4
+      },
+      {
+        "year": 2023,
+        "n": 257,
+        "avgRange": 7.9,
+        "medRange": 7.2
+      },
+      {
+        "year": 2024,
+        "n": 259,
+        "avgRange": 10.7,
+        "medRange": 10.0
+      },
+      {
+        "year": 2025,
+        "n": 257,
+        "avgRange": 21.2,
+        "medRange": 16.8
+      },
+      {
+        "year": 2026,
+        "n": 91,
+        "avgRange": 46.9,
+        "medRange": 35.2
+      }
+    ],
+    "NY AM": [
+      {
+        "year": 2016,
+        "n": 258,
+        "avgRange": 7.2,
+        "medRange": 6.4
+      },
+      {
+        "year": 2017,
+        "n": 257,
+        "avgRange": 5.2,
+        "medRange": 4.6
+      },
+      {
+        "year": 2018,
+        "n": 258,
+        "avgRange": 4.7,
+        "medRange": 4.0
+      },
+      {
+        "year": 2019,
+        "n": 258,
+        "avgRange": 6.6,
+        "medRange": 5.5
+      },
+      {
+        "year": 2020,
+        "n": 258,
+        "avgRange": 14.7,
+        "medRange": 12.5
+      },
+      {
+        "year": 2021,
+        "n": 258,
+        "avgRange": 11.4,
+        "medRange": 10.1
+      },
+      {
+        "year": 2022,
+        "n": 258,
+        "avgRange": 11.9,
+        "medRange": 10.7
+      },
+      {
+        "year": 2023,
+        "n": 257,
+        "avgRange": 11.6,
+        "medRange": 10.6
+      },
+      {
+        "year": 2024,
+        "n": 259,
+        "avgRange": 14.7,
+        "medRange": 13.9
+      },
+      {
+        "year": 2025,
+        "n": 258,
+        "avgRange": 25.2,
+        "medRange": 21.5
+      },
+      {
+        "year": 2026,
+        "n": 91,
+        "avgRange": 59.1,
+        "medRange": 46.0
+      }
+    ],
+    "NY PM": [
+      {
+        "year": 2016,
+        "n": 251,
+        "avgRange": 5.0,
+        "medRange": 4.0
+      },
+      {
+        "year": 2017,
+        "n": 250,
+        "avgRange": 3.8,
+        "medRange": 2.9
+      },
+      {
+        "year": 2018,
+        "n": 250,
+        "avgRange": 3.4,
+        "medRange": 2.7
+      },
+      {
+        "year": 2019,
+        "n": 250,
+        "avgRange": 4.2,
+        "medRange": 2.9
+      },
+      {
+        "year": 2020,
+        "n": 248,
+        "avgRange": 8.5,
+        "medRange": 6.0
+      },
+      {
+        "year": 2021,
+        "n": 251,
+        "avgRange": 4.9,
+        "medRange": 3.9
+      },
+      {
+        "year": 2022,
+        "n": 257,
+        "avgRange": 6.6,
+        "medRange": 4.9
+      },
+      {
+        "year": 2023,
+        "n": 256,
+        "avgRange": 5.0,
+        "medRange": 3.8
+      },
+      {
+        "year": 2024,
+        "n": 258,
+        "avgRange": 7.3,
+        "medRange": 5.8
+      },
+      {
+        "year": 2025,
+        "n": 256,
+        "avgRange": 13.9,
+        "medRange": 10.8
+      },
+      {
+        "year": 2026,
+        "n": 91,
+        "avgRange": 37.9,
+        "medRange": 27.2
+      }
+    ]
+  }
+}
