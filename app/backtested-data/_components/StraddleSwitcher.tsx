@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import StraddleExplorer, { type ExplorerConfig } from './StraddleExplorer';
 
 type AssetKey = 'nq' | 'gc';
@@ -17,6 +17,14 @@ interface Props {
 
 export default function StraddleSwitcher({ nqConfig, gcConfig }: Props) {
   const [asset, setAsset] = useState<AssetKey>('nq');
+
+  // Read ?asset=gc from URL at mount (compatible with static export)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const a = params.get('asset');
+    if (a === 'gc') setAsset('gc');
+  }, []);
+
   const config = asset === 'nq' ? nqConfig : gcConfig;
 
   return (

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type AssetKey = 'nq' | 'gc';
 
@@ -97,6 +97,13 @@ function SummaryTable({ data, unit }: { data: typeof NQ_SUMMARY; unit: string })
 
 export default function NwogSwitcher() {
   const [asset, setAsset] = useState<AssetKey>('nq');
+
+  // Read ?asset=gc from URL at mount (compatible with static export)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const a = params.get('asset');
+    if (a === 'gc') setAsset('gc');
+  }, []);
 
   return (
     <div className="bd-asset-scope" data-asset={asset} style={{ marginBottom: 32 }}>

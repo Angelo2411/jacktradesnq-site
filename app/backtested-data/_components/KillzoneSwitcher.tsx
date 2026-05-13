@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type AssetKey = 'nq' | 'gc';
 
@@ -27,6 +27,14 @@ const GC_ROWS = [
 
 export default function KillzoneSwitcher() {
   const [asset, setAsset] = useState<AssetKey>('nq');
+
+  // Read ?asset=gc from URL at mount (compatible with static export)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const a = params.get('asset');
+    if (a === 'gc') setAsset('gc');
+  }, []);
+
   const rows = asset === 'nq' ? NQ_ROWS : GC_ROWS;
   const unit = asset === 'nq' ? 'pts' : '$/oz';
 
