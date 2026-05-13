@@ -1,8 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-
-type AssetKey = 'nq' | 'gc';
+import { useAsset, type AssetKey } from '../_components/AssetContext';
 
 type Asset = {
   key: AssetKey;
@@ -55,7 +53,7 @@ const ASSETS: Asset[] = [
 ];
 
 export default function MetalsVibePage() {
-  const [active, setActive] = useState<AssetKey>('nq');
+  const { asset: active, setAsset: setActive } = useAsset();
   const asset = ASSETS.find((a) => a.key === active)!;
 
   return (
