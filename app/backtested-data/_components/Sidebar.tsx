@@ -82,9 +82,20 @@ function SideSection({
   const groups = Array.from(groupMap.entries()).sort(([a], [b]) => a.localeCompare(b));
 
   useEffect(() => {
-    if (!listRef.current) return;
-    const h = listRef.current.scrollHeight;
-    setMaxH(open ? h + 'px' : '0px');
+    const el = listRef.current;
+    if (!el) return;
+    if (open) {
+      const h = el.scrollHeight;
+      setMaxH(h + 'px');
+      // Release to 'none' after the transition so nested groups can expand
+      // without being clipped by a stale parent max-height.
+      const t = setTimeout(() => setMaxH('none'), 360);
+      return () => clearTimeout(t);
+    }
+    const h = el.scrollHeight;
+    setMaxH(h + 'px');
+    const raf = requestAnimationFrame(() => setMaxH('0px'));
+    return () => cancelAnimationFrame(raf);
   }, [open, items]);
 
   if (!items.length) return null;
