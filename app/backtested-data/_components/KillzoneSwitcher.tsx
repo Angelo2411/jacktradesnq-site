@@ -1,13 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-
-type AssetKey = 'nq' | 'gc';
-
-const ASSETS: { key: AssetKey; label: string; dot: string }[] = [
-  { key: 'nq', label: 'Nasdaq', dot: 'oklch(0.86 0.16 95)' },
-  { key: 'gc', label: 'Gold', dot: 'oklch(0.74 0.16 78)' },
-];
+import { useAsset } from './AssetContext';
 
 // NQ data hardcoded from explanation.md (10y backtest)
 const NQ_ROWS = [
@@ -26,43 +19,13 @@ const GC_ROWS = [
 ];
 
 export default function KillzoneSwitcher() {
-  const [asset, setAsset] = useState<AssetKey>('nq');
-
-  // Read ?asset=gc from URL at mount (compatible with static export)
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const a = params.get('asset');
-    if (a === 'gc') setAsset('gc');
-  }, []);
+  const { asset } = useAsset();
 
   const rows = asset === 'nq' ? NQ_ROWS : GC_ROWS;
   const unit = asset === 'nq' ? 'pts' : '$/oz';
 
   return (
     <div className="bd-asset-scope" data-asset={asset} style={{ marginBottom: 32 }}>
-      <div className="bd-asset-topbar">
-        <div className="bd-asset-switch" role="tablist" aria-label="Asset selector">
-          {ASSETS.map((a, i) => (
-            <button
-              key={a.key}
-              role="tab"
-              type="button"
-              aria-selected={asset === a.key}
-              onClick={() => setAsset(a.key)}
-              className="bd-asset-switch-btn"
-              style={{ ['--btn-dot' as string]: a.dot }}
-            >
-              {a.label}
-              {i === 0 ? (
-                <span className="bd-asset-switch-sep" aria-hidden="true">
-                  /
-                </span>
-              ) : null}
-            </button>
-          ))}
-        </div>
-      </div>
-
       {asset === 'gc' ? (
         <div aria-live="polite" style={{ marginTop: 16 }}>
           <p
@@ -74,7 +37,7 @@ export default function KillzoneSwitcher() {
             }}
           >
             Gold (GC) — killzone range stats ($/oz), 10-year backtest 2016–2026.
-            Both NQ and Gold backtested — toggle via the buttons above.
+            Both NQ and Gold backtested — toggle via the NQ/GC buttons in the nav bar.
           </p>
           <table
             style={{
@@ -116,7 +79,7 @@ export default function KillzoneSwitcher() {
             marginTop: 16,
           }}
         >
-          Showing NQ data — see PDF below for full breakdown. Switch to Gold to view GC killzone ranges.
+          Showing NQ data — see PDF below for full breakdown. Switch to Gold via the NQ/GC buttons in the nav bar.
         </p>
       )}
     </div>

@@ -1,13 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-
-type AssetKey = 'nq' | 'gc';
-
-const ASSETS: { key: AssetKey; label: string; dot: string }[] = [
-  { key: 'nq', label: 'Nasdaq', dot: 'oklch(0.86 0.16 95)' },
-  { key: 'gc', label: 'Gold', dot: 'oklch(0.74 0.16 78)' },
-];
+import { useAsset } from './AssetContext';
 
 // NQ data from explanation.md (58 events ≥50 pts, 2018–2026)
 const NQ_SUMMARY = {
@@ -35,7 +28,7 @@ function SummaryTable({ data, unit }: { data: typeof NQ_SUMMARY; unit: string })
   return (
     <div aria-live="polite" style={{ marginTop: 16 }}>
       <p style={{ fontFamily: 'var(--f-sans)', fontSize: '0.875rem', color: 'var(--c-muted)', marginBottom: 12 }}>
-        {data.totalEvents} events · gap ≥{data.gapMinPoints} {unit} · Both NQ and Gold backtested — toggle via the buttons above.
+        {data.totalEvents} events · gap ≥{data.gapMinPoints} {unit} · Both NQ and Gold backtested — toggle via the NQ/GC buttons in the nav bar.
       </p>
       <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'var(--f-sans)', fontSize: '0.875rem' }}>
         <thead>
@@ -96,40 +89,10 @@ function SummaryTable({ data, unit }: { data: typeof NQ_SUMMARY; unit: string })
 }
 
 export default function NwogSwitcher() {
-  const [asset, setAsset] = useState<AssetKey>('nq');
-
-  // Read ?asset=gc from URL at mount (compatible with static export)
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const a = params.get('asset');
-    if (a === 'gc') setAsset('gc');
-  }, []);
+  const { asset } = useAsset();
 
   return (
     <div className="bd-asset-scope" data-asset={asset} style={{ marginBottom: 32 }}>
-      <div className="bd-asset-topbar">
-        <div className="bd-asset-switch" role="tablist" aria-label="Asset selector">
-          {ASSETS.map((a, i) => (
-            <button
-              key={a.key}
-              role="tab"
-              type="button"
-              aria-selected={asset === a.key}
-              onClick={() => setAsset(a.key)}
-              className="bd-asset-switch-btn"
-              style={{ ['--btn-dot' as string]: a.dot }}
-            >
-              {a.label}
-              {i === 0 ? (
-                <span className="bd-asset-switch-sep" aria-hidden="true">
-                  /
-                </span>
-              ) : null}
-            </button>
-          ))}
-        </div>
-      </div>
-
       {asset === 'nq' ? (
         <SummaryTable data={NQ_SUMMARY} unit="pts" />
       ) : (
