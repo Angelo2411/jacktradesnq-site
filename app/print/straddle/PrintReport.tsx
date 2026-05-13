@@ -72,6 +72,9 @@ function simulate(
     if (filled === 'long' && fillPrice !== null) {
       const sameBar = i === fillBarIdx;
       if (sameBar) {
+        if (b.h >= tpBuy) { outcome = 'tp'; exitPrice = tpBuy; exitBarIdx = i; filled = 'done'; break; }
+        if (b.l <= sellStop) { outcome = 'sl'; exitPrice = sellStop; exitBarIdx = i; filled = 'done'; break; }
+      } else {
         if (b.c >= b.o) {
           if (b.h >= tpBuy) { outcome = 'tp'; exitPrice = tpBuy; exitBarIdx = i; filled = 'done'; break; }
           if (b.l <= sellStop) { outcome = 'sl'; exitPrice = sellStop; exitBarIdx = i; filled = 'done'; break; }
@@ -79,13 +82,13 @@ function simulate(
           if (b.l <= sellStop) { outcome = 'sl'; exitPrice = sellStop; exitBarIdx = i; filled = 'done'; break; }
           if (b.h >= tpBuy) { outcome = 'tp'; exitPrice = tpBuy; exitBarIdx = i; filled = 'done'; break; }
         }
-      } else {
-        if (b.h >= tpBuy) { outcome = 'tp'; exitPrice = tpBuy; exitBarIdx = i; filled = 'done'; break; }
-        if (b.l <= sellStop) { outcome = 'sl'; exitPrice = sellStop; exitBarIdx = i; filled = 'done'; break; }
       }
     } else if (filled === 'short' && fillPrice !== null) {
       const sameBar = i === fillBarIdx;
       if (sameBar) {
+        if (b.l <= tpSell) { outcome = 'tp'; exitPrice = tpSell; exitBarIdx = i; filled = 'done'; break; }
+        if (b.h >= buyStop) { outcome = 'sl'; exitPrice = buyStop; exitBarIdx = i; filled = 'done'; break; }
+      } else {
         if (b.c >= b.o) {
           if (b.h >= buyStop) { outcome = 'sl'; exitPrice = buyStop; exitBarIdx = i; filled = 'done'; break; }
           if (b.l <= tpSell) { outcome = 'tp'; exitPrice = tpSell; exitBarIdx = i; filled = 'done'; break; }
@@ -93,9 +96,6 @@ function simulate(
           if (b.l <= tpSell) { outcome = 'tp'; exitPrice = tpSell; exitBarIdx = i; filled = 'done'; break; }
           if (b.h >= buyStop) { outcome = 'sl'; exitPrice = buyStop; exitBarIdx = i; filled = 'done'; break; }
         }
-      } else {
-        if (b.l <= tpSell) { outcome = 'tp'; exitPrice = tpSell; exitBarIdx = i; filled = 'done'; break; }
-        if (b.h >= buyStop) { outcome = 'sl'; exitPrice = buyStop; exitBarIdx = i; filled = 'done'; break; }
       }
     }
   }

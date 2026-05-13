@@ -205,6 +205,7 @@ export default function TradeChart({ eventLabel, date, bars, sim, onReady }: Pro
     ]);
 
     chart.timeScale().fitContent();
+    chart.timeScale().applyOptions({ rightOffset: 8 });
 
     // ResizeObserver for responsive width
     const ro = new ResizeObserver(() => {
