@@ -12,7 +12,7 @@ export interface EntryMeta {
   date: string;
   excerpt: string;
   tradingviewUrl: string;
-  pdfFile: string;
+  pdfFile?: string;
   pdfLabel?: string;
   pdfFileNq?: string;
   pdfFileGc?: string;
@@ -81,8 +81,8 @@ export function getEntry(slug: string): EntryDetail | null {
     : explanationHtmlNq;
 
   // Bilingual PDF file: use pdfFileNq + pdfFileGc from meta if both present
-  const pdfFileNq = meta.pdfFileNq ?? meta.pdfFile;
-  const pdfFileGc = meta.pdfFileGc ?? meta.pdfFile;
+  const pdfFileNq = meta.pdfFileNq ?? meta.pdfFile ?? '';
+  const pdfFileGc = meta.pdfFileGc ?? meta.pdfFile ?? '';
 
   const mobilePath = path.join(entryDir, 'mobile.md');
   const mobileHtml = fs.existsSync(mobilePath)

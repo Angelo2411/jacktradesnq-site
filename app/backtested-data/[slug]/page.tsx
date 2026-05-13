@@ -243,11 +243,13 @@ export default async function BacktestedDetail({ params }: PageProps) {
             <IconArrowUpRight />
           </a>
         ) : null}
-        <BilingualPdfLink
-          pdfFileNq={entry.pdfFileNq}
-          pdfFileGc={entry.pdfFileGc}
-          pdfLabel={entry.pdfLabel ?? `Download — ${entry.title} PDF`}
-        />
+        {entry.pdfFileNq ? (
+          <BilingualPdfLink
+            pdfFileNq={entry.pdfFileNq}
+            pdfFileGc={entry.pdfFileGc}
+            pdfLabel={entry.pdfLabel ?? `Download — ${entry.title} PDF`}
+          />
+        ) : null}
       </div>
 
       <div className="mt-16 max-w-[720px] border-t pt-6" style={{ borderColor: 'oklch(0.85 0.02 85)' }}>
