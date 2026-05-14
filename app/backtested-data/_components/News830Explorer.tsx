@@ -150,11 +150,15 @@ interface News830ExplorerProps {
   dataUrl: string;
   pdfTitle: string;
   dataUrlGc?: string;
+  pdfTitleGc?: string;
 }
 
-export default function News830Explorer({ dataUrl, pdfTitle, dataUrlGc }: News830ExplorerProps) {
+export default function News830Explorer({ dataUrl, pdfTitle, dataUrlGc, pdfTitleGc }: News830ExplorerProps) {
   const { asset } = useAsset();
   const activeUrl = (asset === 'gc' && dataUrlGc) ? dataUrlGc : dataUrl;
+  const activePdfTitle = (asset === 'gc' && pdfTitleGc) ? pdfTitleGc : pdfTitle;
+  const smtLabel = asset === 'gc' ? 'SI SMT' : 'ES SMT';
+  const datasetLabel = asset === 'gc' ? 'GC continuous' : 'NQ continuous';
 
   const [data, setData]       = useState<News830Data | null>(null);
   const [loading, setLoading] = useState(true);
@@ -243,7 +247,7 @@ export default function News830Explorer({ dataUrl, pdfTitle, dataUrlGc }: News83
       doc.setFont('times', 'bold');
       doc.setFontSize(26);
       doc.setTextColor(20);
-      doc.text(`${pdfTitle} — Custom Report`, 40, 80);
+      doc.text(`${activePdfTitle} — Custom Report`, 40, 80);
 
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(11);
@@ -266,7 +270,7 @@ export default function News830Explorer({ dataUrl, pdfTitle, dataUrlGc }: News83
       doc.setFontSize(11);
       const filterLines = [
         `• Variant: ${VARIANT_LABELS[variant]}`,
-        `• ES SMT: ${smt ? 'On' : 'Off'}`,
+        `• ${smtLabel}: ${smt ? 'On' : 'Off'}`,
         `• Side: ${side}`,
         `• Year: ${year === 'ALL' ? 'All years (2022–2026)' : year}`,
       ];
@@ -328,13 +332,13 @@ export default function News830Explorer({ dataUrl, pdfTitle, dataUrlGc }: News83
         doc.setFontSize(8);
         doc.setTextColor(120);
         doc.text(
-          `jacktradesnq.com  ·  ${pdfTitle.toLowerCase()} interactive explorer  ·  ${today}  ·  Page ${p}/${pageCount}`,
+          `jacktradesnq.com  ·  ${activePdfTitle.toLowerCase()} interactive explorer  ·  ${today}  ·  Page ${p}/${pageCount}`,
           40,
           doc.internal.pageSize.getHeight() - 24,
         );
       }
 
-      const slugifiedTitle = pdfTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      const slugifiedTitle = activePdfTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
       const filename = `${slugifiedTitle}-custom-${variant}-${smt ? 'smtON' : 'smtOFF'}-${side}-${year}-${today}.pdf`;
       doc.save(filename);
     } catch (e) {
@@ -365,7 +369,7 @@ export default function News830Explorer({ dataUrl, pdfTitle, dataUrlGc }: News83
       doc.setFont('times', 'bold');
       doc.setFontSize(26);
       doc.setTextColor(20);
-      doc.text(`${pdfTitle} — Full Report`, 40, 80);
+      doc.text(`${activePdfTitle} — Full Report`, 40, 80);
 
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(11);
@@ -448,13 +452,13 @@ export default function News830Explorer({ dataUrl, pdfTitle, dataUrlGc }: News83
         doc.setFontSize(8);
         doc.setTextColor(120);
         doc.text(
-          `jacktradesnq.com  ·  ${pdfTitle.toLowerCase()} interactive explorer  ·  ${today}  ·  Page ${p}/${pageCount}`,
+          `jacktradesnq.com  ·  ${activePdfTitle.toLowerCase()} interactive explorer  ·  ${today}  ·  Page ${p}/${pageCount}`,
           40,
           doc.internal.pageSize.getHeight() - 24,
         );
       }
 
-      const slugifiedTitle = pdfTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      const slugifiedTitle = activePdfTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
       doc.save(`${slugifiedTitle}-full-${today}.pdf`);
     } catch (e) {
       console.error('PDF generation failed', e);
@@ -805,7 +809,7 @@ export default function News830Explorer({ dataUrl, pdfTitle, dataUrlGc }: News83
         </label>
 
         <label className="bd-filter">
-          <span className="bd-filter-lbl">ES SMT</span>
+          <span className="bd-filter-lbl">{smtLabel}</span>
           <select
             className="bd-select"
             value={smt ? 'on' : 'off'}
@@ -958,9 +962,9 @@ export default function News830Explorer({ dataUrl, pdfTitle, dataUrlGc }: News83
       </div>
 
       <p className="n8-disclaimer">
-        Backtest on NQ continuous (Databento). Past performance does not
-        predict future results. Sample sizes are small — treat as indicative
-        only, not financial advice.
+        Backtest on {datasetLabel}. Past performance does not predict future
+        results. Sample sizes are small — treat as indicative only, not
+        financial advice.
       </p>
     </section>
   );

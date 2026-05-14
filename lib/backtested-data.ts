@@ -8,6 +8,8 @@ export type Category = 'tradingview' | 'data';
 
 export interface EntryMeta {
   title: string;
+  titleNq?: string;
+  titleGc?: string;
   category: Category;
   date: string;
   excerpt: string;

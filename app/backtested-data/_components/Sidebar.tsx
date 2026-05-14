@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { Entry } from '@/lib/backtested-data';
 import { IconSearch, IconChevDown, IconArrowUpRight } from './icons';
+import BilingualTitle from './BilingualTitle';
 
 const catLabel = (c: string) => (c === 'tradingview' ? 'TRADINGVIEW' : 'DATA');
 
@@ -52,7 +53,7 @@ function SideGroup({
                 href={`/backtested-data/${it.slug}/`}
                 className={'bd-side-item bd-side-item--child' + (currentSlug === it.slug ? ' active' : '')}
               >
-                <span className="bd-side-item-title">{it.title}</span>
+                <span className="bd-side-item-title"><BilingualTitle nq={it.titleNq} gc={it.titleGc} fallback={it.title} /></span>
                 <span className="item-meta">{it.date}</span>
               </Link>
             </li>
@@ -119,7 +120,7 @@ function SideSection({
                 href={`/backtested-data/${it.slug}/`}
                 className={'bd-side-item' + (currentSlug === it.slug ? ' active' : '')}
               >
-                <span className="bd-side-item-title">{it.title}</span>
+                <span className="bd-side-item-title"><BilingualTitle nq={it.titleNq} gc={it.titleGc} fallback={it.title} /></span>
                 <span className="item-meta">{it.date}</span>
               </Link>
             </li>
