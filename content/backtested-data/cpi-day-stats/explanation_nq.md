@@ -55,4 +55,3 @@ Pick a year, stop offset, TP target and side; the table refreshes live and you c
 
 <div data-explorer="cpi"></div>
 
-<a class="bd-btn bd-btn-secondary" href="/downloads/backtested-data/cpi-fullport.pdf" download>Download — CPI Fullport PDF</a>

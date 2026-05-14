@@ -100,6 +100,19 @@ export default async function BacktestedDetail({ params }: PageProps) {
   const isKillzone = slug === KILLZONE_SLUG;
   const isNwog = slug === NWOG_SLUG;
 
+  const FULLPORT_PDFS: Record<string, { nq: string; gc: string; label: string }> = {
+    nfp: {
+      nq: '/downloads/backtested-data/nfp-fullport.pdf',
+      gc: '/downloads/backtested-data/nfp-fullport.pdf',
+      label: 'Download — NFP Fullport PDF',
+    },
+    cpi: {
+      nq: '/downloads/backtested-data/cpi-fullport.pdf',
+      gc: '/downloads/backtested-data/cpi-fullport.pdf',
+      label: 'Download — CPI Fullport PDF',
+    },
+  };
+
   const match = entry.explanationHtmlNq.match(EXPLORER_RE);
   const explorerKey = match ? match[1].toLowerCase() : null;
   const explorerConfig =
@@ -137,10 +150,14 @@ export default async function BacktestedDetail({ params }: PageProps) {
         const key = expMatch[1].toLowerCase();
         let explorerNode = null;
         if (SWITCHER_SLUGS.has(slug) && EXPLORER_CONFIGS[key] && GC_EXPLORER_CONFIGS[key]) {
+          const fpM = FULLPORT_PDFS[key];
           explorerNode = (
             <StraddleSwitcher
               nqConfig={EXPLORER_CONFIGS[key]}
               gcConfig={GC_EXPLORER_CONFIGS[key]}
+              fullportPdfNq={fpM?.nq}
+              fullportPdfGc={fpM?.gc}
+              fullportLabel={fpM?.label}
             />
           );
         } else if (EXPLORER_CONFIGS[key]) {
@@ -157,11 +174,16 @@ export default async function BacktestedDetail({ params }: PageProps) {
 
   // Build desktop explorer node
   let desktopExplorerNode: React.ReactNode = null;
+
   if (isStraddleSwitcher && explorerKey && EXPLORER_CONFIGS[explorerKey] && GC_EXPLORER_CONFIGS[explorerKey]) {
+    const fp = FULLPORT_PDFS[explorerKey];
     desktopExplorerNode = (
       <StraddleSwitcher
         nqConfig={EXPLORER_CONFIGS[explorerKey]}
         gcConfig={GC_EXPLORER_CONFIGS[explorerKey]}
+        fullportPdfNq={fp?.nq}
+        fullportPdfGc={fp?.gc}
+        fullportLabel={fp?.label}
       />
     );
   } else if (explorerConfig) {

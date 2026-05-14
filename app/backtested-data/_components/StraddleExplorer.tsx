@@ -71,14 +71,21 @@ function fmtNum(v: number | undefined | null, digits = 2): string {
 export default function StraddleExplorer({
   config,
   embedded = false,
+  fullportPdfNq,
+  fullportPdfGc,
+  fullportLabel,
 }: {
   config: ExplorerConfig;
   embedded?: boolean;
+  fullportPdfNq?: string;
+  fullportPdfGc?: string;
+  fullportLabel?: string;
 }) {
   const [data, setData] = useState<StraddleData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const { asset } = useAsset();
+  const fullportHref = asset === 'gc' ? fullportPdfGc : fullportPdfNq;
 
   // filter state
   const [year, setYear] = useState<string>(ALL);
@@ -725,6 +732,11 @@ export default function StraddleExplorer({
       )}
 
       <div className="bd-ctas">
+        {fullportHref && (
+          <a className="bd-btn bd-btn-secondary" href={fullportHref} download>
+            {fullportLabel ?? 'Download — Fullport PDF'}
+          </a>
+        )}
         <button
           type="button"
           className="bd-btn bd-btn-secondary"
