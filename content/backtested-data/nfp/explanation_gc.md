@@ -1,8 +1,8 @@
 ## Article 1 — NFP Points (Gold)
 
-The PDF "NFP Points (Gold)" shows every data related to NFP releases in $/oz from 2016 to 2026 — 124 releases. GC tick = 0.10 ($10/contract).
+The PDF "NFP Points (Gold)" shows every data related to NFP releases in pts from 2016 to 2026 — 124 releases.
 
-NFP on Gold is all about the dollar reaction — a hot print tanks the dollar, Gold rips; a miss sends the dollar bid and Gold gets sold. Release-candle ranges are measured in $/oz. The full year-by-year breakdown is in the PDF below.
+NFP on Gold is all about the dollar reaction — a hot print tanks the dollar, Gold rips; a miss sends the dollar bid and Gold gets sold. Release-candle ranges are measured in pts. The full year-by-year breakdown is in the PDF below.
 
 <a class="bd-btn bd-btn-secondary" href="/downloads/backtested-data/nfp-points.pdf" download>Download — NFP Points PDF</a>
 
@@ -12,21 +12,21 @@ NFP on Gold is all about the dollar reaction — a hot print tanks the dollar, G
 
 These datas were my own tests to see which metrics are the best to fullport accounts on Gold. Unlike NQ where wider offsets are required to skip the manip wick, Gold NFP straddles work best with tighter offsets — the metal doesn't produce the same violent two-sided wick, so getting in early captures the real move. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 
-> **Tighter offsets work best.** On NQ, pushing offsets to 80-100+ pts was necessary to escape the manip wick. On Gold, the opposite is true — entry_offset=2.0 $/oz is the best performer. Wider offsets on GC degrade fill rate and average PnL because Gold's NFP move is cleaner: less head-fake, more directional follow-through.
+> **Tighter offsets work best.** On NQ, pushing offsets to 80-100+ pts was necessary to escape the manip wick. On Gold, the opposite is true — Entry offset = 2.0 pts is the best performer. Wider offsets on GC degrade fill rate and average PnL because Gold's NFP move is cleaner: less head-fake, more directional follow-through.
 
 ### Setup
 
 Bilateral straddle, full-port, **no stop loss**:
-- Buy stop pending order at release price **+ Offset** (in $/oz)
+- Buy stop pending order at release price **+ Offset** (in pts)
 - Sell stop pending order at release price **− Offset** (OCO)
 - Take Profit at fill price **± TP**
 - If TP is not hit within 30 min → position closed
-- Entry offsets tested in {2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0} $/oz, TPs in {2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0} $/oz → 49 combos
+- Entry offsets tested in {2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0} pts, TPs in {2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0} pts → 49 combos
 
-All values below are in **$/oz** (GC tick = 0.10, $10 per contract per tick).
+All values below are in **pts**.
 
 **Quick glossary:**
-- **Offset** — distance in $/oz between the release price and where each pending stop order is placed.
+- **Offset** — distance in pts between the release price and where each pending stop order is placed.
 - **OCO** ("One Cancels Other") — the two pending stops are linked. Whichever gets touched first fills, the other auto-cancels.
 - **Filled** — the market triggered one of your stops; you have an open position. Not filled = no position, PnL stays 0.
 
@@ -34,8 +34,8 @@ All values below are in **$/oz** (GC tick = 0.10, $10 per contract per tick).
 
 After testing 49 combos across 124 NFP Gold releases:
 
-- **Entry offset: 2.0 $/oz** — tight enough to get filled on almost every NFP (97.7% fill rate), capturing the full directional leg.
-- **Take profit: 2.0 $/oz** — large enough to clear noise on GC, tight enough that the move actually reaches it.
+- **Entry offset: 2.0 pts** — tight enough to get filled on almost every NFP (97.7% fill rate), capturing the full directional leg.
+- **Take profit: 2.0 pts** — large enough to clear noise on GC, tight enough that the move actually reaches it.
 
 Fill rate ~97.7% — you're in on virtually every release. Gold NFP is a high-probability event; the challenge isn't getting filled, it's picking the right TP.
 
@@ -47,5 +47,5 @@ Pick a year, entry offset, TP target and side; the table refreshes live and you 
 
 ### Why Offset Size Matters (Gold vs NQ)
 
-Gold and NQ handle NFP completely differently. NQ produces a violent manip wick that sweeps both sides before committing — you need wide offsets to survive it. Gold's NFP reaction is cleaner: the metal trends directionally off the dollar reaction, with far less two-sided whipsaw. Tighter offsets capture the move earlier; wider offsets just leave you unfilled on the smaller-but-consistent moves that make up the bulk of the sample. The data confirms it — offset=2.0 $/oz dominates every wider alternative on fill rate, TP hit rate, and average PnL.
+Gold and NQ handle NFP completely differently. NQ produces a violent manip wick that sweeps both sides before committing — you need wide offsets to survive it. Gold's NFP reaction is cleaner: the metal trends directionally off the dollar reaction, with far less two-sided whipsaw. Tighter offsets capture the move earlier; wider offsets just leave you unfilled on the smaller-but-consistent moves that make up the bulk of the sample. The data confirms it — offset=2.0 pts dominates every wider alternative on fill rate, TP hit rate, and average PnL.
 
