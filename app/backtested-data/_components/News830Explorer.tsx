@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState, useEffect } from 'react';
+import { useAsset } from './AssetContext';
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Types
@@ -148,9 +149,13 @@ type Year = (typeof YEAR_OPTIONS)[number];
 interface News830ExplorerProps {
   dataUrl: string;
   pdfTitle: string;
+  dataUrlGc?: string;
 }
 
-export default function News830Explorer({ dataUrl, pdfTitle }: News830ExplorerProps) {
+export default function News830Explorer({ dataUrl, pdfTitle, dataUrlGc }: News830ExplorerProps) {
+  const { asset } = useAsset();
+  const activeUrl = (asset === 'gc' && dataUrlGc) ? dataUrlGc : dataUrl;
+
   const [data, setData]       = useState<News830Data | null>(null);
   const [loading, setLoading] = useState(true);
   const [usingMock, setUsingMock] = useState(false);
@@ -165,7 +170,9 @@ export default function News830Explorer({ dataUrl, pdfTitle }: News830ExplorerPr
 
   useEffect(() => {
     let cancelled = false;
-    fetch(dataUrl)
+    setLoading(true);
+    setUsingMock(false);
+    fetch(activeUrl)
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json() as Promise<News830Data>;
@@ -183,7 +190,7 @@ export default function News830Explorer({ dataUrl, pdfTitle }: News830ExplorerPr
         setLoading(false);
       });
     return () => { cancelled = true; };
-  }, []);
+  }, [activeUrl]);
 
   /* ── filtered row (selected combo) ─────────────────────────────────────── */
 

@@ -1,6 +1,6 @@
 ## 8:30 News Model — NFP IFVG + ES SMT
 
-ICT post-news IFVG entry on the 8:30 ET NFP releases, with optional **ES SMT confirmation filter**. Window: 2022-09 → 2026-04, NQ continuous (Databento).
+ICT post-news IFVG entry on the 8:30 ET NFP releases, with optional **ES SMT confirmation filter**. Window: 2022-09 → 2026-04, NQ continuous.
 
 ### Setup Logic
 

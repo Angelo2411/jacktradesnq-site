@@ -1,6 +1,6 @@
 ## Article 1 — CPI Points (Gold)
 
-The PDF "CPI Points (Gold)" shows every data related to CPI releases in $/oz from 2016 to 2026 — 125 releases, sourced from Databento `.n.0` continuous front-month GC data (forward-filled). GC tick = 0.10 ($10/contract).
+The PDF "CPI Points (Gold)" shows every data related to CPI releases in $/oz from 2016 to 2026 — 125 releases. GC tick = 0.10 ($10/contract).
 
 CPI on Gold is a direct inflation trade — the metal reprices instantly on the print. Release-candle ranges are measured in $/oz, not index points. The full year-by-year breakdown of 1-minute release candle ranges is in the PDF below.
 

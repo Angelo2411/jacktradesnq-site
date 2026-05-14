@@ -1,4 +1,4 @@
-ICT post-news IFVG entry on 8:30 ET releases (CPI, NFP, PPI, RetailSales, PCE, GDP, JoblessClaims, EmpireState, ECI), with optional **SI SMT confirmation filter**. Tested 2016 → 2026 on GC 1m (Gold COMEX, Databento .n.0 forward-filled).
+ICT post-news IFVG entry on 8:30 ET releases (CPI, NFP, PPI, RetailSales, PCE, GDP, JoblessClaims, EmpireState, ECI), with optional **SI SMT confirmation filter**. Tested 2016 → 2026 on GC 1m.
 
 ### Setup Logic
 
@@ -8,12 +8,12 @@ Mark out the data high/low (range price was trading in right before 8:30 ET). Wa
 
 ### SI SMT Confirmation Filter
 
-A trade is kept **only if SI (Silver COMEX) also reaches the same target** within 2h30 after the release.
+A trade is kept **only if SI also reaches the same target** within 2h30 after the release.
 
 - GC SHORT (sweep UP) → SI must sweep its low
 - GC LONG (sweep DOWN) → SI must sweep its high
 
-SI data is sparse (63k bars vs 5.4M for GC): when no SI bar exists at 8:30 ET, the filter returns False — no bias, just no confirmation. Roughly 11% of 8:30 ET events have SI data available.
+When no SI bar exists at 8:30 ET, the filter returns False — no bias, just no confirmation.
 
 If SI never reaches its target by 11:00 ET → trade excluded from the SMT-filtered stats.
 

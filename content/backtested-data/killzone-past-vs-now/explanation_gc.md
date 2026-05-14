@@ -1,4 +1,4 @@
-The following PDF shows informations about the killzone ranges for Gold (GC) futures under different conditions — measured in $/oz, sourced from Databento `.n.0` continuous front-month data (forward-filled). GC tick = 0.10 ($10/contract).
+The following PDF shows informations about the killzone ranges for Gold (GC) futures under different conditions — measured in $/oz. GC tick = 0.10 ($10/contract).
 
 ### Killzone hours (New York time, DST auto)
 
