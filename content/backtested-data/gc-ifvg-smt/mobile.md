@@ -13,7 +13,7 @@ ICT post-news IFVG entry on 8:30 ET releases, with optional **SI SMT confirmatio
 
 ### SI SMT Confirmation Filter
 
-Take the trade **only if SI also reaches its target side** during the same 8:30→11:00 window. SI is sparse — missing bar = no confirmation (not a signal).
+Take the trade **only if SI also reaches its target side** during the same 8:30→11:00 window. Missing SI bar = no confirmation (not a signal).
 
 <div data-explorer="gc-ifvg-smt"></div>
 

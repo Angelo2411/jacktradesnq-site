@@ -13,7 +13,7 @@ A trade is kept **only if SI also reaches the same target** within 2h30 after th
 - GC SHORT (sweep UP) → SI must sweep its low
 - GC LONG (sweep DOWN) → SI must sweep its high
 
-SI data is sparse (63k bars vs 5.4M for GC): when no SI bar exists at 8:30 ET, the filter returns False — no bias, just no confirmation. Roughly 11% of 8:30 ET events have SI data available.
+When no SI bar exists at 8:30 ET, the filter returns False — no bias, just no confirmation.
 
 If SI never reaches its target by 11:00 ET → trade excluded from the SMT-filtered stats.
 
