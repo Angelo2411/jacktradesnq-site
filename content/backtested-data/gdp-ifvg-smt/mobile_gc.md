@@ -1,6 +1,6 @@
 ## 8:30 News Model — GDP IFVG + SI SMT
 
-ICT post-news IFVG entry on 8:30 ET GDP releases, with optional **SI SMT confirmation filter**. Tested 2016 → 2026 on GC 1m.
+ICT post-news IFVG entry on 8:30 ET GDP **advance releases** (1 per quarter — Jan/Apr/Jul/Oct, ~40 events). Tested 2016 → 2026 on GC 1m. SI SMT filter currently disabled (SI data unavailable for this re-run).
 
 ### Setup Logic
 
@@ -11,12 +11,12 @@ ICT post-news IFVG entry on 8:30 ET GDP releases, with optional **SI SMT confirm
 5. **SL** = 1 tick beyond the sweep extreme + 0.10 (1 GC tick)
 6. **TP** = opposite side of the pre-news range
 
-### SI SMT Confirmation Filter
+### SI SMT Confirmation Filter — disabled
 
-Take the trade **only if SI also reaches the same target** within 2h30 after the release. SI not following = fakeout, skip.
+SI data was not available for this re-run, so the SMT toggle below shows zero trades when On. Read the baseline GC IFVG numbers with SMT off.
 
 <div data-explorer="gdp-ifvg-smt"></div>
 
-Without SI SMT: 15 trades, PF 0.59, net -4.5 GC pts. With SI SMT (4 trades): WR 50%, PF 1.64, net +2.3 GC pts. Small sample — treat with caution.
+Baseline GC IFVG (no SMT): 18 trades, PF 0.44, net -15.5 GC pts. Small sample — treat with caution.
 
-Sample size 15 trades — indicative not predictive.
+Sample size 18 trades — indicative not predictive.

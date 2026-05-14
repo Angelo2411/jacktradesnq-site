@@ -1,6 +1,6 @@
 ## 8:30 News Model — GDP IFVG + ES SMT
 
-ICT post-news IFVG entry on 8:30 ET GDP releases, with optional **ES SMT confirmation filter**. Tested 2016 → 2026 on NQ 1m.
+ICT post-news IFVG entry on 8:30 ET GDP **advance releases** (1 per quarter — Jan/Apr/Jul/Oct, ~40 events). Tested 2016 → 2026 on NQ 1m. With optional **ES SMT confirmation filter**.
 
 ### Setup Logic
 
@@ -17,6 +17,6 @@ Take the trade **only if ES also reaches its target side** during the same 8:30�
 
 <div data-explorer="gdp-ifvg-smt"></div>
 
-ES SMT filter cut 11 setups — PF 1.38 → 1.75, net +62 → +77 NQ pts on 43 GDP events.
+ES SMT filter cut 1 setup — PF 1.25 → 1.29, net +18.8 → +21 NQ pts on 15 advance GDP setups.
 
-Sample size 32 trades — indicative not predictive.
+Sample size 14 trades — indicative not predictive.

@@ -1,4 +1,4 @@
-ICT post-news IFVG entry on 8:30 ET GDP releases, with optional **SI SMT confirmation filter**. Tested 2016 → 2026 on GC 1m.
+ICT post-news IFVG entry on 8:30 ET GDP **advance releases** (1 per quarter, Jan/Apr/Jul/Oct). Tested 2016 → 2026 on GC 1m. 2nd and 3rd estimate releases are excluded — only the advance produces a clean market reaction. SI SMT filter is currently disabled on this study.
 
 ### Setup Logic
 
@@ -6,20 +6,13 @@ Mark out the data high/low (range price was trading in right before 8:30 ET). Wa
 
 **Invalidation**: if the opposite side of the range also gets swept BEFORE the IFVG break (entry) — the target liquidity has already been taken, no edge left → skip the setup.
 
-### SI SMT Confirmation Filter
+### SI SMT Confirmation Filter — disabled on this study
 
-A trade is kept **only if SI also reaches the same target** within 2h30 after the release.
+SI data was not available when this study was re-run on advance-only events, so the SMT confirmation filter is currently disabled. The widget below reports the baseline IFVG numbers only — toggle SI SMT off to read the results.
 
-- GC SHORT (sweep UP) → SI must sweep its low
-- GC LONG (sweep DOWN) → SI must sweep its high
+### Performance — GC 10y (advance-only, baseline)
 
-When no SI bar exists at 8:30 ET, the filter returns False — no confirmation, not a disqualifier.
-
-### Performance — GC 10y
-
-Without SI SMT: 15 trades, PF 0.59, net -4.5 GC pts. With SI SMT (4 trades): WR 50%, PF 1.64, net +2.3 GC pts.
-
-Small sample (15 setups); treat with caution.
+18 trades, PF 0.44, net -15.5 GC pts. Small sample (~40 advance events over 10y, 18 IFVG setups fired); treat with caution.
 
 ### Why Gold Behaves Differently from NQ
 
@@ -27,6 +20,6 @@ NQ and ES are equity index futures — near-perfect correlation, SMT divergence 
 
 ### Disclaimer
 
-15 total setups, 4 SMT-filtered trades. AI-assisted analysis — not financial advice.
+18 total setups, SMT filter disabled (SI data unavailable for this run). AI-assisted analysis — not financial advice.
 
 <div data-explorer="gdp-ifvg-smt"></div>
