@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useAsset } from './AssetContext';
 
 /* ──────────────────────────────────────────────────────────────────────────
    Shared types — works for both CPI (stop_pts) and NFP (entry_offset).
@@ -77,6 +78,7 @@ export default function StraddleExplorer({
   const [data, setData] = useState<StraddleData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const { asset } = useAsset();
 
   // filter state
   const [year, setYear] = useState<string>(ALL);
@@ -339,6 +341,9 @@ export default function StraddleExplorer({
         side,
         print: '1',
       });
+      if (asset === 'gc') {
+        params.set('asset', 'gc');
+      }
       const url = `/print/straddle/?${params.toString()}`;
       window.open(url, '_blank', 'noopener,noreferrer');
       setGenerating(false);
