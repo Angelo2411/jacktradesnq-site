@@ -172,6 +172,11 @@ export default function News830Explorer({ dataUrl, pdfTitle, dataUrlGc, pdfTitle
   const [side, setSide]       = useState<'BOTH' | 'LONG' | 'SHORT'>('BOTH');
   const [year, setYear]       = useState<Year>('ALL');
 
+  // view state
+  type ViewMode = 'TABLE' | 'RANKING' | 'BEST';
+  const [view, setView]               = useState<ViewMode>('TABLE');
+  const [showAllRanking, setShowAllRanking] = useState(false);
+
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
@@ -222,6 +227,56 @@ export default function News830Explorer({ dataUrl, pdfTitle, dataUrlGc, pdfTitle
       )
     ).filter((r): r is News830Row => r !== undefined);
   }, [data, variant, smt, side, year]);
+
+  /* ── combos in scope (for RANKING / BEST) ──────────────────────────────── */
+
+  interface N8Combo {
+    variant: Variant;
+    smt: boolean;
+    side: Side;
+    n: number;
+    w: number;
+    l: number;
+    be: number;
+    wr: number;
+    pf: number;
+    net_pts: number;
+    avg_win: number;
+    avg_loss: number;
+  }
+
+  const combosInScope: N8Combo[] = useMemo(() => {
+    if (!data) return [];
+    const scopeYear = year === 'ALL' ? 'ALL' : year;
+    return data.rows
+      .filter((r) => r.year === scopeYear)
+      .map((r) => ({
+        variant: r.variant,
+        smt: r.smt,
+        side: r.side,
+        n: r.n,
+        w: r.w,
+        l: r.l,
+        be: r.be,
+        wr: r.wr,
+        pf: r.pf,
+        net_pts: r.net_pts,
+        avg_win: r.avg_win,
+        avg_loss: r.avg_loss,
+      }));
+  }, [data, year]);
+
+  const rankingRows: N8Combo[] = useMemo(() => {
+    return [...combosInScope].sort((a, b) => {
+      if (b.net_pts !== a.net_pts) return b.net_pts - a.net_pts;
+      if (b.pf !== a.pf) return b.pf - a.pf;
+      return b.n - a.n;
+    });
+  }, [combosInScope]);
+
+  const bestCombo: N8Combo | null = useMemo(() => {
+    return rankingRows.length > 0 ? rankingRows[0] : null;
+  }, [rankingRows]);
 
   /* ── human-readable filter summary ─────────────────────────────────────── */
 
@@ -845,6 +900,33 @@ export default function News830Explorer({ dataUrl, pdfTitle, dataUrlGc, pdfTitle
             ))}
           </select>
         </label>
+
+        <div className="bd-filter">
+          <span className="bd-filter-lbl">View</span>
+          <div className="bd-view-toggle">
+            <button
+              type="button"
+              className={`bd-view-btn${view === 'TABLE' ? ' bd-view-btn-active' : ''}`}
+              onClick={() => setView('TABLE')}
+            >
+              Table
+            </button>
+            <button
+              type="button"
+              className={`bd-view-btn${view === 'RANKING' ? ' bd-view-btn-active' : ''}`}
+              onClick={() => setView('RANKING')}
+            >
+              Ranking
+            </button>
+            <button
+              type="button"
+              className={`bd-view-btn${view === 'BEST' ? ' bd-view-btn-active' : ''}`}
+              onClick={() => setView('BEST')}
+            >
+              Best
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* ── active filter summary ──────────────────────────────────────── */}
@@ -852,89 +934,239 @@ export default function News830Explorer({ dataUrl, pdfTitle, dataUrlGc, pdfTitle
         <strong>Showing:</strong> {filterLabel}
       </div>
 
-      {/* ── stat cards ────────────────────────────────────────────────── */}
-      {!row ? (
-        <div className="n8-no-data">
-          No data for this combination — try a different filter.
-        </div>
-      ) : (
-        <div className="n8-stat-grid">
-          <div className="n8-stat-card">
-            <span className="n8-stat-lbl">Trades</span>
-            <span className="n8-stat-val">{row.n}</span>
-          </div>
+      {/* ── TABLE view ────────────────────────────────────────────────── */}
+      {view === 'TABLE' && (
+        <>
+          {/* stat cards */}
+          {!row ? (
+            <div className="n8-no-data">
+              No data for this combination — try a different filter.
+            </div>
+          ) : (
+            <div className="n8-stat-grid">
+              <div className="n8-stat-card">
+                <span className="n8-stat-lbl">Trades</span>
+                <span className="n8-stat-val">{row.n}</span>
+              </div>
 
-          <div className="n8-stat-card">
-            <span className="n8-stat-lbl">Win Rate</span>
-            <span className="n8-stat-val">{fmtPct(row.wr)}</span>
-          </div>
+              <div className="n8-stat-card">
+                <span className="n8-stat-lbl">Win Rate</span>
+                <span className="n8-stat-val">{fmtPct(row.wr)}</span>
+              </div>
 
-          <div className="n8-stat-card">
-            <span className="n8-stat-lbl">Profit Factor</span>
-            <span className="n8-stat-val">{fmtPf(row.pf)}</span>
-          </div>
+              <div className="n8-stat-card">
+                <span className="n8-stat-lbl">Profit Factor</span>
+                <span className="n8-stat-val">{fmtPf(row.pf)}</span>
+              </div>
 
-          <div className="n8-stat-card">
-            <span className="n8-stat-lbl">Net P&amp;L</span>
-            <span
-              className="n8-stat-val"
-              style={{ color: netColor }}
+              <div className="n8-stat-card">
+                <span className="n8-stat-lbl">Net P&amp;L</span>
+                <span
+                  className="n8-stat-val"
+                  style={{ color: netColor }}
+                >
+                  {fmtPts(row.net_pts)}
+                </span>
+              </div>
+
+              <div className="n8-stat-card">
+                <span className="n8-stat-lbl">Avg Win / Avg Loss</span>
+                <span className="n8-stat-val n8-stat-val--sm">
+                  {fmtAvg(row.avg_win, row.avg_loss)}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* year-by-year breakdown table */}
+          {yearBreakdownRows.length > 0 && (
+            <div className="n8-year-table-wrap">
+              <table className="n8-year-table">
+                <thead>
+                  <tr>
+                    <th>Year</th>
+                    <th>Trades</th>
+                    <th>W</th>
+                    <th>L</th>
+                    <th>BE</th>
+                    <th>WR</th>
+                    <th>PF</th>
+                    <th>Net (pts)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {yearBreakdownRows.map((r) => {
+                    const netCol =
+                      r.net_pts > 0
+                        ? 'oklch(0.50 0.15 145)'
+                        : r.net_pts < 0
+                        ? 'oklch(0.50 0.15 30)'
+                        : 'inherit';
+                    const isHighlighted = year !== 'ALL' && r.year === year;
+                    return (
+                      <tr key={r.year} data-highlighted={isHighlighted ? 'true' : 'false'}>
+                        <td>{r.year}</td>
+                        <td>{r.n}</td>
+                        <td>{r.w}</td>
+                        <td>{r.l}</td>
+                        <td>{r.be}</td>
+                        <td>{fmtPct(r.wr)}</td>
+                        <td>{fmtPf(r.pf)}</td>
+                        <td style={{ color: netCol, fontWeight: 600 }}>
+                          {(r.net_pts > 0 ? '+' : '') + r.net_pts.toFixed(1)}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* ── RANKING view ──────────────────────────────────────────────── */}
+      {view === 'RANKING' && (
+        <div className="bd-ranking-wrap">
+          <p className="bd-ranking-caption">
+            Ranked by net pts{year !== 'ALL' ? ` in ${year}` : ' (all years)'}
+          </p>
+          <div className="bd-table-wrap">
+            <table className="bd-data-table">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Variant</th>
+                  <th>{smtLabel}</th>
+                  <th>Side</th>
+                  <th>N</th>
+                  <th>WR</th>
+                  <th>PF</th>
+                  <th>Net pts</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rankingRows.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} style={{ textAlign: 'center', padding: 24, opacity: 0.6 }}>
+                      No combos in scope.
+                    </td>
+                  </tr>
+                ) : (
+                  (showAllRanking ? rankingRows : rankingRows.slice(0, 3)).map((r, i) => (
+                    <tr
+                      key={`rank-${r.variant}-${String(r.smt)}-${r.side}`}
+                      className={i < 3 ? 'bd-ranking-top3' : undefined}
+                    >
+                      <td className="bd-ranking-rank">{i + 1}</td>
+                      <td>{VARIANT_LABELS[r.variant]}</td>
+                      <td>{r.smt ? 'On' : 'Off'}</td>
+                      <td>{r.side}</td>
+                      <td>{r.n}</td>
+                      <td>{fmtPct(r.wr)}</td>
+                      <td
+                        className={
+                          r.pf > 1
+                            ? 'bd-ranking-pos'
+                            : r.pf < 1
+                            ? 'bd-ranking-neg'
+                            : undefined
+                        }
+                      >
+                        {fmtPf(r.pf)}
+                      </td>
+                      <td
+                        className={
+                          r.net_pts > 0
+                            ? 'bd-ranking-pos'
+                            : r.net_pts < 0
+                            ? 'bd-ranking-neg'
+                            : undefined
+                        }
+                      >
+                        {(r.net_pts > 0 ? '+' : '') + r.net_pts.toFixed(1)}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+          {rankingRows.length > 3 && (
+            <button
+              type="button"
+              className="bd-ranking-toggle"
+              onClick={() => setShowAllRanking((v) => !v)}
             >
-              {fmtPts(row.net_pts)}
-            </span>
-          </div>
-
-          <div className="n8-stat-card">
-            <span className="n8-stat-lbl">Avg Win / Avg Loss</span>
-            <span className="n8-stat-val n8-stat-val--sm">
-              {fmtAvg(row.avg_win, row.avg_loss)}
-            </span>
-          </div>
+              {showAllRanking
+                ? 'Show top 3 only'
+                : `Show all ${rankingRows.length} combos`}
+            </button>
+          )}
         </div>
       )}
 
-      {/* ── year-by-year breakdown table ──────────────────────────────── */}
-      {yearBreakdownRows.length > 0 && (
-        <div className="n8-year-table-wrap">
-          <table className="n8-year-table">
-            <thead>
-              <tr>
-                <th>Year</th>
-                <th>Trades</th>
-                <th>W</th>
-                <th>L</th>
-                <th>BE</th>
-                <th>WR</th>
-                <th>PF</th>
-                <th>Net (pts)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {yearBreakdownRows.map((r) => {
-                const netCol =
-                  r.net_pts > 0
-                    ? 'oklch(0.50 0.15 145)'
-                    : r.net_pts < 0
-                    ? 'oklch(0.50 0.15 30)'
-                    : 'inherit';
-                const isHighlighted = year !== 'ALL' && r.year === year;
-                return (
-                  <tr key={r.year} data-highlighted={isHighlighted ? 'true' : 'false'}>
-                    <td>{r.year}</td>
-                    <td>{r.n}</td>
-                    <td>{r.w}</td>
-                    <td>{r.l}</td>
-                    <td>{r.be}</td>
-                    <td>{fmtPct(r.wr)}</td>
-                    <td>{fmtPf(r.pf)}</td>
-                    <td style={{ color: netCol, fontWeight: 600 }}>
-                      {(r.net_pts > 0 ? '+' : '') + r.net_pts.toFixed(1)}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+      {/* ── BEST view ─────────────────────────────────────────────────── */}
+      {view === 'BEST' && (
+        <div className="bd-best-wrap">
+          {bestCombo === null ? (
+            <p className="bd-best-empty">No combo matches your scope.</p>
+          ) : (
+            <>
+              <div className="bd-best-hero">
+                <p className="bd-best-hero-headline">
+                  Best combo — {asset === 'gc' ? 'GC' : 'NQ'}
+                </p>
+                <p className="bd-best-hero-subline">
+                  {VARIANT_LABELS[bestCombo.variant]}
+                  {' · '}
+                  {smtLabel} {bestCombo.smt ? 'on' : 'off'}
+                  {' · '}
+                  {bestCombo.side}
+                </p>
+                <div className="bd-stat-grid bd-best-hero-stats">
+                  <div className="bd-stat-card">
+                    <span className="bd-stat-card-lbl">Net P&amp;L</span>
+                    <span
+                      className={`bd-stat-card-num bd-stat-card-num-sm ${bestCombo.net_pts > 0 ? 'bd-ranking-pos' : bestCombo.net_pts < 0 ? 'bd-ranking-neg' : ''}`}
+                    >
+                      {bestCombo.net_pts >= 0 ? '+' : ''}{bestCombo.net_pts.toFixed(1)} pts
+                    </span>
+                  </div>
+                  <div className="bd-stat-card">
+                    <span className="bd-stat-card-lbl">Avg PnL / event</span>
+                    <span
+                      className={`bd-stat-card-num bd-stat-card-num-sm ${bestCombo.n > 0 && bestCombo.net_pts / bestCombo.n > 0 ? 'bd-ranking-pos' : bestCombo.n > 0 && bestCombo.net_pts / bestCombo.n < 0 ? 'bd-ranking-neg' : ''}`}
+                    >
+                      {bestCombo.n > 0
+                        ? ((bestCombo.net_pts / bestCombo.n) >= 0 ? '+' : '') + (bestCombo.net_pts / bestCombo.n).toFixed(1)
+                        : '—'} pts
+                    </span>
+                  </div>
+                  <div className="bd-stat-card">
+                    <span className="bd-stat-card-lbl">Win Rate</span>
+                    <span className="bd-stat-card-num bd-stat-card-num-sm">
+                      {fmtPct(bestCombo.wr)}
+                    </span>
+                    <span className="bd-best-sub">
+                      {bestCombo.w}W / {bestCombo.l}L / {bestCombo.be}BE
+                    </span>
+                  </div>
+                  <div className="bd-stat-card">
+                    <span className="bd-stat-card-lbl">Trades</span>
+                    <span className="bd-stat-card-num bd-stat-card-num-sm">
+                      {bestCombo.n}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="bd-best-footer">
+                <p className="bd-best-caption">
+                  Selected from {combosInScope.length} combo{combosInScope.length !== 1 ? 's' : ''} in the current scope, ranked by net points.
+                </p>
+              </div>
+            </>
+          )}
         </div>
       )}
 
