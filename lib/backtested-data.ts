@@ -35,6 +35,8 @@ export interface EntryDetail extends EntryMeta {
   pdfFileNq: string;
   pdfFileGc: string;
   mobileHtml?: string;
+  mobileHtmlNq?: string;
+  mobileHtmlGc?: string;
 }
 
 export function getAllEntries(): Entry[] {
@@ -89,9 +91,22 @@ export function getEntry(slug: string): EntryDetail | null {
   const pdfFileGc = meta.pdfFileGc ?? meta.pdfFile ?? '';
 
   const mobilePath = path.join(entryDir, 'mobile.md');
-  const mobileHtml = fs.existsSync(mobilePath)
-    ? (marked.parse(fs.readFileSync(mobilePath, 'utf-8')) as string)
+  const mobileNqPath = path.join(entryDir, 'mobile_nq.md');
+  const mobileGcPath = path.join(entryDir, 'mobile_gc.md');
+  const hasBilingualMobile = fs.existsSync(mobileNqPath) && fs.existsSync(mobileGcPath);
+
+  const mobileHtmlNq = hasBilingualMobile
+    ? (marked.parse(fs.readFileSync(mobileNqPath, 'utf-8')) as string)
     : undefined;
+  const mobileHtmlGc = hasBilingualMobile
+    ? (marked.parse(fs.readFileSync(mobileGcPath, 'utf-8')) as string)
+    : undefined;
+
+  const mobileHtml = hasBilingualMobile
+    ? mobileHtmlNq
+    : fs.existsSync(mobilePath)
+      ? (marked.parse(fs.readFileSync(mobilePath, 'utf-8')) as string)
+      : undefined;
 
   return {
     slug,
@@ -102,5 +117,7 @@ export function getEntry(slug: string): EntryDetail | null {
     pdfFileNq,
     pdfFileGc,
     mobileHtml,
+    mobileHtmlNq,
+    mobileHtmlGc,
   };
 }
