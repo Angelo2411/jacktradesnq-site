@@ -42,7 +42,7 @@ const GC_EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
       'Pick filters → live stats refresh → download a tailored PDF report.',
     dataUrl: '/data/cpi-straddle-gc.json',
     offsetKey: 'stop_pts',
-    offsetLabel: 'Stop offset ($/oz)',
+    offsetLabel: 'Stop offset',
   },
   nfp: {
     eventType: 'NFP',
@@ -51,7 +51,7 @@ const GC_EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
       'Pick filters → live stats refresh → download a tailored PDF report.',
     dataUrl: '/data/nfp-straddle-gc.json',
     offsetKey: 'entry_offset',
-    offsetLabel: 'Entry offset ($/oz)',
+    offsetLabel: 'Entry offset',
   },
 };
 

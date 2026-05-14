@@ -12,17 +12,17 @@ const NQ_ROWS = [
 
 // GC data from public/data/killzone-gc.json (overall array)
 const GC_ROWS = [
-  { killzone: 'Asia',   hoursNY: '18:00 → 00:00', n: 2671, avg: 13.2, med: 7.7,  unit: '$/oz' },
-  { killzone: 'London', hoursNY: '02:00 → 05:00', n: 2669, avg: 10.2, med: 7.2,  unit: '$/oz' },
-  { killzone: 'NY AM',  hoursNY: '09:30 → 11:00', n: 2670, avg: 12.9, med: 9.2,  unit: '$/oz' },
-  { killzone: 'NY PM',  hoursNY: '14:00 → 16:10', n: 2618, avg: 7.4,  med: 4.5,  unit: '$/oz' },
+  { killzone: 'Asia',   hoursNY: '18:00 → 00:00', n: 2671, avg: 13.2, med: 7.7,  unit: 'pts' },
+  { killzone: 'London', hoursNY: '02:00 → 05:00', n: 2669, avg: 10.2, med: 7.2,  unit: 'pts' },
+  { killzone: 'NY AM',  hoursNY: '09:30 → 11:00', n: 2670, avg: 12.9, med: 9.2,  unit: 'pts' },
+  { killzone: 'NY PM',  hoursNY: '14:00 → 16:10', n: 2618, avg: 7.4,  med: 4.5,  unit: 'pts' },
 ];
 
 export default function KillzoneSwitcher() {
   const { asset } = useAsset();
 
   const rows = asset === 'nq' ? NQ_ROWS : GC_ROWS;
-  const unit = asset === 'nq' ? 'pts' : '$/oz';
+  const unit = 'pts';
 
   return (
     <div className="bd-asset-scope" data-asset={asset} style={{ marginBottom: 32 }}>
@@ -36,7 +36,7 @@ export default function KillzoneSwitcher() {
               marginBottom: 12,
             }}
           >
-            Gold (GC) — killzone range stats ($/oz), 10-year backtest 2016–2026.
+            Gold (GC) — killzone range stats (pts), 10-year backtest 2016–2026.
           </p>
           <table
             style={{
