@@ -42,6 +42,7 @@ interface Props {
   date: string; // 'YYYY-MM-DD'
   bars: Bar[];
   sim: TradeSim;
+  unit?: 'pts' | '$/oz';
   onReady?: () => void;
 }
 
@@ -82,7 +83,7 @@ function barsToCandles(bars: Bar[], dateISO: string): CandlestickData<UTCTimesta
   }));
 }
 
-export default function TradeChart({ eventLabel, date, bars, sim, onReady }: Props) {
+export default function TradeChart({ eventLabel, date, bars, sim, unit = 'pts', onReady }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const filled = useMemo(() => forwardFillBars(bars), [bars]);
@@ -255,11 +256,11 @@ export default function TradeChart({ eventLabel, date, bars, sim, onReady }: Pro
         </div>
         <div>
           <dt>Stop offset</dt>
-          <dd>±{sim.stopPts} pts</dd>
+          <dd>±{sim.stopPts} {unit}</dd>
         </div>
         <div>
           <dt>TP target</dt>
-          <dd>{sim.tpPts} pts</dd>
+          <dd>{sim.tpPts} {unit}</dd>
         </div>
         <div>
           <dt>Fill</dt>
@@ -273,7 +274,7 @@ export default function TradeChart({ eventLabel, date, bars, sim, onReady }: Pro
           <dt>P&L</dt>
           <dd className={sim.pnl > 0 ? 'pos' : sim.pnl < 0 ? 'neg' : 'flat'}>
             {sim.pnl > 0 ? '+' : ''}
-            {sim.pnl.toFixed(2)} pts
+            {sim.pnl.toFixed(2)} {unit}
           </dd>
         </div>
       </dl>

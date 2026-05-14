@@ -137,6 +137,7 @@ function simulate(
 export default function PrintReport() {
   const params = useSearchParams();
   const event = ((params.get('event') ?? 'cpi').toLowerCase() as EventType);
+  const asset = (params.get('asset') ?? 'nq').toLowerCase() as 'nq' | 'gc';
   const stopRaw = params.get('stop') ?? ALL;
   const tpRaw = params.get('tp') ?? ALL;
   const yearRaw = params.get('year') ?? ALL;
@@ -149,7 +150,7 @@ export default function PrintReport() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch(`/data/${event}_event_bars.json`)
+    fetch(`/data/${event}_event_bars${asset === 'gc' ? '_gc' : ''}.json`)
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
@@ -212,6 +213,7 @@ export default function PrintReport() {
   }
 
   const eventLabel = event.toUpperCase();
+  const unit = asset === 'gc' ? '$/oz' : 'pts';
   const today = new Date().toISOString().slice(0, 10);
   const wins = trades.filter((t) => t.sim.outcome === 'tp').length;
   const slHits = trades.filter((t) => t.sim.outcome === 'sl').length;
@@ -226,10 +228,10 @@ export default function PrintReport() {
         <header>
           <p className="kicker">jacktradesnq.com — backtested-data</p>
           <h1>
-            {eventLabel} <em>straddle</em> report
+            {eventLabel} <em>straddle</em> report{asset === 'gc' ? ' (Gold)' : ''}
           </h1>
           <p className="subtitle">
-            Entry offset ±{filteredCombos.stop} pts · TP {filteredCombos.tp} pts
+            Entry offset ±{filteredCombos.stop} {unit} · TP {filteredCombos.tp} {unit}
             {yearRaw !== ALL ? ` · Year ${yearRaw}` : ' · 2016–2026'} ·{' '}
             {sideRaw === 'BOTH' ? 'Bilateral' : sideRaw === 'LONG' ? 'Long only' : 'Short only'}
           </p>
@@ -258,7 +260,7 @@ export default function PrintReport() {
           <div className="stat stat-wide">
             <span className="stat-num">
               {totalPnl >= 0 ? '+' : ''}
-              {totalPnl.toFixed(1)} pts
+              {totalPnl.toFixed(1)} {unit}
             </span>
             <span className="stat-label">Net P&L (sum)</span>
           </div>
@@ -276,6 +278,7 @@ export default function PrintReport() {
           date={t.date}
           bars={t.bars}
           sim={t.sim}
+          unit={unit}
           onReady={() => setChartsReady((n) => n + 1)}
         />
       ))}
