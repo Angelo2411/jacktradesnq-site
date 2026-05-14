@@ -4,6 +4,7 @@ import { getAllEntries, getEntry } from '@/lib/backtested-data';
 import { IconArrowUpRight } from '../_components/icons';
 import StraddleExplorer, { type ExplorerConfig } from '../_components/StraddleExplorer';
 import News830Explorer from '../_components/News830Explorer';
+import EquityCurveWidget from '../_components/EquityCurveWidget';
 import MobileTabs, { type MobileTab } from '../_components/MobileTabs';
 
 const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
@@ -28,6 +29,11 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
 };
 
 const EXPLORER_RE = /<div data-explorer="(cpi|nfp|nfp-ifvg-smt|cpi-ifvg-smt|ppi-ifvg-smt|retailsales-ifvg-smt|pce-ifvg-smt|gdp-ifvg-smt|joblessclaims-ifvg-smt|empirestate-ifvg-smt|employmentcostindex-ifvg-smt)">\s*<\/div>/i;
+const EQUITY_RE  = /<div data-equity="(nfp)">\s*<\/div>/i;
+
+const EQUITY_DATA: Record<string, string> = {
+  nfp: '/data/nfp-trades.json',
+};
 
 const catLabel = (c: string) => (c === 'tradingview' ? 'TRADINGVIEW' : 'DATA');
 
@@ -73,6 +79,15 @@ export default async function BacktestedDetail({ params }: PageProps) {
   const [htmlBefore, htmlAfter] = (explorerConfig || isNews830)
     ? entry.explanationHtml.split(EXPLORER_RE).filter((_, i) => i !== 1)
     : [entry.explanationHtml, ''];
+
+  // Second pass: detect equity curve placeholder inside htmlBefore (it appears before the explorer)
+  const equityMatchBefore = htmlBefore.match(EQUITY_RE);
+  const equityKey = equityMatchBefore ? equityMatchBefore[1].toLowerCase() : null;
+  const equityDataUrl = equityKey ? EQUITY_DATA[equityKey] ?? null : null;
+  // Split htmlBefore around the equity placeholder when found
+  const [htmlBeforeEquity, htmlAfterEquity] = equityDataUrl
+    ? htmlBefore.split(EQUITY_RE).filter((_, i) => i !== 1)
+    : [htmlBefore, ''];
 
   const mobileHasExplorer = !!(entry.mobileHtml && EXPLORER_RE.test(entry.mobileHtml));
   const [mobileBefore, mobileAfter] = mobileHasExplorer
@@ -153,10 +168,15 @@ export default async function BacktestedDetail({ params }: PageProps) {
       <div className={entry.mobileHtml ? 'bd-show-desktop' : undefined}>
         {explorerConfig ? (
           <>
-            <div
-              className="bd-prose"
-              dangerouslySetInnerHTML={{ __html: htmlBefore }}
-            />
+            {equityDataUrl ? (
+              <>
+                <div className="bd-prose" dangerouslySetInnerHTML={{ __html: htmlBeforeEquity }} />
+                <EquityCurveWidget dataPath={equityDataUrl} />
+                <div className="bd-prose" dangerouslySetInnerHTML={{ __html: htmlAfterEquity }} />
+              </>
+            ) : (
+              <div className="bd-prose" dangerouslySetInnerHTML={{ __html: htmlBefore }} />
+            )}
             <StraddleExplorer config={explorerConfig} embedded />
             <div
               className="bd-prose"
@@ -165,15 +185,26 @@ export default async function BacktestedDetail({ params }: PageProps) {
           </>
         ) : isNews830 ? (
           <>
-            <div
-              className="bd-prose"
-              dangerouslySetInnerHTML={{ __html: htmlBefore }}
-            />
+            {equityDataUrl ? (
+              <>
+                <div className="bd-prose" dangerouslySetInnerHTML={{ __html: htmlBeforeEquity }} />
+                <EquityCurveWidget dataPath={equityDataUrl} />
+                <div className="bd-prose" dangerouslySetInnerHTML={{ __html: htmlAfterEquity }} />
+              </>
+            ) : (
+              <div className="bd-prose" dangerouslySetInnerHTML={{ __html: htmlBefore }} />
+            )}
             <News830Explorer dataUrl={news830Config!.dataUrl} pdfTitle={news830Config!.pdfTitle} />
             <div
               className="bd-prose"
               dangerouslySetInnerHTML={{ __html: htmlAfter }}
             />
+          </>
+        ) : equityDataUrl ? (
+          <>
+            <div className="bd-prose" dangerouslySetInnerHTML={{ __html: htmlBeforeEquity }} />
+            <EquityCurveWidget dataPath={equityDataUrl} />
+            <div className="bd-prose" dangerouslySetInnerHTML={{ __html: htmlAfterEquity }} />
           </>
         ) : (
           <div

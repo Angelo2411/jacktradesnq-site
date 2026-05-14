@@ -1421,3 +1421,174 @@ a { color: inherit; text-decoration: none; }
   .bd-best-hero { padding: 24px 20px; }
   .bd-best-hero-headline { font-size: 1.5rem; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Equity Curve Widget — .ec-* namespace
+   Server-rendered SVG, warm-editorial palette
+   ═══════════════════════════════════════════════════════════════════ */
+.ec-widget {
+  margin: var(--s-7) 0 var(--s-6);
+  padding: var(--s-5) var(--s-5) var(--s-6);
+  background: var(--c-surface-card);
+  border: 1px solid var(--c-border);
+  border-radius: 16px;
+  max-width: 720px;
+}
+.ec-widget-title {
+  font-family: var(--f-serif);
+  font-weight: 700;
+  font-size: 1.125rem;
+  letter-spacing: -0.01em;
+  color: var(--c-ink);
+  margin-bottom: var(--s-1);
+}
+.ec-widget-title-sep {
+  color: var(--c-accent-deep);
+  font-weight: 300;
+}
+.ec-widget-sub {
+  font-family: var(--f-sans);
+  font-size: 0.75rem;
+  color: var(--c-muted);
+  margin-bottom: var(--s-5);
+  letter-spacing: 0.01em;
+}
+.ec-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-4);
+}
+@media (max-width: 720px) {
+  .ec-grid { grid-template-columns: 1fr; }
+}
+.ec-card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.ec-card-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: var(--s-3) var(--s-4) var(--s-2);
+  border-bottom: 1px solid var(--c-border);
+}
+.ec-card-title {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 0.9375rem;
+  color: var(--c-ink);
+  letter-spacing: -0.01em;
+}
+.ec-trade-count {
+  font-family: var(--f-sans);
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--c-muted);
+}
+.ec-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* SVG viewBox is 640×320 — aspect maintained */
+}
+
+/* SVG element styles — use CSS classes so no inline color */
+.ec-grid-line {
+  stroke: var(--c-border);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+.ec-grid-zero {
+  stroke: oklch(0.55 0.01 60 / 0.45);
+  stroke-width: 1.5;
+  shape-rendering: crispEdges;
+}
+.ec-tick {
+  stroke: var(--c-border);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+.ec-axis-line {
+  stroke: oklch(0.75 0.02 85);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+.ec-axis-label {
+  font-family: var(--f-sans);
+  font-size: 11px;
+  fill: var(--c-muted);
+}
+.ec-axis-label-y {
+  /* right-aligned to axis — handled via textAnchor in markup */
+}
+.ec-axis-label-x {
+  /* center-aligned tick labels */
+}
+.ec-axis-unit {
+  font-size: 10px;
+  fill: var(--c-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.ec-curve {
+  stroke: oklch(0.68 0.14 72);  /* --p-gold-deep equivalent */
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.ec-area-above {
+  fill: oklch(0.75 0.13 75 / 0.12); /* --p-gold tint */
+}
+.ec-area-below {
+  fill: oklch(0.50 0.15 25 / 0.10); /* muted warm red for drawdowns */
+}
+/* Mask rectangles that white-out the padding areas around the plot */
+.ec-clip-mask {
+  fill: var(--c-surface);
+}
+.ec-clip-top {
+  fill: var(--c-surface);
+}
+
+/* Footer stats */
+.ec-stats {
+  padding: var(--s-3) var(--s-4) var(--s-3);
+  border-top: 1px solid var(--c-border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ec-stat-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-2);
+}
+.ec-stat-lbl {
+  font-family: var(--f-sans);
+  font-size: 0.72rem;
+  color: var(--c-muted);
+  letter-spacing: 0.02em;
+}
+.ec-stat-val {
+  font-family: var(--f-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--c-ink);
+  letter-spacing: -0.01em;
+}
+.ec-stat-pos { color: oklch(0.45 0.14 145); }
+.ec-stat-neg { color: oklch(0.50 0.15 25); }
+
+.ec-error {
+  font-family: var(--f-sans);
+  font-size: 0.875rem;
+  color: var(--c-muted);
+  font-style: italic;
+  padding: var(--s-5) 0;
+}

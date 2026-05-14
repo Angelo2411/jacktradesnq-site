@@ -19,6 +19,8 @@ If ES never reaches its target by 11:00 ET → trade was a one-sided NQ move, ex
 
 Without SMT: 64 trades, PF 1.27, net +169 NQ pts. With SMT: 28 trades remain, PF 5.12, net +529 NQ pts. Year-by-year breakdown in the explorer below + Full PDF download.
 
+<div data-equity="nfp"></div>
+
 ### Why It Works
 
 NQ and ES are highly correlated indices. When NQ reaches the target side but ES doesn't follow during the same window, the move is a one-sided drift — likely a fakeout for the broader market. Filtering for ES confirmation keeps only setups where both indices participate in the reversal.
