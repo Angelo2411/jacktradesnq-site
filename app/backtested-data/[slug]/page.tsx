@@ -135,6 +135,15 @@ export default async function BacktestedDetail({ params }: PageProps) {
     ? entry.mobileHtml!.split(EXPLORER_RE).filter((_, i) => i !== 1)
     : [entry.mobileHtml ?? '', ''];
 
+  // Bilingual mobile splits
+  const hasBilingualMobile = !!(entry.mobileHtmlNq && entry.mobileHtmlGc);
+  const [mobileBeforeNq, mobileAfterNq] = hasBilingualMobile && EXPLORER_RE.test(entry.mobileHtmlNq!)
+    ? entry.mobileHtmlNq!.split(EXPLORER_RE).filter((_, i) => i !== 1)
+    : [entry.mobileHtmlNq ?? '', ''];
+  const [mobileBeforeGc, mobileAfterGc] = hasBilingualMobile && EXPLORER_RE.test(entry.mobileHtmlGc!)
+    ? entry.mobileHtmlGc!.split(EXPLORER_RE).filter((_, i) => i !== 1)
+    : [entry.mobileHtmlGc ?? '', ''];
+
   const mobileH2Count = entry.mobileHtml ? (entry.mobileHtml.match(/<h2[\s>]/g) ?? []).length : 0;
   const useMobileTabs = mobileH2Count >= 2;
   const mobileTabs: MobileTab[] = [];
@@ -233,15 +242,27 @@ export default async function BacktestedDetail({ params }: PageProps) {
           </div>
         ) : mobileHasExplorer && hasDesktopSplit ? (
           <div className="bd-show-mobile">
-            <div className="bd-prose" dangerouslySetInnerHTML={{ __html: mobileBefore }} />
+            {hasBilingualMobile ? (
+              <BilingualProse htmlNq={mobileBeforeNq} htmlGc={mobileBeforeGc} className="bd-prose" />
+            ) : (
+              <div className="bd-prose" dangerouslySetInnerHTML={{ __html: mobileBefore }} />
+            )}
             {desktopExplorerNode}
-            <div className="bd-prose" dangerouslySetInnerHTML={{ __html: mobileAfter }} />
+            {hasBilingualMobile ? (
+              <BilingualProse htmlNq={mobileAfterNq} htmlGc={mobileAfterGc} className="bd-prose" />
+            ) : (
+              <div className="bd-prose" dangerouslySetInnerHTML={{ __html: mobileAfter }} />
+            )}
           </div>
         ) : (
-          <div
-            className="bd-prose bd-show-mobile"
-            dangerouslySetInnerHTML={{ __html: entry.mobileHtml }}
-          />
+          hasBilingualMobile ? (
+            <BilingualProse htmlNq={entry.mobileHtmlNq!} htmlGc={entry.mobileHtmlGc!} className="bd-prose bd-show-mobile" />
+          ) : (
+            <div
+              className="bd-prose bd-show-mobile"
+              dangerouslySetInnerHTML={{ __html: entry.mobileHtml }}
+            />
+          )
         )
       ) : null}
 
