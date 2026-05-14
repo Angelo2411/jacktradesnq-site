@@ -1,4 +1,4 @@
-ICT post-news IFVG entry on 8:30 ET GDP releases, with optional **ES SMT confirmation filter**. Tested 2016 → 2026 on NQ 1m.
+ICT post-news IFVG entry on 8:30 ET GDP **advance releases** (1 per quarter, Jan/Apr/Jul/Oct), with optional **ES SMT confirmation filter**. Tested 2016 → 2026 on NQ 1m. 2nd and 3rd estimate releases are excluded — only the advance produces a clean market reaction.
 
 ### Setup Logic
 
@@ -17,7 +17,7 @@ If ES never reaches its target by 11:00 ET → trade was a one-sided NQ move, ex
 
 ### Performance — NQ 10y
 
-Without SMT: 43 trades, PF 1.38, net +62 NQ pts. With SMT: 32 trades remain, PF 1.75, net +77 NQ pts. Year-by-year breakdown in the explorer below + Full PDF download.
+Without SMT: 15 trades, PF 1.25, net +18.8 NQ pts. With SMT: 14 trades remain, PF 1.29, net +21 NQ pts. Year-by-year breakdown in the explorer below + Full PDF download.
 
 ### Why It Works
 
@@ -25,6 +25,6 @@ NQ and ES are highly correlated indices. When NQ reaches the target side but ES 
 
 ### Disclaimer
 
-Sample size 32 SMT-filtered trades is statistically thin; treat as indicative not predictive. AI-assisted analysis — not financial advice.
+Sample size 14 SMT-filtered trades is small (advance-only universe = ~40 events over 10y); treat as indicative not predictive. AI-assisted analysis — not financial advice.
 
 <div data-explorer="gdp-ifvg-smt"></div>
