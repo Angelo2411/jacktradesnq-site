@@ -1,6 +1,6 @@
 ## Article 1 — NFP Points (Gold)
 
-The PDF "NFP Points (Gold)" shows every data related to NFP releases in $/oz from 2016 to 2026 — 124 releases, sourced from Databento `.n.0` continuous front-month GC data (forward-filled). GC tick = 0.10 ($10/contract).
+The PDF "NFP Points (Gold)" shows every data related to NFP releases in $/oz from 2016 to 2026 — 124 releases. GC tick = 0.10 ($10/contract).
 
 NFP on Gold is all about the dollar reaction — a hot print tanks the dollar, Gold rips; a miss sends the dollar bid and Gold gets sold. Release-candle ranges are measured in $/oz. The full year-by-year breakdown is in the PDF below.
 

@@ -1,4 +1,4 @@
-ICT post-news IFVG entry on 8:30 ET Jobless Claims releases, with optional **SI SMT confirmation filter**. Tested 2016 → 2026 on GC 1m (Gold COMEX, Databento .n.0 forward-filled).
+ICT post-news IFVG entry on 8:30 ET Jobless Claims releases, with optional **SI SMT confirmation filter**. Tested 2016 → 2026 on GC 1m.
 
 ### Setup Logic
 
@@ -8,7 +8,7 @@ Mark out the data high/low (range price was trading in right before 8:30 ET). Wa
 
 ### SI SMT Confirmation Filter
 
-A trade is kept **only if SI (Silver COMEX) also reaches the same target** within 2h30 after the release.
+A trade is kept **only if SI also reaches the same target** within 2h30 after the release.
 
 - GC SHORT (sweep UP) → SI must sweep its low
 - GC LONG (sweep DOWN) → SI must sweep its high

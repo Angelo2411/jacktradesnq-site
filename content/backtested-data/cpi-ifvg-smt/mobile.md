@@ -1,6 +1,6 @@
 ## CPI IFVG + ES SMT — 8:30 News Model
 
-ICT post-news IFVG entry on 8:30 ET CPI releases, with optional **ES SMT confirmation filter**. Window: 2022-09 → 2026-04, NQ continuous (Databento).
+ICT post-news IFVG entry on 8:30 ET CPI releases, with optional **ES SMT confirmation filter**. Window: 2022-09 → 2026-04, NQ continuous.
 
 ### Setup Logic
 

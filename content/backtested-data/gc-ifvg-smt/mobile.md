@@ -1,6 +1,6 @@
 ## 8:30 News Model — GC IFVG + SI SMT
 
-ICT post-news IFVG entry on 8:30 ET releases, with optional **SI SMT confirmation filter**. Window: 2016-01 → 2026-05, GC continuous (Databento .n.0 forward-filled).
+ICT post-news IFVG entry on 8:30 ET releases, with optional **SI SMT confirmation filter**. Window: 2016-01 → 2026-05, GC continuous.
 
 ### Setup Logic
 
