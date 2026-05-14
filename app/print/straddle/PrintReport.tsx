@@ -213,7 +213,6 @@ export default function PrintReport() {
   }
 
   const eventLabel = event.toUpperCase();
-  const unit = asset === 'gc' ? '$/oz' : 'pts';
   const today = new Date().toISOString().slice(0, 10);
   const wins = trades.filter((t) => t.sim.outcome === 'tp').length;
   const slHits = trades.filter((t) => t.sim.outcome === 'sl').length;
@@ -231,9 +230,8 @@ export default function PrintReport() {
             {eventLabel} <em>straddle</em> report{asset === 'gc' ? ' (Gold)' : ''}
           </h1>
           <p className="subtitle">
-            Entry offset ±{filteredCombos.stop} {unit} · TP {filteredCombos.tp} {unit}
-            {yearRaw !== ALL ? ` · Year ${yearRaw}` : ' · 2016–2026'} ·{' '}
-            {sideRaw === 'BOTH' ? 'Bilateral' : sideRaw === 'LONG' ? 'Long only' : 'Short only'}
+            Entry offset ±{filteredCombos.stop} pts · TP {filteredCombos.tp} pts
+            {yearRaw !== ALL ? ` · Year ${yearRaw}` : ' · 2016–2026'}
           </p>
         </header>
         <div className="cover-grid">
@@ -260,7 +258,7 @@ export default function PrintReport() {
           <div className="stat stat-wide">
             <span className="stat-num">
               {totalPnl >= 0 ? '+' : ''}
-              {totalPnl.toFixed(1)} {unit}
+              {totalPnl.toFixed(1)} pts
             </span>
             <span className="stat-label">Net P&L (sum)</span>
           </div>
@@ -278,7 +276,6 @@ export default function PrintReport() {
           date={t.date}
           bars={t.bars}
           sim={t.sim}
-          unit={unit}
           onReady={() => setChartsReady((n) => n + 1)}
         />
       ))}
