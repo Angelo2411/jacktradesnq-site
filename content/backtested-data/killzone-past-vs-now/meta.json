@@ -3,6 +3,8 @@
   "category": "data",
   "date": "2026-05-04",
   "excerpt": "Points per killzone (Asia, London, NY AM, NY PM) under different conditions — NQ + Gold both backtested.",
+  "excerptNq": "Points per killzone (Asia, London, NY AM, NY PM) under different conditions — NQ 10-year backtest.",
+  "excerptGc": "Points per killzone (Asia, London, NY AM, NY PM) under different conditions — Gold (GC) 10-year backtest.",
   "tradingviewUrl": "https://www.tradingview.com/u/jacktradesnq/",
   "pdfFile": "killzone-past-vs-now.pdf",
   "pdfLabel": "Download — Killzone Range PDF"

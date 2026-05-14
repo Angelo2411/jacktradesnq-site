@@ -10,6 +10,7 @@ import News830Explorer from '../_components/News830Explorer';
 import MobileTabs, { type MobileTab } from '../_components/MobileTabs';
 import BilingualProse from '../_components/BilingualProse';
 import BilingualPdfLink from '../_components/BilingualPdfLink';
+import BilingualLede from '../_components/BilingualLede';
 
 const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
   cpi: {
@@ -193,7 +194,9 @@ export default async function BacktestedDetail({ params }: PageProps) {
         {entry.title}<span className="bd-dot">.</span>
       </h1>
 
-      {entry.excerpt ? <p className="bd-article-lede">{entry.excerpt}</p> : null}
+      {entry.excerpt ? (
+        <BilingualLede nq={entry.excerptNq} gc={entry.excerptGc} fallback={entry.excerpt} />
+      ) : null}
 
       {/* Killzone switcher — topbar above article prose */}
       {isKillzone ? <KillzoneSwitcher /> : null}

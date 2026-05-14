@@ -11,6 +11,8 @@ export interface EntryMeta {
   category: Category;
   date: string;
   excerpt: string;
+  excerptNq?: string;
+  excerptGc?: string;
   tradingviewUrl: string;
   pdfFile?: string;
   pdfLabel?: string;
