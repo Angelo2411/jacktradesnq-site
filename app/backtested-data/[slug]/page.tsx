@@ -11,6 +11,7 @@ import MobileTabs, { type MobileTab } from '../_components/MobileTabs';
 import BilingualProse from '../_components/BilingualProse';
 import BilingualPdfLink from '../_components/BilingualPdfLink';
 import BilingualLede from '../_components/BilingualLede';
+import BilingualTitle from '../_components/BilingualTitle';
 
 const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
   cpi: {
@@ -83,16 +84,16 @@ export default async function BacktestedDetail({ params }: PageProps) {
   const wordCount = entry.explanationHtml.replace(/<[^>]*>/g, ' ').split(/\s+/).filter(Boolean).length;
   const readMin = Math.max(1, Math.ceil(wordCount / 200));
 
-  const NEWS830_CONFIGS: Record<string, { dataUrl: string; pdfTitle: string; dataUrlGc?: string }> = {
-    'nfp-ifvg-smt':              { dataUrl: '/data/nfp-ifvg-smt.json',              pdfTitle: 'NFP IFVG + ES SMT',          dataUrlGc: '/data/nfp-ifvg-smt_gc.json' },
-    'cpi-ifvg-smt':              { dataUrl: '/data/cpi-ifvg-smt.json',              pdfTitle: 'CPI IFVG + ES SMT',          dataUrlGc: '/data/cpi-ifvg-smt_gc.json' },
-    'ppi-ifvg-smt':              { dataUrl: '/data/ppi-ifvg-smt.json',              pdfTitle: 'PPI IFVG + ES SMT',          dataUrlGc: '/data/ppi-ifvg-smt_gc.json' },
-    'retailsales-ifvg-smt':      { dataUrl: '/data/retailsales-ifvg-smt.json',      pdfTitle: 'Retail Sales IFVG + ES SMT', dataUrlGc: '/data/retailsales-ifvg-smt_gc.json' },
-    'pce-ifvg-smt':              { dataUrl: '/data/pce-ifvg-smt.json',              pdfTitle: 'PCE IFVG + ES SMT',          dataUrlGc: '/data/pce-ifvg-smt_gc.json' },
-    'gdp-ifvg-smt':              { dataUrl: '/data/gdp-ifvg-smt.json',              pdfTitle: 'GDP IFVG + ES SMT',          dataUrlGc: '/data/gdp-ifvg-smt_gc.json' },
-    'joblessclaims-ifvg-smt':    { dataUrl: '/data/joblessclaims-ifvg-smt.json',    pdfTitle: 'Jobless Claims IFVG + ES SMT', dataUrlGc: '/data/joblessclaims-ifvg-smt_gc.json' },
-    'empirestate-ifvg-smt':      { dataUrl: '/data/empirestate-ifvg-smt.json',      pdfTitle: 'Empire State IFVG + ES SMT', dataUrlGc: '/data/empirestate-ifvg-smt_gc.json' },
-    'employmentcostindex-ifvg-smt': { dataUrl: '/data/employmentcostindex-ifvg-smt.json', pdfTitle: 'ECI IFVG + ES SMT',   dataUrlGc: '/data/employmentcostindex-ifvg-smt_gc.json' },
+  const NEWS830_CONFIGS: Record<string, { dataUrl: string; pdfTitle: string; dataUrlGc?: string; pdfTitleGc?: string }> = {
+    'nfp-ifvg-smt':              { dataUrl: '/data/nfp-ifvg-smt.json',              pdfTitle: 'NFP IFVG + ES SMT',          dataUrlGc: '/data/nfp-ifvg-smt_gc.json',              pdfTitleGc: 'NFP IFVG + SI SMT' },
+    'cpi-ifvg-smt':              { dataUrl: '/data/cpi-ifvg-smt.json',              pdfTitle: 'CPI IFVG + ES SMT',          dataUrlGc: '/data/cpi-ifvg-smt_gc.json',              pdfTitleGc: 'CPI IFVG + SI SMT' },
+    'ppi-ifvg-smt':              { dataUrl: '/data/ppi-ifvg-smt.json',              pdfTitle: 'PPI IFVG + ES SMT',          dataUrlGc: '/data/ppi-ifvg-smt_gc.json',              pdfTitleGc: 'PPI IFVG + SI SMT' },
+    'retailsales-ifvg-smt':      { dataUrl: '/data/retailsales-ifvg-smt.json',      pdfTitle: 'Retail Sales IFVG + ES SMT', dataUrlGc: '/data/retailsales-ifvg-smt_gc.json',      pdfTitleGc: 'Retail Sales IFVG + SI SMT' },
+    'pce-ifvg-smt':              { dataUrl: '/data/pce-ifvg-smt.json',              pdfTitle: 'PCE IFVG + ES SMT',          dataUrlGc: '/data/pce-ifvg-smt_gc.json',              pdfTitleGc: 'PCE IFVG + SI SMT' },
+    'gdp-ifvg-smt':              { dataUrl: '/data/gdp-ifvg-smt.json',              pdfTitle: 'GDP IFVG + ES SMT',          dataUrlGc: '/data/gdp-ifvg-smt_gc.json',              pdfTitleGc: 'GDP IFVG + SI SMT' },
+    'joblessclaims-ifvg-smt':    { dataUrl: '/data/joblessclaims-ifvg-smt.json',    pdfTitle: 'Jobless Claims IFVG + ES SMT', dataUrlGc: '/data/joblessclaims-ifvg-smt_gc.json',  pdfTitleGc: 'Jobless Claims IFVG + SI SMT' },
+    'empirestate-ifvg-smt':      { dataUrl: '/data/empirestate-ifvg-smt.json',      pdfTitle: 'Empire State IFVG + ES SMT', dataUrlGc: '/data/empirestate-ifvg-smt_gc.json',      pdfTitleGc: 'Empire State IFVG + SI SMT' },
+    'employmentcostindex-ifvg-smt': { dataUrl: '/data/employmentcostindex-ifvg-smt.json', pdfTitle: 'ECI IFVG + ES SMT',   dataUrlGc: '/data/employmentcostindex-ifvg-smt_gc.json', pdfTitleGc: 'ECI IFVG + SI SMT' },
   };
 
   // Determine rendering mode
@@ -163,7 +164,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
         } else if (EXPLORER_CONFIGS[key]) {
           explorerNode = <StraddleExplorer config={EXPLORER_CONFIGS[key]} embedded />;
         } else if (NEWS830_CONFIGS[key]) {
-          explorerNode = <News830Explorer dataUrl={NEWS830_CONFIGS[key].dataUrl} pdfTitle={NEWS830_CONFIGS[key].pdfTitle} dataUrlGc={NEWS830_CONFIGS[key].dataUrlGc} />;
+          explorerNode = <News830Explorer dataUrl={NEWS830_CONFIGS[key].dataUrl} pdfTitle={NEWS830_CONFIGS[key].pdfTitle} dataUrlGc={NEWS830_CONFIGS[key].dataUrlGc} pdfTitleGc={NEWS830_CONFIGS[key].pdfTitleGc} />;
         }
         mobileTabs.push({ label, htmlBefore: hb, explorer: explorerNode, htmlAfter: ha });
       } else {
@@ -190,7 +191,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
     desktopExplorerNode = <StraddleExplorer config={explorerConfig} embedded />;
   } else if (isNews830) {
     desktopExplorerNode = (
-      <News830Explorer dataUrl={news830Config!.dataUrl} pdfTitle={news830Config!.pdfTitle} dataUrlGc={news830Config!.dataUrlGc} />
+      <News830Explorer dataUrl={news830Config!.dataUrl} pdfTitle={news830Config!.pdfTitle} dataUrlGc={news830Config!.dataUrlGc} pdfTitleGc={news830Config!.pdfTitleGc} />
     );
   }
 
@@ -213,7 +214,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
       </div>
 
       <h1 className="bd-h1 bd-article-title">
-        {entry.title}<span className="bd-dot">.</span>
+        <BilingualTitle nq={entry.titleNq} gc={entry.titleGc} fallback={entry.title} /><span className="bd-dot">.</span>
       </h1>
 
       {entry.excerpt ? (
