@@ -8,12 +8,22 @@ export type AssetType = 'NQ' | 'GC' | 'ES' | 'SI' | 'mixed';
 export type FamilyType = 'News' | 'IB' | 'EMA' | 'Time' | 'Misc';
 export type WindowType = 'Asia' | 'London' | 'NY 8:30' | 'NY 9:30';
 
+export interface DescriptivePayload {
+  primaryValue: string;
+  primaryLabel: string;
+  secondaryValue: string;
+  secondaryLabel: string;
+  tertiary?: string;
+  barSegments?: { label: string; value: number; color: 'sage' | 'gold' | 'terra' | 'mute' }[];
+}
+
 export interface StudyStats {
   slug: string;
   title: string;
   asset: AssetType;
   family: FamilyType;
   window?: WindowType;
+  kind: 'strategy' | 'study';
   pf: number;
   n: number;
   edgePts: number;
@@ -23,6 +33,8 @@ export interface StudyStats {
   bestVariant?: string;
   smt?: boolean;
   date: string;
+  excerpt?: string;
+  descriptive?: DescriptivePayload;
 }
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -235,11 +247,15 @@ function processStraddle(data: StraddleJson, n_events_hint?: number): Pick<Study
 // ── NWOG shape ────────────────────────────────────────────────────────────────
 
 interface NwogJson {
+  symbol?: string;
   totalEvents?: number;
+  dateRange?: { from: string; to: string };
   summary?: {
     direct?: { count: number; pct: number };
     later?: { count: number; pct: number };
     held?: { count: number; pct: number };
+    bull?: { count: number; direct: number; later: number; held: number };
+    bear?: { count: number; direct: number; later: number; held: number };
   };
 }
 
@@ -302,6 +318,14 @@ function loadJson<T>(filePath: string): T | null {
   }
 }
 
+// Slug-to-data-file overrides (when filename differs from slug)
+const SLUG_DATA_MAP: Record<string, string> = {
+  'asia-open': 'nwog-gc',
+  'killzone-past-vs-now': 'killzone-gc',
+  'cpi-day-stats': 'cpi-straddle',
+  'nfp': 'nfp-straddle',
+};
+
 function processOneSlug(slug: string): StudyStats | null {
   const metaPath = path.join(contentDir, slug, 'meta.json');
   if (!fs.existsSync(metaPath)) return null;
@@ -312,38 +336,106 @@ function processOneSlug(slug: string): StudyStats | null {
     category: string;
     date: string;
     group?: string;
+    excerpt?: string;
   };
 
   const title = meta.titleNq ?? meta.title;
   const group = meta.group;
   const date = meta.date;
+  const excerpt = meta.excerpt ?? '';
   const family = inferFamily(slug, group);
   const asset = inferAsset(slug);
   const window = inferWindow(slug, family, group);
 
-  // Try to load JSON data
-  // Priority: exact slug, then slug + _nq variant, then gc variant
-  const jsonPath = path.join(dataDir, `${slug}.json`);
+  // Resolve data file (slug override or exact match)
+  const dataSlug = SLUG_DATA_MAP[slug] ?? slug;
+  const jsonPath = path.join(dataDir, `${dataSlug}.json`);
   const jsonData = loadJson<Record<string, unknown>>(jsonPath);
 
+  let kind: 'strategy' | 'study' = 'strategy';
+  let descriptive: DescriptivePayload | undefined;
   let stats: Pick<StudyStats, 'pf' | 'n' | 'edgePts' | 'wr' | 'wrByWeekday' | 'nByWeekday' | 'bestVariant' | 'smt'>;
 
   const asUnknown = jsonData as unknown;
   if (jsonData && Array.isArray((asUnknown as IfvgJson).rows) && Array.isArray((asUnknown as IfvgJson).trades)) {
+    kind = 'strategy';
     stats = processIfvgSmt(asUnknown as IfvgJson);
   } else if (jsonData && Array.isArray((asUnknown as StraddleJson).ranked)) {
-    stats = processStraddle(asUnknown as StraddleJson);
+    // Straddle: has real backtest data but stats may be marginal — render as study
+    kind = 'study';
+    const n_events = (asUnknown as StraddleJson).ranked?.[0]?.events_total ?? 0;
+    const straddleStats = processStraddle(asUnknown as StraddleJson);
+    stats = straddleStats;
+    descriptive = {
+      primaryValue: `${n_events}`,
+      primaryLabel: 'releases backtested',
+      secondaryValue: straddleStats.bestVariant ?? '—',
+      secondaryLabel: 'best combo',
+      tertiary: excerpt || 'Straddle backtest — explore offset/TP combos',
+    };
   } else if (jsonData && typeof (asUnknown as NwogJson).totalEvents === 'number') {
-    stats = processNwog(asUnknown as NwogJson);
+    kind = 'study';
+    const nwogData = asUnknown as NwogJson;
+    const directPct = nwogData.summary?.direct?.pct ?? 0;
+    const laterPct = nwogData.summary?.later?.pct ?? 0;
+    const heldPct = nwogData.summary?.held?.pct ?? 0;
+    const bullDirect = nwogData.summary?.bull?.direct ?? 0;
+    const bearDirect = nwogData.summary?.bear?.direct ?? 0;
+    const totalN = nwogData.totalEvents ?? 0;
+    stats = processNwog(nwogData);
+    const dateRangeStr = nwogData.dateRange
+      ? `${new Date(nwogData.dateRange.from).getFullYear()}–${new Date(nwogData.dateRange.to).getFullYear()}`
+      : '10y';
+    descriptive = {
+      primaryValue: `${directPct.toFixed(1)}%`,
+      primaryLabel: 'fill in 30 min',
+      secondaryValue: `${totalN} events`,
+      secondaryLabel: `${dateRangeStr} · ${nwogData.symbol ?? asset}`,
+      tertiary: `Bull ${bullDirect.toFixed(1)}% · Bear ${bearDirect.toFixed(1)}%`,
+      barSegments: [
+        { label: 'Direct', value: Math.round(directPct), color: 'sage' },
+        { label: 'Later', value: Math.round(laterPct), color: 'gold' },
+        { label: 'Held', value: Math.round(heldPct), color: 'mute' },
+      ],
+    };
   } else if (jsonData && Array.isArray((asUnknown as KillzoneJson).overall)) {
-    stats = processKillzone(asUnknown as KillzoneJson);
+    kind = 'study';
+    const kzData = asUnknown as KillzoneJson;
+    const rows = kzData.overall ?? [];
+    const totalN = rows.reduce((s, r) => s + r.n, 0);
+    // Find session with highest avgRange
+    const best = rows.reduce((a, b) => (a.avgRange > b.avgRange ? a : b), rows[0]);
+    const minR = rows.reduce((a, b) => (a.avgRange < b.avgRange ? a : b), rows[0]);
+    stats = processKillzone(kzData);
+    descriptive = {
+      primaryValue: `${best?.avgRange?.toFixed(1) ?? '—'} pts`,
+      primaryLabel: `avg range ${best?.killzone ?? ''}`,
+      secondaryValue: `${totalN.toLocaleString()} sessions`,
+      secondaryLabel: `10y · ${asset}`,
+      tertiary: rows.length >= 2 ? `${minR.killzone} ${minR.avgRange.toFixed(1)} pts → ${best.killzone} ${best.avgRange.toFixed(1)} pts` : undefined,
+      barSegments: rows.map((r) => ({
+        label: r.killzone,
+        value: Math.round(r.avgRange * 10) / 10,
+        color: r === best ? 'gold' as const : 'mute' as const,
+      })),
+    };
   } else {
-    // No JSON data — return zeroed card
+    // No JSON data — render as study with excerpt teaser
+    kind = 'study';
     stats = {
       pf: 0, n: 0, edgePts: 0, wr: 0,
       wrByWeekday: [0, 0, 0, 0, 0],
       nByWeekday: [0, 0, 0, 0, 0],
     };
+    if (excerpt) {
+      descriptive = {
+        primaryValue: '—',
+        primaryLabel: 'no data',
+        secondaryValue: date,
+        secondaryLabel: asset,
+        tertiary: excerpt,
+      };
+    }
   }
 
   return {
@@ -352,7 +444,10 @@ function processOneSlug(slug: string): StudyStats | null {
     asset,
     family,
     window,
+    kind,
     date,
+    excerpt,
+    descriptive,
     ...stats,
   };
 }
