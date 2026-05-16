@@ -22,8 +22,9 @@ export default function BacktestedHub() {
           The data<span className="bd-dot">.</span>
         </h1>
         <p className="bd-hub-sub">
-          Every futures setup, backtested on 10 years of clean tick data.
-          Numbers first — methodology underneath. Re-verify before risking capital.
+          Every futures setup, backtested on 10 years of 1-minute OHLCV data
+          (Databento). Numbers first — methodology underneath. Re-verify before
+          risking capital.
         </p>
         <div className="bd-hub-meta">
           <div className="bd-hub-meta-item">
