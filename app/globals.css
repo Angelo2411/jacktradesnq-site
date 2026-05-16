@@ -2132,6 +2132,271 @@ a { color: inherit; text-decoration: none; }
   .bd-hub-meta-num { font-size: 1.25rem; }
 }
 
+/* ══════════════════════════════════════════════════════════════════════════════
+   BD-HUB-3COL — 3-column hub layout (hub only, sub-pages unaffected)
+   Left: HubFilters (via bd-hub-body inside bd-hub-center)
+   Center: header + cards
+   Right: TodaySidebar (280px)
+   ══════════════════════════════════════════════════════════════════════════════ */
+.bd-hub-3col {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  align-items: start;
+  gap: 0;
+}
+.bd-hub-center {
+  min-width: 0;
+}
+
+/* ── TodaySidebar ── */
+.ts-sidebar {
+  position: sticky;
+  top: var(--nav-h);
+  height: calc(100vh - var(--nav-h));
+  overflow-y: auto;
+  border-left: 1px solid var(--c-border);
+  padding: 28px 20px 40px;
+  background: var(--c-surface-raised);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--c-border) transparent;
+}
+.ts-header {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--c-border);
+}
+.ts-day {
+  font-family: var(--f-serif);
+  font-weight: 700;
+  font-size: 1.375rem;
+  color: var(--c-ink);
+  margin: 0;
+  line-height: 1.2;
+}
+.ts-date {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: 0.75rem;
+  color: var(--c-accent-deep);
+  margin: 4px 0 0;
+}
+.ts-section {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--c-border);
+}
+.ts-section:last-of-type { border-bottom: 0; }
+.ts-section--chips { padding-bottom: 12px; }
+.ts-section-hd {
+  font-family: var(--f-sans);
+  font-weight: 700;
+  font-size: 0.62rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+  margin-bottom: 10px;
+}
+.ts-quiet {
+  font-family: var(--f-sans);
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--c-muted);
+}
+
+/* ── Event list ── */
+.ts-event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ts-event-card {
+  border-radius: 8px;
+  overflow: hidden;
+}
+.ts-event-link {
+  display: block;
+  padding: 10px 12px;
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  background: oklch(1 0 0 / 0.35);
+  transition: border-color 140ms ease, background 140ms ease;
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+}
+.ts-event-link:not(.ts-event-link--static):hover {
+  border-color: var(--c-accent);
+  background: oklch(1 0 0 / 0.55);
+}
+.ts-event-link:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+}
+.ts-event-link--static { cursor: default; }
+.ts-event-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.ts-event-name {
+  font-family: var(--f-serif);
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--c-ink);
+  line-height: 1.2;
+}
+.ts-event-time {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: 0.7rem;
+  color: var(--c-accent-deep);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.ts-event-arrow {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.75rem;
+  color: var(--c-accent);
+  opacity: 0;
+  transition: opacity 140ms ease;
+}
+.ts-event-link:not(.ts-event-link--static):hover .ts-event-arrow { opacity: 1; }
+
+/* ── Edge badge ── */
+.ts-edge-badge {
+  display: block;
+  font-family: var(--f-sans);
+  font-size: 0.68rem;
+  font-weight: 500;
+  padding: 3px 7px;
+  border-radius: 4px;
+  line-height: 1.5;
+  margin-top: 2px;
+}
+.ts-edge-badge--sage {
+  background: oklch(0.48 0.10 160 / 0.12);
+  color: oklch(0.38 0.10 160);
+}
+.ts-edge-badge--mute {
+  background: oklch(0.55 0.01 60 / 0.08);
+  color: var(--c-muted);
+}
+
+/* ── Killzone rows ── */
+.ts-kz-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ts-kz-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--c-border);
+  background: oklch(1 0 0 / 0.25);
+}
+.ts-kz-row--top {
+  border-color: var(--c-accent);
+  background: oklch(0.75 0.13 75 / 0.07);
+}
+.ts-kz-label {
+  font-family: var(--f-sans);
+  font-size: 0.775rem;
+  font-weight: 600;
+  color: var(--c-ink);
+}
+.ts-kz-row--top .ts-kz-label { color: var(--c-accent-deep); }
+.ts-kz-range {
+  font-family: var(--f-serif);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--c-ink);
+}
+.ts-kz-row--top .ts-kz-range { color: var(--c-accent-deep); }
+.ts-kz-unit {
+  font-family: var(--f-sans);
+  font-size: 0.65rem;
+  font-weight: 400;
+  color: var(--c-muted);
+  margin-left: 2px;
+}
+
+/* ── Other day chips ── */
+.ts-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.ts-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 7px 10px;
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  background: oklch(1 0 0 / 0.30);
+  cursor: pointer;
+  transition: border-color 130ms ease, background 130ms ease;
+  min-width: 52px;
+}
+.ts-chip:hover {
+  border-color: var(--c-accent);
+  background: oklch(1 0 0 / 0.55);
+}
+.ts-chip:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+}
+.ts-chip-day {
+  font-family: var(--f-sans);
+  font-weight: 700;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+.ts-chip-event {
+  font-family: var(--f-serif);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--c-ink);
+  text-align: center;
+}
+
+/* ── Footer note ── */
+.ts-footer {
+  margin-top: auto;
+  padding-top: 16px;
+  font-family: var(--f-sans);
+  font-size: 0.68rem;
+  font-style: italic;
+  color: var(--c-muted);
+  line-height: 1.5;
+}
+
+/* ── Responsive: collapse right sidebar ── */
+@media (max-width: 1100px) {
+  .bd-hub-3col {
+    grid-template-columns: 1fr;
+  }
+  .ts-sidebar {
+    display: none;
+  }
+}
+
 /* ── Descriptive study card variant ── */
 .bd-sc--study {
   background: oklch(1 0 0 / 0.40);
