@@ -50,7 +50,7 @@ export default function BacktestedHub() {
           </div>
         </header>
 
-        <HubFilters studies={studies} />
+        <HubFilters studies={studies} weekly={weekly} />
       </div>
 
       <TodaySidebar weekly={weekly} />

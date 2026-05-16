@@ -2,9 +2,13 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import type { StudyStats, AssetType } from '@/lib/study-stats';
+import type { DayPlaybook } from '@/lib/today-events';
 import StudyCard from './StudyCard';
 
 const STORAGE_KEY = 'hub-filters-v2';
+
+const DOW_SHORT_LABELS = ['M', 'T', 'W', 'T', 'F'];
+const DOW_FULL_LABELS  = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
 
 interface FilterState {
   asset: AssetType | 'All';
@@ -33,13 +37,41 @@ function saveState(s: FilterState) {
   } catch {}
 }
 
-export default function HubFilters({ studies }: { studies: StudyStats[] }) {
+/** Returns 0=Mon … 4=Fri in NY time, or null until mounted */
+function getNyDowIndex(): number | null {
+  const ny = new Date(
+    new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }),
+  );
+  const jsDay = ny.getDay(); // 0=Sun, 1=Mon … 6=Sat
+  if (jsDay < 1 || jsDay > 5) return 0; // weekend → default Mon
+  return jsDay - 1; // 1=Mon → 0 … 5=Fri → 4
+}
+
+function cellHint(day: DayPlaybook): string {
+  if (day.events.length === 0) return '—';
+  // If there's a "name-brand" event use it, else show count
+  const named = day.events.find((e) =>
+    ['CPI', 'NFP', 'FOMC', 'PPI', 'PCE', 'GDP', 'JC', 'ISM', 'ADP'].includes(e.event),
+  );
+  if (named) return named.event;
+  return `${day.events.length} ev`;
+}
+
+export default function HubFilters({
+  studies,
+  weekly,
+}: {
+  studies: StudyStats[];
+  weekly?: DayPlaybook[];
+}) {
   const [filters, setFilters] = useState<FilterState>(DEFAULT_STATE);
   const [mounted, setMounted] = useState(false);
+  const [selectedDow, setSelectedDow] = useState<number | null>(null);
 
   useEffect(() => {
     setFilters(loadState());
     setMounted(true);
+    setSelectedDow(getNyDowIndex());
   }, []);
 
   useEffect(() => {
@@ -128,6 +160,62 @@ export default function HubFilters({ studies }: { studies: StudyStats[] }) {
             ))}
           </div>
         </div>
+
+        {/* ── Day playbook stripe ── */}
+        {weekly && weekly.length >= 5 && (
+          <div className="bd-flt-section bd-flt-section--playbook">
+            <h4 className="bd-flt-section-hd bd-flt-section-hd--playbook">Day playbook</h4>
+            <div className="bd-dow-strip" role="group" aria-label="Day of week playbook">
+              {weekly.slice(0, 5).map((day, i) => {
+                const isSel = mounted && selectedDow === i;
+                return (
+                  <button
+                    key={i}
+                    className={`bd-dow-cell${isSel ? ' bd-dow-cell--on' : ''}`}
+                    aria-pressed={isSel}
+                    aria-label={`${day.dowLabel}: ${day.events.length} release${day.events.length !== 1 ? 's' : ''}`}
+                    onClick={() => setSelectedDow(isSel ? null : i)}
+                  >
+                    <span className="bd-dow-cell-lbl">{DOW_SHORT_LABELS[i]}</span>
+                    <span className="bd-dow-cell-sub">{cellHint(day)}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* expanded detail for selected day */}
+            {mounted && selectedDow !== null && weekly[selectedDow] && (
+              <div className="bd-day-detail" aria-live="polite">
+                <p className="bd-day-detail-dayname">{DOW_FULL_LABELS[selectedDow]}</p>
+                {weekly[selectedDow].events.length === 0 ? (
+                  <p className="bd-day-detail-quiet">No scheduled releases.</p>
+                ) : (
+                  <ul className="bd-day-detail-list">
+                    {weekly[selectedDow].events.map((ev) => (
+                      <li key={ev.event} className="bd-day-detail-row">
+                        <span className="bd-day-detail-ev">{ev.event}</span>
+                        <span className="bd-day-detail-time">{ev.time}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {weekly[selectedDow].killzone.length > 0 && (
+                  <p className="bd-day-detail-verdict">
+                    Top session:{' '}
+                    {weekly[selectedDow].killzone.reduce((a, b) =>
+                      a.avgRange > b.avgRange ? a : b,
+                    ).session}{' '}
+                    ·{' '}
+                    {weekly[selectedDow].killzone
+                      .reduce((a, b) => (a.avgRange > b.avgRange ? a : b))
+                      .avgRange.toFixed(1)}{' '}
+                    pts avg
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="bd-flt-section">
           <label className="bd-flt-toggle-row">
