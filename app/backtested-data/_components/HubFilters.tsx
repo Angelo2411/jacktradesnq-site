@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import type { StudyStats, AssetType, FamilyType } from '@/lib/study-stats';
+import type { StudyStats, AssetType } from '@/lib/study-stats';
 import StudyCard from './StudyCard';
 
 const STORAGE_KEY = 'hub-filters-v2';
@@ -66,25 +66,35 @@ export default function HubFilters({ studies }: { studies: StudyStats[] }) {
     return list;
   }, [studies, filters]);
 
-  // Group by family, preserving sort order within each family
-  const familyOrder: FamilyType[] = ['News', 'IB', 'EMA', 'Time', 'Misc'];
-  const grouped = useMemo(() => {
-    const map = new Map<FamilyType, StudyStats[]>();
-    for (const fam of familyOrder) map.set(fam, []);
-    for (const s of filtered) {
-      map.get(s.family)?.push(s);
-    }
-    return Array.from(map.entries()).filter(([, items]) => items.length > 0);
-  }, [filtered]);
+  // Group by kind: strategies first, market studies second
+  const strategies = useMemo(() => filtered.filter((s) => s.kind === 'strategy'), [filtered]);
+  const marketStudies = useMemo(() => filtered.filter((s) => s.kind === 'study'), [filtered]);
 
-  const bestPfByFamily = useMemo(() => {
-    const m = new Map<FamilyType, number>();
-    for (const [fam, items] of grouped) {
-      const best = Math.max(...items.map((s) => s.pf));
-      m.set(fam, best);
+  const bestStrategyPf = useMemo(
+    () => (strategies.length > 0 ? Math.max(...strategies.map((s) => s.pf)) : 0),
+    [strategies],
+  );
+
+  const sections = useMemo(() => {
+    const result: { key: string; label: string; subtitle: string; items: typeof filtered }[] = [];
+    if (strategies.length > 0) {
+      result.push({
+        key: 'strategy',
+        label: 'Strategies',
+        subtitle: `${strategies.length} ${strategies.length === 1 ? 'study' : 'studies'}${bestStrategyPf > 0 ? ` · best PF ${bestStrategyPf.toFixed(2)}` : ''}`,
+        items: strategies,
+      });
     }
-    return m;
-  }, [grouped]);
+    if (marketStudies.length > 0) {
+      result.push({
+        key: 'study',
+        label: 'Market studies',
+        subtitle: `${marketStudies.length} ${marketStudies.length === 1 ? 'study' : 'studies'} · descriptive`,
+        items: marketStudies,
+      });
+    }
+    return result;
+  }, [strategies, marketStudies, bestStrategyPf]);
 
   return (
     <div className="bd-hub-body">
@@ -140,28 +150,22 @@ export default function HubFilters({ studies }: { studies: StudyStats[] }) {
 
       {/* ── Card grid ── */}
       <main className="bd-hub-main" id="hub-grid">
-        {grouped.length === 0 ? (
+        {sections.length === 0 ? (
           <p className="bd-hub-empty">No studies match your filters.</p>
         ) : (
-          grouped.map(([family, items]) => {
-            const bestPf = bestPfByFamily.get(family) ?? 0;
-            return (
-              <section key={family} className="bd-hub-family">
-                <div className="bd-hub-family-head">
-                  <h2 className="bd-hub-family-title">{family}</h2>
-                  <span className="bd-hub-family-meta">
-                    {items.length} {items.length === 1 ? 'study' : 'studies'}
-                    {bestPf > 0 ? ` · best PF ${bestPf.toFixed(2)}` : ''}
-                  </span>
-                </div>
-                <div className="bd-hub-grid">
-                  {items.map((s) => (
-                    <StudyCard key={s.slug} s={s} />
-                  ))}
-                </div>
-              </section>
-            );
-          })
+          sections.map(({ key, label, subtitle, items }) => (
+            <section key={key} className="bd-kind-section">
+              <div className="bd-kind-head">
+                <h2 className="bd-kind-title">{label}</h2>
+                <p className="bd-kind-subtitle">{subtitle}</p>
+              </div>
+              <div className="bd-hub-grid">
+                {items.map((s) => (
+                  <StudyCard key={s.slug} s={s} />
+                ))}
+              </div>
+            </section>
+          ))
         )}
       </main>
     </div>

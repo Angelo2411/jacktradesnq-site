@@ -1909,6 +1909,30 @@ a { color: inherit; text-decoration: none; }
   white-space: nowrap;
 }
 
+/* ── Kind section headings (Strategies / Market studies) ── */
+.bd-kind-section { margin-bottom: 56px; }
+.bd-kind-section + .bd-kind-section { margin-top: 48px; }
+.bd-kind-head {
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--c-border);
+}
+.bd-kind-title {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: 1.5rem;        /* 24px */
+  letter-spacing: -0.01em;
+  color: var(--c-ink);
+  margin: 0 0 4px;
+}
+.bd-kind-subtitle {
+  font-family: var(--f-serif);
+  font-size: 0.8125rem;     /* 13px */
+  font-style: italic;
+  color: var(--c-muted);
+  margin: 0;
+}
+
 /* ── Card grid ── */
 .bd-hub-grid {
   display: grid;
