@@ -36,7 +36,8 @@ type IfvgJson = {
 };
 
 function loadIfvgJson(slug: string): IfvgJson | null {
-  const p = path.join(dataDir, `${slug}.json`);
+  const filename = slug.endsWith('-gc') ? slug.slice(0, -3) + '_gc.json' : `${slug}.json`;
+  const p = path.join(dataDir, filename);
   if (!fs.existsSync(p)) return null;
   try {
     return JSON.parse(fs.readFileSync(p, 'utf-8')) as IfvgJson;
@@ -85,6 +86,15 @@ const IFVG_SLUGS: Array<{ slug: string; event: string; asset: string }> = [
   { slug: 'employmentcostindex-ifvg-smt',event: 'Employment Cost',      asset: 'NQ' },
   { slug: 'gdp-ifvg-smt',               event: 'GDP',                  asset: 'NQ' },
   { slug: 'gc-ifvg-smt',                event: 'Multi-event',          asset: 'GC' },
+  { slug: 'cpi-ifvg-smt-gc',                 event: 'CPI',             asset: 'GC' },
+  { slug: 'nfp-ifvg-smt-gc',                 event: 'NFP',             asset: 'GC' },
+  { slug: 'ppi-ifvg-smt-gc',                 event: 'PPI',             asset: 'GC' },
+  { slug: 'pce-ifvg-smt-gc',                 event: 'PCE',             asset: 'GC' },
+  { slug: 'gdp-ifvg-smt-gc',                 event: 'GDP',             asset: 'GC' },
+  { slug: 'joblessclaims-ifvg-smt-gc',       event: 'Jobless Claims',  asset: 'GC' },
+  { slug: 'retailsales-ifvg-smt-gc',         event: 'Retail Sales',    asset: 'GC' },
+  { slug: 'empirestate-ifvg-smt-gc',         event: 'Empire State',    asset: 'GC' },
+  { slug: 'employmentcostindex-ifvg-smt-gc', event: 'Employment Cost', asset: 'GC' },
 ];
 
 function computeIfvgStats(
