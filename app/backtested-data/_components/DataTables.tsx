@@ -145,7 +145,8 @@ export default function DataTables({ strats, marketStudies, totalTrades, period,
               {filteredStrats.map((s) => (
                 <tr
                   key={s.slug}
-                  onClick={`document.location='/backtested-data/${s.slug}/'` as unknown as React.MouseEventHandler}
+                  onClick={() => { window.location.href = `/backtested-data/${s.slug}/`; }}
+                  style={{ cursor: 'pointer' }}
                 >
                   <td>
                     <Link href={`/backtested-data/${s.slug}/`} className="td-study" style={{ fontFamily: 'var(--f-serif)', fontWeight: 600, fontSize: '0.9rem' }}>
