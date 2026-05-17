@@ -1,10 +1,16 @@
 'use client';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useAsset } from './AssetContext';
 import type { StrategyStats, MarketStudyStats } from '@/lib/study-stats';
 
 function pct(v: number) { return `${v}%`; }
 function netFmt(v: number) { const sign = v >= 0 ? '+' : ''; return `${sign}${v.toFixed(1)}`; }
+
+type SortBy = 'pf' | 'n' | 'net' | 'wr';
+
+const SORT_LABEL: Record<SortBy, string> = { pf: 'PF', n: 'N', net: 'Net', wr: 'WR' };
+const SORT_CYCLE: SortBy[] = ['pf', 'n', 'net', 'wr'];
 
 type Props = {
   strats: StrategyStats[];
@@ -16,22 +22,82 @@ type Props = {
 
 export default function DataTables({ strats, marketStudies, totalTrades, period, allAssets }: Props) {
   const { asset } = useAsset();
+  const [family, setFamily] = useState('');
+  const [event, setEvent] = useState('');
+  const [session, setSession] = useState('');
+  const [sortBy, setSortBy] = useState<SortBy>('pf');
+  const [showNoEdge, setShowNoEdge] = useState(false);
 
-  const filteredStrats = asset === 'all'
-    ? strats
-    : strats.filter((s) => s.asset.toLowerCase() === asset);
+  function nextSort() {
+    const i = SORT_CYCLE.indexOf(sortBy);
+    setSortBy(SORT_CYCLE[(i + 1) % SORT_CYCLE.length]);
+  }
 
-  const filteredStudies = asset === 'all'
-    ? marketStudies
-    : marketStudies.filter((ms) => ms.asset.toLowerCase() === asset);
+  const filteredStrats = useMemo(() => {
+    let list = strats;
+    if (asset !== 'all') list = list.filter((s) => s.asset.toLowerCase() === asset);
+    if (event) list = list.filter((s) => s.event === event);
+    if (session === '8:30 ET') { /* all strats are 8:30, no-op */ }
+    else if (session) list = [];
+    if (family === 'Market structure') list = [];
+    // family === '8:30 News' → all strats, no-op
+    if (!showNoEdge) list = list.filter((s) => s.pf >= 1.2);
+    return [...list].sort((a, b) => b[sortBy] - a[sortBy]);
+  }, [strats, asset, family, event, session, sortBy, showNoEdge]);
+
+  const filteredStudies = useMemo(() => {
+    let list = marketStudies;
+    if (asset !== 'all') list = list.filter((ms) => ms.asset.toLowerCase() === asset);
+    if (family === '8:30 News') list = [];
+    if (event) list = [];
+    if (session && session !== '8:30 ET') list = [];
+    return list;
+  }, [marketStudies, asset, family, event, session]);
 
   const visibleTrades = filteredStrats.reduce((s, st) => s + st.n, 0);
-  const visibleAssets = asset === 'all'
-    ? allAssets
-    : asset.toUpperCase();
+  const visibleAssets = asset === 'all' ? allAssets : asset.toUpperCase();
 
   return (
     <>
+      {/* Filters bar — wired */}
+      <div className="v3-filters">
+        <div className="v3-flt-sep" />
+        <select className="v3-flt-select" value={family} onChange={(e) => setFamily(e.target.value)}>
+          <option value="">Family</option>
+          <option value="8:30 News">8:30 News</option>
+          <option value="Market structure">Market structure</option>
+        </select>
+        <select className="v3-flt-select" value={event} onChange={(e) => setEvent(e.target.value)}>
+          <option value="">Event</option>
+          <option value="CPI">CPI</option>
+          <option value="NFP">NFP</option>
+          <option value="Jobless Claims">Jobless Claims</option>
+          <option value="PPI">PPI</option>
+          <option value="PCE">PCE</option>
+          <option value="GDP">GDP</option>
+          <option value="Retail Sales">Retail Sales</option>
+          <option value="Empire State">Empire State</option>
+          <option value="Employment Cost">Employment Cost</option>
+        </select>
+        <select className="v3-flt-select" value={session} onChange={(e) => setSession(e.target.value)}>
+          <option value="">Session</option>
+          <option value="8:30 ET">8:30 ET</option>
+          <option value="Asia">Asia</option>
+          <option value="London">London</option>
+        </select>
+        <div className="v3-flt-sep" />
+        <button className="v3-flt-pill active" onClick={nextSort} title="Click to cycle sort">
+          ↑ Sort: {SORT_LABEL[sortBy]}
+        </button>
+        <button
+          className={'v3-flt-pill' + (showNoEdge ? ' active' : '')}
+          onClick={() => setShowNoEdge((v) => !v)}
+          title="Show strategies with PF<1.2"
+        >
+          {showNoEdge ? '✓ ' : ''}Show no-edge
+        </button>
+      </div>
+
       {/* Meta-row KPIs */}
       <div className="v3-meta-row">
         <div className="v3-kpi-item">
