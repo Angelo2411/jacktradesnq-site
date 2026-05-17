@@ -2245,3 +2245,6 @@ a { color: inherit; text-decoration: none; }
 .v3-doc-ul li:last-child { border-bottom: none; }
 .v3-doc-ul li:before { content: ""; position: absolute; left: 0; top: 22px; width: 10px; height: 1px; background: var(--c-accent-deep); }
 .v3-doc-foot { font-style: italic; color: var(--c-muted); border-top: 1px solid var(--c-border); padding-top: 18px; margin-top: 12px; }
+
+/* News empty state */
+.v3-news-empty { font-family: var(--f-serif); font-style: italic; font-size: 0.95rem; color: var(--c-muted); padding: 12px 0; }

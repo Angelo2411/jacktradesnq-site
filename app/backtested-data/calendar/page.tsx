@@ -73,24 +73,36 @@ export default function CalendarPage() {
       {/* Day cards — client component, filters by asset context */}
       <CalendarDays calData={calData} weekDates={weekDates} />
 
-      {/* News this week */}
+      {/* News this week — Red folder (High impact) only */}
       <section className="v3-news-week">
-        <div className="v3-news-week-h2">News this week</div>
+        <div className="v3-news-week-h2">Red folder this week</div>
         <div className="v3-news-week-sub">
-          Scheduled releases (NY time). {/* TODO: wire to live news-pine.json when available */}
+          High-impact scheduled releases only (NY time). {/* TODO: wire to live news-pine.json when available */}
         </div>
-        <table className="v3-news-tbl">
-          <tbody>
-            {NEWS_PLACEHOLDER.map((row, i) => (
-              <tr key={i}>
-                <td className="v3-news-td-d">{row.day}</td>
-                <td className="v3-news-td-t">{row.time}</td>
-                <td className="v3-news-td-e">{row.event}</td>
-                <td className={'v3-news-td-imp ' + impClass(row.imp)}>{row.imp}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        {(() => {
+          const redFolder = NEWS_PLACEHOLDER.filter((n) => n.imp === 'High');
+          if (redFolder.length === 0) {
+            return (
+              <p className="v3-news-empty">
+                No red-folder events scheduled this week. Quiet macro week.
+              </p>
+            );
+          }
+          return (
+            <table className="v3-news-tbl">
+              <tbody>
+                {redFolder.map((row, i) => (
+                  <tr key={i}>
+                    <td className="v3-news-td-d">{row.day}</td>
+                    <td className="v3-news-td-t">{row.time}</td>
+                    <td className="v3-news-td-e">{row.event}</td>
+                    <td className={'v3-news-td-imp ' + impClass(row.imp)}>{row.imp}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          );
+        })()}
       </section>
     </>
   );
