@@ -37,25 +37,23 @@ export default function MethodologyPage() {
       <section className="v3-doc-section">
         <h2 className="v3-doc-h2">How backtests are run</h2>
         <p className="v3-doc-p">
-          Each event-driven setup (CPI, NFP, PPI, PCE, Jobless Claims, etc.) is
-          run through the same Python engine: identify the IFVG zone on the
-          release bar, optionally require an ES SMT divergence, enter on
-          displacement, manage with a fixed stop and a tp1 break-even
-          variant.
+          Every study runs through the same Python engine: a setup is encoded
+          as a rule-based entry trigger, with optional confirmation filters, a
+          fixed stop, and a target-management variant. The exact logic of
+          each setup lives on its own page — this is a generic methodology
+          note, not a description of any single edge.
         </p>
         <p className="v3-doc-p">
-          For every study we explore a small grid of variants
-          (<code className="v3-doc-code">tp1_be</code> vs
-          <code className="v3-doc-code"> no_be</code>, SMT on / off, long / short / both)
-          and surface the variant with the highest profit factor on the full
-          sample. Trade-by-trade logs are stored as JSON so the weekday and
-          year breakdowns you see are recomputed from the underlying ledger,
-          not from a pre-rounded summary.
+          For every study we explore a small grid of parameter variants and
+          surface the one with the highest profit factor on the full sample.
+          Trade-by-trade logs are stored as JSON, so the weekday and year
+          breakdowns you see are recomputed from the underlying ledger — not
+          from a pre-rounded summary.
         </p>
         <p className="v3-doc-p">
-          Backtests are AI-assisted: the engine is human-written, the orchestration
-          and per-study analysis prose is drafted with the help of LLMs and then
-          reviewed before publishing.
+          Backtests are AI-assisted: the engine is human-written, the
+          orchestration and the per-study analysis prose are drafted with the
+          help of LLMs and then reviewed before publishing.
         </p>
       </section>
 
