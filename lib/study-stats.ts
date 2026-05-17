@@ -1,0 +1,340 @@
+import fs from 'fs';
+import path from 'path';
+
+const dataDir = path.join(process.cwd(), 'public', 'data');
+
+type Trade = {
+  ts: string;
+  year: string | number;
+  variant: string;
+  smt: boolean;
+  side: string;
+  pnl_pts: number;
+  outcome: string;
+};
+
+type Row = {
+  year: string | number;
+  variant: string;
+  smt: boolean;
+  side: string;
+  n: number;
+  w: number;
+  l: number;
+  be: number;
+  wr: number;
+  pf: number;
+  net_pts: number;
+  avg_win: number;
+  avg_loss: number;
+};
+
+type IfvgJson = {
+  meta?: Record<string, unknown>;
+  rows?: Row[];
+  trades?: Trade[];
+};
+
+function loadIfvgJson(slug: string): IfvgJson | null {
+  const p = path.join(dataDir, `${slug}.json`);
+  if (!fs.existsSync(p)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(p, 'utf-8')) as IfvgJson;
+  } catch {
+    return null;
+  }
+}
+
+export type StrategyStats = {
+  slug: string;
+  event: string;
+  asset: string;
+  pf: number;
+  n: number;
+  net: number;
+  wr: number;
+  bias: string;
+  dateFrom: string;
+  dateTo: string;
+};
+
+export type WeekdayStats = {
+  n: number;
+  w: number;
+  net: number;
+  wr: number;
+};
+
+export type WeekdayBreakdown = {
+  mon: WeekdayStats;
+  tue: WeekdayStats;
+  wed: WeekdayStats;
+  thu: WeekdayStats;
+  fri: WeekdayStats;
+};
+
+// IFVG SMT slugs that have a trades[] array we can derive stats from
+const IFVG_SLUGS: Array<{ slug: string; event: string; asset: string }> = [
+  { slug: 'cpi-ifvg-smt',                event: 'CPI',                  asset: 'NQ' },
+  { slug: 'nfp-ifvg-smt',                event: 'NFP',                  asset: 'NQ' },
+  { slug: 'ppi-ifvg-smt',                event: 'PPI',                  asset: 'NQ' },
+  { slug: 'pce-ifvg-smt',                event: 'PCE',                  asset: 'NQ' },
+  { slug: 'joblessclaims-ifvg-smt',      event: 'Jobless Claims',       asset: 'NQ' },
+  { slug: 'retailsales-ifvg-smt',        event: 'Retail Sales',         asset: 'NQ' },
+  { slug: 'empirestate-ifvg-smt',        event: 'Empire State',         asset: 'NQ' },
+  { slug: 'employmentcostindex-ifvg-smt',event: 'Employment Cost',      asset: 'NQ' },
+  { slug: 'gdp-ifvg-smt',               event: 'GDP',                  asset: 'NQ' },
+  { slug: 'gc-ifvg-smt',                event: 'Multi-event',          asset: 'GC' },
+];
+
+function computeIfvgStats(
+  json: IfvgJson,
+  slugEntry: { slug: string; event: string; asset: string }
+): StrategyStats {
+  const trades = (json.trades ?? []).filter(
+    (t) => t.smt === true && t.variant === 'tp1_be'
+  );
+  const n = trades.length;
+  const wins = trades.filter((t) => t.outcome === 'win').length;
+  const net = trades.reduce((s, t) => s + t.pnl_pts, 0);
+  const wr = n > 0 ? wins / n : 0;
+  const winPnl = trades.filter((t) => t.pnl_pts > 0).reduce((s, t) => s + t.pnl_pts, 0);
+  const lossPnl = Math.abs(trades.filter((t) => t.pnl_pts < 0).reduce((s, t) => s + t.pnl_pts, 0));
+  const pf = lossPnl > 0 ? winPnl / lossPnl : winPnl > 0 ? 99 : 0;
+  const meta = json.meta as Record<string, string> | undefined;
+  const dateFrom = meta?.date_from ?? '';
+  const dateTo = meta?.date_to ?? '';
+
+  // Simple bias: if more long trades win than short, bias is Long
+  const longs = trades.filter((t) => t.side === 'LONG');
+  const shorts = trades.filter((t) => t.side === 'SHORT');
+  const longWr = longs.length > 0 ? longs.filter((t) => t.outcome === 'win').length / longs.length : 0;
+  const shortWr = shorts.length > 0 ? shorts.filter((t) => t.outcome === 'win').length / shorts.length : 0;
+  const bias = longWr > shortWr + 0.05 ? 'Long' : shortWr > longWr + 0.05 ? 'Short' : 'Both';
+
+  return {
+    slug: slugEntry.slug,
+    event: slugEntry.event,
+    asset: slugEntry.asset,
+    pf: Math.round(pf * 100) / 100,
+    n,
+    net: Math.round(net * 10) / 10,
+    wr: Math.round(wr * 100),
+    bias,
+    dateFrom,
+    dateTo,
+  };
+}
+
+let _stratCache: StrategyStats[] | null = null;
+
+export function getAllStrategyStats(): StrategyStats[] {
+  if (_stratCache) return _stratCache;
+  const results: StrategyStats[] = [];
+  for (const entry of IFVG_SLUGS) {
+    const json = loadIfvgJson(entry.slug);
+    if (!json) continue;
+    const stats = computeIfvgStats(json, entry);
+    if (stats.n > 0) results.push(stats);
+  }
+  _stratCache = results;
+  return results;
+}
+
+export function getStrategyStats(slug: string): StrategyStats | null {
+  return getAllStrategyStats().find((s) => s.slug === slug) ?? null;
+}
+
+export type MarketStudyStats = {
+  slug: string;
+  title: string;
+  asset: string;
+  headline: string;
+  sample: string;
+  detail: string;
+};
+
+export function getMarketStudyStats(): MarketStudyStats[] {
+  const results: MarketStudyStats[] = [];
+
+  // nwog-gc
+  const nwogPath = path.join(dataDir, 'nwog-gc.json');
+  if (fs.existsSync(nwogPath)) {
+    const d = JSON.parse(fs.readFileSync(nwogPath, 'utf-8'));
+    const fillPct = d.summary?.direct_pct
+      ? `${(d.summary.direct_pct * 100).toFixed(1)}%`
+      : '86.5%';
+    results.push({
+      slug: 'asia-open',
+      title: 'Asia Open NWOG',
+      asset: 'GC',
+      headline: `${fillPct} fill in ${d.directWindowMinutes ?? 30} min`,
+      sample: `${d.totalEvents ?? 155} events`,
+      detail: 'New Week Opening Gap fill rate · 10y',
+    });
+  }
+
+  // killzone-gc
+  const kzPath = path.join(dataDir, 'killzone-gc.json');
+  if (fs.existsSync(kzPath)) {
+    const d = JSON.parse(fs.readFileSync(kzPath, 'utf-8'));
+    const asia = (d.overall ?? []).find((k: { killzone: string }) => k.killzone === 'Asia');
+    results.push({
+      slug: 'killzone-past-vs-now',
+      title: 'Killzone Ranges',
+      asset: 'GC',
+      headline: asia ? `${asia.avgRange.toFixed(1)} pts avg Asia range` : '13.2 pts avg Asia range',
+      sample: `${asia?.n ?? 2671} sessions`,
+      detail: 'Killzone OHLC stats · 10y',
+    });
+  }
+
+  // cpi event bars
+  const cpiEbPath = path.join(dataDir, 'cpi_event_bars.json');
+  if (fs.existsSync(cpiEbPath)) {
+    const d = JSON.parse(fs.readFileSync(cpiEbPath, 'utf-8'));
+    const events = Array.isArray(d) ? d : d.events ?? [];
+    results.push({
+      slug: 'cpi-day-stats',
+      title: 'CPI Event Bars',
+      asset: 'NQ',
+      headline: `${events.length} CPI releases charted`,
+      sample: `${events.length} events`,
+      detail: 'Per-release bar chart · 10y',
+    });
+  }
+
+  // nfp event bars
+  const nfpEbPath = path.join(dataDir, 'nfp_event_bars.json');
+  if (fs.existsSync(nfpEbPath)) {
+    const d = JSON.parse(fs.readFileSync(nfpEbPath, 'utf-8'));
+    const events = Array.isArray(d) ? d : d.events ?? [];
+    results.push({
+      slug: 'nfp',
+      title: 'NFP Event Bars',
+      asset: 'NQ',
+      headline: `${events.length} NFP releases charted`,
+      sample: `${events.length} events`,
+      detail: 'Per-release bar chart · 10y',
+    });
+  }
+
+  return results;
+}
+
+// Returns weekday breakdown for an IFVG SMT slug (tp1_be smt=True)
+// Day 0 = Monday (Python weekday: Mon=0 ... Fri=4)
+export function getWeekdayBreakdown(slug: string, smtOn = true): WeekdayBreakdown {
+  const empty: WeekdayStats = { n: 0, w: 0, net: 0, wr: 0 };
+  const acc: Record<number, { n: number; w: number; net: number }> = {
+    0: { n: 0, w: 0, net: 0 },
+    1: { n: 0, w: 0, net: 0 },
+    2: { n: 0, w: 0, net: 0 },
+    3: { n: 0, w: 0, net: 0 },
+    4: { n: 0, w: 0, net: 0 },
+  };
+
+  const json = loadIfvgJson(slug);
+  if (!json) return { mon: empty, tue: empty, wed: empty, thu: empty, fri: empty };
+
+  const trades = (json.trades ?? []).filter(
+    (t) => t.variant === 'tp1_be' && (smtOn ? t.smt === true : true)
+  );
+
+  for (const t of trades) {
+    if (!t.ts) continue;
+    // ts is ISO timestamp string like "2016-04-19T12:30:00+00:00"
+    const d = new Date(t.ts);
+    // Convert to ET: ET = UTC-5 (EST) or UTC-4 (EDT)
+    // Use UTC date shifted by ET offset approximation
+    // For weekday, we look at ET date. ET = UTC - 4 or 5 hours.
+    // The release is always at 8:30 ET, so UTC time is 12:30 or 13:30.
+    // We subtract 5h to get approximate ET date for weekday.
+    const etMs = d.getTime() - 5 * 60 * 60 * 1000;
+    const etDate = new Date(etMs);
+    // getDay() returns 0=Sun, 1=Mon ... 5=Fri, 6=Sat
+    const dayJs = etDate.getUTCDay(); // use UTC since we manually shifted
+    // Map JS day (1=Mon..5=Fri) to 0=Mon..4=Fri
+    const day = dayJs - 1; // Mon=0, Fri=4
+    if (day < 0 || day > 4) continue; // skip weekends
+    acc[day].n++;
+    if (t.outcome === 'win') acc[day].w++;
+    acc[day].net += t.pnl_pts;
+  }
+
+  const toStat = (d: { n: number; w: number; net: number }): WeekdayStats => ({
+    n: d.n,
+    w: d.w,
+    net: Math.round(d.net * 10) / 10,
+    wr: d.n > 0 ? Math.round((d.w / d.n) * 100) : 0,
+  });
+
+  return {
+    mon: toStat(acc[0]),
+    tue: toStat(acc[1]),
+    wed: toStat(acc[2]),
+    thu: toStat(acc[3]),
+    fri: toStat(acc[4]),
+  };
+}
+
+// Returns top strategies per weekday (for Calendar view)
+// Returns for each day (mon..fri) the top 2 strategies by N*WR score
+export type CalendarDayEntry = {
+  slug: string;
+  name: string;
+  n: number;
+  wr: number;
+  net: number;
+};
+
+export function getCalendarWeekday(): Record<string, CalendarDayEntry[]> {
+  const DAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri'];
+  const result: Record<string, CalendarDayEntry[]> = {
+    mon: [], tue: [], wed: [], thu: [], fri: [],
+  };
+
+  // For each IFVG slug, compute weekday breakdown and rank by score
+  const candidates: Array<{
+    slug: string;
+    name: string;
+    day: string;
+    n: number;
+    wr: number;
+    net: number;
+    score: number;
+  }> = [];
+
+  for (const entry of IFVG_SLUGS) {
+    const json = loadIfvgJson(entry.slug);
+    if (!json || !json.trades?.length) continue;
+
+    const bd = getWeekdayBreakdown(entry.slug, true);
+    for (const [i, dayKey] of DAY_KEYS.entries()) {
+      const stats = bd[dayKey as keyof WeekdayBreakdown];
+      if (stats.n < 2) continue; // skip days with < 2 trades
+      if (stats.net <= 0) continue; // skip losing days
+      const score = stats.n * (stats.wr / 100);
+      candidates.push({
+        slug: entry.slug,
+        name: `${entry.event} IFVG+SMT`,
+        day: dayKey,
+        n: stats.n,
+        wr: stats.wr,
+        net: stats.net,
+        score,
+      });
+      void i;
+    }
+  }
+
+  // Sort candidates by score desc, pick top 2 per day
+  candidates.sort((a, b) => b.score - a.score);
+  for (const c of candidates) {
+    if (result[c.day].length < 2) {
+      result[c.day].push({ slug: c.slug, name: c.name, n: c.n, wr: c.wr, net: c.net });
+    }
+  }
+
+  return result;
+}
