@@ -1,17 +1,7 @@
 import { getEventStudyMap } from '@/lib/study-stats';
+import { loadNewsWeek } from '@/lib/news-week-server';
 import type { NewsItem } from '@/lib/news-week';
 import CalendarDays from './_components/CalendarDays';
-
-const NEWS_PLACEHOLDER: NewsItem[] = [
-  { day: 'Mon 19', time: '8:30',  event: 'Empire State Manufacturing', imp: 'Medium' },
-  { day: 'Mon 19', time: '9:15',  event: 'Industrial Production',      imp: 'Low'    },
-  { day: 'Tue 20', time: '8:30',  event: 'Building Permits',           imp: 'Low'    },
-  { day: 'Tue 20', time: '8:30',  event: 'Housing Starts',             imp: 'Low'    },
-  { day: 'Wed 21', time: '14:00', event: 'FOMC Minutes',               imp: 'High'   },
-  { day: 'Thu 22', time: '8:30',  event: 'Jobless Claims',             imp: 'Medium' },
-  { day: 'Thu 22', time: '8:30',  event: 'Philly Fed',                 imp: 'Medium' },
-  { day: 'Fri 23', time: '10:00', event: 'Existing Home Sales',        imp: 'Low'    },
-];
 
 function impClass(imp: string) {
   if (imp === 'High') return 'v3-imp-h';
@@ -20,9 +10,10 @@ function impClass(imp: string) {
 }
 
 export default function CalendarPage() {
-  // Server-side: resolve study stats (uses fs). Pass serializable map to client.
-  const studyMap = getEventStudyMap(NEWS_PLACEHOLDER);
-  const redFolder = NEWS_PLACEHOLDER.filter((n) => n.imp === 'High');
+  // Server-side: load real news from public/data/news-week.json (uses fs).
+  const news = loadNewsWeek();
+  const studyMap = getEventStudyMap(news);
+  const redFolder = news.filter((n: { imp: string }) => n.imp === 'High');
 
   return (
     <>
@@ -42,7 +33,7 @@ export default function CalendarPage() {
       </div>
 
       {/* Day cards — client: computes week dates at runtime, filters by asset */}
-      <CalendarDays news={NEWS_PLACEHOLDER} studyMap={studyMap} />
+      <CalendarDays news={news} studyMap={studyMap} />
 
       {/* News this week — Red folder (High impact) only */}
       <section className="v3-news-week">
@@ -57,7 +48,7 @@ export default function CalendarPage() {
         ) : (
           <table className="v3-news-tbl">
             <tbody>
-              {redFolder.map((row, i) => (
+              {redFolder.map((row: NewsItem, i: number) => (
                 <tr key={i}>
                   <td className="v3-news-td-d">{row.day}</td>
                   <td className="v3-news-td-t">{row.time}</td>

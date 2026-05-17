@@ -81,3 +81,4 @@ export function getRedFolderByDay(
 
   return result;
 }
+
