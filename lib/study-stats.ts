@@ -325,6 +325,73 @@ export function getWeekdayBreakdown(slug: string, smtOn = true): WeekdayBreakdow
   };
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Year breakdown
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type YearStats = { year: number; n: number; w: number; net: number; wr: number; pf: number };
+export type YearBreakdown = YearStats[]; // sorted asc by year
+
+export function getYearBreakdown(slug: string, smtOn = true): YearBreakdown {
+  const json = loadIfvgJson(slug);
+  if (!json) return [];
+
+  const trades = (json.trades ?? []).filter(
+    (t) => t.variant === 'tp1_be' && (smtOn ? t.smt === true : true)
+  );
+
+  const acc: Record<number, { n: number; w: number; winPts: number; lossPts: number; net: number }> = {};
+
+  for (const t of trades) {
+    const yr = typeof t.year === 'number' ? t.year : (t.year ? Number(t.year) : new Date(t.ts).getUTCFullYear());
+    if (!acc[yr]) acc[yr] = { n: 0, w: 0, winPts: 0, lossPts: 0, net: 0 };
+    acc[yr].n++;
+    if (t.outcome === 'win') {
+      acc[yr].w++;
+      acc[yr].winPts += t.pnl_pts;
+    } else if (t.outcome === 'loss') {
+      acc[yr].lossPts += Math.abs(t.pnl_pts);
+    }
+    acc[yr].net += t.pnl_pts;
+  }
+
+  return Object.entries(acc)
+    .map(([yr, d]) => {
+      const pf = d.lossPts > 0 ? d.winPts / d.lossPts : d.winPts > 0 ? 99 : 0;
+      return {
+        year: Number(yr),
+        n: d.n,
+        w: d.w,
+        net: Math.round(d.net * 10) / 10,
+        wr: d.n > 0 ? Math.round((d.w / d.n) * 100) : 0,
+        pf: Math.round(pf * 100) / 100,
+      };
+    })
+    .sort((a, b) => a.year - b.year);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Trade list
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type TradeRow = { ts: string; year: number; side: string; pnl_pts: number; outcome: string };
+
+export function getTradeList(slug: string, smtOn = true): TradeRow[] {
+  const json = loadIfvgJson(slug);
+  if (!json) return [];
+
+  return (json.trades ?? [])
+    .filter((t) => t.variant === 'tp1_be' && (smtOn ? t.smt === true : true))
+    .map((t) => ({
+      ts: t.ts,
+      year: typeof t.year === 'number' ? t.year : Number(t.year) || new Date(t.ts).getUTCFullYear(),
+      side: t.side.toLowerCase(),
+      pnl_pts: Math.round(t.pnl_pts * 100) / 100,
+      outcome: t.outcome,
+    }))
+    .sort((a, b) => (a.ts < b.ts ? 1 : a.ts > b.ts ? -1 : 0));
+}
+
 // Returns top strategies per weekday (for Calendar view)
 // Returns for each day (mon..fri) the top 2 strategies by N*WR score
 export type CalendarDayEntry = {
