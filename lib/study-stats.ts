@@ -283,6 +283,7 @@ export function getWeekdayBreakdown(slug: string, smtOn = true): WeekdayBreakdow
 export type CalendarDayEntry = {
   slug: string;
   name: string;
+  asset: string;
   n: number;
   wr: number;
   net: number;
@@ -298,6 +299,7 @@ export function getCalendarWeekday(): Record<string, CalendarDayEntry[]> {
   const candidates: Array<{
     slug: string;
     name: string;
+    asset: string;
     day: string;
     n: number;
     wr: number;
@@ -320,6 +322,7 @@ export function getCalendarWeekday(): Record<string, CalendarDayEntry[]> {
       candidates.push({
         slug: entry.slug,
         name: `${entry.event} IFVG+SMT`,
+        asset: entry.asset,
         day: dayKey,
         n: stats.n,
         wr: stats.wr,
@@ -334,7 +337,7 @@ export function getCalendarWeekday(): Record<string, CalendarDayEntry[]> {
   candidates.sort((a, b) => b.score - a.score);
   for (const c of candidates) {
     if (result[c.day].length < 2) {
-      result[c.day].push({ slug: c.slug, name: c.name, n: c.n, wr: c.wr, net: c.net });
+      result[c.day].push({ slug: c.slug, name: c.name, asset: c.asset, n: c.n, wr: c.wr, net: c.net });
     }
   }
 
