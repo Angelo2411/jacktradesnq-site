@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import type { WeekdayBreakdown, WeekdayStats, YearBreakdown, TradeRow } from '@/lib/study-stats';
+import TradeMiniChart from './TradeMiniChart';
 
 type Tab = 'overview' | 'weekday' | 'year' | 'trades' | 'methodology';
 
@@ -208,12 +209,25 @@ function tradeWeekday(ts: string): number {
 
 const DAY_KEY_TO_NUM: Record<string, number> = { mon: 1, tue: 2, wed: 3, thu: 4, fri: 5 };
 
-function TradesBlock({ trades, dayFilter = '', slug }: { trades: TradeRow[]; dayFilter?: string; slug: string }) {
+function TradesBlock({
+  trades,
+  dayFilter = '',
+  slug,
+  eventShort,
+  asset,
+}: {
+  trades: TradeRow[];
+  dayFilter?: string;
+  slug: string;
+  eventShort: string;
+  asset: 'nq' | 'gc';
+}) {
   const filtered = dayFilter && DAY_KEY_TO_NUM[dayFilter] !== undefined
     ? trades.filter((t) => tradeWeekday(t.ts) === DAY_KEY_TO_NUM[dayFilter])
     : trades;
 
   const [visible, setVisible] = useState(PAGE_SIZE);
+  const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
 
   if (trades.length === 0) {
     return <div className="v3-coming-soon">No trade data available.</div>;
@@ -249,16 +263,40 @@ function TradesBlock({ trades, dayFilter = '', slug }: { trades: TradeRow[]; day
           </thead>
           <tbody>
             {shown.map((t, i) => (
-              <tr key={i} className="v3-tr-row">
-                <td className="v3-tr-date">{t.ts.slice(0, 10)}</td>
-                <td className="v3-tr-side">{t.side.toUpperCase()}</td>
-                <td className={pnlClass(t.pnl_pts)}>
-                  {t.pnl_pts >= 0 ? '+' : ''}{t.pnl_pts.toFixed(2)}
-                </td>
-                <td>
-                  <span className={outcomeClass(t.outcome)}>{t.outcome}</span>
-                </td>
-              </tr>
+              <>
+                <tr
+                  key={i}
+                  className={'v3-tr-row' + (expandedIdx === i ? ' expanded' : '')}
+                  onClick={() => setExpandedIdx(expandedIdx === i ? null : i)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <td className="v3-tr-date">
+                    <span className="v3-tr-expand-icon">{expandedIdx === i ? '▾' : '▸'}</span>
+                    {t.ts.slice(0, 10)}
+                  </td>
+                  <td className="v3-tr-side">{t.side.toUpperCase()}</td>
+                  <td className={pnlClass(t.pnl_pts)}>
+                    {t.pnl_pts >= 0 ? '+' : ''}{t.pnl_pts.toFixed(2)}
+                  </td>
+                  <td>
+                    <span className={outcomeClass(t.outcome)}>{t.outcome}</span>
+                  </td>
+                </tr>
+                {expandedIdx === i && (
+                  <tr key={`${i}-chart`} className="v3-tr-expanded">
+                    <td colSpan={4} style={{ padding: '16px 16px 24px' }}>
+                      <TradeMiniChart
+                        eventShort={eventShort}
+                        asset={asset}
+                        tradeDate={t.ts.slice(0, 10)}
+                        side={t.side}
+                        pnl_pts={t.pnl_pts}
+                        outcome={t.outcome}
+                      />
+                    </td>
+                  </tr>
+                )}
+              </>
             ))}
           </tbody>
         </table>
@@ -288,12 +326,16 @@ export default function V3Tabs({
   yearBreakdown,
   trades,
   overviewContent,
+  eventShort,
+  asset,
 }: {
   slug: string;
   breakdown: WeekdayBreakdown;
   yearBreakdown: YearBreakdown;
   trades: TradeRow[];
   overviewContent: React.ReactNode;
+  eventShort: string;
+  asset: 'nq' | 'gc';
 }) {
   const searchParams = useSearchParams();
   const tab = (searchParams.get('tab') ?? 'overview') as Tab;
@@ -323,7 +365,7 @@ export default function V3Tabs({
       ) : activeTab === 'year' ? (
         <YearBlock breakdown={yearBreakdown} />
       ) : activeTab === 'trades' ? (
-        <TradesBlock trades={trades} dayFilter={dayFilter} slug={slug} />
+        <TradesBlock trades={trades} dayFilter={dayFilter} slug={slug} eventShort={eventShort} asset={asset} />
       ) : activeTab === 'methodology' ? (
         <div className="v3-meth-link">
           <Link href="/backtested-data/methodology/">Read full methodology →</Link>

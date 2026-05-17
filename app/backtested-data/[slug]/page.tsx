@@ -347,7 +347,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
 
         {/* V3Tabs is a client component that reads ?tab from URL */}
         <Suspense fallback={<div className="v3-tabs" style={{ height: 48 }} />}>
-          <V3Tabs slug={slug} breakdown={breakdown} yearBreakdown={yearBreakdown} trades={trades} overviewContent={overviewNode} />
+          <V3Tabs slug={slug} breakdown={breakdown} yearBreakdown={yearBreakdown} trades={trades} overviewContent={overviewNode} eventShort={stratStats?.event ?? ''} asset={(stratStats?.asset?.toLowerCase() ?? 'nq') as 'nq' | 'gc'} />
         </Suspense>
 
         {pager}

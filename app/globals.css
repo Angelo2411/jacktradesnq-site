@@ -2453,6 +2453,24 @@ a { color: inherit; text-decoration: none; }
   text-align: center;
   margin-top: 8px;
 }
+.v3-tr-row { cursor: pointer; }
+.v3-tr-row.expanded td { background: oklch(0.96 0.02 80); }
+.v3-tr-expanded td {
+  background: var(--c-bg, oklch(0.98 0.01 80));
+  border-bottom: 1px solid var(--c-border);
+}
+.v3-tr-chart-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.v3-tr-expand-icon {
+  display: inline-block;
+  margin-right: 6px;
+  font-size: 0.65rem;
+  color: var(--c-muted);
+  vertical-align: middle;
+}
 
 /* ── Methodology link ─────────────────────────────────────────────────────── */
 .v3-meth-link {
