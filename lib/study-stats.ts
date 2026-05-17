@@ -397,24 +397,75 @@ export type TradeRow = {
   exit_price?: number;
 };
 
+type PriceOverlayRow = {
+  ts: string;
+  variant: string;
+  smt: boolean;
+  side: string;
+  entry_price: number;
+  sl_price: number;
+  tp_price: number;
+  exit_ts: string;
+  exit_price: number;
+};
+
+type PriceOverlayFile = {
+  prices: PriceOverlayRow[];
+};
+
+type PriceFields = Pick<PriceOverlayRow, 'entry_price' | 'sl_price' | 'tp_price' | 'exit_ts' | 'exit_price'>;
+
+function normTs(ts: string): string {
+  try { return new Date(ts).toISOString(); } catch { return ts; }
+}
+
+function loadPriceOverlay(slug: string): Map<string, PriceFields> | null {
+  // Overlay files only exist for NQ slugs (no -gc suffix)
+  const overlaySlug = slug.endsWith('-gc') ? null : slug;
+  if (!overlaySlug) return null;
+  const p = path.join(dataDir, `${overlaySlug}-trade-prices.json`);
+  if (!fs.existsSync(p)) return null;
+  try {
+    const data = JSON.parse(fs.readFileSync(p, 'utf-8')) as PriceOverlayFile;
+    const map = new Map<string, PriceFields>();
+    for (const row of data.prices ?? []) {
+      const key = `${normTs(row.ts)}|${row.variant}|${String(row.smt)}|${String(row.side).toLowerCase()}`;
+      map.set(key, {
+        entry_price: row.entry_price,
+        sl_price: row.sl_price,
+        tp_price: row.tp_price,
+        exit_ts: row.exit_ts,
+        exit_price: row.exit_price,
+      });
+    }
+    return map;
+  } catch {
+    return null;
+  }
+}
+
 export function getTradeList(slug: string, smtOn = true): TradeRow[] {
   const json = loadIfvgJson(slug);
   if (!json) return [];
 
+  const overlay = loadPriceOverlay(slug);
+
   return (json.trades ?? [])
     .filter((t) => t.variant === 'tp1_be' && (smtOn ? t.smt === true : true))
-    .map((t) => ({
-      ts: t.ts,
-      year: typeof t.year === 'number' ? t.year : Number(t.year) || new Date(t.ts).getUTCFullYear(),
-      side: t.side.toLowerCase(),
-      pnl_pts: Math.round(t.pnl_pts * 100) / 100,
-      outcome: t.outcome,
-      entry_price: (t as any).entry_price,
-      sl_price: (t as any).sl_price,
-      tp_price: (t as any).tp_price,
-      exit_ts: (t as any).exit_ts,
-      exit_price: (t as any).exit_price,
-    }))
+    .map((t) => {
+      const sideNorm = t.side.toLowerCase();
+      const priceFields: Partial<PriceFields> = overlay
+        ? (overlay.get(`${normTs(t.ts)}|${t.variant}|${String(t.smt)}|${sideNorm}`) ?? {})
+        : {};
+      return {
+        ts: t.ts,
+        year: typeof t.year === 'number' ? t.year : Number(t.year) || new Date(t.ts).getUTCFullYear(),
+        side: sideNorm,
+        pnl_pts: Math.round(t.pnl_pts * 100) / 100,
+        outcome: t.outcome,
+        ...priceFields,
+      };
+    })
     .sort((a, b) => (a.ts < b.ts ? 1 : a.ts > b.ts ? -1 : 0));
 }
 
