@@ -1,5 +1,4 @@
 'use client';
-import { useRouter, usePathname } from 'next/navigation';
 import { useAsset, type AssetKey } from './AssetContext';
 
 const PILLS: { label: string; value: AssetKey }[] = [
@@ -10,14 +9,12 @@ const PILLS: { label: string; value: AssetKey }[] = [
 
 export default function AssetPills() {
   const { asset, setAsset } = useAsset();
-  const router = useRouter();
-  const pathname = usePathname();
 
   function handleClick(value: AssetKey) {
     setAsset(value);
     const params = new URLSearchParams(window.location.search);
     params.set('asset', value);
-    router.replace(`${pathname}?${params.toString()}`);
+    window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
   }
 
   return (

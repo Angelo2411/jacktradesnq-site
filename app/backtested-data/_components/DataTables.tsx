@@ -80,7 +80,7 @@ export default function DataTables({ strats, marketStudies, totalTrades, period,
         </select>
         <div className="v3-flt-sep" />
         <select
-          className="v3-flt-pill v3-flt-pill-dark"
+          className="v3-flt-select"
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value as SortBy)}
         >
