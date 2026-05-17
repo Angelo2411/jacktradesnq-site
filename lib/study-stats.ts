@@ -306,6 +306,8 @@ export function getCalendarWeekday(): Record<string, CalendarDayEntry[]> {
   }> = [];
 
   for (const entry of IFVG_SLUGS) {
+    // Skip multi-event aggregate (gc-ifvg-smt covers all 9 events, not day-specific)
+    if (entry.slug === 'gc-ifvg-smt') continue;
     const json = loadIfvgJson(entry.slug);
     if (!json || !json.trades?.length) continue;
 
