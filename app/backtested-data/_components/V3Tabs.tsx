@@ -289,9 +289,14 @@ function TradesBlock({
                         eventShort={eventShort}
                         asset={asset}
                         tradeDate={t.ts.slice(0, 10)}
-                        side={t.side}
+                        side={t.side as 'long' | 'short'}
                         pnl_pts={t.pnl_pts}
                         outcome={t.outcome}
+                        entryPrice={t.entry_price}
+                        slPrice={t.sl_price}
+                        tpPrice={t.tp_price}
+                        exitTs={t.exit_ts}
+                        exitPrice={t.exit_price}
                       />
                     </td>
                   </tr>

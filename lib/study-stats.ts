@@ -384,7 +384,18 @@ export function getYearBreakdown(slug: string, smtOn = true): YearBreakdown {
 // Trade list
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type TradeRow = { ts: string; year: number; side: string; pnl_pts: number; outcome: string };
+export type TradeRow = {
+  ts: string;
+  year: number;
+  side: string;
+  pnl_pts: number;
+  outcome: string;
+  entry_price?: number;
+  sl_price?: number;
+  tp_price?: number;
+  exit_ts?: string;
+  exit_price?: number;
+};
 
 export function getTradeList(slug: string, smtOn = true): TradeRow[] {
   const json = loadIfvgJson(slug);
@@ -398,6 +409,11 @@ export function getTradeList(slug: string, smtOn = true): TradeRow[] {
       side: t.side.toLowerCase(),
       pnl_pts: Math.round(t.pnl_pts * 100) / 100,
       outcome: t.outcome,
+      entry_price: (t as any).entry_price,
+      sl_price: (t as any).sl_price,
+      tp_price: (t as any).tp_price,
+      exit_ts: (t as any).exit_ts,
+      exit_price: (t as any).exit_price,
     }))
     .sort((a, b) => (a.ts < b.ts ? 1 : a.ts > b.ts ? -1 : 0));
 }

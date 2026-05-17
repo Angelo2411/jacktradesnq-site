@@ -3,9 +3,11 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   createChart,
+  createSeriesMarkers,
   CandlestickSeries,
   CrosshairMode,
   LineSeries,
+  LineStyle,
   type IChartApi,
   type UTCTimestamp,
   type CandlestickData,
@@ -42,9 +44,14 @@ interface Props {
   eventShort: string;
   asset: 'nq' | 'gc';
   tradeDate: string;
-  side: string;
+  side: 'long' | 'short';
   pnl_pts: number;
   outcome: string;
+  entryPrice?: number;
+  slPrice?: number;
+  tpPrice?: number;
+  exitTs?: string;
+  exitPrice?: number;
 }
 
 function forwardFill(bars: EventBar[]): EventBar[] {
@@ -75,7 +82,7 @@ function toCandles(bars: EventBar[], dateISO: string): CandlestickData<UTCTimest
   }));
 }
 
-export default function TradeMiniChart({ eventShort, asset, tradeDate, pnl_pts, outcome }: Props) {
+export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl_pts, outcome, entryPrice: entryPriceProp, slPrice, tpPrice, exitTs, exitPrice }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [status, setStatus] = useState<'loading' | 'found' | 'missing'>('loading');
   const entryRef = useRef<number | null>(null);
@@ -166,22 +173,67 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, pnl_pts, 
     });
     candleSeries.setData(candles);
 
+    const hasLevels = entryPrice !== null && entryPriceProp !== undefined && slPrice !== undefined && tpPrice !== undefined;
+
     if (entryPrice !== null) {
       candleSeries.createPriceLine({
         price: entryPrice,
         color: cGold,
-        lineWidth: 1,
+        lineWidth: 2,
         lineStyle: 0, // solid
         axisLabelVisible: true,
-        title: 'Entry',
+        title: hasLevels ? `Entry · ${entryPrice}` : 'Entry',
       });
+    }
+
+    if (hasLevels && slPrice !== undefined) {
+      candleSeries.createPriceLine({
+        price: slPrice,
+        color: cDown,
+        lineWidth: 1,
+        lineStyle: LineStyle.Dashed,
+        axisLabelVisible: true,
+        title: `SL · ${slPrice}`,
+      });
+    }
+
+    if (hasLevels && tpPrice !== undefined) {
+      candleSeries.createPriceLine({
+        price: tpPrice,
+        color: cUp,
+        lineWidth: 1,
+        lineStyle: LineStyle.Dashed,
+        axisLabelVisible: true,
+        title: `TP · ${tpPrice}`,
+      });
+    }
+
+    // Exit marker
+    if (exitTs !== undefined && exitPrice !== undefined) {
+      const exitTime = (Math.floor(new Date(exitTs).getTime() / 1000)) as UTCTimestamp;
+      const exitSeries = chart.addSeries(LineSeries, {
+        color: '#00000000',
+        lineWidth: 1,
+        lastValueVisible: false,
+        priceLineVisible: false,
+        crosshairMarkerVisible: false,
+      });
+      exitSeries.setData([{ time: exitTime, value: exitPrice }]);
+      createSeriesMarkers(exitSeries, [{
+        time: exitTime,
+        position: outcome === 'win' ? 'aboveBar' : 'belowBar',
+        color: outcome === 'win' ? cUp : cDown,
+        shape: 'circle',
+        text: outcome.toUpperCase(),
+      }]);
     }
 
     // Invisible range series to pad Y-axis
     const allH = candles.map((c) => c.high);
     const allL = candles.map((c) => c.low);
-    const yMax = Math.max(...allH, entryPrice ?? -Infinity);
-    const yMin = Math.min(...allL, entryPrice ?? Infinity);
+    const extraPrices = [entryPrice, slPrice, tpPrice, exitPrice].filter((v): v is number => v !== undefined && v !== null);
+    const yMax = Math.max(...allH, ...extraPrices);
+    const yMin = Math.min(...allL, ...extraPrices);
     const pad = Math.max((yMax - yMin) * 0.08, 2);
     const rangeSeries = chart.addSeries(LineSeries, {
       color: '#00000000',
@@ -232,16 +284,18 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, pnl_pts, 
             Chart data not available for this date.
           </div>
         )}
-        <div
-          ref={containerRef}
-          style={{
-            width: 280, height: 280,
-            borderRadius: 8,
-            overflow: 'hidden',
-            display: status === 'found' ? 'block' : 'none',
-            border: '1px solid oklch(0.90 0.02 80)',
-          }}
-        />
+        <div style={{ position: 'relative', display: status === 'found' ? 'block' : 'none' }}>
+          <div className="v3-tc-side-badge" data-side={side}>{side.toUpperCase()}</div>
+          <div
+            ref={containerRef}
+            style={{
+              width: 280, height: 280,
+              borderRadius: 8,
+              overflow: 'hidden',
+              border: '1px solid oklch(0.90 0.02 80)',
+            }}
+          />
+        </div>
         <div style={{
           display: 'flex', gap: 12, alignItems: 'center',
           fontFamily: 'var(--f-sans)', fontSize: '0.72rem', color: 'var(--c-muted)',
