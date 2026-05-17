@@ -1,12 +1,7 @@
 import Link from 'next/link';
 import V3SideNav from './_components/V3SideNav';
 import { AssetProvider } from './_components/AssetContext';
-
-const ASSET_PILLS = [
-  { label: 'NQ', value: 'nq' },
-  { label: 'GC', value: 'gc' },
-  { label: 'All', value: 'all' },
-];
+import AssetPills from './_components/AssetPills';
 
 export default function BacktestedLayout({
   children,
@@ -22,17 +17,7 @@ export default function BacktestedLayout({
           J<span className="v3-logo-dot">.</span>
         </Link>
         <div className="v3-topbar-spacer" />
-        {/* Asset pills — UI only, NQ active by default */}
-        <div className="v3-asset-pills">
-          {ASSET_PILLS.map((p) => (
-            <span
-              key={p.value}
-              className={'v3-asset-pill' + (p.value === 'nq' ? ' active' : '')}
-            >
-              {p.label}
-            </span>
-          ))}
-        </div>
+        <AssetPills />
         <a
           href="https://jacktradesnq.com"
           className="v3-home-link"
