@@ -9,8 +9,6 @@ function netFmt(v: number) { const sign = v >= 0 ? '+' : ''; return `${sign}${v.
 
 type SortBy = 'pf' | 'n' | 'net' | 'wr';
 
-const SORT_LABEL: Record<SortBy, string> = { pf: 'PF', n: 'N', net: 'Net', wr: 'WR' };
-const SORT_CYCLE: SortBy[] = ['pf', 'n', 'net', 'wr'];
 
 type Props = {
   strats: StrategyStats[];
@@ -27,11 +25,6 @@ export default function DataTables({ strats, marketStudies, totalTrades, period,
   const [session, setSession] = useState('');
   const [sortBy, setSortBy] = useState<SortBy>('pf');
   const [showNoEdge, setShowNoEdge] = useState(false);
-
-  function nextSort() {
-    const i = SORT_CYCLE.indexOf(sortBy);
-    setSortBy(SORT_CYCLE[(i + 1) % SORT_CYCLE.length]);
-  }
 
   const filteredStrats = useMemo(() => {
     let list = strats;
@@ -86,9 +79,16 @@ export default function DataTables({ strats, marketStudies, totalTrades, period,
           <option value="London">London</option>
         </select>
         <div className="v3-flt-sep" />
-        <button className="v3-flt-pill active" onClick={nextSort} title="Click to cycle sort">
-          ↑ Sort: {SORT_LABEL[sortBy]}
-        </button>
+        <select
+          className="v3-flt-pill v3-flt-pill-dark"
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value as SortBy)}
+        >
+          <option value="pf">↑ Sort: PF</option>
+          <option value="n">↑ Sort: N</option>
+          <option value="net">↑ Sort: Net</option>
+          <option value="wr">↑ Sort: WR</option>
+        </select>
         <button
           className={'v3-flt-pill' + (showNoEdge ? ' active' : '')}
           onClick={() => setShowNoEdge((v) => !v)}
