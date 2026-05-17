@@ -14,7 +14,7 @@ import BilingualPdfLink from '../_components/BilingualPdfLink';
 import BilingualLede from '../_components/BilingualLede';
 import BilingualTitle from '../_components/BilingualTitle';
 import V3Tabs from '../_components/V3Tabs';
-import { getStrategyStats, getWeekdayBreakdown } from '@/lib/study-stats';
+import { getStrategyStats, getWeekdayBreakdown, getYearBreakdown, getTradeList } from '@/lib/study-stats';
 
 const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
   cpi: {
@@ -290,6 +290,8 @@ export default async function BacktestedDetail({ params }: PageProps) {
   if (isIfvg) {
     const stratStats = getStrategyStats(slug);
     const breakdown = getWeekdayBreakdown(slug, true);
+    const yearBreakdown = getYearBreakdown(slug, true);
+    const trades = getTradeList(slug, true);
     const eventLabel = stratStats?.event ?? entry.title;
     const assetLabel = stratStats?.asset ?? 'NQ';
     const dateFrom = stratStats?.dateFrom ? stratStats.dateFrom.slice(0, 4) : '2016';
@@ -341,7 +343,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
 
         {/* V3Tabs is a client component that reads ?tab from URL */}
         <Suspense fallback={<div className="v3-tabs" style={{ height: 48 }} />}>
-          <V3Tabs slug={slug} breakdown={breakdown} overviewContent={overviewNode} />
+          <V3Tabs slug={slug} breakdown={breakdown} yearBreakdown={yearBreakdown} trades={trades} overviewContent={overviewNode} />
         </Suspense>
 
         {pager}
