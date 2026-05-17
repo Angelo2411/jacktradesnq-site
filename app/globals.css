@@ -1996,6 +1996,12 @@ a { color: inherit; text-decoration: none; }
   margin-bottom: 4px;
   color: var(--c-ink);
 }
+.v3-day-strat-time {
+  font-family: var(--f-sans);
+  font-size: 0.72rem;
+  color: var(--c-muted);
+  font-weight: 400;
+}
 .v3-day-strat-stats {
   display: flex;
   gap: 10px;

@@ -1,38 +1,8 @@
-import { getCalendarWeekday } from '@/lib/study-stats';
+import { getEventStudyMap } from '@/lib/study-stats';
+import type { NewsItem } from '@/lib/news-week';
 import CalendarDays from './_components/CalendarDays';
 
-// Current week Mon-Fri dates in ET timezone
-function getWeekDates(): Array<{ dayKey: string; label: string; date: string; isoDate: string; isToday: boolean }> {
-  const nowUtc = new Date();
-  const etMs = nowUtc.getTime() - 5 * 60 * 60 * 1000;
-  const etNow = new Date(etMs);
-
-  const dayOfWeek = etNow.getUTCDay();
-  const daysFromMon = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-  const monday = new Date(etNow.getTime() + daysFromMon * 24 * 60 * 60 * 1000);
-
-  const DAYS = [
-    { dayKey: 'mon', label: 'Mon' },
-    { dayKey: 'tue', label: 'Tue' },
-    { dayKey: 'wed', label: 'Wed' },
-    { dayKey: 'thu', label: 'Thu' },
-    { dayKey: 'fri', label: 'Fri' },
-  ];
-
-  return DAYS.map(({ dayKey, label }, i) => {
-    const d = new Date(monday.getTime() + i * 24 * 60 * 60 * 1000);
-    const month = d.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' });
-    const day = d.getUTCDate();
-    const todayEt = new Date(nowUtc.getTime() - 5 * 60 * 60 * 1000);
-    const isToday =
-      d.getUTCFullYear() === todayEt.getUTCFullYear() &&
-      d.getUTCMonth() === todayEt.getUTCMonth() &&
-      d.getUTCDate() === todayEt.getUTCDate();
-    return { dayKey, label, date: `${month} ${day}`, isoDate: d.toISOString().slice(0, 10), isToday };
-  });
-}
-
-const NEWS_PLACEHOLDER = [
+const NEWS_PLACEHOLDER: NewsItem[] = [
   { day: 'Mon 19', time: '8:30',  event: 'Empire State Manufacturing', imp: 'Medium' },
   { day: 'Mon 19', time: '9:15',  event: 'Industrial Production',      imp: 'Low'    },
   { day: 'Tue 20', time: '8:30',  event: 'Building Permits',           imp: 'Low'    },
@@ -50,8 +20,9 @@ function impClass(imp: string) {
 }
 
 export default function CalendarPage() {
-  const weekDates = getWeekDates();
-  const calData = getCalendarWeekday();
+  // Server-side: resolve study stats (uses fs). Pass serializable map to client.
+  const studyMap = getEventStudyMap(NEWS_PLACEHOLDER);
+  const redFolder = NEWS_PLACEHOLDER.filter((n) => n.imp === 'High');
 
   return (
     <>
@@ -70,39 +41,33 @@ export default function CalendarPage() {
         <button className="v3-flt-pill">Month view</button>
       </div>
 
-      {/* Day cards — client component, filters by asset context */}
-      <CalendarDays calData={calData} weekDates={weekDates} />
+      {/* Day cards — client: computes week dates at runtime, filters by asset */}
+      <CalendarDays news={NEWS_PLACEHOLDER} studyMap={studyMap} />
 
       {/* News this week — Red folder (High impact) only */}
       <section className="v3-news-week">
         <div className="v3-news-week-h2">Red folder this week</div>
         <div className="v3-news-week-sub">
-          High-impact scheduled releases only (NY time). {/* TODO: wire to live news-pine.json when available */}
+          High-impact scheduled releases only (NY time).
         </div>
-        {(() => {
-          const redFolder = NEWS_PLACEHOLDER.filter((n) => n.imp === 'High');
-          if (redFolder.length === 0) {
-            return (
-              <p className="v3-news-empty">
-                No red-folder events scheduled this week. Quiet macro week.
-              </p>
-            );
-          }
-          return (
-            <table className="v3-news-tbl">
-              <tbody>
-                {redFolder.map((row, i) => (
-                  <tr key={i}>
-                    <td className="v3-news-td-d">{row.day}</td>
-                    <td className="v3-news-td-t">{row.time}</td>
-                    <td className="v3-news-td-e">{row.event}</td>
-                    <td className={'v3-news-td-imp ' + impClass(row.imp)}>{row.imp}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          );
-        })()}
+        {redFolder.length === 0 ? (
+          <p className="v3-news-empty">
+            No red-folder events scheduled this week. Quiet macro week.
+          </p>
+        ) : (
+          <table className="v3-news-tbl">
+            <tbody>
+              {redFolder.map((row, i) => (
+                <tr key={i}>
+                  <td className="v3-news-td-d">{row.day}</td>
+                  <td className="v3-news-td-t">{row.time}</td>
+                  <td className="v3-news-td-e">{row.event}</td>
+                  <td className={'v3-news-td-imp ' + impClass(row.imp)}>{row.imp}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </section>
     </>
   );

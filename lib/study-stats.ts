@@ -222,6 +222,53 @@ export function getMarketStudyStats(): MarketStudyStats[] {
   return results;
 }
 
+// Event name → IFVG SMT slug mapping (NQ only for now; GC mapped later)
+const EVENT_SLUG_MAP: Record<string, string | null> = {
+  'CPI':                        'cpi-ifvg-smt',
+  'NFP':                        'nfp-ifvg-smt',
+  'Non-Farm Payrolls':          'nfp-ifvg-smt',
+  'PPI':                        'ppi-ifvg-smt',
+  'PCE':                        'pce-ifvg-smt',
+  'Jobless Claims':             'joblessclaims-ifvg-smt',
+  'Retail Sales':               'retailsales-ifvg-smt',
+  'Empire State Manufacturing': 'empirestate-ifvg-smt',
+  'Employment Cost Index':      'employmentcostindex-ifvg-smt',
+  'GDP':                        'gdp-ifvg-smt',
+  'FOMC Minutes':               null,
+  'FOMC Statement':             null,
+  'Federal Funds Rate':         null,
+};
+
+export type EventStudyStats = {
+  slug: string;
+  pf: number;
+  n: number;
+  net: number;
+  wr: number;
+  asset: string;
+};
+
+export function getEventStudyMap(
+  news: Array<{ event: string }>
+): Record<string, EventStudyStats | null> {
+  const map: Record<string, EventStudyStats | null> = {};
+  for (const item of news) {
+    if (!(item.event in map)) {
+      map[item.event] = getStudyForEvent(item.event);
+    }
+  }
+  return map;
+}
+
+export function getStudyForEvent(eventName: string): EventStudyStats | null {
+  const slug = EVENT_SLUG_MAP[eventName];
+  if (slug === undefined) return null; // unknown event — treat same as no study
+  if (slug === null) return null;       // known event, no study yet
+  const stats = getStrategyStats(slug);
+  if (!stats) return null;
+  return { slug, pf: stats.pf, n: stats.n, net: stats.net, wr: stats.wr, asset: stats.asset };
+}
+
 // Returns weekday breakdown for an IFVG SMT slug (tp1_be smt=True)
 // Day 0 = Monday (Python weekday: Mon=0 ... Fri=4)
 export function getWeekdayBreakdown(slug: string, smtOn = true): WeekdayBreakdown {

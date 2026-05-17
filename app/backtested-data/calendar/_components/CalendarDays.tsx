@@ -1,37 +1,38 @@
 'use client';
 import Link from 'next/link';
 import { useAsset } from '../../_components/AssetContext';
-import type { CalendarDayEntry } from '@/lib/study-stats';
-
-type WeekDate = { dayKey: string; label: string; date: string; isoDate: string; isToday: boolean };
+import { getWeekDates, getRedFolderByDay, type NewsItem } from '@/lib/news-week';
+import type { EventStudyStats } from '@/lib/study-stats';
 
 type Props = {
-  calData: Record<string, CalendarDayEntry[]>;
-  weekDates: WeekDate[];
+  news: NewsItem[];
+  studyMap: Record<string, EventStudyStats | null>;
 };
 
-export default function CalendarDays({ calData, weekDates }: Props) {
+export default function CalendarDays({ news, studyMap }: Props) {
   const { asset } = useAsset();
+
+  // Compute current week dates at runtime (client-side, uses real browser Date)
+  const weekDates = getWeekDates();
+  const dayRedEvents = getRedFolderByDay(news, weekDates, studyMap);
 
   return (
     <div className="v3-day-cards">
       {weekDates.map((day) => {
-        const allStrats = calData[day.dayKey] ?? [];
-        const strats = asset === 'all'
-          ? allStrats
-          : allStrats.filter((s) => s.asset.toLowerCase() === asset);
+        const events = dayRedEvents[day.dayKey] ?? [];
 
-        const topSlug = strats[0]?.slug;
-        const href = topSlug
-          ? `/backtested-data/${topSlug}/?tab=weekday`
-          : '/backtested-data/';
+        // Asset filter: gc → only events with a GC study (none currently)
+        const filtered = asset === 'gc'
+          ? events.filter((e) => e.study?.asset === 'GC')
+          : events;
 
-        return (
-          <Link
-            key={day.dayKey}
-            href={href}
-            className={'v3-day-card' + (day.isToday ? ' today' : '')}
-          >
+        const firstStudy = filtered.find((e) => e.study != null)?.study ?? null;
+        const href = firstStudy ? `/backtested-data/${firstStudy.slug}/` : null;
+
+        const cardClass = 'v3-day-card' + (day.isToday ? ' today' : '');
+
+        const inner = (
+          <>
             <div className="v3-day-hd">
               <div className="v3-day-name-wrap">
                 <span className="v3-day-name">{day.label}</span>
@@ -40,35 +41,44 @@ export default function CalendarDays({ calData, weekDates }: Props) {
               <span className="v3-day-date">{day.date}</span>
             </div>
 
-            {strats.length === 0 ? (
-              <div className="v3-day-empty">Quiet day — no setups with edge</div>
-            ) : strats.length === 1 ? (
-              <>
-                <div className="v3-day-strat">
-                  <div className="v3-day-strat-name">{strats[0].name}</div>
-                  <div className="v3-day-strat-stats">
-                    <span>N={strats[0].n}</span>
-                    <span>WR <span className="pos">{strats[0].wr}%</span></span>
-                    <span className="pos">+{strats[0].net} pts</span>
-                  </div>
-                </div>
-                <div className="v3-day-empty" style={{ textAlign: 'left', padding: '8px 0' }}>
-                  Quiet day — only 1 setup
-                </div>
-              </>
+            {filtered.length === 0 ? (
+              <div className="v3-day-empty">
+                {asset === 'gc'
+                  ? 'No GC red folder events scheduled'
+                  : 'Quiet day — no red folder release'}
+              </div>
             ) : (
-              strats.map((st) => (
-                <div key={st.slug} className="v3-day-strat">
-                  <div className="v3-day-strat-name">{st.name}</div>
-                  <div className="v3-day-strat-stats">
-                    <span>N={st.n}</span>
-                    <span>WR <span className="pos">{st.wr}%</span></span>
-                    <span className="pos">+{st.net} pts</span>
+              filtered.map((ev, i) => (
+                <div key={i} className="v3-day-strat">
+                  <div className="v3-day-strat-name">
+                    {ev.event}
+                    <span className="v3-day-strat-time"> · {ev.time}</span>
                   </div>
+                  {ev.study ? (
+                    <div className="v3-day-strat-stats">
+                      <span>N={ev.study.n}</span>
+                      <span>WR <span className="pos">{ev.study.wr}%</span></span>
+                      <span className="pos">+{ev.study.net} pts</span>
+                    </div>
+                  ) : (
+                    <div className="v3-day-empty" style={{ padding: '4px 0', fontStyle: 'italic' }}>
+                      No backtest yet
+                    </div>
+                  )}
                 </div>
               ))
             )}
+          </>
+        );
+
+        return href ? (
+          <Link key={day.dayKey} href={href} className={cardClass}>
+            {inner}
           </Link>
+        ) : (
+          <div key={day.dayKey} className={cardClass}>
+            {inner}
+          </div>
         );
       })}
     </div>
