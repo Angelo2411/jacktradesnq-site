@@ -67,8 +67,6 @@ function WeekdayBlock({
     return parts.join(' ');
   })();
 
-  void slug;
-
   return (
     <div>
       <div className="v3-wd-h">Performance by day of the week</div>
@@ -81,27 +79,33 @@ function WeekdayBlock({
           const colClass = 'v3-wd-col' + (isBest ? ' best' : isWorst ? ' worst' : '');
           const barH = st.n === 0 ? 4 : Math.max(6, Math.round((st.wr / maxWr) * 80));
           return (
-            <div key={d.key} className={colClass}>
-              <div className="v3-wd-col-day">{d.label}</div>
-              <div className="v3-wd-bar-wrap">
-                <div className={barClass(st)} style={{ height: `${barH}%` }} />
+            <Link
+              key={d.key}
+              href={`/backtested-data/${slug}/?tab=trades&day=${d.key}`}
+              style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
+            >
+              <div className={colClass}>
+                <div className="v3-wd-col-day">{d.label}</div>
+                <div className="v3-wd-bar-wrap">
+                  <div className={barClass(st)} style={{ height: `${barH}%` }} />
+                </div>
+                {st.n === 0 ? (
+                  <>
+                    <div className="v3-wd-stat">—</div>
+                    <div className="v3-wd-stat-sub">N=0</div>
+                    <div className="v3-wd-stat-pnl zero">no events</div>
+                  </>
+                ) : (
+                  <>
+                    <div className="v3-wd-stat">{st.wr}%</div>
+                    <div className="v3-wd-stat-sub">N={st.n} · WR</div>
+                    <div className={pnlClass(st)}>
+                      {st.net >= 0 ? '+' : ''}{st.net} pts
+                    </div>
+                  </>
+                )}
               </div>
-              {st.n === 0 ? (
-                <>
-                  <div className="v3-wd-stat">—</div>
-                  <div className="v3-wd-stat-sub">N=0</div>
-                  <div className="v3-wd-stat-pnl zero">no events</div>
-                </>
-              ) : (
-                <>
-                  <div className="v3-wd-stat">{st.wr}%</div>
-                  <div className="v3-wd-stat-sub">N={st.n} · WR</div>
-                  <div className={pnlClass(st)}>
-                    {st.net >= 0 ? '+' : ''}{st.net} pts
-                  </div>
-                </>
-              )}
-            </div>
+            </Link>
           );
         })}
       </div>
@@ -192,14 +196,30 @@ function YearBlock({ breakdown }: { breakdown: YearBreakdown }) {
 
 const PAGE_SIZE = 25;
 
-function TradesBlock({ trades }: { trades: TradeRow[] }) {
+const DAY_LABEL: Record<string, string> = {
+  mon: 'Monday', tue: 'Tuesday', wed: 'Wednesday', thu: 'Thursday', fri: 'Friday',
+};
+
+function tradeWeekday(ts: string): number {
+  // Convert UTC timestamp to ET (subtract 5h) then get day
+  const d = new Date(new Date(ts).getTime() - 5 * 3600 * 1000);
+  return d.getUTCDay(); // 1=Mon...5=Fri
+}
+
+const DAY_KEY_TO_NUM: Record<string, number> = { mon: 1, tue: 2, wed: 3, thu: 4, fri: 5 };
+
+function TradesBlock({ trades, dayFilter = '', slug }: { trades: TradeRow[]; dayFilter?: string; slug: string }) {
+  const filtered = dayFilter && DAY_KEY_TO_NUM[dayFilter] !== undefined
+    ? trades.filter((t) => tradeWeekday(t.ts) === DAY_KEY_TO_NUM[dayFilter])
+    : trades;
+
   const [visible, setVisible] = useState(PAGE_SIZE);
 
   if (trades.length === 0) {
     return <div className="v3-coming-soon">No trade data available.</div>;
   }
 
-  const shown = trades.slice(0, visible);
+  const shown = filtered.slice(0, visible);
 
   function pnlClass(pnl: number) {
     if (pnl > 0) return 'v3-tr-pnl pos';
@@ -243,15 +263,21 @@ function TradesBlock({ trades }: { trades: TradeRow[] }) {
           </tbody>
         </table>
       </div>
-      {visible < trades.length && (
+      {dayFilter && DAY_LABEL[dayFilter] && (
+        <div className="v3-tr-filter-badge">
+          Filtered by {DAY_LABEL[dayFilter]} ·{' '}
+          <Link href={`/backtested-data/${slug}/?tab=trades`} className="v3-tr-clear">× clear</Link>
+        </div>
+      )}
+      {visible < filtered.length && (
         <button
           className="v3-tr-load-more"
           onClick={() => setVisible((v) => v + PAGE_SIZE)}
         >
-          Load more ({trades.length - visible} remaining)
+          Load more ({filtered.length - visible} remaining)
         </button>
       )}
-      <div className="v3-tr-count">{trades.length} total trades</div>
+      <div className="v3-tr-count">{filtered.length} total trades{dayFilter ? ` (${trades.length} unfiltered)` : ''}</div>
     </div>
   );
 }
@@ -272,6 +298,7 @@ export default function V3Tabs({
   const searchParams = useSearchParams();
   const tab = (searchParams.get('tab') ?? 'overview') as Tab;
   const activeTab: Tab = TAB_LIST.some((t) => t.key === tab) ? tab : 'overview';
+  const dayFilter = searchParams.get('day') ?? '';
 
   function tabHref(t: string) {
     return `/backtested-data/${slug}/?tab=${t}`;
@@ -296,7 +323,7 @@ export default function V3Tabs({
       ) : activeTab === 'year' ? (
         <YearBlock breakdown={yearBreakdown} />
       ) : activeTab === 'trades' ? (
-        <TradesBlock trades={trades} />
+        <TradesBlock trades={trades} dayFilter={dayFilter} slug={slug} />
       ) : activeTab === 'methodology' ? (
         <div className="v3-meth-link">
           <Link href="/backtested-data/methodology/">Read full methodology →</Link>
