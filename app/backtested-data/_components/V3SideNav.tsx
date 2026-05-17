@@ -29,18 +29,32 @@ const NAV = [
       </svg>
     ),
   },
+  {
+    key: 'methodology',
+    label: 'Methodology',
+    href: '/backtested-data/methodology/',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ flexShrink: 0, opacity: 0.8 }}>
+        <circle cx="8" cy="8" r="6.25" />
+        <line x1="8" y1="4.5" x2="8" y2="8.5" />
+        <circle cx="8" cy="11.25" r="0.6" fill="currentColor" />
+      </svg>
+    ),
+  },
 ];
 
 export default function V3SideNav() {
   const pathname = usePathname();
   const isCalendar = pathname.includes('/calendar');
+  const isMethodology = pathname.includes('/methodology');
 
   return (
     <aside className="v3-sidenav">
       {NAV.map((item) => {
         const active =
           (item.key === 'calendar' && isCalendar) ||
-          (item.key === 'data' && !isCalendar);
+          (item.key === 'methodology' && isMethodology) ||
+          (item.key === 'data' && !isCalendar && !isMethodology);
         return (
           <Link
             key={item.key}
