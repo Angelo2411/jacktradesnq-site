@@ -29,9 +29,6 @@ const NAV = [
       </svg>
     ),
   },
-  { key: 'strategies', label: 'Strategies', href: '/backtested-data/', icon: null },
-  { key: 'notes',      label: 'Notes',      href: '/backtested-data/', icon: null },
-  { key: 'about',      label: 'About',      href: '/backtested-data/', icon: null },
 ];
 
 export default function V3SideNav() {
