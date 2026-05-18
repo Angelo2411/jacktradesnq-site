@@ -407,7 +407,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       const cIfvg = 'rgba(20, 20, 20, 0.9)';
 
       const topEdge = chart.addSeries(LineSeries, {
-        color: cIfvg, lineWidth: 4, lineStyle: LineStyle.Solid,
+        color: cIfvg, lineWidth: 2, lineStyle: LineStyle.Solid,
         priceLineVisible: false, lastValueVisible: true,
         title: 'IFVG',
       });
@@ -417,7 +417,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       ]);
 
       const bottomEdge = chart.addSeries(LineSeries, {
-        color: cIfvg, lineWidth: 4, lineStyle: LineStyle.Solid,
+        color: cIfvg, lineWidth: 2, lineStyle: LineStyle.Solid,
         priceLineVisible: false, lastValueVisible: false,
       });
       bottomEdge.setData([
