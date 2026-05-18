@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   createChart,
-  createSeriesMarkers,
   CandlestickSeries,
   CrosshairMode,
   LineSeries,
@@ -263,8 +262,11 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         lastValueVisible: true,
         title: 'Stop loss',
       });
+      const slStartSec = (sweepTs !== undefined
+        ? Math.floor(new Date(sweepTs).getTime() / 1000)
+        : entrySec) as UTCTimestamp;
       slSegment.setData([
-        { time: entrySec, value: slPrice },
+        { time: slStartSec, value: slPrice },
         { time: exitSec, value: slPrice },
       ]);
 
@@ -331,24 +333,6 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         crosshairMarkerVisible: false,
       });
       exitSeries.setData([{ time: exitTime, value: exitPrice }]);
-      // Same-bar: place exit on opposite side from entry triangle to avoid overlap
-      const entryTimeSec2 = entryTs !== undefined ? Math.floor(new Date(entryTs).getTime() / 1000) : null;
-      const sameBar = entryTimeSec2 !== null && exitTime === entryTimeSec2;
-      let exitPosition: 'aboveBar' | 'belowBar';
-      if (sameBar) {
-        // entry is belowBar (long) or aboveBar (short) → exit goes opposite
-        exitPosition = side === 'long' ? 'aboveBar' : 'belowBar';
-      } else {
-        exitPosition = outcome === 'win' ? 'aboveBar' : 'belowBar';
-      }
-      createSeriesMarkers(exitSeries, [{
-        time: exitTime,
-        position: exitPosition,
-        color: outcome === 'win' ? cUp : cDown,
-        shape: 'circle',
-        text: outcome.toUpperCase(),
-        size: 2,
-      }]);
     }
 
     // E. Data range lines: each extends individually until its own sweep (or chart end if never).
