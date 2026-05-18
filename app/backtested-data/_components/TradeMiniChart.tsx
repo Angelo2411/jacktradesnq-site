@@ -214,9 +214,10 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
     // Segment lines: entry_ts → exit_ts (not infinite priceLines)
     if (hasLevels && entryTs !== undefined && exitTs !== undefined && entryPriceProp !== undefined && slPrice !== undefined && tpPrice !== undefined) {
       const entrySec = Math.floor(new Date(entryTs).getTime() / 1000) as UTCTimestamp;
-      let exitSec = Math.floor(new Date(exitTs).getTime() / 1000) as UTCTimestamp;
-      // 1-bar trade: force at least 1-min segment for visibility
-      if (exitSec <= entrySec) exitSec = (entrySec + 60) as UTCTimestamp;
+      // Extend segment from entry to end of visible chart (not just exit_ts which can be 1min away = invisible).
+      const lastCandle = candles[candles.length - 1];
+      const chartEndSec = (lastCandle?.time as number) ?? Math.floor(new Date(exitTs).getTime() / 1000);
+      const exitSec = chartEndSec as UTCTimestamp;
 
       const entrySegment = chart.addSeries(LineSeries, {
         color: cGold,
