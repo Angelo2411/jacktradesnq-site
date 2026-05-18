@@ -295,7 +295,12 @@ export default async function BacktestedDetail({ params }: PageProps) {
     const stratStats = getStrategyStats(slug);
     const breakdown = getWeekdayBreakdown(slug, true);
     const yearBreakdown = getYearBreakdown(slug, true);
-    const trades = getTradeList(slug, true);
+    const tradesByVariant = {
+      tp1_be: getTradeList(slug, true, 'tp1_be'),
+      be_50:  getTradeList(slug, true, 'be_50'),
+      no_be:  getTradeList(slug, true, 'no_be'),
+    };
+    const trades = tradesByVariant.tp1_be;
     const eventLabel = stratStats?.event ?? entry.title;
     const assetLabel = stratStats?.asset ?? 'NQ';
     const dateFrom = stratStats?.dateFrom ? stratStats.dateFrom.slice(0, 4) : '2016';
@@ -347,7 +352,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
 
         {/* V3Tabs is a client component that reads ?tab from URL */}
         <Suspense fallback={<div className="v3-tabs" style={{ height: 48 }} />}>
-          <V3Tabs slug={slug} breakdown={breakdown} yearBreakdown={yearBreakdown} trades={trades} overviewContent={overviewNode} eventShort={stratStats?.event ?? ''} asset={(stratStats?.asset?.toLowerCase() ?? 'nq') as 'nq' | 'gc'} />
+          <V3Tabs slug={slug} breakdown={breakdown} yearBreakdown={yearBreakdown} trades={trades} tradesByVariant={tradesByVariant} overviewContent={overviewNode} eventShort={stratStats?.event ?? ''} asset={(stratStats?.asset?.toLowerCase() ?? 'nq') as 'nq' | 'gc'} />
         </Suspense>
 
         {pager}

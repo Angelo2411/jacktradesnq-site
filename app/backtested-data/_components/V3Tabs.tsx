@@ -209,22 +209,34 @@ function tradeWeekday(ts: string): number {
 
 const DAY_KEY_TO_NUM: Record<string, number> = { mon: 1, tue: 2, wed: 3, thu: 4, fri: 5 };
 
+type VariantKey = 'tp1_be' | 'be_50' | 'no_be';
+
+const VARIANT_LABELS: Record<VariantKey, string> = {
+  tp1_be: 'TP1 + BE',
+  be_50:  'TP only + BE',
+  no_be:  'TP only',
+};
+
 function TradesBlock({
   trades,
+  tradesByVariant,
   dayFilter = '',
   slug,
   eventShort,
   asset,
 }: {
   trades: TradeRow[];
+  tradesByVariant?: { tp1_be: TradeRow[]; be_50: TradeRow[]; no_be: TradeRow[] };
   dayFilter?: string;
   slug: string;
   eventShort: string;
   asset: 'nq' | 'gc';
 }) {
+  const [variant, setVariant] = useState<VariantKey>('tp1_be');
+  const activeTrades = tradesByVariant ? tradesByVariant[variant] : trades;
   const filtered = dayFilter && DAY_KEY_TO_NUM[dayFilter] !== undefined
-    ? trades.filter((t) => tradeWeekday(t.ts) === DAY_KEY_TO_NUM[dayFilter])
-    : trades;
+    ? activeTrades.filter((t) => tradeWeekday(t.ts) === DAY_KEY_TO_NUM[dayFilter])
+    : activeTrades;
 
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
@@ -253,8 +265,22 @@ function TradesBlock({
     <div>
       <div className="v3-wd-h">Trade list</div>
       <div className="v3-wd-sub">
-        tp1_be · SMT-on variant{hasStructuralPrices ? ' · SL = sweep ± 1 tick · TP = pre-news pivot (structural, varies per trade)' : ''} · most recent first.
+        {VARIANT_LABELS[variant]} · SMT-on variant{hasStructuralPrices ? ' · SL = sweep ± 1 tick · TP = pre-news pivot (structural, varies per trade)' : ''} · most recent first.
       </div>
+      {tradesByVariant && (
+        <div className="v3-flt-row" style={{ marginBottom: 12 }}>
+          {(['tp1_be', 'be_50', 'no_be'] as VariantKey[]).map((v) => (
+            <button
+              key={v}
+              type="button"
+              className={'v3-flt-pill' + (variant === v ? ' active' : '')}
+              onClick={() => { setVariant(v); setExpandedIdx(null); setVisible(PAGE_SIZE); }}
+            >
+              {VARIANT_LABELS[v]}
+            </button>
+          ))}
+        </div>
+      )}
       <div className="v3-tr-table-wrap">
         <table className="v3-tr-table">
           <thead>
@@ -310,6 +336,7 @@ function TradesBlock({
                         ifvgTop={t.ifvg_top}
                         ifvgBottom={t.ifvg_bottom}
                         ifvgFormationTs={t.ifvg_formation_ts}
+                        variant={variant}
                       />
                     </td>
                   </tr>
@@ -343,6 +370,7 @@ export default function V3Tabs({
   breakdown,
   yearBreakdown,
   trades,
+  tradesByVariant,
   overviewContent,
   eventShort,
   asset,
@@ -351,6 +379,7 @@ export default function V3Tabs({
   breakdown: WeekdayBreakdown;
   yearBreakdown: YearBreakdown;
   trades: TradeRow[];
+  tradesByVariant?: { tp1_be: TradeRow[]; be_50: TradeRow[]; no_be: TradeRow[] };
   overviewContent: React.ReactNode;
   eventShort: string;
   asset: 'nq' | 'gc';
@@ -383,7 +412,7 @@ export default function V3Tabs({
       ) : activeTab === 'year' ? (
         <YearBlock breakdown={yearBreakdown} />
       ) : activeTab === 'trades' ? (
-        <TradesBlock trades={trades} dayFilter={dayFilter} slug={slug} eventShort={eventShort} asset={asset} />
+        <TradesBlock trades={trades} tradesByVariant={tradesByVariant} dayFilter={dayFilter} slug={slug} eventShort={eventShort} asset={asset} />
       ) : activeTab === 'methodology' ? (
         <div className="v3-meth-link">
           <Link href="/backtested-data/methodology/">Read full methodology →</Link>

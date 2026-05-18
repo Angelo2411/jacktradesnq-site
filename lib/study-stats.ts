@@ -476,14 +476,14 @@ function loadPriceOverlay(slug: string): Map<string, PriceFields> | null {
   }
 }
 
-export function getTradeList(slug: string, smtOn = true): TradeRow[] {
+export function getTradeList(slug: string, smtOn = true, variant: 'tp1_be' | 'be_50' | 'no_be' = 'tp1_be'): TradeRow[] {
   const json = loadIfvgJson(slug);
   if (!json) return [];
 
   const overlay = loadPriceOverlay(slug);
 
   return (json.trades ?? [])
-    .filter((t) => t.variant === 'tp1_be' && (smtOn ? t.smt === true : true))
+    .filter((t) => t.variant === variant && (smtOn ? t.smt === true : true))
     .map((t) => {
       const sideNorm = t.side.toLowerCase();
       const priceFields: Partial<PriceFields> = overlay

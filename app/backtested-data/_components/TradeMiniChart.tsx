@@ -60,6 +60,7 @@ interface Props {
   ifvgTop?: number;
   ifvgBottom?: number;
   ifvgFormationTs?: string;
+  variant?: 'tp1_be' | 'be_50' | 'no_be';
 }
 
 function forwardFill(bars: EventBar[]): EventBar[] {
@@ -123,7 +124,7 @@ function LegendPill({ color, label, value }: { color: string; label: string; val
   );
 }
 
-export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl_pts, outcome, entryPrice: entryPriceProp, slPrice, tpPrice, entryTs, exitTs, exitPrice, ts, dataHigh, dataLow, sweepTs, sweepSide, ifvgTop, ifvgBottom, ifvgFormationTs }: Props) {
+export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl_pts, outcome, entryPrice: entryPriceProp, slPrice, tpPrice, entryTs, exitTs, exitPrice, ts, dataHigh, dataLow, sweepTs, sweepSide, ifvgTop, ifvgBottom, ifvgFormationTs, variant = 'tp1_be' }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [status, setStatus] = useState<'loading' | 'found' | 'missing'>('loading');
   const entryRef = useRef<number | null>(null);
@@ -284,20 +285,22 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         { time: exitSec, value: tpPrice },
       ]);
 
-      // TP1 line: half-close threshold at +50% TP distance (tp1_be variant).
-      const tp1Price = entryPriceProp + 0.5 * (tpPrice - entryPriceProp);
-      const tp1Segment = chart.addSeries(LineSeries, {
-        color: cUp,
-        lineWidth: 1,
-        lineStyle: LineStyle.Dotted,
-        priceLineVisible: false,
-        lastValueVisible: true,
-        title: 'TP1',
-      });
-      tp1Segment.setData([
-        { time: entrySec, value: tp1Price },
-        { time: exitSec, value: tp1Price },
-      ]);
+      // TP1 line: half-close threshold at +50% TP distance — only drawn for tp1_be variant.
+      if (variant === 'tp1_be') {
+        const tp1Price = entryPriceProp + 0.5 * (tpPrice - entryPriceProp);
+        const tp1Segment = chart.addSeries(LineSeries, {
+          color: cUp,
+          lineWidth: 1,
+          lineStyle: LineStyle.Dotted,
+          priceLineVisible: false,
+          lastValueVisible: true,
+          title: 'TP1',
+        });
+        tp1Segment.setData([
+          { time: entrySec, value: tp1Price },
+          { time: exitSec, value: tp1Price },
+        ]);
+      }
     } else if (effectiveEntryPrice !== null && effectiveEntryPrice !== undefined) {
       // GC fallback: no segments, just a price line for entry only
       candleSeries.createPriceLine({
@@ -527,7 +530,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
           </span>
           <span style={{ marginLeft: 'auto', display: 'flex', gap: 10, flexWrap: 'wrap', fontVariantNumeric: 'tabular-nums' }}>
             {tpPrice !== undefined && (<LegendPill color="#4a8c3f" label="TP" value={tpPrice} />)}
-            {tpPrice !== undefined && entryPriceProp !== undefined && (
+            {variant === 'tp1_be' && tpPrice !== undefined && entryPriceProp !== undefined && (
               <LegendPill color="#4a8c3f" label="TP1" value={(entryPriceProp + 0.5 * (tpPrice - entryPriceProp)).toFixed(2)} />
             )}
             {dataHigh !== undefined && (<LegendPill color="rgba(122,110,90,0.85)" label="Data H" value={dataHigh} />)}
