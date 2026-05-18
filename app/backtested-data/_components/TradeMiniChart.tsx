@@ -53,6 +53,14 @@ interface Props {
   entryTs?: string;
   exitTs?: string;
   exitPrice?: number;
+  ts?: string;
+  dataHigh?: number;
+  dataLow?: number;
+  sweepTs?: string;
+  sweepSide?: 'UP' | 'DOWN';
+  ifvgTop?: number;
+  ifvgBottom?: number;
+  ifvgFormationTs?: string;
 }
 
 function forwardFill(bars: EventBar[]): EventBar[] {
@@ -101,7 +109,7 @@ function detectIfvgZone(bars: EventBar[], entryMinute: number, side: 'long' | 's
   return null;
 }
 
-export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl_pts, outcome, entryPrice: entryPriceProp, slPrice, tpPrice, entryTs, exitTs, exitPrice }: Props) {
+export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl_pts, outcome, entryPrice: entryPriceProp, slPrice, tpPrice, entryTs, exitTs, exitPrice, ts, dataHigh, dataLow, sweepTs, sweepSide, ifvgTop, ifvgBottom, ifvgFormationTs }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [status, setStatus] = useState<'loading' | 'found' | 'missing'>('loading');
   const entryRef = useRef<number | null>(null);
@@ -346,10 +354,70 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       }]);
     }
 
+    // E. Data range lines: from t0 (release ts) to sweep_ts
+    if (dataHigh !== undefined && dataLow !== undefined && sweepTs !== undefined && ts !== undefined) {
+      const releaseTimeSec = Math.floor(new Date(ts).getTime() / 1000) as UTCTimestamp;
+      const sweepTimeSec = Math.floor(new Date(sweepTs).getTime() / 1000) as UTCTimestamp;
+
+      const cDataLine = 'rgba(122, 110, 90, 0.7)';
+
+      const dataHighLine = chart.addSeries(LineSeries, {
+        color: cDataLine,
+        lineWidth: 1,
+        lineStyle: LineStyle.Dotted,
+        priceLineVisible: false,
+        lastValueVisible: true,
+        title: `Data H · ${dataHigh}`,
+      });
+      dataHighLine.setData([
+        { time: releaseTimeSec, value: dataHigh },
+        { time: sweepTimeSec, value: dataHigh },
+      ]);
+
+      const dataLowLine = chart.addSeries(LineSeries, {
+        color: cDataLine,
+        lineWidth: 1,
+        lineStyle: LineStyle.Dotted,
+        priceLineVisible: false,
+        lastValueVisible: true,
+        title: `Data L · ${dataLow}`,
+      });
+      dataLowLine.setData([
+        { time: releaseTimeSec, value: dataLow },
+        { time: sweepTimeSec, value: dataLow },
+      ]);
+    }
+
+    // F. IFVG zone rectangle (top + bottom horizontals)
+    if (ifvgTop !== undefined && ifvgBottom !== undefined && ifvgFormationTs !== undefined && entryTs !== undefined) {
+      const formSec = Math.floor(new Date(ifvgFormationTs).getTime() / 1000) as UTCTimestamp;
+      const entrySec = Math.floor(new Date(entryTs).getTime() / 1000) as UTCTimestamp;
+
+      const cIfvg = side === 'long' ? 'rgba(201, 117, 88, 0.6)' : 'rgba(125, 162, 116, 0.6)';
+
+      const topEdge = chart.addSeries(LineSeries, {
+        color: cIfvg, lineWidth: 1, lineStyle: LineStyle.Solid,
+        priceLineVisible: false, lastValueVisible: false,
+      });
+      topEdge.setData([
+        { time: formSec, value: ifvgTop },
+        { time: entrySec, value: ifvgTop },
+      ]);
+
+      const bottomEdge = chart.addSeries(LineSeries, {
+        color: cIfvg, lineWidth: 1, lineStyle: LineStyle.Solid,
+        priceLineVisible: false, lastValueVisible: false,
+      });
+      bottomEdge.setData([
+        { time: formSec, value: ifvgBottom },
+        { time: entrySec, value: ifvgBottom },
+      ]);
+    }
+
     // Invisible range series to pad Y-axis
     const allH = candles.map((c) => c.high);
     const allL = candles.map((c) => c.low);
-    const extraPrices = [entryPrice, slPrice, tpPrice, exitPrice].filter((v): v is number => v !== undefined && v !== null);
+    const extraPrices = [entryPrice, slPrice, tpPrice, exitPrice, dataHigh, dataLow, ifvgTop, ifvgBottom].filter((v): v is number => v !== undefined && v !== null);
     const yMax = Math.max(...allH, ...extraPrices);
     const yMin = Math.min(...allL, ...extraPrices);
     const pad = Math.max((yMax - yMin) * 0.08, 2);

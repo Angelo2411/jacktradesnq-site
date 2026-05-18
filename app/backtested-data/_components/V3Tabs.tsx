@@ -302,6 +302,14 @@ function TradesBlock({
                         entryTs={t.entry_ts}
                         exitTs={t.exit_ts}
                         exitPrice={t.exit_price}
+                        ts={t.ts}
+                        dataHigh={t.data_high}
+                        dataLow={t.data_low}
+                        sweepTs={t.sweep_ts}
+                        sweepSide={t.sweep_side}
+                        ifvgTop={t.ifvg_top}
+                        ifvgBottom={t.ifvg_bottom}
+                        ifvgFormationTs={t.ifvg_formation_ts}
                       />
                     </td>
                   </tr>
