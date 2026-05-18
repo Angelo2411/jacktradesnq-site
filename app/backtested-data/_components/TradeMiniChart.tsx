@@ -235,7 +235,8 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
 
     // Segment lines: entry_ts → exit_ts (not infinite priceLines)
     if (hasLevels && entryTs !== undefined && exitTs !== undefined && entryPriceProp !== undefined && slPrice !== undefined && tpPrice !== undefined) {
-      const entrySec = Math.floor(new Date(entryTs).getTime() / 1000) as UTCTimestamp;
+      // entry_ts is the OPEN of the breaking bar; trade fills at its CLOSE → +60s.
+      const entrySec = (Math.floor(new Date(entryTs).getTime() / 1000) + 60) as UTCTimestamp;
       // Extend segment from entry to end of visible chart (not just exit_ts which can be 1min away = invisible).
       const lastCandle = candles[candles.length - 1];
       const chartEndSec = (lastCandle?.time as number) ?? Math.floor(new Date(exitTs).getTime() / 1000);
@@ -387,7 +388,8 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
     if (ifvgTop !== undefined && ifvgBottom !== undefined && ifvgFormationTs !== undefined && entryTs !== undefined) {
       // Extend back 2 minutes to include the FVG formation context.
       const formSec = (Math.floor(new Date(ifvgFormationTs).getTime() / 1000) - 120) as UTCTimestamp;
-      const entrySec = Math.floor(new Date(entryTs).getTime() / 1000) as UTCTimestamp;
+      // Stop IFVG at the entry bar's CLOSE (entry_ts + 60s) so the breaking bar is inside the zone.
+      const entrySec = (Math.floor(new Date(entryTs).getTime() / 1000) + 60) as UTCTimestamp;
       const cIfvg = 'rgba(20, 20, 20, 0.9)';
 
       const topEdge = chart.addSeries(LineSeries, {
