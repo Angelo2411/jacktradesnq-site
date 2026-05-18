@@ -434,8 +434,15 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
     if (levels.length >= 3) {
       const levelMin = Math.min(...levels);
       const levelMax = Math.max(...levels);
-      const center = (levelMin + levelMax) / 2;
-      const span = Math.max(levelMax - levelMin + 40, 300); // min 300pt window, expands if levels wider
+      // Also include candles around entry to keep price action visible.
+      const entrySec = entryTs ? Math.floor(new Date(entryTs).getTime() / 1000) : 0;
+      const nearby = candles.filter((c) => Math.abs((c.time as number) - entrySec) <= 30 * 60);
+      const candleMax = nearby.length > 0 ? Math.max(...nearby.map((c) => c.high)) : levelMax;
+      const candleMin = nearby.length > 0 ? Math.min(...nearby.map((c) => c.low)) : levelMin;
+      const fullMin = Math.min(levelMin, candleMin);
+      const fullMax = Math.max(levelMax, candleMax);
+      const span = (fullMax - fullMin) * 1.15; // 15% padding above + below combined
+      const center = (fullMin + fullMax) / 2;
       yMin = center - span / 2;
       yMax = center + span / 2;
     } else {
