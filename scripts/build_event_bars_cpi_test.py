@@ -32,9 +32,9 @@ TO_DATE = "2026-05-18"
 ET = ZoneInfo("America/New_York")
 UTC = timezone.utc
 
-# Window: T-30 → T+240 (270 min total) — covers late entries like 2025-06-11 m=203, 2019-07-11 m=171
+# Window: T-30 → T+305 (335 min total) — covers late entries like 2025-06-11 m=203, 2019-07-11 m=171
 PRE_MIN = 30
-POST_MIN = 240
+POST_MIN = 305
 MIN_VALID_BARS = 15   # same as original build_event_bars.py
 
 
@@ -122,7 +122,7 @@ def main() -> None:
             SELECT ts, open, high, low, close
             FROM nq
             WHERE ts >= ? - INTERVAL 31 MINUTE
-              AND ts <= ? + INTERVAL 241 MINUTE
+              AND ts <= ? + INTERVAL 306 MINUTE
             ORDER BY ts
             """,
             [t0, t0],

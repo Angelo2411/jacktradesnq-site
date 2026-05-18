@@ -40,6 +40,7 @@ MIN_VALID_BARS = 15  # minimum bars to keep an event
 # The canonical CSV uses no-space names (e.g. "JoblessClaims" not "Jobless Claims")
 # ---------------------------------------------------------------------------
 EVENT_MAP: dict[str, str] = {
+    "NFP": "nfp",
     "PPI": "ppi",
     "PCE": "pce",
     "GDP": "gdp",
@@ -49,8 +50,8 @@ EVENT_MAP: dict[str, str] = {
     "EmploymentCostIndex": "employmentcostindex",
 }
 
-# Short names already generated (skip to avoid touching existing files)
-SKIP_SHORTS: set[str] = {"cpi", "nfp"}
+# CPI already handled by build_event_bars_cpi_test.py with same window.
+SKIP_SHORTS: set[str] = {"cpi"}
 
 
 # ---------------------------------------------------------------------------
@@ -130,7 +131,7 @@ def build_nq_bars(events_by_short: dict[str, list[str]]) -> None:
                 """
                 SELECT ts, open, high, low, close
                 FROM nq
-                WHERE ts >= ? - INTERVAL 31 MINUTE AND ts <= ? + INTERVAL 90 MINUTE
+                WHERE ts >= ? - INTERVAL 31 MINUTE AND ts <= ? + INTERVAL 306 MINUTE
                 ORDER BY ts
                 """,
                 [t0, t0],
@@ -157,11 +158,11 @@ def build_nq_bars(events_by_short: dict[str, list[str]]) -> None:
             else:
                 entry_price = float(entry_match.iloc[0]["close"])
 
-            # Build bars m=-1 to m=+90
+            # Build bars m=-30 to m=+305
             bar_list: list[dict] = []
             for _, b in df.iterrows():
                 offset = int((b["ts_utc"] - t0_ts).total_seconds() / 60)
-                if -1 <= offset <= 90:
+                if -30 <= offset <= 305:
                     bar_list.append({
                         "m": offset,
                         "o": round(float(b["open"]), 2),
@@ -219,8 +220,8 @@ def build_gc_bars(events_by_short: dict[str, list[str]]) -> None:
 
         for date_str in sorted(dates):
             t0 = build_t0_utc(date_str)
-            t_start = t0 - timedelta(minutes=1)   # m=-1
-            t_end = t0 + timedelta(minutes=90)
+            t_start = t0 - timedelta(minutes=30)   # m=-30
+            t_end = t0 + timedelta(minutes=305)
 
             window = df_gc.filter(
                 (pl.col("ts_event") >= t_start) & (pl.col("ts_event") <= t_end)
@@ -240,7 +241,7 @@ def build_gc_bars(events_by_short: dict[str, list[str]]) -> None:
                     from datetime import timezone as _tz
                     ts = ts.replace(tzinfo=_tz.utc)
                 offset = int((ts - t0).total_seconds() / 60)
-                if -1 <= offset <= 90:
+                if -30 <= offset <= 305:
                     bar_list.append({
                         "m": offset,
                         "o": round(row["open"], 2),
