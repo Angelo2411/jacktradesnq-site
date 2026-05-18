@@ -109,7 +109,7 @@ function detectIfvgZone(bars: EventBar[], entryMinute: number, side: 'long' | 's
   return null;
 }
 
-function LegendPill({ color, label, value }: { color: string; label: string; value: number }) {
+function LegendPill({ color, label, value }: { color: string; label: string; value: number | string }) {
   return (
     <span style={{
       display: 'inline-flex', alignItems: 'center', gap: 5,
@@ -248,7 +248,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         lineStyle: 0,
         priceLineVisible: false,
         lastValueVisible: false,
-        title: `Entry · ${entryPriceProp}`,
+        title: '',
       });
       entrySegment.setData([
         { time: entrySec, value: entryPriceProp },
@@ -261,7 +261,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         lineStyle: LineStyle.Dashed,
         priceLineVisible: false,
         lastValueVisible: false,
-        title: `SL · ${slPrice}`,
+        title: '',
       });
       slSegment.setData([
         { time: entrySec, value: slPrice },
@@ -274,7 +274,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         lineStyle: LineStyle.Dashed,
         priceLineVisible: false,
         lastValueVisible: false,
-        title: `TP · ${tpPrice}`,
+        title: '',
       });
       tpSegment.setData([
         { time: entrySec, value: tpPrice },
@@ -506,6 +506,9 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
           <span style={{ marginLeft: 'auto', display: 'flex', gap: 10, flexWrap: 'wrap', fontVariantNumeric: 'tabular-nums' }}>
             {tpPrice !== undefined && (<LegendPill color="#4a8c3f" label="TP" value={tpPrice} />)}
             {dataHigh !== undefined && (<LegendPill color="rgba(122,110,90,0.85)" label="Data H" value={dataHigh} />)}
+            {ifvgTop !== undefined && ifvgBottom !== undefined && (
+              <LegendPill color={side === 'long' ? '#c97558' : '#7da274'} label="IFVG" value={`${ifvgBottom}–${ifvgTop}`} />
+            )}
             {dataLow !== undefined && (<LegendPill color="rgba(122,110,90,0.85)" label="Data L" value={dataLow} />)}
             {entryPriceProp !== undefined && (<LegendPill color="#b08932" label="Entry" value={entryPriceProp} />)}
             {slPrice !== undefined && (<LegendPill color="#b8452a" label="SL" value={slPrice} />)}
