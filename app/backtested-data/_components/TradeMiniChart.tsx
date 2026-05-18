@@ -211,7 +211,53 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
     // Prefer real IFVG entry (overlay) over event_bars release-bar open.
     const effectiveEntryPrice = entryPriceProp !== undefined ? entryPriceProp : entryPrice;
 
-    if (effectiveEntryPrice !== null && effectiveEntryPrice !== undefined) {
+    // Segment lines: entry_ts → exit_ts (not infinite priceLines)
+    if (hasLevels && entryTs !== undefined && exitTs !== undefined && entryPriceProp !== undefined && slPrice !== undefined && tpPrice !== undefined) {
+      const entrySec = Math.floor(new Date(entryTs).getTime() / 1000) as UTCTimestamp;
+      let exitSec = Math.floor(new Date(exitTs).getTime() / 1000) as UTCTimestamp;
+      // 1-bar trade: force at least 1-min segment for visibility
+      if (exitSec <= entrySec) exitSec = (entrySec + 60) as UTCTimestamp;
+
+      const entrySegment = chart.addSeries(LineSeries, {
+        color: cGold,
+        lineWidth: 2,
+        lineStyle: 0,
+        priceLineVisible: false,
+        lastValueVisible: true,
+        title: `Entry · ${entryPriceProp}`,
+      });
+      entrySegment.setData([
+        { time: entrySec, value: entryPriceProp },
+        { time: exitSec, value: entryPriceProp },
+      ]);
+
+      const slSegment = chart.addSeries(LineSeries, {
+        color: cDown,
+        lineWidth: 1,
+        lineStyle: LineStyle.Dashed,
+        priceLineVisible: false,
+        lastValueVisible: true,
+        title: `SL · ${slPrice}`,
+      });
+      slSegment.setData([
+        { time: entrySec, value: slPrice },
+        { time: exitSec, value: slPrice },
+      ]);
+
+      const tpSegment = chart.addSeries(LineSeries, {
+        color: cUp,
+        lineWidth: 1,
+        lineStyle: LineStyle.Dashed,
+        priceLineVisible: false,
+        lastValueVisible: true,
+        title: `TP · ${tpPrice}`,
+      });
+      tpSegment.setData([
+        { time: entrySec, value: tpPrice },
+        { time: exitSec, value: tpPrice },
+      ]);
+    } else if (effectiveEntryPrice !== null && effectiveEntryPrice !== undefined) {
+      // GC fallback: no segments, just a price line for entry only
       candleSeries.createPriceLine({
         price: effectiveEntryPrice,
         color: cGold,
@@ -219,28 +265,6 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         lineStyle: 0,
         axisLabelVisible: true,
         title: hasLevels ? `Entry · ${effectiveEntryPrice}` : 'Entry',
-      });
-    }
-
-    if (hasLevels && slPrice !== undefined) {
-      candleSeries.createPriceLine({
-        price: slPrice,
-        color: cDown,
-        lineWidth: 1,
-        lineStyle: LineStyle.Dashed,
-        axisLabelVisible: true,
-        title: `SL · ${slPrice}`,
-      });
-    }
-
-    if (hasLevels && tpPrice !== undefined) {
-      candleSeries.createPriceLine({
-        price: tpPrice,
-        color: cUp,
-        lineWidth: 1,
-        lineStyle: LineStyle.Dashed,
-        axisLabelVisible: true,
-        title: `TP · ${tpPrice}`,
       });
     }
 
@@ -258,9 +282,10 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       createSeriesMarkers(entrySeries, [{
         time: entryTimeSec,
         position: side === 'long' ? 'belowBar' : 'aboveBar',
-        color: side === 'long' ? cUp : cDown,
+        color: side === 'long' ? '#5a9a52' : '#c05030',
         shape: side === 'long' ? 'arrowUp' : 'arrowDown',
         text: side === 'long' ? 'L' : 'S',
+        size: 2,
       }]);
 
       // C. IFVG zone detection
@@ -300,12 +325,23 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         crosshairMarkerVisible: false,
       });
       exitSeries.setData([{ time: exitTime, value: exitPrice }]);
+      // Same-bar: place exit on opposite side from entry triangle to avoid overlap
+      const entryTimeSec2 = entryTs !== undefined ? Math.floor(new Date(entryTs).getTime() / 1000) : null;
+      const sameBar = entryTimeSec2 !== null && exitTime === entryTimeSec2;
+      let exitPosition: 'aboveBar' | 'belowBar';
+      if (sameBar) {
+        // entry is belowBar (long) or aboveBar (short) → exit goes opposite
+        exitPosition = side === 'long' ? 'aboveBar' : 'belowBar';
+      } else {
+        exitPosition = outcome === 'win' ? 'aboveBar' : 'belowBar';
+      }
       createSeriesMarkers(exitSeries, [{
         time: exitTime,
-        position: outcome === 'win' ? 'aboveBar' : 'belowBar',
+        position: exitPosition,
         color: outcome === 'win' ? cUp : cDown,
         shape: 'circle',
         text: outcome.toUpperCase(),
+        size: 2,
       }]);
     }
 
