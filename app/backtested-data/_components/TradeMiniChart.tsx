@@ -197,16 +197,18 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
     });
     candleSeries.setData(candles);
 
-    const hasLevels = entryPrice !== null && entryPriceProp !== undefined && slPrice !== undefined && tpPrice !== undefined;
+    const hasLevels = entryPriceProp !== undefined && slPrice !== undefined && tpPrice !== undefined;
+    // Prefer real IFVG entry (overlay) over event_bars release-bar open.
+    const effectiveEntryPrice = entryPriceProp !== undefined ? entryPriceProp : entryPrice;
 
-    if (entryPrice !== null) {
+    if (effectiveEntryPrice !== null && effectiveEntryPrice !== undefined) {
       candleSeries.createPriceLine({
-        price: entryPrice,
+        price: effectiveEntryPrice,
         color: cGold,
         lineWidth: 2,
         lineStyle: 0,
         axisLabelVisible: true,
-        title: hasLevels ? `Entry · ${entryPrice}` : 'Entry',
+        title: hasLevels ? `Entry · ${effectiveEntryPrice}` : 'Entry',
       });
     }
 
