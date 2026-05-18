@@ -153,8 +153,8 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
     const cGold     = '#b08932';
 
     const chart: IChartApi = createChart(el, {
-      width: 280,
-      height: 280,
+      width: el.clientWidth || 720,
+      height: 360,
       layout: {
         background: { color: cPaper },
         textColor: cInkDim,
@@ -329,10 +329,10 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
 
   return (
     <div className="v3-tr-chart-wrap">
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: 8, width: '100%', maxWidth: 720, margin: '0 auto' }}>
         {status === 'loading' && (
           <div style={{
-            width: 280, height: 280,
+            width: '100%', maxWidth: 720, height: 360,
             background: 'oklch(0.97 0.01 80)',
             borderRadius: 8,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -343,7 +343,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         )}
         {status === 'missing' && (
           <div style={{
-            width: 280, height: 280,
+            width: '100%', maxWidth: 720, height: 360,
             background: 'oklch(0.97 0.01 80)',
             borderRadius: 8,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -357,7 +357,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
           <div
             ref={containerRef}
             style={{
-              width: 280, height: 280,
+              width: '100%', maxWidth: 720, height: 360,
               borderRadius: 8,
               overflow: 'hidden',
               border: '1px solid oklch(0.90 0.02 80)',
