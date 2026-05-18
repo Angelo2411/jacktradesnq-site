@@ -247,8 +247,8 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         lineWidth: 2,
         lineStyle: 0,
         priceLineVisible: false,
-        lastValueVisible: false,
-        title: '',
+        lastValueVisible: true,
+        title: 'Entry',
       });
       entrySegment.setData([
         { time: entrySec, value: entryPriceProp },
@@ -260,8 +260,8 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         lineWidth: 1,
         lineStyle: LineStyle.Dashed,
         priceLineVisible: false,
-        lastValueVisible: false,
-        title: '',
+        lastValueVisible: true,
+        title: 'Stop loss',
       });
       slSegment.setData([
         { time: entrySec, value: slPrice },
@@ -273,8 +273,8 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         lineWidth: 1,
         lineStyle: LineStyle.Dashed,
         priceLineVisible: false,
-        lastValueVisible: false,
-        title: '',
+        lastValueVisible: true,
+        title: 'Take profit',
       });
       tpSegment.setData([
         { time: entrySec, value: tpPrice },
