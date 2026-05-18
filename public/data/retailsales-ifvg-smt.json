@@ -5,7 +5,7 @@
     "date_to": "2026-05-09",
     "n_events_total": 84,
     "n_csv_events": 126,
-    "generated_at": "2026-05-18T19:48:49.505855+00:00",
+    "generated_at": "2026-05-18T19:57:36.117881+00:00",
     "event_filter": "RetailSales",
     "csv": "/Users/angelo/news-cal-official/news_official_2016_2026.csv",
     "variants": {
@@ -3313,7 +3313,7 @@
       "smt": true,
       "side": "long",
       "pnl_pts": 2.8125,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2016-08-12T12:30:00+00:00",
@@ -3340,7 +3340,7 @@
       "smt": true,
       "side": "long",
       "pnl_pts": 4.3125,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2016-11-15T13:30:00+00:00",
@@ -3610,7 +3610,7 @@
       "smt": true,
       "side": "long",
       "pnl_pts": 75.9375,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2018-03-14T12:30:00+00:00",
@@ -3691,7 +3691,7 @@
       "smt": true,
       "side": "short",
       "pnl_pts": 6.1875,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2018-08-15T12:30:00+00:00",
@@ -3880,7 +3880,7 @@
       "smt": false,
       "side": "short",
       "pnl_pts": 8.625,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2019-04-01T12:30:00+00:00",
@@ -3934,7 +3934,7 @@
       "smt": true,
       "side": "long",
       "pnl_pts": 4.6875,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2019-05-15T12:30:00+00:00",
@@ -4150,7 +4150,7 @@
       "smt": true,
       "side": "long",
       "pnl_pts": 22.6875,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2020-06-16T12:30:00+00:00",
@@ -4204,7 +4204,7 @@
       "smt": true,
       "side": "long",
       "pnl_pts": 10.5,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2020-09-16T12:30:00+00:00",
@@ -4312,7 +4312,7 @@
       "smt": true,
       "side": "short",
       "pnl_pts": 20.25,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2021-01-15T13:30:00+00:00",
@@ -4582,7 +4582,7 @@
       "smt": true,
       "side": "long",
       "pnl_pts": 24.9375,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2022-05-17T12:30:00+00:00",
@@ -4609,7 +4609,7 @@
       "smt": true,
       "side": "long",
       "pnl_pts": 29.4375,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2022-07-15T12:30:00+00:00",
@@ -4663,7 +4663,7 @@
       "smt": true,
       "side": "short",
       "pnl_pts": 35.625,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2022-10-14T12:30:00+00:00",
@@ -4690,7 +4690,7 @@
       "smt": true,
       "side": "short",
       "pnl_pts": 136.3125,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2022-11-16T13:30:00+00:00",
@@ -4744,7 +4744,7 @@
       "smt": false,
       "side": "long",
       "pnl_pts": 18.1875,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2023-02-15T13:30:00+00:00",
@@ -4798,7 +4798,7 @@
       "smt": true,
       "side": "long",
       "pnl_pts": 41.4375,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2023-05-16T12:30:00+00:00",
@@ -4825,7 +4825,7 @@
       "smt": false,
       "side": "long",
       "pnl_pts": 33.1875,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2023-06-15T12:30:00+00:00",
@@ -4933,7 +4933,7 @@
       "smt": true,
       "side": "long",
       "pnl_pts": 108.9375,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2023-11-15T13:30:00+00:00",
@@ -5014,7 +5014,7 @@
       "smt": true,
       "side": "short",
       "pnl_pts": 15.5625,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2024-03-14T12:30:00+00:00",
@@ -5230,7 +5230,7 @@
       "smt": true,
       "side": "short",
       "pnl_pts": 46.6875,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2024-11-15T13:30:00+00:00",
@@ -5338,7 +5338,7 @@
       "smt": true,
       "side": "short",
       "pnl_pts": 20.25,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2025-05-15T12:30:00+00:00",

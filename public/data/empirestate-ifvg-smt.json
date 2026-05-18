@@ -5,7 +5,7 @@
     "date_to": "2026-05-09",
     "n_events_total": 67,
     "n_csv_events": 121,
-    "generated_at": "2026-05-18T19:48:49.687786+00:00",
+    "generated_at": "2026-05-18T19:57:36.301056+00:00",
     "event_filter": "EmpireState",
     "csv": "/Users/angelo/news-cal-official/news_official_2016_2026.csv",
     "variants": {
@@ -3313,7 +3313,7 @@
       "smt": true,
       "side": "long",
       "pnl_pts": 3.1875,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2016-07-15T12:30:00+00:00",
@@ -3340,7 +3340,7 @@
       "smt": true,
       "side": "long",
       "pnl_pts": 2.8125,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2016-08-15T12:30:00+00:00",
@@ -4042,7 +4042,7 @@
       "smt": true,
       "side": "long",
       "pnl_pts": 22.6875,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2020-08-17T12:30:00+00:00",
@@ -4339,7 +4339,7 @@
       "smt": true,
       "side": "short",
       "pnl_pts": 35.625,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2022-11-15T13:30:00+00:00",
@@ -4366,7 +4366,7 @@
       "smt": false,
       "side": "short",
       "pnl_pts": 109.875,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2022-12-15T13:30:00+00:00",
@@ -4393,7 +4393,7 @@
       "smt": false,
       "side": "long",
       "pnl_pts": 18.1875,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2023-01-17T13:30:00+00:00",
@@ -4420,7 +4420,7 @@
       "smt": true,
       "side": "short",
       "pnl_pts": 7.5,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2023-02-15T13:30:00+00:00",
@@ -4663,7 +4663,7 @@
       "smt": true,
       "side": "short",
       "pnl_pts": 15.5625,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2024-05-15T12:30:00+00:00",
@@ -4771,7 +4771,7 @@
       "smt": true,
       "side": "long",
       "pnl_pts": 6.75,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2024-11-15T13:30:00+00:00",

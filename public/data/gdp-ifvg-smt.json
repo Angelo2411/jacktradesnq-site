@@ -5,7 +5,7 @@
     "date_to": "2026-05-09",
     "n_events_total": 27,
     "n_csv_events": 47,
-    "generated_at": "2026-05-18T19:48:49.552764+00:00",
+    "generated_at": "2026-05-18T19:57:36.166011+00:00",
     "event_filter": "GDP",
     "csv": "/Users/angelo/news-cal-official/news_official_2016_2026.csv",
     "variants": {
@@ -3340,7 +3340,7 @@
       "smt": true,
       "side": "long",
       "pnl_pts": 2.8125,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2018-01-26T13:30:00+00:00",
@@ -3367,7 +3367,7 @@
       "smt": true,
       "side": "short",
       "pnl_pts": 5.625,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2018-04-27T12:30:00+00:00",
@@ -3394,7 +3394,7 @@
       "smt": true,
       "side": "short",
       "pnl_pts": 6.9375,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2018-07-26T12:30:00+00:00",
@@ -3448,7 +3448,7 @@
       "smt": true,
       "side": "short",
       "pnl_pts": 79.125,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2019-04-26T12:30:00+00:00",
@@ -3475,7 +3475,7 @@
       "smt": true,
       "side": "short",
       "pnl_pts": 15.5625,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2019-07-26T12:30:00+00:00",
@@ -3637,7 +3637,7 @@
       "smt": true,
       "side": "short",
       "pnl_pts": 9.1875,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2022-10-27T12:30:00+00:00",
@@ -3718,7 +3718,7 @@
       "smt": true,
       "side": "long",
       "pnl_pts": 31.3125,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2023-07-27T12:30:00+00:00",
@@ -3880,7 +3880,7 @@
       "smt": true,
       "side": "short",
       "pnl_pts": 42.5625,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2025-04-30T12:30:00+00:00",
@@ -3961,7 +3961,7 @@
       "smt": true,
       "side": "long",
       "pnl_pts": 7.3125,
-      "outcome": "be"
+      "outcome": "win"
     },
     {
       "ts": "2026-04-30T12:30:00+00:00",
