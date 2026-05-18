@@ -180,6 +180,16 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         barSpacing: 12,
         fixLeftEdge: true,
         fixRightEdge: true,
+        tickMarkFormatter: (time: number) => {
+          const d = new Date(time * 1000);
+          return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'America/New_York' });
+        },
+      },
+      localization: {
+        timeFormatter: (time: number) => {
+          const d = new Date(time * 1000);
+          return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'America/New_York' }) + ' ET';
+        },
       },
       handleScroll: false,
       handleScale: false,
