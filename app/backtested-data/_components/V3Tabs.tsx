@@ -247,19 +247,13 @@ function TradesBlock({
     return 'v3-tr-badge be';
   }
 
-  const firstTradeWithPrices = trades.find((t) => t.entry_price !== undefined && t.sl_price !== undefined && t.tp_price !== undefined);
-  let slPts: number | null = null;
-  let tpPts: number | null = null;
-  if (firstTradeWithPrices && firstTradeWithPrices.entry_price !== undefined && firstTradeWithPrices.sl_price !== undefined && firstTradeWithPrices.tp_price !== undefined) {
-    slPts = Math.round(Math.abs(firstTradeWithPrices.entry_price - firstTradeWithPrices.sl_price) * 10) / 10;
-    tpPts = Math.round(Math.abs(firstTradeWithPrices.entry_price - firstTradeWithPrices.tp_price) * 10) / 10;
-  }
+  const hasStructuralPrices = trades.some((t) => t.entry_price !== undefined && t.sl_price !== undefined && t.tp_price !== undefined);
 
   return (
     <div>
       <div className="v3-wd-h">Trade list</div>
       <div className="v3-wd-sub">
-        tp1_be · SMT-on variant{slPts !== null ? ` · SL −${slPts}pts · TP +${tpPts}pts` : ''} · most recent first.
+        tp1_be · SMT-on variant{hasStructuralPrices ? ' · SL = sweep ± 1 tick · TP = pre-news pivot (structural, varies per trade)' : ''} · most recent first.
       </div>
       <div className="v3-tr-table-wrap">
         <table className="v3-tr-table">
