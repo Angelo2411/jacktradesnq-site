@@ -425,13 +425,26 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       ]);
     }
 
-    // Invisible range series to pad Y-axis
-    const allH = candles.map((c) => c.high);
-    const allL = candles.map((c) => c.low);
-    const extraPrices = [entryPrice, slPrice, tpPrice, exitPrice, dataHigh, dataLow, ifvgTop, ifvgBottom].filter((v): v is number => v !== undefined && v !== null);
-    const yMax = Math.max(...allH, ...extraPrices);
-    const yMin = Math.min(...allL, ...extraPrices);
-    const pad = Math.max((yMax - yMin) * 0.08, 2);
+    // Y-axis range: focus on trade levels (~300 pts window centered on trade).
+    // If SL/Entry/TP exist, build window around them; else fall back to full candles range.
+    const levels = [entryPriceProp, slPrice, tpPrice, ifvgTop, ifvgBottom].filter((v): v is number => v !== undefined && v !== null);
+    let yMin: number;
+    let yMax: number;
+    if (levels.length >= 3) {
+      const levelMin = Math.min(...levels);
+      const levelMax = Math.max(...levels);
+      const center = (levelMin + levelMax) / 2;
+      const span = Math.max(levelMax - levelMin + 40, 300); // min 300pt window, expands if levels wider
+      yMin = center - span / 2;
+      yMax = center + span / 2;
+    } else {
+      const allH = candles.map((c) => c.high);
+      const allL = candles.map((c) => c.low);
+      const extraPrices = [entryPrice, slPrice, tpPrice, exitPrice, dataHigh, dataLow].filter((v): v is number => v !== undefined && v !== null);
+      yMax = Math.max(...allH, ...extraPrices);
+      yMin = Math.min(...allL, ...extraPrices);
+    }
+    const pad = 0;
     const rangeSeries = chart.addSeries(LineSeries, {
       color: '#00000000',
       lineWidth: 1,
