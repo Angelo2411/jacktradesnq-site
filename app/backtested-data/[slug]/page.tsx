@@ -14,7 +14,7 @@ import BilingualPdfLink from '../_components/BilingualPdfLink';
 import BilingualLede from '../_components/BilingualLede';
 import BilingualTitle from '../_components/BilingualTitle';
 import V3Tabs from '../_components/V3Tabs';
-import { getStrategyStats, getWeekdayBreakdown, getYearBreakdown, getTradeList } from '@/lib/study-stats';
+import { getStrategyStats, getStrategyStatsByVariant, getWeekdayBreakdown, getYearBreakdown, getTradeList } from '@/lib/study-stats';
 
 const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
   cpi: {
@@ -301,6 +301,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
       no_be:  getTradeList(slug, true, 'no_be'),
     };
     const trades = tradesByVariant.tp1_be;
+    const statsByVariant = getStrategyStatsByVariant(slug);
     const eventLabel = stratStats?.event ?? entry.title;
     const assetLabel = stratStats?.asset ?? 'NQ';
     const dateFrom = stratStats?.dateFrom ? stratStats.dateFrom.slice(0, 4) : '2016';
@@ -321,38 +322,9 @@ export default async function BacktestedDetail({ params }: PageProps) {
           {stratStats ? ` · ${stratStats.n} events` : ''}
         </p>
 
-        {stratStats && (
-          <div className="v3-kpi-band">
-            <div className="v3-kpi-cell">
-              <div className="v3-kpi-band-lbl">Profit factor</div>
-              <div className={'v3-kpi-band-val' + (stratStats.pf >= 1.5 ? ' pos' : '')}>
-                {stratStats.pf.toFixed(2)}
-              </div>
-              <div className="v3-kpi-band-foot">winners $ ÷ losers $</div>
-            </div>
-            <div className="v3-kpi-cell">
-              <div className="v3-kpi-band-lbl">Sample size</div>
-              <div className="v3-kpi-band-val">{stratStats.n}</div>
-              <div className="v3-kpi-band-foot">events tested</div>
-            </div>
-            <div className="v3-kpi-cell">
-              <div className="v3-kpi-band-lbl">Net (pts)</div>
-              <div className={'v3-kpi-band-val' + (stratStats.net > 0 ? ' pos' : '')}>
-                {stratStats.net >= 0 ? '+' : ''}{stratStats.net.toFixed(1)}
-              </div>
-              <div className="v3-kpi-band-foot">total over {dateFrom}–{dateTo}</div>
-            </div>
-            <div className="v3-kpi-cell">
-              <div className="v3-kpi-band-lbl">Win rate</div>
-              <div className="v3-kpi-band-val gold">{stratStats.wr}%</div>
-              <div className="v3-kpi-band-foot">tp1_be · SMT-on variant</div>
-            </div>
-          </div>
-        )}
-
-        {/* V3Tabs is a client component that reads ?tab from URL */}
+        {/* V3Tabs is a client component that reads ?tab from URL and renders the KPI band + tabs */}
         <Suspense fallback={<div className="v3-tabs" style={{ height: 48 }} />}>
-          <V3Tabs slug={slug} breakdown={breakdown} yearBreakdown={yearBreakdown} trades={trades} tradesByVariant={tradesByVariant} overviewContent={overviewNode} eventShort={stratStats?.event ?? ''} asset={(stratStats?.asset?.toLowerCase() ?? 'nq') as 'nq' | 'gc'} />
+          <V3Tabs slug={slug} breakdown={breakdown} yearBreakdown={yearBreakdown} trades={trades} tradesByVariant={tradesByVariant} statsByVariant={statsByVariant} dateFrom={dateFrom} dateTo={dateTo} overviewContent={overviewNode} eventShort={stratStats?.event ?? ''} asset={(stratStats?.asset?.toLowerCase() ?? 'nq') as 'nq' | 'gc'} />
         </Suspense>
 
         {pager}

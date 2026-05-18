@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
-import type { WeekdayBreakdown, WeekdayStats, YearBreakdown, TradeRow } from '@/lib/study-stats';
+import type { WeekdayBreakdown, WeekdayStats, YearBreakdown, TradeRow, StrategyStats } from '@/lib/study-stats';
 import TradeMiniChart from './TradeMiniChart';
 
 type Tab = 'overview' | 'weekday' | 'year' | 'trades' | 'methodology';
@@ -220,6 +220,8 @@ const VARIANT_LABELS: Record<VariantKey, string> = {
 function TradesBlock({
   trades,
   tradesByVariant,
+  variant,
+  setVariant,
   dayFilter = '',
   slug,
   eventShort,
@@ -227,12 +229,13 @@ function TradesBlock({
 }: {
   trades: TradeRow[];
   tradesByVariant?: { tp1_be: TradeRow[]; be_50: TradeRow[]; no_be: TradeRow[] };
+  variant: VariantKey;
+  setVariant: (v: VariantKey) => void;
   dayFilter?: string;
   slug: string;
   eventShort: string;
   asset: 'nq' | 'gc';
 }) {
-  const [variant, setVariant] = useState<VariantKey>('tp1_be');
   const activeTrades = tradesByVariant ? tradesByVariant[variant] : trades;
   const filtered = dayFilter && DAY_KEY_TO_NUM[dayFilter] !== undefined
     ? activeTrades.filter((t) => tradeWeekday(t.ts) === DAY_KEY_TO_NUM[dayFilter])
@@ -267,20 +270,6 @@ function TradesBlock({
       <div className="v3-wd-sub">
         {VARIANT_LABELS[variant]} · SMT-on variant{hasStructuralPrices ? ' · SL = sweep ± 1 tick · TP = pre-news pivot (structural, varies per trade)' : ''} · most recent first.
       </div>
-      {tradesByVariant && (
-        <div className="v3-flt-row" style={{ marginBottom: 12 }}>
-          {(['tp1_be', 'be_50', 'no_be'] as VariantKey[]).map((v) => (
-            <button
-              key={v}
-              type="button"
-              className={'v3-flt-pill' + (variant === v ? ' active' : '')}
-              onClick={() => { setVariant(v); setExpandedIdx(null); setVisible(PAGE_SIZE); }}
-            >
-              {VARIANT_LABELS[v]}
-            </button>
-          ))}
-        </div>
-      )}
       <div className="v3-tr-table-wrap">
         <table className="v3-tr-table">
           <thead>
@@ -371,6 +360,9 @@ export default function V3Tabs({
   yearBreakdown,
   trades,
   tradesByVariant,
+  statsByVariant,
+  dateFrom,
+  dateTo,
   overviewContent,
   eventShort,
   asset,
@@ -380,10 +372,15 @@ export default function V3Tabs({
   yearBreakdown: YearBreakdown;
   trades: TradeRow[];
   tradesByVariant?: { tp1_be: TradeRow[]; be_50: TradeRow[]; no_be: TradeRow[] };
+  statsByVariant?: { tp1_be: StrategyStats; be_50: StrategyStats; no_be: StrategyStats } | null;
+  dateFrom?: string;
+  dateTo?: string;
   overviewContent: React.ReactNode;
   eventShort: string;
   asset: 'nq' | 'gc';
 }) {
+  const [variant, setVariant] = useState<VariantKey>('tp1_be');
+  const activeStats = statsByVariant ? statsByVariant[variant] : null;
   const searchParams = useSearchParams();
   const tab = (searchParams.get('tab') ?? 'overview') as Tab;
   const activeTab: Tab = TAB_LIST.some((t) => t.key === tab) ? tab : 'overview';
@@ -395,6 +392,50 @@ export default function V3Tabs({
 
   return (
     <>
+      {activeStats && (
+        <div className="v3-kpi-band">
+          <div className="v3-kpi-cell">
+            <div className="v3-kpi-band-lbl">Profit factor</div>
+            <div className={'v3-kpi-band-val' + (activeStats.pf >= 1.5 ? ' pos' : '')}>
+              {activeStats.pf.toFixed(2)}
+            </div>
+            <div className="v3-kpi-band-foot">winners $ ÷ losers $</div>
+          </div>
+          <div className="v3-kpi-cell">
+            <div className="v3-kpi-band-lbl">Sample size</div>
+            <div className="v3-kpi-band-val">{activeStats.n}</div>
+            <div className="v3-kpi-band-foot">events tested</div>
+          </div>
+          <div className="v3-kpi-cell">
+            <div className="v3-kpi-band-lbl">Net (pts)</div>
+            <div className={'v3-kpi-band-val' + (activeStats.net > 0 ? ' pos' : '')}>
+              {activeStats.net >= 0 ? '+' : ''}{activeStats.net.toFixed(1)}
+            </div>
+            <div className="v3-kpi-band-foot">total over {dateFrom}–{dateTo}</div>
+          </div>
+          <div className="v3-kpi-cell">
+            <div className="v3-kpi-band-lbl">Win rate</div>
+            <div className="v3-kpi-band-val gold">{activeStats.wr}%</div>
+            <div className="v3-kpi-band-foot">{VARIANT_LABELS[variant]} · SMT-on variant</div>
+          </div>
+        </div>
+      )}
+
+      {statsByVariant && (
+        <div className="v3-flt-row" style={{ margin: '0 0 12px' }}>
+          {(['tp1_be', 'be_50', 'no_be'] as VariantKey[]).map((v) => (
+            <button
+              key={v}
+              type="button"
+              className={'v3-flt-pill' + (variant === v ? ' active' : '')}
+              onClick={() => setVariant(v)}
+            >
+              {VARIANT_LABELS[v]}
+            </button>
+          ))}
+        </div>
+      )}
+
       <div className="v3-tabs">
         {TAB_LIST.map((t) => (
           <Link
@@ -412,7 +453,7 @@ export default function V3Tabs({
       ) : activeTab === 'year' ? (
         <YearBlock breakdown={yearBreakdown} />
       ) : activeTab === 'trades' ? (
-        <TradesBlock trades={trades} tradesByVariant={tradesByVariant} dayFilter={dayFilter} slug={slug} eventShort={eventShort} asset={asset} />
+        <TradesBlock trades={trades} tradesByVariant={tradesByVariant} variant={variant} setVariant={setVariant} dayFilter={dayFilter} slug={slug} eventShort={eventShort} asset={asset} />
       ) : activeTab === 'methodology' ? (
         <div className="v3-meth-link">
           <Link href="/backtested-data/methodology/">Read full methodology →</Link>

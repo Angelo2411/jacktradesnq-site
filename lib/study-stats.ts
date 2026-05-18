@@ -99,10 +99,11 @@ const IFVG_SLUGS: Array<{ slug: string; event: string; asset: string }> = [
 
 function computeIfvgStats(
   json: IfvgJson,
-  slugEntry: { slug: string; event: string; asset: string }
+  slugEntry: { slug: string; event: string; asset: string },
+  variant: 'tp1_be' | 'be_50' | 'no_be' = 'tp1_be',
 ): StrategyStats {
   const trades = (json.trades ?? []).filter(
-    (t) => t.smt === true && t.variant === 'tp1_be'
+    (t) => t.smt === true && t.variant === variant
   );
   const n = trades.length;
   const wins = trades.filter((t) => t.outcome === 'win').length;
@@ -153,6 +154,18 @@ export function getAllStrategyStats(): StrategyStats[] {
 
 export function getStrategyStats(slug: string): StrategyStats | null {
   return getAllStrategyStats().find((s) => s.slug === slug) ?? null;
+}
+
+export function getStrategyStatsByVariant(slug: string): { tp1_be: StrategyStats; be_50: StrategyStats; no_be: StrategyStats } | null {
+  const entry = IFVG_SLUGS.find((e) => e.slug === slug);
+  if (!entry) return null;
+  const json = loadIfvgJson(slug);
+  if (!json) return null;
+  return {
+    tp1_be: computeIfvgStats(json, entry, 'tp1_be'),
+    be_50:  computeIfvgStats(json, entry, 'be_50'),
+    no_be:  computeIfvgStats(json, entry, 'no_be'),
+  };
 }
 
 export type MarketStudyStats = {
