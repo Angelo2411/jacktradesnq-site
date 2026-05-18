@@ -399,30 +399,31 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       ]);
     }
 
-    // F. IFVG zone: thicker lines + extended time window for visibility (zone can be tiny ~0.5pt).
+    // F. IFVG zone: thick visible lines from formation_ts−2min to chart END (like Entry/SL/TP segments).
     if (ifvgTop !== undefined && ifvgBottom !== undefined && ifvgFormationTs !== undefined && entryTs !== undefined) {
-      // Extend back 2 minutes to include the 3-bar FVG formation context.
       const formSec = (Math.floor(new Date(ifvgFormationTs).getTime() / 1000) - 120) as UTCTimestamp;
-      const entrySec = Math.floor(new Date(entryTs).getTime() / 1000) as UTCTimestamp;
+      const lastIfvgCandle = candles[candles.length - 1];
+      const ifvgEndSec = (lastIfvgCandle?.time as number ?? Math.floor(new Date(entryTs).getTime() / 1000)) as UTCTimestamp;
 
-      const cIfvg = side === 'long' ? 'rgba(201, 117, 88, 0.85)' : 'rgba(125, 162, 116, 0.85)';
+      const cIfvg = side === 'long' ? 'rgba(201, 117, 88, 0.95)' : 'rgba(125, 162, 116, 0.95)';
 
       const topEdge = chart.addSeries(LineSeries, {
-        color: cIfvg, lineWidth: 3, lineStyle: LineStyle.Solid,
-        priceLineVisible: false, lastValueVisible: false,
+        color: cIfvg, lineWidth: 4, lineStyle: LineStyle.Solid,
+        priceLineVisible: false, lastValueVisible: true,
+        title: 'IFVG',
       });
       topEdge.setData([
         { time: formSec, value: ifvgTop },
-        { time: entrySec, value: ifvgTop },
+        { time: ifvgEndSec, value: ifvgTop },
       ]);
 
       const bottomEdge = chart.addSeries(LineSeries, {
-        color: cIfvg, lineWidth: 3, lineStyle: LineStyle.Solid,
+        color: cIfvg, lineWidth: 4, lineStyle: LineStyle.Solid,
         priceLineVisible: false, lastValueVisible: false,
       });
       bottomEdge.setData([
         { time: formSec, value: ifvgBottom },
-        { time: entrySec, value: ifvgBottom },
+        { time: ifvgEndSec, value: ifvgBottom },
       ]);
     }
 
