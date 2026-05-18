@@ -292,26 +292,8 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       });
     }
 
-    // A. Entry triangle marker
+    // A. Entry triangle removed — Entry line already indicates entry; IFVG detection still uses bars.
     if (entryTs !== undefined && entryPriceProp !== undefined) {
-      const entryTimeSec = Math.floor(new Date(entryTs).getTime() / 1000) as UTCTimestamp;
-      const entrySeries = chart.addSeries(LineSeries, {
-        color: '#00000000',
-        lineWidth: 1,
-        lastValueVisible: false,
-        priceLineVisible: false,
-        crosshairMarkerVisible: false,
-      });
-      entrySeries.setData([{ time: entryTimeSec, value: entryPriceProp }]);
-      createSeriesMarkers(entrySeries, [{
-        time: entryTimeSec,
-        position: side === 'long' ? 'belowBar' : 'aboveBar',
-        color: side === 'long' ? '#5a9a52' : '#c05030',
-        shape: side === 'long' ? 'arrowUp' : 'arrowDown',
-        text: side === 'long' ? 'L' : 'S',
-        size: 2,
-      }]);
-
       // C. IFVG zone detection
       if (bars.length > 0 && t0Ms > 0) {
         const entryMs = new Date(entryTs).getTime();
