@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-18T20:45:41.009208+00:00",
+  "generated_at": "2026-05-18T20:57:03.718107+00:00",
   "source": "run_nq_10y_all_events.py",
   "event": "PPI",
   "asset": "NQ",
@@ -760,7 +760,7 @@
       "data_low": 7076.0,
       "sweep_ts": "2018-03-14T12:31:00+00:00",
       "sweep_side": "UP",
-      "ifvg_top": 7085.75,
+      "ifvg_top": 7087.75,
       "ifvg_bottom": 7084.5,
       "ifvg_formation_ts": "2018-03-14T12:33:00+00:00"
     },
@@ -779,7 +779,7 @@
       "data_low": 7076.0,
       "sweep_ts": "2018-03-14T12:31:00+00:00",
       "sweep_side": "UP",
-      "ifvg_top": 7085.75,
+      "ifvg_top": 7087.75,
       "ifvg_bottom": 7084.5,
       "ifvg_formation_ts": "2018-03-14T12:33:00+00:00"
     },
@@ -798,7 +798,7 @@
       "data_low": 7076.0,
       "sweep_ts": "2018-03-14T12:31:00+00:00",
       "sweep_side": "UP",
-      "ifvg_top": 7085.75,
+      "ifvg_top": 7087.75,
       "ifvg_bottom": 7084.5,
       "ifvg_formation_ts": "2018-03-14T12:33:00+00:00"
     },
@@ -2414,7 +2414,7 @@
       "sweep_ts": "2021-12-14T13:31:00+00:00",
       "sweep_side": "DOWN",
       "ifvg_top": 15907.0,
-      "ifvg_bottom": 15906.75,
+      "ifvg_bottom": 15903.75,
       "ifvg_formation_ts": "2021-12-14T13:48:00+00:00"
     },
     {
@@ -2433,7 +2433,7 @@
       "sweep_ts": "2021-12-14T13:31:00+00:00",
       "sweep_side": "DOWN",
       "ifvg_top": 15907.0,
-      "ifvg_bottom": 15906.75,
+      "ifvg_bottom": 15903.75,
       "ifvg_formation_ts": "2021-12-14T13:48:00+00:00"
     },
     {
@@ -2452,7 +2452,7 @@
       "sweep_ts": "2021-12-14T13:31:00+00:00",
       "sweep_side": "DOWN",
       "ifvg_top": 15907.0,
-      "ifvg_bottom": 15906.75,
+      "ifvg_bottom": 15903.75,
       "ifvg_formation_ts": "2021-12-14T13:48:00+00:00"
     },
     {
@@ -4579,7 +4579,7 @@
       "data_low": 21236.25,
       "sweep_ts": "2025-05-15T12:32:00+00:00",
       "sweep_side": "UP",
-      "ifvg_top": 21313.0,
+      "ifvg_top": 21318.75,
       "ifvg_bottom": 21305.75,
       "ifvg_formation_ts": "2025-05-15T12:43:00+00:00"
     },
@@ -4598,7 +4598,7 @@
       "data_low": 21236.25,
       "sweep_ts": "2025-05-15T12:32:00+00:00",
       "sweep_side": "UP",
-      "ifvg_top": 21313.0,
+      "ifvg_top": 21318.75,
       "ifvg_bottom": 21305.75,
       "ifvg_formation_ts": "2025-05-15T12:43:00+00:00"
     },
@@ -4617,7 +4617,7 @@
       "data_low": 21236.25,
       "sweep_ts": "2025-05-15T12:32:00+00:00",
       "sweep_side": "UP",
-      "ifvg_top": 21313.0,
+      "ifvg_top": 21318.75,
       "ifvg_bottom": 21305.75,
       "ifvg_formation_ts": "2025-05-15T12:43:00+00:00"
     },

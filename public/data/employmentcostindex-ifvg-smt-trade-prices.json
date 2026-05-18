@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-18T20:45:41.241800+00:00",
+  "generated_at": "2026-05-18T20:57:03.943194+00:00",
   "source": "run_nq_10y_all_events.py",
   "event": "EmploymentCostIndex",
   "asset": "NQ",
@@ -20,7 +20,7 @@
       "sweep_ts": "2016-07-29T12:31:00+00:00",
       "sweep_side": "DOWN",
       "ifvg_top": 4722.25,
-      "ifvg_bottom": 4721.75,
+      "ifvg_bottom": 4721.5,
       "ifvg_formation_ts": "2016-07-29T12:41:00+00:00"
     },
     {
@@ -39,7 +39,7 @@
       "sweep_ts": "2016-07-29T12:31:00+00:00",
       "sweep_side": "DOWN",
       "ifvg_top": 4722.25,
-      "ifvg_bottom": 4721.75,
+      "ifvg_bottom": 4721.5,
       "ifvg_formation_ts": "2016-07-29T12:41:00+00:00"
     },
     {
@@ -58,7 +58,7 @@
       "sweep_ts": "2016-07-29T12:31:00+00:00",
       "sweep_side": "DOWN",
       "ifvg_top": 4722.25,
-      "ifvg_bottom": 4721.75,
+      "ifvg_bottom": 4721.5,
       "ifvg_formation_ts": "2016-07-29T12:41:00+00:00"
     },
     {
@@ -704,7 +704,7 @@
       "sweep_ts": "2022-07-29T12:34:00+00:00",
       "sweep_side": "DOWN",
       "ifvg_top": 12821.25,
-      "ifvg_bottom": 12820.0,
+      "ifvg_bottom": 12817.75,
       "ifvg_formation_ts": "2022-07-29T12:38:00+00:00"
     },
     {
@@ -723,7 +723,7 @@
       "sweep_ts": "2022-07-29T12:34:00+00:00",
       "sweep_side": "DOWN",
       "ifvg_top": 12821.25,
-      "ifvg_bottom": 12820.0,
+      "ifvg_bottom": 12817.75,
       "ifvg_formation_ts": "2022-07-29T12:38:00+00:00"
     },
     {
@@ -742,7 +742,7 @@
       "sweep_ts": "2022-07-29T12:34:00+00:00",
       "sweep_side": "DOWN",
       "ifvg_top": 12821.25,
-      "ifvg_bottom": 12820.0,
+      "ifvg_bottom": 12817.75,
       "ifvg_formation_ts": "2022-07-29T12:38:00+00:00"
     },
     {
