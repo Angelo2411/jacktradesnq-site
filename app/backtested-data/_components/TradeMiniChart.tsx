@@ -109,6 +109,21 @@ function detectIfvgZone(bars: EventBar[], entryMinute: number, side: 'long' | 's
   return null;
 }
 
+function LegendPill({ color, label, value }: { color: string; label: string; value: number }) {
+  return (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', gap: 5,
+      padding: '2px 7px', borderRadius: 4,
+      background: 'oklch(0.97 0.01 80)',
+      border: '1px solid oklch(0.90 0.02 80)',
+    }}>
+      <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: 1, background: color }} />
+      <span style={{ fontWeight: 600, color: 'var(--c-ink)' }}>{label}</span>
+      <span style={{ color: 'var(--c-muted)' }}>{value}</span>
+    </span>
+  );
+}
+
 export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl_pts, outcome, entryPrice: entryPriceProp, slPrice, tpPrice, entryTs, exitTs, exitPrice, ts, dataHigh, dataLow, sweepTs, sweepSide, ifvgTop, ifvgBottom, ifvgFormationTs }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [status, setStatus] = useState<'loading' | 'found' | 'missing'>('loading');
@@ -232,7 +247,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         lineWidth: 2,
         lineStyle: 0,
         priceLineVisible: false,
-        lastValueVisible: true,
+        lastValueVisible: false,
         title: `Entry · ${entryPriceProp}`,
       });
       entrySegment.setData([
@@ -245,7 +260,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         lineWidth: 1,
         lineStyle: LineStyle.Dashed,
         priceLineVisible: false,
-        lastValueVisible: true,
+        lastValueVisible: false,
         title: `SL · ${slPrice}`,
       });
       slSegment.setData([
@@ -258,7 +273,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         lineWidth: 1,
         lineStyle: LineStyle.Dashed,
         priceLineVisible: false,
-        lastValueVisible: true,
+        lastValueVisible: false,
         title: `TP · ${tpPrice}`,
       });
       tpSegment.setData([
@@ -354,10 +369,26 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       }]);
     }
 
-    // E. Data range lines: from t0 (release ts) to sweep_ts
-    if (dataHigh !== undefined && dataLow !== undefined && sweepTs !== undefined && ts !== undefined) {
+    // E. Data range lines: each extends individually until its own sweep (or chart end if never).
+    if (dataHigh !== undefined && dataLow !== undefined && ts !== undefined) {
       const releaseTimeSec = Math.floor(new Date(ts).getTime() / 1000) as UTCTimestamp;
-      const sweepTimeSec = Math.floor(new Date(sweepTs).getTime() / 1000) as UTCTimestamp;
+      const lastCandle = candles[candles.length - 1];
+      const chartEndSec = (lastCandle?.time as number) ?? releaseTimeSec;
+
+      // Find first candle (time > releaseTimeSec) where high > dataHigh / low < dataLow
+      let dataHighEndSec: UTCTimestamp = chartEndSec as UTCTimestamp;
+      let dataLowEndSec: UTCTimestamp = chartEndSec as UTCTimestamp;
+      for (const c of candles) {
+        const ct = c.time as number;
+        if (ct <= releaseTimeSec) continue;
+        if ((dataHighEndSec as number) === chartEndSec && c.high > dataHigh) {
+          dataHighEndSec = ct as UTCTimestamp;
+        }
+        if ((dataLowEndSec as number) === chartEndSec && c.low < dataLow) {
+          dataLowEndSec = ct as UTCTimestamp;
+        }
+        if ((dataHighEndSec as number) !== chartEndSec && (dataLowEndSec as number) !== chartEndSec) break;
+      }
 
       const cDataLine = 'rgba(122, 110, 90, 0.7)';
 
@@ -366,12 +397,11 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         lineWidth: 1,
         lineStyle: LineStyle.Dotted,
         priceLineVisible: false,
-        lastValueVisible: true,
-        title: `Data H · ${dataHigh}`,
+        lastValueVisible: false,
       });
       dataHighLine.setData([
         { time: releaseTimeSec, value: dataHigh },
-        { time: sweepTimeSec, value: dataHigh },
+        { time: dataHighEndSec, value: dataHigh },
       ]);
 
       const dataLowLine = chart.addSeries(LineSeries, {
@@ -379,12 +409,11 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         lineWidth: 1,
         lineStyle: LineStyle.Dotted,
         priceLineVisible: false,
-        lastValueVisible: true,
-        title: `Data L · ${dataLow}`,
+        lastValueVisible: false,
       });
       dataLowLine.setData([
         { time: releaseTimeSec, value: dataLow },
-        { time: sweepTimeSec, value: dataLow },
+        { time: dataLowEndSec, value: dataLow },
       ]);
     }
 
@@ -482,14 +511,22 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
           />
         </div>
         <div style={{
-          display: 'flex', gap: 12, alignItems: 'center',
-          fontFamily: 'var(--f-sans)', fontSize: '0.72rem', color: 'var(--c-muted)',
+          display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap',
+          fontFamily: 'var(--f-sans)', fontSize: '0.7rem', color: 'var(--c-muted)',
+          paddingTop: 4,
         }}>
           <span style={{ color: outcomeColor, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
             {outcome}
           </span>
           <span style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 700, color: pnl_pts > 0 ? '#4a8c3f' : pnl_pts < 0 ? '#b8452a' : 'var(--c-muted)' }}>
             {pnlSign}{pnl_pts.toFixed(2)} pts
+          </span>
+          <span style={{ marginLeft: 'auto', display: 'flex', gap: 10, flexWrap: 'wrap', fontVariantNumeric: 'tabular-nums' }}>
+            {tpPrice !== undefined && (<LegendPill color="#4a8c3f" label="TP" value={tpPrice} />)}
+            {dataHigh !== undefined && (<LegendPill color="rgba(122,110,90,0.85)" label="Data H" value={dataHigh} />)}
+            {dataLow !== undefined && (<LegendPill color="rgba(122,110,90,0.85)" label="Data L" value={dataLow} />)}
+            {entryPriceProp !== undefined && (<LegendPill color="#b08932" label="Entry" value={entryPriceProp} />)}
+            {slPrice !== undefined && (<LegendPill color="#b8452a" label="SL" value={slPrice} />)}
           </span>
         </div>
       </div>
