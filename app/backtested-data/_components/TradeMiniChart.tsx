@@ -404,7 +404,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       // Extend back 2 minutes to include the FVG formation context.
       const formSec = (Math.floor(new Date(ifvgFormationTs).getTime() / 1000) - 120) as UTCTimestamp;
       const entrySec = Math.floor(new Date(entryTs).getTime() / 1000) as UTCTimestamp;
-      const cIfvg = side === 'long' ? 'rgba(201, 117, 88, 0.95)' : 'rgba(125, 162, 116, 0.95)';
+      const cIfvg = 'rgba(20, 20, 20, 0.9)';
 
       const topEdge = chart.addSeries(LineSeries, {
         color: cIfvg, lineWidth: 4, lineStyle: LineStyle.Solid,
@@ -521,7 +521,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
             {tpPrice !== undefined && (<LegendPill color="#4a8c3f" label="TP" value={tpPrice} />)}
             {dataHigh !== undefined && (<LegendPill color="rgba(122,110,90,0.85)" label="Data H" value={dataHigh} />)}
             {ifvgTop !== undefined && ifvgBottom !== undefined && (
-              <LegendPill color={side === 'long' ? '#c97558' : '#7da274'} label="IFVG" value={`${ifvgBottom}–${ifvgTop}`} />
+              <LegendPill color="#141414" label="IFVG" value={`${ifvgBottom}–${ifvgTop}`} />
             )}
             {dataLow !== undefined && (<LegendPill color="rgba(122,110,90,0.85)" label="Data L" value={dataLow} />)}
             {entryPriceProp !== undefined && (<LegendPill color="#b08932" label="Entry" value={entryPriceProp} />)}
