@@ -399,12 +399,11 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       ]);
     }
 
-    // F. IFVG zone: thick visible lines from formation_ts−2min to chart END (like Entry/SL/TP segments).
+    // F. IFVG: localized to formation→entry window (3-5 min), thick lines for thin zones.
     if (ifvgTop !== undefined && ifvgBottom !== undefined && ifvgFormationTs !== undefined && entryTs !== undefined) {
+      // Extend back 2 minutes to include the FVG formation context.
       const formSec = (Math.floor(new Date(ifvgFormationTs).getTime() / 1000) - 120) as UTCTimestamp;
-      const lastIfvgCandle = candles[candles.length - 1];
-      const ifvgEndSec = (lastIfvgCandle?.time as number ?? Math.floor(new Date(entryTs).getTime() / 1000)) as UTCTimestamp;
-
+      const entrySec = Math.floor(new Date(entryTs).getTime() / 1000) as UTCTimestamp;
       const cIfvg = side === 'long' ? 'rgba(201, 117, 88, 0.95)' : 'rgba(125, 162, 116, 0.95)';
 
       const topEdge = chart.addSeries(LineSeries, {
@@ -414,7 +413,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       });
       topEdge.setData([
         { time: formSec, value: ifvgTop },
-        { time: ifvgEndSec, value: ifvgTop },
+        { time: entrySec, value: ifvgTop },
       ]);
 
       const bottomEdge = chart.addSeries(LineSeries, {
@@ -423,7 +422,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       });
       bottomEdge.setData([
         { time: formSec, value: ifvgBottom },
-        { time: ifvgEndSec, value: ifvgBottom },
+        { time: entrySec, value: ifvgBottom },
       ]);
     }
 

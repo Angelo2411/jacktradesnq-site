@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-18T20:25:13.626593+00:00",
+  "generated_at": "2026-05-18T20:45:40.939544+00:00",
   "source": "run_nq_10y_all_events.py",
   "event": "CPI",
   "asset": "NQ",
@@ -1901,7 +1901,7 @@
       "sweep_ts": "2019-07-11T12:31:00+00:00",
       "sweep_side": "DOWN",
       "ifvg_top": 7941.75,
-      "ifvg_bottom": 7940.5,
+      "ifvg_bottom": 7941.25,
       "ifvg_formation_ts": "2019-07-11T13:27:00+00:00"
     },
     {
@@ -1920,7 +1920,7 @@
       "sweep_ts": "2019-07-11T12:31:00+00:00",
       "sweep_side": "DOWN",
       "ifvg_top": 7941.75,
-      "ifvg_bottom": 7940.5,
+      "ifvg_bottom": 7941.25,
       "ifvg_formation_ts": "2019-07-11T13:27:00+00:00"
     },
     {
@@ -1939,7 +1939,7 @@
       "sweep_ts": "2019-07-11T12:31:00+00:00",
       "sweep_side": "DOWN",
       "ifvg_top": 7941.75,
-      "ifvg_bottom": 7940.5,
+      "ifvg_bottom": 7941.25,
       "ifvg_formation_ts": "2019-07-11T13:27:00+00:00"
     },
     {
@@ -2186,7 +2186,7 @@
       "sweep_ts": "2019-12-11T13:31:00+00:00",
       "sweep_side": "DOWN",
       "ifvg_top": 8379.75,
-      "ifvg_bottom": 8378.25,
+      "ifvg_bottom": 8379.5,
       "ifvg_formation_ts": "2019-12-11T13:34:00+00:00"
     },
     {
@@ -2205,7 +2205,7 @@
       "sweep_ts": "2019-12-11T13:31:00+00:00",
       "sweep_side": "DOWN",
       "ifvg_top": 8379.75,
-      "ifvg_bottom": 8378.25,
+      "ifvg_bottom": 8379.5,
       "ifvg_formation_ts": "2019-12-11T13:34:00+00:00"
     },
     {
@@ -2224,7 +2224,7 @@
       "sweep_ts": "2019-12-11T13:31:00+00:00",
       "sweep_side": "DOWN",
       "ifvg_top": 8379.75,
-      "ifvg_bottom": 8378.25,
+      "ifvg_bottom": 8379.5,
       "ifvg_formation_ts": "2019-12-11T13:34:00+00:00"
     },
     {
@@ -3097,7 +3097,7 @@
       "data_low": 15015.0,
       "sweep_ts": "2021-08-11T12:31:00+00:00",
       "sweep_side": "UP",
-      "ifvg_top": 15105.0,
+      "ifvg_top": 15101.75,
       "ifvg_bottom": 15099.75,
       "ifvg_formation_ts": "2021-08-11T12:48:00+00:00"
     },
@@ -3116,7 +3116,7 @@
       "data_low": 15015.0,
       "sweep_ts": "2021-08-11T12:31:00+00:00",
       "sweep_side": "UP",
-      "ifvg_top": 15105.0,
+      "ifvg_top": 15101.75,
       "ifvg_bottom": 15099.75,
       "ifvg_formation_ts": "2021-08-11T12:48:00+00:00"
     },
@@ -3135,7 +3135,7 @@
       "data_low": 15015.0,
       "sweep_ts": "2021-08-11T12:31:00+00:00",
       "sweep_side": "UP",
-      "ifvg_top": 15105.0,
+      "ifvg_top": 15101.75,
       "ifvg_bottom": 15099.75,
       "ifvg_formation_ts": "2021-08-11T12:48:00+00:00"
     },
@@ -3269,7 +3269,7 @@
       "sweep_ts": "2021-11-10T13:31:00+00:00",
       "sweep_side": "DOWN",
       "ifvg_top": 16093.0,
-      "ifvg_bottom": 16086.75,
+      "ifvg_bottom": 16092.5,
       "ifvg_formation_ts": "2021-11-10T13:46:00+00:00"
     },
     {
@@ -3288,7 +3288,7 @@
       "sweep_ts": "2021-11-10T13:31:00+00:00",
       "sweep_side": "DOWN",
       "ifvg_top": 16093.0,
-      "ifvg_bottom": 16086.75,
+      "ifvg_bottom": 16092.5,
       "ifvg_formation_ts": "2021-11-10T13:46:00+00:00"
     },
     {
@@ -3307,7 +3307,7 @@
       "sweep_ts": "2021-11-10T13:31:00+00:00",
       "sweep_side": "DOWN",
       "ifvg_top": 16093.0,
-      "ifvg_bottom": 16086.75,
+      "ifvg_bottom": 16092.5,
       "ifvg_formation_ts": "2021-11-10T13:46:00+00:00"
     },
     {
@@ -3781,7 +3781,7 @@
       "data_low": 13089.0,
       "sweep_ts": "2022-08-10T12:31:00+00:00",
       "sweep_side": "UP",
-      "ifvg_top": 13350.25,
+      "ifvg_top": 13347.75,
       "ifvg_bottom": 13344.0,
       "ifvg_formation_ts": "2022-08-10T12:42:00+00:00"
     },
@@ -3800,7 +3800,7 @@
       "data_low": 13089.0,
       "sweep_ts": "2022-08-10T12:31:00+00:00",
       "sweep_side": "UP",
-      "ifvg_top": 13350.25,
+      "ifvg_top": 13347.75,
       "ifvg_bottom": 13344.0,
       "ifvg_formation_ts": "2022-08-10T12:42:00+00:00"
     },
@@ -3819,7 +3819,7 @@
       "data_low": 13089.0,
       "sweep_ts": "2022-08-10T12:31:00+00:00",
       "sweep_side": "UP",
-      "ifvg_top": 13350.25,
+      "ifvg_top": 13347.75,
       "ifvg_bottom": 13344.0,
       "ifvg_formation_ts": "2022-08-10T12:42:00+00:00"
     },
@@ -3839,7 +3839,7 @@
       "sweep_ts": "2022-09-13T12:31:00+00:00",
       "sweep_side": "DOWN",
       "ifvg_top": 12465.25,
-      "ifvg_bottom": 12453.0,
+      "ifvg_bottom": 12463.0,
       "ifvg_formation_ts": "2022-09-13T12:38:00+00:00"
     },
     {
@@ -3858,7 +3858,7 @@
       "sweep_ts": "2022-09-13T12:31:00+00:00",
       "sweep_side": "DOWN",
       "ifvg_top": 12465.25,
-      "ifvg_bottom": 12453.0,
+      "ifvg_bottom": 12463.0,
       "ifvg_formation_ts": "2022-09-13T12:38:00+00:00"
     },
     {
@@ -3877,7 +3877,7 @@
       "sweep_ts": "2022-09-13T12:31:00+00:00",
       "sweep_side": "DOWN",
       "ifvg_top": 12465.25,
-      "ifvg_bottom": 12453.0,
+      "ifvg_bottom": 12463.0,
       "ifvg_formation_ts": "2022-09-13T12:38:00+00:00"
     },
     {
@@ -6061,7 +6061,7 @@
       "data_low": 25905.5,
       "sweep_ts": "2026-01-13T13:31:00+00:00",
       "sweep_side": "UP",
-      "ifvg_top": 25993.0,
+      "ifvg_top": 25983.0,
       "ifvg_bottom": 25981.5,
       "ifvg_formation_ts": "2026-01-13T14:21:00+00:00"
     },
@@ -6080,7 +6080,7 @@
       "data_low": 25905.5,
       "sweep_ts": "2026-01-13T13:31:00+00:00",
       "sweep_side": "UP",
-      "ifvg_top": 25993.0,
+      "ifvg_top": 25983.0,
       "ifvg_bottom": 25981.5,
       "ifvg_formation_ts": "2026-01-13T14:21:00+00:00"
     },
@@ -6099,7 +6099,7 @@
       "data_low": 25905.5,
       "sweep_ts": "2026-01-13T13:31:00+00:00",
       "sweep_side": "UP",
-      "ifvg_top": 25993.0,
+      "ifvg_top": 25983.0,
       "ifvg_bottom": 25981.5,
       "ifvg_formation_ts": "2026-01-13T14:21:00+00:00"
     },
@@ -6119,7 +6119,7 @@
       "sweep_ts": "2026-02-13T14:30:00+00:00",
       "sweep_side": "DOWN",
       "ifvg_top": 24677.5,
-      "ifvg_bottom": 24612.25,
+      "ifvg_bottom": 24677.0,
       "ifvg_formation_ts": "2026-02-13T14:40:00+00:00"
     },
     {
@@ -6138,7 +6138,7 @@
       "sweep_ts": "2026-02-13T14:30:00+00:00",
       "sweep_side": "DOWN",
       "ifvg_top": 24677.5,
-      "ifvg_bottom": 24612.25,
+      "ifvg_bottom": 24677.0,
       "ifvg_formation_ts": "2026-02-13T14:40:00+00:00"
     },
     {
@@ -6157,7 +6157,7 @@
       "sweep_ts": "2026-02-13T14:30:00+00:00",
       "sweep_side": "DOWN",
       "ifvg_top": 24677.5,
-      "ifvg_bottom": 24612.25,
+      "ifvg_bottom": 24677.0,
       "ifvg_formation_ts": "2026-02-13T14:40:00+00:00"
     },
     {
