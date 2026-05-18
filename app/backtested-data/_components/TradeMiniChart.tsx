@@ -399,15 +399,16 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       ]);
     }
 
-    // F. IFVG zone rectangle (top + bottom horizontals)
+    // F. IFVG zone: thicker lines + extended time window for visibility (zone can be tiny ~0.5pt).
     if (ifvgTop !== undefined && ifvgBottom !== undefined && ifvgFormationTs !== undefined && entryTs !== undefined) {
-      const formSec = Math.floor(new Date(ifvgFormationTs).getTime() / 1000) as UTCTimestamp;
+      // Extend back 2 minutes to include the 3-bar FVG formation context.
+      const formSec = (Math.floor(new Date(ifvgFormationTs).getTime() / 1000) - 120) as UTCTimestamp;
       const entrySec = Math.floor(new Date(entryTs).getTime() / 1000) as UTCTimestamp;
 
-      const cIfvg = side === 'long' ? 'rgba(201, 117, 88, 0.6)' : 'rgba(125, 162, 116, 0.6)';
+      const cIfvg = side === 'long' ? 'rgba(201, 117, 88, 0.85)' : 'rgba(125, 162, 116, 0.85)';
 
       const topEdge = chart.addSeries(LineSeries, {
-        color: cIfvg, lineWidth: 1, lineStyle: LineStyle.Solid,
+        color: cIfvg, lineWidth: 3, lineStyle: LineStyle.Solid,
         priceLineVisible: false, lastValueVisible: false,
       });
       topEdge.setData([
@@ -416,7 +417,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       ]);
 
       const bottomEdge = chart.addSeries(LineSeries, {
-        color: cIfvg, lineWidth: 1, lineStyle: LineStyle.Solid,
+        color: cIfvg, lineWidth: 3, lineStyle: LineStyle.Solid,
         priceLineVisible: false, lastValueVisible: false,
       });
       bottomEdge.setData([
