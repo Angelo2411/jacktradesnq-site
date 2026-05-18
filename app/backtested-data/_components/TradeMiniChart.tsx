@@ -50,6 +50,7 @@ interface Props {
   entryPrice?: number;
   slPrice?: number;
   tpPrice?: number;
+  entryTs?: string;
   exitTs?: string;
   exitPrice?: number;
 }
@@ -69,26 +70,45 @@ function forwardFill(bars: EventBar[]): EventBar[] {
   return out;
 }
 
-function toCandles(bars: EventBar[], dateISO: string): CandlestickData<UTCTimestamp>[] {
-  const base = Date.UTC(
-    Number(dateISO.slice(0, 4)),
-    Number(dateISO.slice(5, 7)) - 1,
-    Number(dateISO.slice(8, 10)),
-    8, 30, 0,
-  );
+// base time is T0 = 8:30 ET = 12:30 UTC (or 13:30 UTC in EDT — we use the t0_iso from JSON)
+function toCandles(bars: EventBar[], t0IsoMs: number): CandlestickData<UTCTimestamp>[] {
   return bars.map((b) => ({
-    time: ((base + b.m * 60_000) / 1000) as UTCTimestamp,
+    time: ((t0IsoMs + b.m * 60_000) / 1000) as UTCTimestamp,
     open: b.o, high: b.h, low: b.l, close: b.c,
   }));
 }
 
-export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl_pts, outcome, entryPrice: entryPriceProp, slPrice, tpPrice, exitTs, exitPrice }: Props) {
+interface IfvgZone {
+  gap_high: number;
+  gap_low: number;
+}
+
+function detectIfvgZone(bars: EventBar[], entryMinute: number, side: 'long' | 'short'): IfvgZone | null {
+  const entryIdx = bars.findIndex((b) => b.m === entryMinute);
+  if (entryIdx < 3) return null;
+  for (let i = entryIdx - 1; i >= Math.max(2, entryIdx - 5); i--) {
+    const a = bars[i - 2];
+    const c = bars[i];
+    if (!a || !c) continue;
+    if (side === 'long') {
+      // bearish FVG: bar A low > bar C high (gap down) → IFVG filled from below
+      if (a.l > c.h) return { gap_high: a.l, gap_low: c.h };
+    } else {
+      // bullish FVG: bar A high < bar C low (gap up) → IFVG filled from above
+      if (a.h < c.l) return { gap_high: c.l, gap_low: a.h };
+    }
+  }
+  return null;
+}
+
+export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl_pts, outcome, entryPrice: entryPriceProp, slPrice, tpPrice, entryTs, exitTs, exitPrice }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [status, setStatus] = useState<'loading' | 'found' | 'missing'>('loading');
   const entryRef = useRef<number | null>(null);
   const candlesRef = useRef<CandlestickData<UTCTimestamp>[]>([]);
+  const barsRef = useRef<EventBar[]>([]);
+  const t0MsRef = useRef<number>(0);
 
-  // Resolve eventShort: could already be a short key, or needs mapping
   const resolvedShort = EVENT_SHORT[eventShort] ?? eventShort;
   const suffix = asset === 'gc' ? '_gc' : '';
   const jsonPath = `/data/${resolvedShort}_event_bars${suffix}.json`;
@@ -101,8 +121,11 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         if (cancelled) return;
         const entry = data.find((e) => e.date === tradeDate);
         if (!entry) { setStatus('missing'); return; }
+        const t0Ms = new Date(entry.t0_iso).getTime();
+        t0MsRef.current = t0Ms;
         const filled = forwardFill(entry.bars);
-        candlesRef.current = toCandles(filled, tradeDate);
+        barsRef.current = filled;
+        candlesRef.current = toCandles(filled, t0Ms);
         entryRef.current = entry.entry_price;
         setStatus('found');
       })
@@ -115,18 +138,19 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
     if (!containerRef.current) return;
     const candles = candlesRef.current;
     const entryPrice = entryRef.current;
+    const bars = barsRef.current;
+    const t0Ms = t0MsRef.current;
     if (candles.length === 0) return;
 
     const el = containerRef.current;
 
-    // Warm-editorial hex palette (OKLCH not supported by LWC)
     const cPaper    = '#faf6ee';
     const cEdge     = '#ece5d3';
     const cInkDim   = '#5b5868';
     const cInkQuiet = '#7d7a86';
-    const cUp       = '#7da274';   // sage green
-    const cDown     = '#c97558';   // terra
-    const cGold     = '#b08932';   // gold accent — entry line
+    const cUp       = '#7da274';
+    const cDown     = '#c97558';
+    const cGold     = '#b08932';
 
     const chart: IChartApi = createChart(el, {
       width: 280,
@@ -180,7 +204,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         price: entryPrice,
         color: cGold,
         lineWidth: 2,
-        lineStyle: 0, // solid
+        lineStyle: 0,
         axisLabelVisible: true,
         title: hasLevels ? `Entry · ${entryPrice}` : 'Entry',
       });
@@ -208,7 +232,52 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       });
     }
 
-    // Exit marker
+    // A. Entry triangle marker
+    if (entryTs !== undefined && entryPriceProp !== undefined) {
+      const entryTimeSec = Math.floor(new Date(entryTs).getTime() / 1000) as UTCTimestamp;
+      const entrySeries = chart.addSeries(LineSeries, {
+        color: '#00000000',
+        lineWidth: 1,
+        lastValueVisible: false,
+        priceLineVisible: false,
+        crosshairMarkerVisible: false,
+      });
+      entrySeries.setData([{ time: entryTimeSec, value: entryPriceProp }]);
+      createSeriesMarkers(entrySeries, [{
+        time: entryTimeSec,
+        position: side === 'long' ? 'belowBar' : 'aboveBar',
+        color: side === 'long' ? cUp : cDown,
+        shape: side === 'long' ? 'arrowUp' : 'arrowDown',
+        text: side === 'long' ? 'L' : 'S',
+      }]);
+
+      // C. IFVG zone detection
+      if (bars.length > 0 && t0Ms > 0) {
+        const entryMs = new Date(entryTs).getTime();
+        const entryMinute = Math.round((entryMs - t0Ms) / 60_000);
+        const zone = detectIfvgZone(bars, entryMinute, side);
+        if (zone !== null) {
+          candleSeries.createPriceLine({
+            price: zone.gap_high,
+            color: 'rgba(180,150,100,0.5)',
+            lineWidth: 1,
+            lineStyle: LineStyle.Dotted,
+            axisLabelVisible: false,
+            title: 'IFVG top',
+          });
+          candleSeries.createPriceLine({
+            price: zone.gap_low,
+            color: 'rgba(180,150,100,0.5)',
+            lineWidth: 1,
+            lineStyle: LineStyle.Dotted,
+            axisLabelVisible: false,
+            title: 'IFVG bot',
+          });
+        }
+      }
+    }
+
+    // D. Exit marker
     if (exitTs !== undefined && exitPrice !== undefined) {
       const exitTime = (Math.floor(new Date(exitTs).getTime() / 1000)) as UTCTimestamp;
       const exitSeries = chart.addSeries(LineSeries, {
@@ -284,8 +353,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
             Chart data not available for this date.
           </div>
         )}
-        <div style={{ position: 'relative', display: status === 'found' ? 'block' : 'none' }}>
-          <div className="v3-tc-side-badge" data-side={side}>{side.toUpperCase()}</div>
+        <div style={{ display: status === 'found' ? 'block' : 'none' }}>
           <div
             ref={containerRef}
             style={{

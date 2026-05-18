@@ -393,12 +393,14 @@ export type TradeRow = {
   entry_price?: number;
   sl_price?: number;
   tp_price?: number;
+  entry_ts?: string;
   exit_ts?: string;
   exit_price?: number;
 };
 
 type PriceOverlayRow = {
   ts: string;
+  entry_ts: string;
   variant: string;
   smt: boolean;
   side: string;
@@ -413,7 +415,7 @@ type PriceOverlayFile = {
   prices: PriceOverlayRow[];
 };
 
-type PriceFields = Pick<PriceOverlayRow, 'entry_price' | 'sl_price' | 'tp_price' | 'exit_ts' | 'exit_price'>;
+type PriceFields = Pick<PriceOverlayRow, 'entry_price' | 'sl_price' | 'tp_price' | 'entry_ts' | 'exit_ts' | 'exit_price'>;
 
 function normTs(ts: string): string {
   try { return new Date(ts).toISOString(); } catch { return ts; }
@@ -434,6 +436,7 @@ function loadPriceOverlay(slug: string): Map<string, PriceFields> | null {
         entry_price: row.entry_price,
         sl_price: row.sl_price,
         tp_price: row.tp_price,
+        entry_ts: row.entry_ts,
         exit_ts: row.exit_ts,
         exit_price: row.exit_price,
       });

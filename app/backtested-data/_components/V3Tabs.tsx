@@ -247,10 +247,20 @@ function TradesBlock({
     return 'v3-tr-badge be';
   }
 
+  const firstTradeWithPrices = trades.find((t) => t.entry_price !== undefined && t.sl_price !== undefined && t.tp_price !== undefined);
+  let slPts: number | null = null;
+  let tpPts: number | null = null;
+  if (firstTradeWithPrices && firstTradeWithPrices.entry_price !== undefined && firstTradeWithPrices.sl_price !== undefined && firstTradeWithPrices.tp_price !== undefined) {
+    slPts = Math.round(Math.abs(firstTradeWithPrices.entry_price - firstTradeWithPrices.sl_price) * 10) / 10;
+    tpPts = Math.round(Math.abs(firstTradeWithPrices.entry_price - firstTradeWithPrices.tp_price) * 10) / 10;
+  }
+
   return (
     <div>
       <div className="v3-wd-h">Trade list</div>
-      <div className="v3-wd-sub">tp1_be · SMT-on variant · most recent first.</div>
+      <div className="v3-wd-sub">
+        tp1_be · SMT-on variant{slPts !== null ? ` · SL −${slPts}pts · TP +${tpPts}pts` : ''} · most recent first.
+      </div>
       <div className="v3-tr-table-wrap">
         <table className="v3-tr-table">
           <thead>
@@ -295,6 +305,7 @@ function TradesBlock({
                         entryPrice={t.entry_price}
                         slPrice={t.sl_price}
                         tpPrice={t.tp_price}
+                        entryTs={t.entry_ts}
                         exitTs={t.exit_ts}
                         exitPrice={t.exit_price}
                       />
