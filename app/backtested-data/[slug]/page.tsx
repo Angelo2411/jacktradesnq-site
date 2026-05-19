@@ -5,6 +5,7 @@ import { getAllEntries, getEntry } from '@/lib/backtested-data';
 import { IconArrowUpRight } from '../_components/icons';
 import StraddleExplorer, { type ExplorerConfig } from '../_components/StraddleExplorer';
 import StraddleSwitcher from '../_components/StraddleSwitcher';
+import StraddleTrades from '../_components/StraddleTrades';
 import KillzoneSwitcher from '../_components/KillzoneSwitcher';
 import NwogSwitcher from '../_components/NwogSwitcher';
 import News830Explorer from '../_components/News830Explorer';
@@ -420,6 +421,25 @@ export default async function BacktestedDetail({ params }: PageProps) {
           captured in historical samples may decay or disappear in live conditions.
         </p>
       </div>
+
+      {isStraddleSwitcher && explorerKey === 'cpi' ? (
+        <div style={{ marginTop: 48 }}>
+          <StraddleTrades
+            eventShort="cpi"
+            jsonUrl="/data/cpi-straddle-trades.json"
+            offsetLabel="Stop offset"
+          />
+        </div>
+      ) : null}
+      {isStraddleSwitcher && explorerKey === 'nfp' ? (
+        <div style={{ marginTop: 48 }}>
+          <StraddleTrades
+            eventShort="nfp"
+            jsonUrl="/data/nfp-straddle-trades.json"
+            offsetLabel="Entry offset"
+          />
+        </div>
+      ) : null}
 
       {pager}
     </article>
