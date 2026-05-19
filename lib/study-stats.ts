@@ -88,6 +88,7 @@ const IFVG_SLUGS: Array<{ slug: string; event: string; asset: string; releaseTim
   { slug: 'gdp-ifvg-smt',               event: 'GDP',                  asset: 'NQ' },
   { slug: 'fomc-ifvg-smt',              event: 'FOMC',                 asset: 'NQ', releaseTime: '14:00 ET' },
   { slug: 'adp-ifvg-smt',               event: 'ADP',                  asset: 'NQ', releaseTime: '8:15 ET' },
+  { slug: 'jolts-ifvg-smt',             event: 'JOLTS',                asset: 'NQ', releaseTime: '10:00 ET' },
   { slug: 'gc-ifvg-smt',                event: 'Multi-event',          asset: 'GC' },
   { slug: 'cpi-ifvg-smt-gc',                 event: 'CPI',             asset: 'GC' },
   { slug: 'nfp-ifvg-smt-gc',                 event: 'NFP',             asset: 'GC' },
@@ -100,6 +101,7 @@ const IFVG_SLUGS: Array<{ slug: string; event: string; asset: string; releaseTim
   { slug: 'employmentcostindex-ifvg-smt-gc', event: 'Employment Cost', asset: 'GC' },
   { slug: 'fomc-ifvg-smt-gc',                event: 'FOMC',            asset: 'GC', releaseTime: '14:00 ET' },
   { slug: 'adp-ifvg-smt-gc',                 event: 'ADP',             asset: 'GC', releaseTime: '8:15 ET' },
+  { slug: 'jolts-ifvg-smt-gc',               event: 'JOLTS',           asset: 'GC', releaseTime: '10:00 ET' },
 ];
 
 function computeIfvgStats(
@@ -310,23 +312,17 @@ const EVENT_SLUG_MAP: Record<string, { nq: string | null; gc: string | null }> =
   'Federal Funds Rate':               { nq: 'fomc-ifvg-smt',               gc: 'fomc-ifvg-smt-gc' },
   'ADP Non-Farm Employment Change':   { nq: 'adp-ifvg-smt',                gc: 'adp-ifvg-smt-gc' },
   'ADP':                              { nq: 'adp-ifvg-smt',                gc: 'adp-ifvg-smt-gc' },
+  'JOLTS Job Openings':               { nq: 'jolts-ifvg-smt',              gc: 'jolts-ifvg-smt-gc' },
+  'JOLTS':                            { nq: 'jolts-ifvg-smt',              gc: 'jolts-ifvg-smt-gc' },
   // ── FF red folder, no backtest yet (visible with "No backtest yet" badge) ─
   'FOMC Minutes':                          { nq: null, gc: null },
-  'Unemployment Rate':                     { nq: null, gc: null },
-  'Average Hourly Earnings':               { nq: null, gc: null },
   'ISM Manufacturing PMI':                 { nq: null, gc: null },
   'ISM Services PMI':                      { nq: null, gc: null },
   'ISM Non-Manufacturing PMI':             { nq: null, gc: null },
-  'JOLTS Job Openings':                    { nq: null, gc: null },
   'CB Consumer Confidence':                { nq: null, gc: null },
   'Philadelphia Fed Manufacturing Index':  { nq: null, gc: null },
   'Durable Goods Orders':                  { nq: null, gc: null },
   'Core Durable Goods Orders':             { nq: null, gc: null },
-  'Existing Home Sales':                   { nq: null, gc: null },
-  'New Home Sales':                        { nq: null, gc: null },
-  'Trade Balance':                         { nq: null, gc: null },
-  'University of Michigan Consumer Sentiment': { nq: null, gc: null },
-  'UoM Consumer Sentiment':                { nq: null, gc: null },
 };
 
 export type EventStudyStats = {
