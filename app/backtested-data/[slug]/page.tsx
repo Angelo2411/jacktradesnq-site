@@ -67,11 +67,15 @@ const IFVG_SLUGS = new Set([
   'joblessclaims-ifvg-smt', 'retailsales-ifvg-smt', 'empirestate-ifvg-smt',
   'employmentcostindex-ifvg-smt', 'gdp-ifvg-smt', 'gc-ifvg-smt',
   'fomc-ifvg-smt', 'adp-ifvg-smt', 'jolts-ifvg-smt',
+  'ism-mfg-ifvg-smt', 'ism-services-ifvg-smt', 'cb-confidence-ifvg-smt',
+  'philly-fed-ifvg-smt', 'durable-goods-ifvg-smt',
   // 9 individual GC event slugs
   'cpi-ifvg-smt-gc', 'nfp-ifvg-smt-gc', 'ppi-ifvg-smt-gc', 'pce-ifvg-smt-gc',
   'gdp-ifvg-smt-gc', 'joblessclaims-ifvg-smt-gc', 'retailsales-ifvg-smt-gc',
   'empirestate-ifvg-smt-gc', 'employmentcostindex-ifvg-smt-gc',
   'fomc-ifvg-smt-gc', 'adp-ifvg-smt-gc', 'jolts-ifvg-smt-gc',
+  'ism-mfg-ifvg-smt-gc', 'ism-services-ifvg-smt-gc', 'cb-confidence-ifvg-smt-gc',
+  'philly-fed-ifvg-smt-gc', 'durable-goods-ifvg-smt-gc',
 ]);
 
 const catLabel = (c: string) => (c === 'tradingview' ? 'TRADINGVIEW' : 'DATA');

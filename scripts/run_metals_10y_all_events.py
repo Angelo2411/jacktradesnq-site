@@ -1,7 +1,7 @@
-"""GC 10y 8:30 ET news IFVG runner — 9 events × 3 exit variants × 2-way SI SMT × 3 sides × 11 year buckets.
+"""GC 10y 8:30 ET news IFVG runner — 17 events × 3 exit variants × 2-way SI SMT × 3 sides × 11 year buckets.
 
 Loads GC + SI parquet ONCE for the full 10y window (2016-01-04 → 2026-05-11), then loops
-over 9 event types. Output schema matches the existing site Explorer (same as NQ runner).
+over 17 event types. Output schema matches the existing site Explorer (same as NQ runner).
 
 GC-specific notes:
 - Tick size: GC = 0.10 pt (NQ = 0.25 pt). detect_setup_metals is a local clone of
@@ -62,6 +62,11 @@ EVENTS = [
     "FOMC",
     "ADP",
     "JOLTS",
+    "ISMMfg",
+    "ISMServices",
+    "CBConfidence",
+    "PhillyFed",
+    "DurableGoods",
 ]
 
 # Mapping event_type → site slug (used to generate per-event _gc.json files)
@@ -78,6 +83,11 @@ EVENT_SLUG: dict[str, str] = {
     "FOMC":                 "fomc-ifvg-smt",
     "ADP":                  "adp-ifvg-smt",
     "JOLTS":                "jolts-ifvg-smt",
+    "ISMMfg":               "ism-mfg-ifvg-smt",
+    "ISMServices":          "ism-services-ifvg-smt",
+    "CBConfidence":         "cb-confidence-ifvg-smt",
+    "PhillyFed":            "philly-fed-ifvg-smt",
+    "DurableGoods":         "durable-goods-ifvg-smt",
 }
 
 
@@ -89,6 +99,11 @@ EVENT_RELEASE_TIME: dict[str, tuple[int, int]] = {
     "FOMC": (14, 0),
     "ADP": (8, 15),
     "JOLTS": (10, 0),
+    "ISMMfg": (10, 0),
+    "ISMServices": (10, 0),
+    "CBConfidence": (10, 0),
+    "PhillyFed": (8, 30),
+    "DurableGoods": (8, 30),
 }
 
 # Sweep window: release hour + N hours offset per event type
@@ -99,6 +114,11 @@ EVENT_SWEEP_HOURS: dict[str, int] = {
     "FOMC": 3,
     "ADP": 3,  # sweep window 8:16 → 11:15 ET (release_h + 3)
     "JOLTS": 2,  # sweep window 10:01 → 12:00 ET (release_h + 2)
+    "ISMMfg": 2,  # sweep window 10:01 → 12:00 ET (release_h + 2)
+    "ISMServices": 2,  # sweep window 10:01 → 12:00 ET (release_h + 2)
+    "CBConfidence": 2,  # sweep window 10:01 → 12:00 ET (release_h + 2)
+    "PhillyFed": 3,  # sweep window 8:31 → 11:30 ET (release_h + 3)
+    "DurableGoods": 3,  # sweep window 8:31 → 11:30 ET (release_h + 3)
 }
 
 
@@ -658,7 +678,7 @@ def main():
         per_event_paths.append(prices_path)
         print(f"[out ] {prices_path}  prices={len(prices_payload)}", file=sys.stderr)
 
-    # Build combined 216 rows + trades from all 9 events
+    # Build combined 216 rows + trades from all 17 events
     combined_rows, all_trades = build_rows_and_trades(all_trade_db)
 
     out = {
@@ -673,7 +693,7 @@ def main():
             "n_events_total": n_events_total_all,
             "n_csv_events":   n_csv_events_all,
             "generated_at":   datetime.now(timezone.utc).isoformat(),
-            "event_filter":   "ALL_9_EVENTS",
+            "event_filter":   "ALL_17_EVENTS",
             "csv":            NEWS_CSV,
             "events":         EVENTS,
             "variants": {
@@ -699,7 +719,7 @@ def main():
     elapsed = _time.time() - t_start
 
     r_headline = find_row(combined_rows, "ALL", "no_be", True, "BOTH")
-    print(f"\n=== no_be / BOTH / ALL / smt=true (target) — GC 10y ALL 9 EVENTS ===")
+    print(f"\n=== no_be / BOTH / ALL / smt=true (target) — GC 10y ALL 17 EVENTS ===")
     if r_headline:
         pf = r_headline["pf"] if r_headline["pf"] is not None else float("inf")
         pf_str = f"{pf:.2f}" if isinstance(pf, (int, float)) and pf != float("inf") else "inf"

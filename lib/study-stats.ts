@@ -89,6 +89,11 @@ const IFVG_SLUGS: Array<{ slug: string; event: string; asset: string; releaseTim
   { slug: 'fomc-ifvg-smt',              event: 'FOMC',                 asset: 'NQ', releaseTime: '14:00 ET' },
   { slug: 'adp-ifvg-smt',               event: 'ADP',                  asset: 'NQ', releaseTime: '8:15 ET' },
   { slug: 'jolts-ifvg-smt',             event: 'JOLTS',                asset: 'NQ', releaseTime: '10:00 ET' },
+  { slug: 'ism-mfg-ifvg-smt',           event: 'ISM Manufacturing PMI', asset: 'NQ', releaseTime: '10:00 ET' },
+  { slug: 'ism-services-ifvg-smt',      event: 'ISM Services PMI',      asset: 'NQ', releaseTime: '10:00 ET' },
+  { slug: 'cb-confidence-ifvg-smt',     event: 'CB Consumer Confidence', asset: 'NQ', releaseTime: '10:00 ET' },
+  { slug: 'philly-fed-ifvg-smt',        event: 'Philadelphia Fed Manufacturing', asset: 'NQ', releaseTime: '8:30 ET' },
+  { slug: 'durable-goods-ifvg-smt',     event: 'Durable Goods Orders', asset: 'NQ', releaseTime: '8:30 ET' },
   { slug: 'gc-ifvg-smt',                event: 'Multi-event',          asset: 'GC' },
   { slug: 'cpi-ifvg-smt-gc',                 event: 'CPI',             asset: 'GC' },
   { slug: 'nfp-ifvg-smt-gc',                 event: 'NFP',             asset: 'GC' },
@@ -102,6 +107,11 @@ const IFVG_SLUGS: Array<{ slug: string; event: string; asset: string; releaseTim
   { slug: 'fomc-ifvg-smt-gc',                event: 'FOMC',            asset: 'GC', releaseTime: '14:00 ET' },
   { slug: 'adp-ifvg-smt-gc',                 event: 'ADP',             asset: 'GC', releaseTime: '8:15 ET' },
   { slug: 'jolts-ifvg-smt-gc',               event: 'JOLTS',           asset: 'GC', releaseTime: '10:00 ET' },
+  { slug: 'ism-mfg-ifvg-smt-gc',             event: 'ISM Manufacturing PMI', asset: 'GC', releaseTime: '10:00 ET' },
+  { slug: 'ism-services-ifvg-smt-gc',        event: 'ISM Services PMI',      asset: 'GC', releaseTime: '10:00 ET' },
+  { slug: 'cb-confidence-ifvg-smt-gc',       event: 'CB Consumer Confidence', asset: 'GC', releaseTime: '10:00 ET' },
+  { slug: 'philly-fed-ifvg-smt-gc',          event: 'Philadelphia Fed Manufacturing', asset: 'GC', releaseTime: '8:30 ET' },
+  { slug: 'durable-goods-ifvg-smt-gc',       event: 'Durable Goods Orders', asset: 'GC', releaseTime: '8:30 ET' },
 ];
 
 function computeIfvgStats(
@@ -314,15 +324,15 @@ const EVENT_SLUG_MAP: Record<string, { nq: string | null; gc: string | null }> =
   'ADP':                              { nq: 'adp-ifvg-smt',                gc: 'adp-ifvg-smt-gc' },
   'JOLTS Job Openings':               { nq: 'jolts-ifvg-smt',              gc: 'jolts-ifvg-smt-gc' },
   'JOLTS':                            { nq: 'jolts-ifvg-smt',              gc: 'jolts-ifvg-smt-gc' },
+  'ISM Manufacturing PMI':                 { nq: 'ism-mfg-ifvg-smt',      gc: 'ism-mfg-ifvg-smt-gc' },
+  'ISM Services PMI':                      { nq: 'ism-services-ifvg-smt', gc: 'ism-services-ifvg-smt-gc' },
+  'ISM Non-Manufacturing PMI':             { nq: 'ism-services-ifvg-smt', gc: 'ism-services-ifvg-smt-gc' },
+  'CB Consumer Confidence':                { nq: 'cb-confidence-ifvg-smt', gc: 'cb-confidence-ifvg-smt-gc' },
+  'Philadelphia Fed Manufacturing Index':  { nq: 'philly-fed-ifvg-smt',   gc: 'philly-fed-ifvg-smt-gc' },
+  'Durable Goods Orders':                  { nq: 'durable-goods-ifvg-smt', gc: 'durable-goods-ifvg-smt-gc' },
+  'Core Durable Goods Orders':             { nq: 'durable-goods-ifvg-smt', gc: 'durable-goods-ifvg-smt-gc' },
   // ── FF red folder, no backtest yet (visible with "No backtest yet" badge) ─
   'FOMC Minutes':                          { nq: null, gc: null },
-  'ISM Manufacturing PMI':                 { nq: null, gc: null },
-  'ISM Services PMI':                      { nq: null, gc: null },
-  'ISM Non-Manufacturing PMI':             { nq: null, gc: null },
-  'CB Consumer Confidence':                { nq: null, gc: null },
-  'Philadelphia Fed Manufacturing Index':  { nq: null, gc: null },
-  'Durable Goods Orders':                  { nq: null, gc: null },
-  'Core Durable Goods Orders':             { nq: null, gc: null },
 };
 
 export type EventStudyStats = {
