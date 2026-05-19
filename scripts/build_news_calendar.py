@@ -57,9 +57,7 @@ BACKTESTED_EVENTS = {
     "Empire State Manufacturing Index",
     "Employment Cost Index",
     "FOMC Statement", "Federal Funds Rate", "FOMC Minutes",
-    # FF red folder, not backtested yet (visible with "No backtest yet"):
-    "Unemployment Rate",
-    "Average Hourly Earnings",
+    # FF red folder (co-released NFP events dropped; orange events dropped):
     "ISM Manufacturing PMI",
     "ISM Services PMI",
     "ADP Non-Farm Employment Change",
@@ -67,9 +65,6 @@ BACKTESTED_EVENTS = {
     "CB Consumer Confidence",
     "Philadelphia Fed Manufacturing Index",
     "Durable Goods Orders", "Core Durable Goods Orders",
-    "Existing Home Sales", "New Home Sales",
-    "Trade Balance",
-    "University of Michigan Consumer Sentiment",
 }
 
 # ── Canonical timing whitelist (ET, leading-zero stripped) ───────────────────

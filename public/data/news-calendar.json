@@ -1,17 +1,9 @@
 {
-  "generated_at": "2026-05-19T19:08:29Z",
+  "generated_at": "2026-05-19T19:10:47Z",
   "window_start": "2026-05-11",
   "window_end": "2026-06-21",
   "source": "news_red_folder_full.csv + upcoming_events.csv",
   "events": [
-    {
-      "date": "2026-05-11",
-      "day": "Mon 11",
-      "time": "10:00",
-      "event": "Existing Home Sales",
-      "imp": "High",
-      "weekday": 0
-    },
     {
       "date": "2026-05-12",
       "day": "Tue 12",

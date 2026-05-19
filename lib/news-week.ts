@@ -68,9 +68,7 @@ export const RED_FOLDER_WHITELIST = new Set([
   'Employment Cost Index',
   'FOMC Statement', 'FOMC Rate Decision', 'FOMC Press Conference', 'Fed Interest Rate Decision',
   'Federal Funds Rate', 'FOMC Minutes',
-  // ── FF red folder, NOT backtested yet (show with "No backtest yet" badge) ─
-  'Unemployment Rate',
-  'Average Hourly Earnings',
+  // ── FF red folder (co-released w/ NFP dropped; orange events dropped) ─
   'ISM Manufacturing PMI',
   'ISM Services PMI', 'ISM Non-Manufacturing PMI',
   'ADP Non-Farm Employment Change',
@@ -78,9 +76,6 @@ export const RED_FOLDER_WHITELIST = new Set([
   'CB Consumer Confidence',
   'Philadelphia Fed Manufacturing Index',
   'Durable Goods Orders', 'Core Durable Goods Orders',
-  'Existing Home Sales', 'New Home Sales',
-  'Trade Balance',
-  'University of Michigan Consumer Sentiment', 'UoM Consumer Sentiment',
 ]);
 
 // Pure client-safe: match news items to week dates, attach study from map.

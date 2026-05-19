@@ -316,8 +316,6 @@ const EVENT_SLUG_MAP: Record<string, { nq: string | null; gc: string | null }> =
   'JOLTS':                            { nq: 'jolts-ifvg-smt',              gc: 'jolts-ifvg-smt-gc' },
   // ── FF red folder, no backtest yet (visible with "No backtest yet" badge) ─
   'FOMC Minutes':                          { nq: null, gc: null },
-  'Unemployment Rate':                     { nq: null, gc: null },
-  'Average Hourly Earnings':               { nq: null, gc: null },
   'ISM Manufacturing PMI':                 { nq: null, gc: null },
   'ISM Services PMI':                      { nq: null, gc: null },
   'ISM Non-Manufacturing PMI':             { nq: null, gc: null },
@@ -325,11 +323,6 @@ const EVENT_SLUG_MAP: Record<string, { nq: string | null; gc: string | null }> =
   'Philadelphia Fed Manufacturing Index':  { nq: null, gc: null },
   'Durable Goods Orders':                  { nq: null, gc: null },
   'Core Durable Goods Orders':             { nq: null, gc: null },
-  'Existing Home Sales':                   { nq: null, gc: null },
-  'New Home Sales':                        { nq: null, gc: null },
-  'Trade Balance':                         { nq: null, gc: null },
-  'University of Michigan Consumer Sentiment': { nq: null, gc: null },
-  'UoM Consumer Sentiment':                { nq: null, gc: null },
 };
 
 export type EventStudyStats = {
