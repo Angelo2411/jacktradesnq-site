@@ -244,7 +244,7 @@ function TradesBlock({
   yearFilter?: string;
   slug: string;
   eventShort: string;
-  asset: 'nq' | 'gc';
+  asset: 'nq' | 'gc' | 'es';
   smtLabel?: string;
 }) {
   const activeTrades = tradesByVariant ? tradesByVariant[variant] : trades;
@@ -408,7 +408,7 @@ export default function V3Tabs({
   dateTo?: string;
   overviewContent: React.ReactNode;
   eventShort: string;
-  asset: 'nq' | 'gc';
+  asset: 'nq' | 'gc' | 'es';
 }) {
   const [variant, setVariant] = useState<VariantKey>('tp1_be');
   const [smtOn, setSmtOn] = useState<boolean>(true);

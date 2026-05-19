@@ -76,6 +76,13 @@ const IFVG_SLUGS = new Set([
   'fomc-ifvg-smt-gc', 'adp-ifvg-smt-gc', 'jolts-ifvg-smt-gc',
   'ism-mfg-ifvg-smt-gc', 'ism-services-ifvg-smt-gc', 'cb-confidence-ifvg-smt-gc',
   'philly-fed-ifvg-smt-gc', 'durable-goods-ifvg-smt-gc',
+  // 17 individual ES event slugs + 1 combined
+  'cpi-ifvg-smt-es', 'nfp-ifvg-smt-es', 'ppi-ifvg-smt-es', 'pce-ifvg-smt-es',
+  'gdp-ifvg-smt-es', 'joblessclaims-ifvg-smt-es', 'retailsales-ifvg-smt-es',
+  'empirestate-ifvg-smt-es', 'employmentcostindex-ifvg-smt-es',
+  'fomc-ifvg-smt-es', 'adp-ifvg-smt-es', 'jolts-ifvg-smt-es',
+  'ism-mfg-ifvg-smt-es', 'ism-services-ifvg-smt-es', 'cb-confidence-ifvg-smt-es',
+  'philly-fed-ifvg-smt-es', 'durable-goods-ifvg-smt-es', 'es-ifvg-smt',
 ]);
 
 const catLabel = (c: string) => (c === 'tradingview' ? 'TRADINGVIEW' : 'DATA');
@@ -339,7 +346,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
 
         {/* V3Tabs is a client component that reads ?tab from URL and renders the KPI band + tabs */}
         <Suspense fallback={<div className="v3-tabs" style={{ height: 48 }} />}>
-          <V3Tabs slug={slug} breakdown={breakdown} breakdownOff={breakdownOff} yearBreakdown={yearBreakdown} yearBreakdownOff={yearBreakdownOff} trades={trades} tradesByVariant={tradesByVariant} tradesByVariantOff={tradesByVariantOff} statsByVariant={statsByVariant} statsByVariantAndSmt={statsByVariantAndSmt} dateFrom={dateFrom} dateTo={dateTo} overviewContent={overviewNode} eventShort={stratStats?.event ?? ''} asset={(stratStats?.asset?.toLowerCase() ?? 'nq') as 'nq' | 'gc'} />
+          <V3Tabs slug={slug} breakdown={breakdown} breakdownOff={breakdownOff} yearBreakdown={yearBreakdown} yearBreakdownOff={yearBreakdownOff} trades={trades} tradesByVariant={tradesByVariant} tradesByVariantOff={tradesByVariantOff} statsByVariant={statsByVariant} statsByVariantAndSmt={statsByVariantAndSmt} dateFrom={dateFrom} dateTo={dateTo} overviewContent={overviewNode} eventShort={stratStats?.event ?? ''} asset={(stratStats?.asset?.toLowerCase() ?? 'nq') as 'nq' | 'gc' | 'es'} />
         </Suspense>
 
         {pager}
