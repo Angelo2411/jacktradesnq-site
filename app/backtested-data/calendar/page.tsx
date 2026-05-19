@@ -1,5 +1,6 @@
 import { getEventStudyMap } from '@/lib/study-stats';
 import { loadNewsWeek } from '@/lib/news-week-server';
+import { RED_FOLDER_WHITELIST } from '@/lib/news-week';
 import type { NewsItem } from '@/lib/news-week';
 import CalendarDays from './_components/CalendarDays';
 
@@ -13,7 +14,7 @@ export default function CalendarPage() {
   // Server-side: load real news from public/data/news-week.json (uses fs).
   const news = loadNewsWeek();
   const studyMap = getEventStudyMap(news);
-  const redFolder = news.filter((n: { imp: string }) => n.imp === 'High');
+  const redFolder = news.filter((n: { imp: string; event: string }) => n.imp === 'High' && RED_FOLDER_WHITELIST.has(n.event));
 
   return (
     <>

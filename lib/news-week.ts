@@ -53,6 +53,21 @@ export function getWeekDates(): Array<{
   });
 }
 
+// Whitelist of true red-folder events for NQ/GC. Crude Oil, PMI, Philly Fed
+// etc. are flagged "High" by the upstream feed but not relevant for our setups.
+export const RED_FOLDER_WHITELIST = new Set([
+  'CPI', 'Core CPI',
+  'NFP', 'Non-Farm Payrolls', 'Employment Situation', 'Average Hourly Earnings', 'Unemployment Rate',
+  'PPI', 'Core PPI',
+  'PCE', 'Core PCE',
+  'GDP', 'GDP Advance', 'GDP (Advance)',
+  'Jobless Claims', 'Initial Jobless Claims',
+  'Retail Sales', 'Core Retail Sales',
+  'Empire State Manufacturing Index', 'Empire State Manufacturing', 'Empire State',
+  'Employment Cost Index',
+  'FOMC Statement', 'FOMC Rate Decision', 'FOMC Press Conference', 'Fed Interest Rate Decision',
+]);
+
 // Pure client-safe: match news items to week dates, attach study from map.
 export function getRedFolderByDay(
   news: NewsItem[],
@@ -70,7 +85,7 @@ export function getRedFolderByDay(
 
     const hits = news.filter((n) => {
       const newsDayNum = n.day.split(' ')[1];
-      return newsDayNum === dayNum && n.imp === 'High';
+      return newsDayNum === dayNum && n.imp === 'High' && RED_FOLDER_WHITELIST.has(n.event);
     });
     result[dayKey] = hits.map((n) => ({
       time: n.time,
