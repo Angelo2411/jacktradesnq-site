@@ -16,7 +16,6 @@ ICT post-news IFVG entry on 8:30 ET CPI releases, with optional **SI SMT confirm
 
 Take the trade **only if SI also reaches the same target** within 2h30 after the release. SI not following = fakeout, skip.
 
-<div data-explorer="cpi-ifvg-smt"></div>
 
 Without SI SMT: 38 trades, PF 1.08, net +5.4 GC pts. With SI SMT (1 trade): WR 0%, PF —, net -0.2 GC pts.
 

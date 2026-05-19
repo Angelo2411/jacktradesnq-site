@@ -15,7 +15,6 @@ ICT post-news IFVG entry on 8:30 ET Employment Cost Index (ECI) releases, with o
 
 Take the trade **only if SI also reaches the same target** within 2h30 after the release. SI not following = fakeout, skip.
 
-<div data-explorer="employmentcostindex-ifvg-smt"></div>
 
 Without SI SMT: 7 trades, PF 3.71, net +5.7 GC pts. With SI SMT (2 trades): WR 100%, PF ∞, net +4.7 GC pts. Very small sample — quarterly release.
 

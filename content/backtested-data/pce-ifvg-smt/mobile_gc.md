@@ -15,7 +15,6 @@ ICT post-news IFVG entry on 8:30 ET PCE releases, with optional **SI SMT confirm
 
 Take the trade **only if SI also reaches the same target** within 2h30 after the release. SI not following = fakeout, skip.
 
-<div data-explorer="pce-ifvg-smt"></div>
 
 Without SI SMT: 77 trades, PF 0.41, net -58.3 GC pts. With SI SMT (11 trades): WR 18%, PF 0.17, net -12.9 GC pts. Negative edge both with and without filter.
 

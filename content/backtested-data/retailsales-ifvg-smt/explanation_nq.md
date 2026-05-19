@@ -27,4 +27,3 @@ NQ and ES are highly correlated indices. When NQ reaches the target side but ES 
 
 Sample size 24 SMT-filtered trades is statistically thin; treat as indicative not predictive. AI-assisted analysis — not financial advice.
 
-<div data-explorer="retailsales-ifvg-smt"></div>

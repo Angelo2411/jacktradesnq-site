@@ -15,7 +15,6 @@ ICT post-news IFVG entry on 8:30 ET Empire State releases, with optional **ES SM
 
 Take the trade **only if ES also reaches its target side** during the same 8:30→11:00 window. ES not following = fakeout, skip.
 
-<div data-explorer="empirestate-ifvg-smt"></div>
 
 ES SMT filter cut 8 setups — PF 0.39 → 0.81, net -122 → -18 NQ pts on 34 Empire State events. No positive edge found.
 

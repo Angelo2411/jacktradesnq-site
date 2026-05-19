@@ -15,7 +15,6 @@ ICT post-news IFVG entry on 8:30 ET releases, with optional **SI SMT confirmatio
 
 Take the trade **only if SI also reaches its target side** during the same 8:30→11:00 window. Missing SI bar = no confirmation (not a signal).
 
-<div data-explorer="gc-ifvg-smt"></div>
 
 No significant edge on Gold across 9 event types. NFP isolated: 8 trades / PF 6.18 / +31.6 GC pts (low sample). Overall SMT-filtered: 52 trades / PF 0.977 / -1.4 GC pts.
 

@@ -15,7 +15,6 @@ ICT post-news IFVG entry on 8:30 ET Jobless Claims releases, with optional **SI 
 
 Take the trade **only if SI also reaches the same target** within 2h30 after the release. SI not following = fakeout, skip.
 
-<div data-explorer="joblessclaims-ifvg-smt"></div>
 
 Without SI SMT: 217 trades, PF 0.76, net -49.2 GC pts. With SI SMT (23 trades): WR 26%, PF 0.26, net -25.6 GC pts. Negative edge persists with SI filter.
 

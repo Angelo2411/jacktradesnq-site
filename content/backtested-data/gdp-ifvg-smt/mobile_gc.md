@@ -15,7 +15,6 @@ ICT post-news IFVG entry on 8:30 ET GDP **advance releases** (1 per quarter — 
 
 SI data was not available for this re-run, so the SMT toggle below shows zero trades when On. Read the baseline GC IFVG numbers with SMT off.
 
-<div data-explorer="gdp-ifvg-smt"></div>
 
 Baseline GC IFVG (no SMT): 18 trades, PF 0.44, net -15.5 GC pts. Small sample — treat with caution.
 

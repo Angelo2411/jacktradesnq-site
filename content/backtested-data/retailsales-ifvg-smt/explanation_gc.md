@@ -29,4 +29,3 @@ NQ and ES are equity index futures — near-perfect correlation, SMT divergence 
 
 101 total setups, 2 SMT-filtered trades. AI-assisted analysis — not financial advice.
 
-<div data-explorer="retailsales-ifvg-smt"></div>
