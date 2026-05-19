@@ -1,14 +1,6 @@
-ICT post-news IFVG entry on 8:30 ET GDP **advance releases** (1 per quarter, Jan/Apr/Jul/Oct). Tested 2016 → 2026 on GC 1m. 2nd and 3rd estimate releases are excluded — only the advance produces a clean market reaction. SI SMT filter is currently disabled on this study.
+ICT post-news IFVG entry on 8:30 ET GDP **advance releases** (1 per quarter, Jan/Apr/Jul/Oct). Tested 2016 → 2026 on GC 1m. 2nd and 3rd estimate releases are excluded — only the advance produces a clean market reaction. SI SMT filter is currently disabled on this study (SI data unavailable when this study was re-run on advance-only events).
 
-### Setup Logic
-
-Mark out the data high/low (range price was trading in right before 8:30 ET). Wait for price to sweep one side, then wait for an FVG to form on the rejection. Entry on the IFVG break (close back inside the range). SL on the sweep extreme + 0.10 (1 GC tick). TP on the opposite liquidity.
-
-**Invalidation**: if the opposite side of the range also gets swept BEFORE the IFVG break (entry) — the target liquidity has already been taken, no edge left → skip the setup.
-
-### SI SMT Confirmation Filter — disabled on this study
-
-SI data was not available when this study was re-run on advance-only events, so the SMT confirmation filter is currently disabled. The widget below reports the baseline IFVG numbers only — toggle SI SMT off to read the results.
+Sweep the pre-news data high/low, wait for an FVG on the rejection, enter on the IFVG break back inside range · SL = sweep extreme + 0.10 (1 GC tick) · TP = opposite liquidity (pre-news pivot). The widget reports the baseline IFVG numbers only — toggle SI SMT off to read the results.
 
 ### Performance — GC 10y (advance-only, baseline)
 
@@ -21,5 +13,3 @@ NQ and ES are equity index futures — near-perfect correlation, SMT divergence 
 ### Disclaimer
 
 18 total setups, SMT filter disabled (SI data unavailable for this run). AI-assisted analysis — not financial advice.
-
-<div data-explorer="gdp-ifvg-smt"></div>
