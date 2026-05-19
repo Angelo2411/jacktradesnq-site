@@ -15,7 +15,6 @@ ICT post-news IFVG entry on 8:30 ET PCE releases, with optional **ES SMT confirm
 
 Take the trade **only if ES also reaches its target side** during the same 8:30→11:00 window. ES not following = fakeout, skip.
 
-<div data-explorer="pce-ifvg-smt"></div>
 
 ES SMT filter cut 9 setups — PF 0.93 → 1.34, net -16 → +45 NQ pts on 38 PCE events.
 

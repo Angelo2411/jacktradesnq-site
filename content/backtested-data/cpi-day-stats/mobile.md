@@ -28,8 +28,6 @@ Bilateral straddle, full-port, **no stop loss**. AI-gathered data, not financial
 
 > **Pre-2020 note:** CPI was a non-event before the inflation regime. Use **2022 onwards** as your baseline.
 
-### Explore the data — your filters, your PDF
 
-<div data-explorer="cpi"></div>
 
 <a class="bd-btn bd-btn-secondary" href="/downloads/backtested-data/cpi-fullport.pdf" download>Download — CPI Fullport PDF</a>

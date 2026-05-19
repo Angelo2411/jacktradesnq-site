@@ -1,19 +1,6 @@
 ICT post-news IFVG entry on 8:30 ET PCE releases, with optional **SI SMT confirmation filter**. Tested 2016 → 2026 on GC 1m.
 
-### Setup Logic
-
-Mark out the data high/low (range price was trading in right before 8:30 ET). Wait for price to sweep one side, then wait for an FVG to form on the rejection. Entry on the IFVG break (close back inside the range). SL on the sweep extreme + 0.10 (1 GC tick). TP on the opposite liquidity.
-
-**Invalidation**: if the opposite side of the range also gets swept BEFORE the IFVG break (entry) — the target liquidity has already been taken, no edge left → skip the setup.
-
-### SI SMT Confirmation Filter
-
-A trade is kept **only if SI also reaches the same target** within 2h30 after the release.
-
-- GC SHORT (sweep UP) → SI must sweep its low
-- GC LONG (sweep DOWN) → SI must sweep its high
-
-When no SI bar exists at 8:30 ET, the filter returns False — no confirmation, not a disqualifier.
+Sweep the pre-news data high/low, wait for an FVG on the rejection, enter on the IFVG break back inside range · SL = sweep extreme + 0.10 (1 GC tick) · TP = opposite liquidity (pre-news pivot). SI SMT keeps only trades where SI also reaches its mirror target within 2h30 of the release; missing SI bars at 8:30 ET return no confirmation (not a disqualifier).
 
 ### Performance — GC 10y
 
@@ -28,5 +15,3 @@ NQ and ES are equity index futures — near-perfect correlation, SMT divergence 
 ### Disclaimer
 
 77 total setups, 11 SMT-filtered trades. AI-assisted analysis — not financial advice.
-
-<div data-explorer="pce-ifvg-smt"></div>

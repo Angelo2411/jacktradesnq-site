@@ -5,9 +5,9 @@
     "date_to": "2026-05-11",
     "n_events_total": 50,
     "n_csv_events": 134,
-    "generated_at": "2026-05-14T15:17:06.524390+00:00",
+    "generated_at": "2026-05-19T16:45:38.138783+00:00",
     "event_filter": "PPI",
-    "csv": "/home/jtnq/backtesting-data/news_official_2016_2026.csv",
+    "csv": "/Users/angelo/news-cal-official/news_official_2016_2026.csv",
     "variants": {
       "no_be": "Pure SL/TP/timeout, no breakeven move",
       "be_50": "MFE>=50% TP-dist arms BE; bar touching entry exits flat",

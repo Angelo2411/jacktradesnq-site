@@ -34,8 +34,6 @@ After testing 24 combos across 102 NFP releases:
 - **Take profit: 50 pts**
 - Fill rate ~24%
 
-### Explore the data — your filters, your PDF
 
-<div data-explorer="nfp"></div>
 
 <a class="bd-btn bd-btn-secondary" href="/downloads/backtested-data/nfp-fullport.pdf" download>Download — NFP Fullport PDF</a>

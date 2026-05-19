@@ -15,7 +15,6 @@ ICT post-news IFVG entry on 8:30 ET GDP **advance releases** (1 per quarter — 
 
 Take the trade **only if ES also reaches its target side** during the same 8:30→11:00 window. ES not following = fakeout, skip.
 
-<div data-explorer="gdp-ifvg-smt"></div>
 
 ES SMT filter cut 1 setup — PF 1.25 → 1.29, net +18.8 → +21 NQ pts on 15 advance GDP setups.
 

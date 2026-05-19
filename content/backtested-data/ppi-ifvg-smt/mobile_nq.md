@@ -15,7 +15,6 @@ ICT post-news IFVG entry on 8:30 ET PPI releases, with optional **ES SMT confirm
 
 Take the trade **only if ES also reaches its target side** during the same 8:30→11:00 window. ES not following = fakeout, skip.
 
-<div data-explorer="ppi-ifvg-smt"></div>
 
 ES SMT filter cut 14 setups — PF 1.11 → 2.83, net +40 → +254 NQ pts on 46 PPI events.
 

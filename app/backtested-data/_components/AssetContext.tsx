@@ -1,7 +1,7 @@
 'use client';
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 
-export type AssetKey = 'nq' | 'gc';
+export type AssetKey = 'nq' | 'gc' | 'all';
 
 type Ctx = { asset: AssetKey; setAsset: (a: AssetKey) => void };
 const AssetCtx = createContext<Ctx | null>(null);
@@ -9,13 +9,15 @@ const AssetCtx = createContext<Ctx | null>(null);
 export function AssetProvider({ children }: { children: ReactNode }) {
   const [asset, setAssetState] = useState<AssetKey>('nq');
 
-  // Hydrate from URL query OR localStorage on mount
+  // Hydrate from URL query > slug suffix > localStorage on mount
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const fromUrl = params.get('asset');
-    if (fromUrl === 'gc' || fromUrl === 'nq') { setAssetState(fromUrl); return; }
+    if (fromUrl === 'gc' || fromUrl === 'nq' || fromUrl === 'all') { setAssetState(fromUrl); return; }
+    const path = window.location.pathname.replace(/\/+$/, '');
+    if (/-gc$/.test(path)) { setAssetState('gc'); return; }
     const stored = localStorage.getItem('jtnq-asset');
-    if (stored === 'gc' || stored === 'nq') setAssetState(stored);
+    if (stored === 'gc' || stored === 'nq' || stored === 'all') setAssetState(stored as AssetKey);
   }, []);
 
   const setAsset = (a: AssetKey) => {

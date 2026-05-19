@@ -16,7 +16,6 @@ ICT post-news IFVG entry on 8:30 ET NFP releases, with optional **SI SMT confirm
 
 Take the trade **only if SI also reaches the same target** within 2h30 after the release. SI not following = fakeout, skip.
 
-<div data-explorer="nfp-ifvg-smt"></div>
 
 Without SI SMT: 68 trades, PF 0.87, net -20.0 GC pts. With SI SMT (8 trades): WR 62%, PF 6.18, net +31.6 GC pts.
 

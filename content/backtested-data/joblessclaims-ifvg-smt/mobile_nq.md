@@ -15,7 +15,6 @@ ICT post-news IFVG entry on 8:30 ET Jobless Claims releases, with optional **ES 
 
 Take the trade **only if ES also reaches its target side** during the same 8:30→11:00 window. ES not following = fakeout, skip.
 
-<div data-explorer="joblessclaims-ifvg-smt"></div>
 
 ES SMT filter cut 37 setups — PF 1.00 → 2.35, net +1 → +406 NQ pts on 159 Jobless Claims events.
 

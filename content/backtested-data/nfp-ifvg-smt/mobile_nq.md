@@ -15,7 +15,6 @@ ICT post-news IFVG entry on the 8:30 ET NFP releases, with optional **ES SMT con
 
 Take the trade **only if ES also reaches its target side** during the same 8:30→11:00 window. ES not following = fakeout, skip.
 
-<div data-explorer="nfp-ifvg-smt"></div>
 
 ES SMT filter cut **7 LOSSES, 0 WINS** — PF 1.08 → 1.79, net +29 → +171 NQ pts.
 

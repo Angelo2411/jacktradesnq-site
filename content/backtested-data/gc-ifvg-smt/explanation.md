@@ -31,4 +31,3 @@ NQ and ES are equity index futures — near-perfect correlation, SMT divergence 
 
 594 total setups, 52 SMT-filtered trades. No statistically significant edge observed on Gold 8:30 news IFVG across 9 event types. AI-assisted analysis — not financial advice.
 
-<div data-explorer="gc-ifvg-smt"></div>

@@ -15,7 +15,6 @@ ICT post-news IFVG entry on 8:30 ET Empire State releases, with optional **SI SM
 
 Take the trade **only if SI also reaches the same target** within 2h30 after the release. SI not following = fakeout, skip.
 
-<div data-explorer="empirestate-ifvg-smt"></div>
 
 Without SI SMT: 19 trades, PF 0.01, net -20.4 GC pts. With SI SMT: 0 trades — no SI confirmation ever triggered.
 

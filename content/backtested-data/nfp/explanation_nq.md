@@ -36,19 +36,7 @@ These datas were my own tests to see which metrics are the best to fullport acco
 
 ### Setup
 
-Bilateral straddle, full-port, **no stop loss**:
-- Buy stop pending order at release price **+ Offset** (in NQ points)
-- Sell stop pending order at release price **− Offset** (OCO)
-- Take Profit at fill price **± TP**
-- If TP is not hit within 30 min → position closed
-- Entry offsets tested in {45, 60, 80, 100, 120, 150}, TPs in {20, 30, 50, 75} → 24 combos
-
-All values below in **NQ points** (1 pt ≈ $20 on 1 NQ contract / $2 on 1 MNQ).
-
-**Quick glossary:**
-- **Offset** — distance in points between the release price and where each pending stop order is placed.
-- **OCO** ("One Cancels Other") — the two pending stops are linked. Whichever gets touched first fills, the other auto-cancels.
-- **Filled** — the market triggered one of your stops; you have an open position. Not filled = no position, PnL stays 0.
+OCO buy-stop / sell-stop ±Offset from release close, TP at fill ±TP, no SL, 30-min expiry. 24 combos tested (Offset ∈ {45, 60, 80, 100, 120, 150} × TP ∈ {20, 30, 50, 75}). 1 NQ pt ≈ $20 / 1 MNQ pt ≈ $2.
 
 ### Where to place your stop and TP
 
@@ -58,12 +46,6 @@ After testing 24 combos across 102 NFP releases:
 - **Take profit: 50 pts** — large enough to clear the chop, tight enough to actually get hit.
 
 Fill rate ~24% — you skip the NFPs that don't reach ±100 pts in 60 seconds. When you do fill, you're entering on the real directional leg.
-
-### Explore the data — your filters, your PDF
-
-Pick a year, entry offset, TP target and side; the table refreshes live and you can download a tailored PDF report.
-
-<div data-explorer="nfp"></div>
 
 ### Why Offset Size Matters
 

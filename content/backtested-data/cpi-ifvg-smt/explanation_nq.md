@@ -1,23 +1,10 @@
 ICT post-news IFVG entry on 8:30 ET CPI releases, with optional **ES SMT confirmation filter**. Tested 2016 → 2026 on NQ 1m.
 
-### Setup Logic
-
-Mark out the data high/low (range price was trading in right before 8:30 ET). Wait for price to sweep one side, then wait for an FVG to form on the rejection. Entry on the IFVG break (close back inside the range). SL on the sweep extreme. TP on the opposite liquidity.
-
-**Invalidation**: if the opposite side of the range also gets swept BEFORE the IFVG break (entry) — the target liquidity has already been taken, no edge left → skip the setup.
-
-### ES SMT Confirmation Filter
-
-A trade is kept **only if ES (E-mini S&P 500) also reaches the same target** within 2h30 after the release.
-
-- NQ SHORT (sweep UP) → ES must sweep its low
-- NQ LONG (sweep DOWN) → ES must sweep its high
-
-If ES never reaches its target by 11:00 ET → trade was a one-sided NQ move, excluded from the SMT-filtered stats.
+Sweep the pre-news data high/low, wait for an FVG on the rejection, enter on the IFVG break back inside range · SL = sweep ± 1 tick · TP = opposite liquidity (pre-news pivot). ES SMT keeps only trades where ES also reaches its mirror target within 2h30 of the release.
 
 ### Performance — NQ 10y
 
-Without SMT: 54 trades, PF 0.60, net -338 NQ pts. With SMT: 32 trades remain, PF 1.54, net +175 NQ pts. Year-by-year breakdown in the explorer below + Full PDF download.
+Without SMT: 54 trades, PF 0.60, net -338 NQ pts. With SMT: 32 trades remain, PF 1.54, net +175 NQ pts.
 
 ### Why It Works
 
@@ -26,5 +13,3 @@ NQ and ES are highly correlated indices. When NQ reaches the target side but ES 
 ### Disclaimer
 
 Sample size 32 SMT-filtered trades is statistically thin; treat as indicative not predictive. AI-assisted analysis — not financial advice.
-
-<div data-explorer="cpi-ifvg-smt"></div>
