@@ -1,5 +1,6 @@
 import { getAllStrategyStats, getMarketStudyStats } from '@/lib/study-stats';
 import DataTables from './_components/DataTables';
+import DataSubtitle from './_components/DataSubtitle';
 
 export default function BacktestedHub() {
   const strats = getAllStrategyStats();
@@ -19,9 +20,7 @@ export default function BacktestedHub() {
       <h1 className="v3-hero-h1">
         The data<span className="v3-hero-dot">.</span>
       </h1>
-      <p className="v3-hero-sub">
-        10 years of NQ &amp; GC futures · 1-min bars · AI-backtested entry models.
-      </p>
+      <DataSubtitle />
 
       {/* Client component handles asset filtering + filters + KPIs + both tables */}
       <DataTables
