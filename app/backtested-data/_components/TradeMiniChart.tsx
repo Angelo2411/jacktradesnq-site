@@ -272,8 +272,10 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         { time: exitSec, value: slPrice },
       ]);
 
-      // tp1_be variant: full TP = data_high/low so showing both is redundant — Data H/L lines carry it.
-      if (variant !== 'tp1_be') {
+      // tp1_be variant: full TP = data_high/low so it's redundant — skip the line UNLESS this trade
+      // actually hit full TP (outcome=win means the remainder closed at TP, not at BE).
+      const showFullTp = variant !== 'tp1_be' || outcome === 'win';
+      if (showFullTp) {
         const tpSegment = chart.addSeries(LineSeries, {
           color: cUp,
           lineWidth: 1,
@@ -532,7 +534,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
             {pnlSign}{pnl_pts.toFixed(2)} pts
           </span>
           <span style={{ marginLeft: 'auto', display: 'flex', gap: 10, flexWrap: 'wrap', fontVariantNumeric: 'tabular-nums' }}>
-            {variant !== 'tp1_be' && tpPrice !== undefined && (<LegendPill color="#4a8c3f" label="TP" value={tpPrice} />)}
+            {(variant !== 'tp1_be' || outcome === 'win') && tpPrice !== undefined && (<LegendPill color="#4a8c3f" label="TP" value={tpPrice} />)}
             {variant === 'tp1_be' && tpPrice !== undefined && entryPriceProp !== undefined && (
               <LegendPill color="#4a8c3f" label="TP1" value={(entryPriceProp + 0.5 * (tpPrice - entryPriceProp)).toFixed(2)} />
             )}
