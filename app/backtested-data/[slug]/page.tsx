@@ -395,7 +395,26 @@ export default async function BacktestedDetail({ params }: PageProps) {
         )}
       </div>
 
-      <div className="bd-ctas">
+      {slug === 'cpi-day-stats' ? (
+        <div style={{ marginTop: 48 }}>
+          <StraddleTrades
+            eventShort="cpi"
+            jsonUrl="/data/cpi-straddle-trades.json"
+            offsetLabel="Stop offset"
+          />
+        </div>
+      ) : null}
+      {slug === 'nfp' ? (
+        <div style={{ marginTop: 48 }}>
+          <StraddleTrades
+            eventShort="nfp"
+            jsonUrl="/data/nfp-straddle-trades.json"
+            offsetLabel="Entry offset"
+          />
+        </div>
+      ) : null}
+
+      <div className="bd-ctas" style={{ marginTop: 48 }}>
         {entry.category === 'tradingview' && entry.tradingviewUrl ? (
           <a className="bd-btn bd-btn-primary" href={entry.tradingviewUrl} target="_blank" rel="noreferrer noopener">
             Open on TradingView
@@ -421,29 +440,6 @@ export default async function BacktestedDetail({ params }: PageProps) {
           captured in historical samples may decay or disappear in live conditions.
         </p>
       </div>
-
-      {slug === 'cpi-day-stats' ? (
-        <div style={{ marginTop: 48 }}>
-          <StraddleTrades
-            eventShort="cpi"
-            jsonUrl="/data/cpi-straddle-trades.json"
-            offsetLabel="Stop offset"
-            pdfUrl="/downloads/backtested-data/cpi-fullport.pdf"
-            pdfLabel="Download — CPI Fullport PDF"
-          />
-        </div>
-      ) : null}
-      {slug === 'nfp' ? (
-        <div style={{ marginTop: 48 }}>
-          <StraddleTrades
-            eventShort="nfp"
-            jsonUrl="/data/nfp-straddle-trades.json"
-            offsetLabel="Entry offset"
-            pdfUrl="/downloads/backtested-data/nfp-fullport.pdf"
-            pdfLabel="Download — NFP Fullport PDF"
-          />
-        </div>
-      ) : null}
 
       {pager}
     </article>
