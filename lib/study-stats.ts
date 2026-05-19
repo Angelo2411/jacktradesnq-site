@@ -457,9 +457,7 @@ function normTs(ts: string): string {
 }
 
 function loadPriceOverlay(slug: string): Map<string, PriceFields> | null {
-  // Overlay files only exist for NQ slugs (no -gc suffix)
-  const overlaySlug = slug.endsWith('-gc') ? null : slug;
-  if (!overlaySlug) return null;
+  const overlaySlug = slug;
   const p = path.join(dataDir, `${overlaySlug}-trade-prices.json`);
   if (!fs.existsSync(p)) return null;
   try {
