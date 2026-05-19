@@ -221,19 +221,7 @@ export default function StraddleMiniChart({
       { time: chartEndSec as UTCTimestamp, value: tpSell },
     ]);
 
-    // Highlight the filled side: gold solid segment from fill_ts → exit_ts
-    if (filledSide && fillTs && fillPrice !== null && fillPrice !== undefined && exitTs && exitPrice !== null && exitPrice !== undefined) {
-      const fillSec = Math.floor(new Date(fillTs).getTime() / 1000) as UTCTimestamp;
-      const exitSec = Math.floor(new Date(exitTs).getTime() / 1000) as UTCTimestamp;
-      const fillSegment = chart.addSeries(LineSeries, {
-        color: cGold, lineWidth: 2, lineStyle: LineStyle.Solid,
-        priceLineVisible: false, lastValueVisible: false,
-      });
-      fillSegment.setData([
-        { time: fillSec, value: fillPrice },
-        { time: exitSec, value: exitPrice },
-      ]);
-    }
+    // (Removed misleading diagonal fillSegment — outcome label + PnL pill explain the result.)
 
     // Y-axis: focus on the active range (entry ± max(X+Y) with 15% pad)
     const levels = [entryPrice, buyStop, sellStop, tpBuy, tpSell];
