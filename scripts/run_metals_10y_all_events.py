@@ -60,6 +60,7 @@ EVENTS = [
     "EmpireState",
     "EmploymentCostIndex",
     "FOMC",
+    "ADP",
 ]
 
 # Mapping event_type → site slug (used to generate per-event _gc.json files)
@@ -74,6 +75,7 @@ EVENT_SLUG: dict[str, str] = {
     "EmpireState":          "empirestate-ifvg-smt",
     "EmploymentCostIndex":  "employmentcostindex-ifvg-smt",
     "FOMC":                 "fomc-ifvg-smt",
+    "ADP":                  "adp-ifvg-smt",
 }
 
 
@@ -83,6 +85,7 @@ EVENT_RELEASE_TIME: dict[str, tuple[int, int]] = {
     "PCE": (8, 30), "GDP": (8, 30), "JoblessClaims": (8, 30),
     "EmpireState": (8, 30), "EmploymentCostIndex": (8, 30),
     "FOMC": (14, 0),
+    "ADP": (8, 15),
 }
 
 # Sweep window: release hour + N hours offset per event type
@@ -91,6 +94,7 @@ EVENT_SWEEP_HOURS: dict[str, int] = {
     "PCE": 3, "GDP": 3, "JoblessClaims": 3,
     "EmpireState": 3, "EmploymentCostIndex": 3,
     "FOMC": 3,
+    "ADP": 3,  # sweep window 8:16 → 11:15 ET (release_h + 3)
 }
 
 
