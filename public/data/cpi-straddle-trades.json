@@ -1,6 +1,6 @@
 {
   "event": "CPI",
-  "generated_at": "2026-05-19T00:04:24.808105+00:00",
+  "generated_at": "2026-05-19T00:40:44.521076+00:00",
   "combos": [
     {
       "X": 25,
@@ -1261,10 +1261,10 @@
           "filled_side": "long",
           "fill_ts": "2021-10-13T12:30:00+00:00",
           "fill_price": 14738.75,
-          "exit_ts": "2021-10-13T13:27:00+00:00",
-          "exit_price": 14753.75,
-          "pnl": 15.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2021-10-13T13:00:00+00:00",
+          "exit_price": 14681.75,
+          "pnl": -57.0,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2021-11-10",
@@ -1297,10 +1297,10 @@
           "filled_side": "short",
           "fill_ts": "2021-12-10T13:30:00+00:00",
           "fill_price": 16166.75,
-          "exit_ts": "2021-12-10T16:05:00+00:00",
-          "exit_price": 16151.75,
-          "pnl": 15.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2021-12-10T14:00:00+00:00",
+          "exit_price": 16285.5,
+          "pnl": -118.75,
+          "outcome": "expired_short_loss"
         },
         {
           "date": "2022-01-12",
@@ -1315,10 +1315,10 @@
           "filled_side": "short",
           "fill_ts": "2022-01-12T13:30:00+00:00",
           "fill_price": 15859.0,
-          "exit_ts": "2022-01-12T15:52:00+00:00",
-          "exit_price": 15844.0,
-          "pnl": 15.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2022-01-12T14:00:00+00:00",
+          "exit_price": 15967.75,
+          "pnl": -108.75,
+          "outcome": "expired_short_loss"
         },
         {
           "date": "2022-02-08",
@@ -1603,10 +1603,10 @@
           "filled_side": "long",
           "fill_ts": "2023-03-14T12:30:00+00:00",
           "fill_price": 12065.0,
-          "exit_ts": "2023-03-14T13:16:00+00:00",
-          "exit_price": 12080.0,
-          "pnl": 15.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2023-03-14T13:00:00+00:00",
+          "exit_price": 12060.75,
+          "pnl": -4.25,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2023-04-12",
@@ -1711,10 +1711,10 @@
           "filled_side": "long",
           "fill_ts": "2023-09-13T12:30:00+00:00",
           "fill_price": 15325.75,
-          "exit_ts": "2023-09-13T13:31:00+00:00",
-          "exit_price": 15340.75,
-          "pnl": 15.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2023-09-13T13:00:00+00:00",
+          "exit_price": 15294.0,
+          "pnl": -31.75,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2023-10-12",
@@ -1783,9 +1783,9 @@
           "filled_side": "long",
           "fill_ts": "2024-01-11T13:30:00+00:00",
           "fill_price": 17050.75,
-          "exit_ts": "2024-01-11T18:35:00+00:00",
-          "exit_price": 16896.25,
-          "pnl": -154.5,
+          "exit_ts": "2024-01-11T14:00:00+00:00",
+          "exit_price": 16910.25,
+          "pnl": -140.5,
           "outcome": "expired_long_loss"
         },
         {
@@ -1819,9 +1819,9 @@
           "filled_side": "long",
           "fill_ts": "2024-02-13T13:30:00+00:00",
           "fill_price": 17867.0,
-          "exit_ts": "2024-02-13T18:35:00+00:00",
-          "exit_price": 17677.5,
-          "pnl": -189.5,
+          "exit_ts": "2024-02-13T14:00:00+00:00",
+          "exit_price": 17653.5,
+          "pnl": -213.5,
           "outcome": "expired_long_loss"
         },
         {
@@ -1963,10 +1963,10 @@
           "filled_side": "long",
           "fill_ts": "2024-10-10T12:30:00+00:00",
           "fill_price": 20467.5,
-          "exit_ts": "2024-10-10T16:00:00+00:00",
-          "exit_price": 20482.5,
-          "pnl": 15.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2024-10-10T13:00:00+00:00",
+          "exit_price": 20361.0,
+          "pnl": -106.5,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2024-11-13",
@@ -2161,10 +2161,10 @@
           "filled_side": "long",
           "fill_ts": "2025-09-11T12:30:00+00:00",
           "fill_price": 23973.0,
-          "exit_ts": "2025-09-11T13:30:00+00:00",
-          "exit_price": 23988.0,
-          "pnl": 15.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2025-09-11T13:00:00+00:00",
+          "exit_price": 23959.5,
+          "pnl": -13.5,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2025-10-24",
@@ -2815,10 +2815,10 @@
           "filled_side": "long",
           "fill_ts": "2018-10-11T12:30:00+00:00",
           "fill_price": 7031.5,
-          "exit_ts": "2018-10-11T13:07:00+00:00",
-          "exit_price": 7051.5,
-          "pnl": 20.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2018-10-11T13:00:00+00:00",
+          "exit_price": 7028.25,
+          "pnl": -3.25,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2018-11-14",
@@ -3535,10 +3535,10 @@
           "filled_side": "long",
           "fill_ts": "2021-10-13T12:30:00+00:00",
           "fill_price": 14738.75,
-          "exit_ts": "2021-10-13T13:31:00+00:00",
-          "exit_price": 14758.75,
-          "pnl": 20.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2021-10-13T13:00:00+00:00",
+          "exit_price": 14681.75,
+          "pnl": -57.0,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2021-11-10",
@@ -3571,10 +3571,10 @@
           "filled_side": "short",
           "fill_ts": "2021-12-10T13:30:00+00:00",
           "fill_price": 16166.75,
-          "exit_ts": "2021-12-10T16:05:00+00:00",
-          "exit_price": 16146.75,
-          "pnl": 20.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2021-12-10T14:00:00+00:00",
+          "exit_price": 16285.5,
+          "pnl": -118.75,
+          "outcome": "expired_short_loss"
         },
         {
           "date": "2022-01-12",
@@ -3589,10 +3589,10 @@
           "filled_side": "short",
           "fill_ts": "2022-01-12T13:30:00+00:00",
           "fill_price": 15859.0,
-          "exit_ts": "2022-01-12T15:53:00+00:00",
-          "exit_price": 15839.0,
-          "pnl": 20.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2022-01-12T14:00:00+00:00",
+          "exit_price": 15967.75,
+          "pnl": -108.75,
+          "outcome": "expired_short_loss"
         },
         {
           "date": "2022-02-08",
@@ -3877,10 +3877,10 @@
           "filled_side": "long",
           "fill_ts": "2023-03-14T12:30:00+00:00",
           "fill_price": 12065.0,
-          "exit_ts": "2023-03-14T13:30:00+00:00",
-          "exit_price": 12085.0,
-          "pnl": 20.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2023-03-14T13:00:00+00:00",
+          "exit_price": 12060.75,
+          "pnl": -4.25,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2023-04-12",
@@ -3985,10 +3985,10 @@
           "filled_side": "long",
           "fill_ts": "2023-09-13T12:30:00+00:00",
           "fill_price": 15325.75,
-          "exit_ts": "2023-09-13T13:31:00+00:00",
-          "exit_price": 15345.75,
-          "pnl": 20.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2023-09-13T13:00:00+00:00",
+          "exit_price": 15294.0,
+          "pnl": -31.75,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2023-10-12",
@@ -4021,9 +4021,9 @@
           "filled_side": "short",
           "fill_ts": "2023-11-14T13:30:00+00:00",
           "fill_price": 15567.5,
-          "exit_ts": "2023-11-14T18:35:00+00:00",
-          "exit_price": 15877.0,
-          "pnl": -309.5,
+          "exit_ts": "2023-11-14T14:00:00+00:00",
+          "exit_price": 15806.75,
+          "pnl": -239.25,
           "outcome": "expired_short_loss"
         },
         {
@@ -4057,9 +4057,9 @@
           "filled_side": "long",
           "fill_ts": "2024-01-11T13:30:00+00:00",
           "fill_price": 17050.75,
-          "exit_ts": "2024-01-11T18:35:00+00:00",
-          "exit_price": 16896.25,
-          "pnl": -154.5,
+          "exit_ts": "2024-01-11T14:00:00+00:00",
+          "exit_price": 16910.25,
+          "pnl": -140.5,
           "outcome": "expired_long_loss"
         },
         {
@@ -4093,9 +4093,9 @@
           "filled_side": "long",
           "fill_ts": "2024-02-13T13:30:00+00:00",
           "fill_price": 17867.0,
-          "exit_ts": "2024-02-13T18:35:00+00:00",
-          "exit_price": 17677.5,
-          "pnl": -189.5,
+          "exit_ts": "2024-02-13T14:00:00+00:00",
+          "exit_price": 17653.5,
+          "pnl": -213.5,
           "outcome": "expired_long_loss"
         },
         {
@@ -4237,10 +4237,10 @@
           "filled_side": "long",
           "fill_ts": "2024-10-10T12:30:00+00:00",
           "fill_price": 20467.5,
-          "exit_ts": "2024-10-10T16:01:00+00:00",
-          "exit_price": 20487.5,
-          "pnl": 20.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2024-10-10T13:00:00+00:00",
+          "exit_price": 20361.0,
+          "pnl": -106.5,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2024-11-13",
@@ -4363,9 +4363,9 @@
           "filled_side": "short",
           "fill_ts": "2025-05-13T12:30:00+00:00",
           "fill_price": 20962.75,
-          "exit_ts": "2025-05-13T17:35:00+00:00",
-          "exit_price": 21341.0,
-          "pnl": -378.25,
+          "exit_ts": "2025-05-13T13:00:00+00:00",
+          "exit_price": 21000.5,
+          "pnl": -37.75,
           "outcome": "expired_short_loss"
         },
         {
@@ -4435,10 +4435,10 @@
           "filled_side": "long",
           "fill_ts": "2025-09-11T12:30:00+00:00",
           "fill_price": 23973.0,
-          "exit_ts": "2025-09-11T13:30:00+00:00",
-          "exit_price": 23993.0,
-          "pnl": 20.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2025-09-11T13:00:00+00:00",
+          "exit_price": 23959.5,
+          "pnl": -13.5,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2025-10-24",
@@ -4543,10 +4543,10 @@
           "filled_side": "short",
           "fill_ts": "2026-04-10T12:30:00+00:00",
           "fill_price": 25311.25,
-          "exit_ts": "2026-04-10T13:40:00+00:00",
-          "exit_price": 25291.25,
-          "pnl": 20.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2026-04-10T13:00:00+00:00",
+          "exit_price": 25303.75,
+          "pnl": 7.5,
+          "outcome": "expired_short_win"
         }
       ]
     },
@@ -5089,10 +5089,10 @@
           "filled_side": "long",
           "fill_ts": "2018-10-11T12:30:00+00:00",
           "fill_price": 7031.5,
-          "exit_ts": "2018-10-11T13:24:00+00:00",
-          "exit_price": 7056.5,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2018-10-11T13:00:00+00:00",
+          "exit_price": 7028.25,
+          "pnl": -3.25,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2018-11-14",
@@ -5809,10 +5809,10 @@
           "filled_side": "long",
           "fill_ts": "2021-10-13T12:30:00+00:00",
           "fill_price": 14738.75,
-          "exit_ts": "2021-10-13T13:31:00+00:00",
-          "exit_price": 14763.75,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2021-10-13T13:00:00+00:00",
+          "exit_price": 14681.75,
+          "pnl": -57.0,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2021-11-10",
@@ -5845,10 +5845,10 @@
           "filled_side": "short",
           "fill_ts": "2021-12-10T13:30:00+00:00",
           "fill_price": 16166.75,
-          "exit_ts": "2021-12-10T16:07:00+00:00",
-          "exit_price": 16141.75,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2021-12-10T14:00:00+00:00",
+          "exit_price": 16285.5,
+          "pnl": -118.75,
+          "outcome": "expired_short_loss"
         },
         {
           "date": "2022-01-12",
@@ -5863,10 +5863,10 @@
           "filled_side": "short",
           "fill_ts": "2022-01-12T13:30:00+00:00",
           "fill_price": 15859.0,
-          "exit_ts": "2022-01-12T16:05:00+00:00",
-          "exit_price": 15834.0,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2022-01-12T14:00:00+00:00",
+          "exit_price": 15967.75,
+          "pnl": -108.75,
+          "outcome": "expired_short_loss"
         },
         {
           "date": "2022-02-08",
@@ -6079,10 +6079,10 @@
           "filled_side": "short",
           "fill_ts": "2022-12-13T13:30:00+00:00",
           "fill_price": 11975.0,
-          "exit_ts": "2022-12-13T15:38:00+00:00",
-          "exit_price": 11950.0,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2022-12-13T14:00:00+00:00",
+          "exit_price": 12160.5,
+          "pnl": -185.5,
+          "outcome": "expired_short_loss"
         },
         {
           "date": "2023-01-12",
@@ -6151,10 +6151,10 @@
           "filled_side": "long",
           "fill_ts": "2023-03-14T12:30:00+00:00",
           "fill_price": 12065.0,
-          "exit_ts": "2023-03-14T13:30:00+00:00",
-          "exit_price": 12090.0,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2023-03-14T13:00:00+00:00",
+          "exit_price": 12060.75,
+          "pnl": -4.25,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2023-04-12",
@@ -6259,10 +6259,10 @@
           "filled_side": "long",
           "fill_ts": "2023-09-13T12:30:00+00:00",
           "fill_price": 15325.75,
-          "exit_ts": "2023-09-13T13:31:00+00:00",
-          "exit_price": 15350.75,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2023-09-13T13:00:00+00:00",
+          "exit_price": 15294.0,
+          "pnl": -31.75,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2023-10-12",
@@ -6295,9 +6295,9 @@
           "filled_side": "short",
           "fill_ts": "2023-11-14T13:30:00+00:00",
           "fill_price": 15567.5,
-          "exit_ts": "2023-11-14T18:35:00+00:00",
-          "exit_price": 15877.0,
-          "pnl": -309.5,
+          "exit_ts": "2023-11-14T14:00:00+00:00",
+          "exit_price": 15806.75,
+          "pnl": -239.25,
           "outcome": "expired_short_loss"
         },
         {
@@ -6331,9 +6331,9 @@
           "filled_side": "long",
           "fill_ts": "2024-01-11T13:30:00+00:00",
           "fill_price": 17050.75,
-          "exit_ts": "2024-01-11T18:35:00+00:00",
-          "exit_price": 16896.25,
-          "pnl": -154.5,
+          "exit_ts": "2024-01-11T14:00:00+00:00",
+          "exit_price": 16910.25,
+          "pnl": -140.5,
           "outcome": "expired_long_loss"
         },
         {
@@ -6367,9 +6367,9 @@
           "filled_side": "long",
           "fill_ts": "2024-02-13T13:30:00+00:00",
           "fill_price": 17867.0,
-          "exit_ts": "2024-02-13T18:35:00+00:00",
-          "exit_price": 17677.5,
-          "pnl": -189.5,
+          "exit_ts": "2024-02-13T14:00:00+00:00",
+          "exit_price": 17653.5,
+          "pnl": -213.5,
           "outcome": "expired_long_loss"
         },
         {
@@ -6511,10 +6511,10 @@
           "filled_side": "long",
           "fill_ts": "2024-10-10T12:30:00+00:00",
           "fill_price": 20467.5,
-          "exit_ts": "2024-10-10T16:11:00+00:00",
-          "exit_price": 20492.5,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2024-10-10T13:00:00+00:00",
+          "exit_price": 20361.0,
+          "pnl": -106.5,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2024-11-13",
@@ -6637,9 +6637,9 @@
           "filled_side": "short",
           "fill_ts": "2025-05-13T12:30:00+00:00",
           "fill_price": 20962.75,
-          "exit_ts": "2025-05-13T17:35:00+00:00",
-          "exit_price": 21341.0,
-          "pnl": -378.25,
+          "exit_ts": "2025-05-13T13:00:00+00:00",
+          "exit_price": 21000.5,
+          "pnl": -37.75,
           "outcome": "expired_short_loss"
         },
         {
@@ -6709,10 +6709,10 @@
           "filled_side": "long",
           "fill_ts": "2025-09-11T12:30:00+00:00",
           "fill_price": 23973.0,
-          "exit_ts": "2025-09-11T14:06:00+00:00",
-          "exit_price": 23998.0,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2025-09-11T13:00:00+00:00",
+          "exit_price": 23959.5,
+          "pnl": -13.5,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2025-10-24",
@@ -6817,10 +6817,10 @@
           "filled_side": "short",
           "fill_ts": "2026-04-10T12:30:00+00:00",
           "fill_price": 25311.25,
-          "exit_ts": "2026-04-10T14:01:00+00:00",
-          "exit_price": 25286.25,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2026-04-10T13:00:00+00:00",
+          "exit_price": 25303.75,
+          "pnl": 7.5,
+          "outcome": "expired_short_win"
         }
       ]
     },
@@ -7363,10 +7363,10 @@
           "filled_side": "long",
           "fill_ts": "2018-10-11T12:30:00+00:00",
           "fill_price": 7036.5,
-          "exit_ts": "2018-10-11T13:07:00+00:00",
-          "exit_price": 7051.5,
-          "pnl": 15.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2018-10-11T13:00:00+00:00",
+          "exit_price": 7028.25,
+          "pnl": -8.25,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2018-11-14",
@@ -8137,10 +8137,10 @@
           "filled_side": "short",
           "fill_ts": "2022-01-12T13:30:00+00:00",
           "fill_price": 15854.0,
-          "exit_ts": "2022-01-12T15:53:00+00:00",
-          "exit_price": 15839.0,
-          "pnl": 15.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2022-01-12T14:00:00+00:00",
+          "exit_price": 15967.75,
+          "pnl": -113.75,
+          "outcome": "expired_short_loss"
         },
         {
           "date": "2022-02-08",
@@ -8425,10 +8425,10 @@
           "filled_side": "long",
           "fill_ts": "2023-03-14T12:30:00+00:00",
           "fill_price": 12070.0,
-          "exit_ts": "2023-03-14T13:30:00+00:00",
-          "exit_price": 12085.0,
-          "pnl": 15.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2023-03-14T13:00:00+00:00",
+          "exit_price": 12060.75,
+          "pnl": -9.25,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2023-04-12",
@@ -8569,9 +8569,9 @@
           "filled_side": "short",
           "fill_ts": "2023-11-14T13:30:00+00:00",
           "fill_price": 15562.5,
-          "exit_ts": "2023-11-14T18:35:00+00:00",
-          "exit_price": 15877.0,
-          "pnl": -314.5,
+          "exit_ts": "2023-11-14T14:00:00+00:00",
+          "exit_price": 15806.75,
+          "pnl": -244.25,
           "outcome": "expired_short_loss"
         },
         {
@@ -8605,9 +8605,9 @@
           "filled_side": "long",
           "fill_ts": "2024-01-11T13:30:00+00:00",
           "fill_price": 17055.75,
-          "exit_ts": "2024-01-11T18:35:00+00:00",
-          "exit_price": 16896.25,
-          "pnl": -159.5,
+          "exit_ts": "2024-01-11T14:00:00+00:00",
+          "exit_price": 16910.25,
+          "pnl": -145.5,
           "outcome": "expired_long_loss"
         },
         {
@@ -8785,10 +8785,10 @@
           "filled_side": "long",
           "fill_ts": "2024-10-10T12:30:00+00:00",
           "fill_price": 20472.5,
-          "exit_ts": "2024-10-10T16:01:00+00:00",
-          "exit_price": 20487.5,
-          "pnl": 15.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2024-10-10T13:00:00+00:00",
+          "exit_price": 20361.0,
+          "pnl": -111.5,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2024-11-13",
@@ -8911,9 +8911,9 @@
           "filled_side": "short",
           "fill_ts": "2025-05-13T12:30:00+00:00",
           "fill_price": 20957.75,
-          "exit_ts": "2025-05-13T17:35:00+00:00",
-          "exit_price": 21341.0,
-          "pnl": -383.25,
+          "exit_ts": "2025-05-13T13:00:00+00:00",
+          "exit_price": 21000.5,
+          "pnl": -42.75,
           "outcome": "expired_short_loss"
         },
         {
@@ -9091,10 +9091,10 @@
           "filled_side": "short",
           "fill_ts": "2026-04-10T12:30:00+00:00",
           "fill_price": 25306.25,
-          "exit_ts": "2026-04-10T13:40:00+00:00",
-          "exit_price": 25291.25,
-          "pnl": 15.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2026-04-10T13:00:00+00:00",
+          "exit_price": 25303.75,
+          "pnl": 2.5,
+          "outcome": "expired_short_win"
         }
       ]
     },
@@ -9637,10 +9637,10 @@
           "filled_side": "long",
           "fill_ts": "2018-10-11T12:30:00+00:00",
           "fill_price": 7036.5,
-          "exit_ts": "2018-10-11T13:24:00+00:00",
-          "exit_price": 7056.5,
-          "pnl": 20.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2018-10-11T13:00:00+00:00",
+          "exit_price": 7028.25,
+          "pnl": -8.25,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2018-11-14",
@@ -10411,10 +10411,10 @@
           "filled_side": "short",
           "fill_ts": "2022-01-12T13:30:00+00:00",
           "fill_price": 15854.0,
-          "exit_ts": "2022-01-12T16:05:00+00:00",
-          "exit_price": 15834.0,
-          "pnl": 20.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2022-01-12T14:00:00+00:00",
+          "exit_price": 15967.75,
+          "pnl": -113.75,
+          "outcome": "expired_short_loss"
         },
         {
           "date": "2022-02-08",
@@ -10627,10 +10627,10 @@
           "filled_side": "short",
           "fill_ts": "2022-12-13T13:30:00+00:00",
           "fill_price": 11970.0,
-          "exit_ts": "2022-12-13T15:38:00+00:00",
-          "exit_price": 11950.0,
-          "pnl": 20.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2022-12-13T14:00:00+00:00",
+          "exit_price": 12160.5,
+          "pnl": -190.5,
+          "outcome": "expired_short_loss"
         },
         {
           "date": "2023-01-12",
@@ -10699,10 +10699,10 @@
           "filled_side": "long",
           "fill_ts": "2023-03-14T12:30:00+00:00",
           "fill_price": 12070.0,
-          "exit_ts": "2023-03-14T13:30:00+00:00",
-          "exit_price": 12090.0,
-          "pnl": 20.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2023-03-14T13:00:00+00:00",
+          "exit_price": 12060.75,
+          "pnl": -9.25,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2023-04-12",
@@ -10843,9 +10843,9 @@
           "filled_side": "short",
           "fill_ts": "2023-11-14T13:30:00+00:00",
           "fill_price": 15562.5,
-          "exit_ts": "2023-11-14T18:35:00+00:00",
-          "exit_price": 15877.0,
-          "pnl": -314.5,
+          "exit_ts": "2023-11-14T14:00:00+00:00",
+          "exit_price": 15806.75,
+          "pnl": -244.25,
           "outcome": "expired_short_loss"
         },
         {
@@ -10879,9 +10879,9 @@
           "filled_side": "long",
           "fill_ts": "2024-01-11T13:30:00+00:00",
           "fill_price": 17055.75,
-          "exit_ts": "2024-01-11T18:35:00+00:00",
-          "exit_price": 16896.25,
-          "pnl": -159.5,
+          "exit_ts": "2024-01-11T14:00:00+00:00",
+          "exit_price": 16910.25,
+          "pnl": -145.5,
           "outcome": "expired_long_loss"
         },
         {
@@ -11059,10 +11059,10 @@
           "filled_side": "long",
           "fill_ts": "2024-10-10T12:30:00+00:00",
           "fill_price": 20472.5,
-          "exit_ts": "2024-10-10T16:11:00+00:00",
-          "exit_price": 20492.5,
-          "pnl": 20.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2024-10-10T13:00:00+00:00",
+          "exit_price": 20361.0,
+          "pnl": -111.5,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2024-11-13",
@@ -11185,9 +11185,9 @@
           "filled_side": "short",
           "fill_ts": "2025-05-13T12:30:00+00:00",
           "fill_price": 20957.75,
-          "exit_ts": "2025-05-13T17:35:00+00:00",
-          "exit_price": 21341.0,
-          "pnl": -383.25,
+          "exit_ts": "2025-05-13T13:00:00+00:00",
+          "exit_price": 21000.5,
+          "pnl": -42.75,
           "outcome": "expired_short_loss"
         },
         {
@@ -11365,10 +11365,10 @@
           "filled_side": "short",
           "fill_ts": "2026-04-10T12:30:00+00:00",
           "fill_price": 25306.25,
-          "exit_ts": "2026-04-10T14:01:00+00:00",
-          "exit_price": 25286.25,
-          "pnl": 20.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2026-04-10T13:00:00+00:00",
+          "exit_price": 25303.75,
+          "pnl": 2.5,
+          "outcome": "expired_short_win"
         }
       ]
     },
@@ -11911,10 +11911,10 @@
           "filled_side": "long",
           "fill_ts": "2018-10-11T12:30:00+00:00",
           "fill_price": 7036.5,
-          "exit_ts": "2018-10-11T13:25:00+00:00",
-          "exit_price": 7061.5,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2018-10-11T13:00:00+00:00",
+          "exit_price": 7028.25,
+          "pnl": -8.25,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2018-11-14",
@@ -12685,10 +12685,10 @@
           "filled_side": "short",
           "fill_ts": "2022-01-12T13:30:00+00:00",
           "fill_price": 15854.0,
-          "exit_ts": "2022-01-12T16:06:00+00:00",
-          "exit_price": 15829.0,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2022-01-12T14:00:00+00:00",
+          "exit_price": 15967.75,
+          "pnl": -113.75,
+          "outcome": "expired_short_loss"
         },
         {
           "date": "2022-02-08",
@@ -12901,10 +12901,10 @@
           "filled_side": "short",
           "fill_ts": "2022-12-13T13:30:00+00:00",
           "fill_price": 11970.0,
-          "exit_ts": "2022-12-13T15:39:00+00:00",
-          "exit_price": 11945.0,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2022-12-13T14:00:00+00:00",
+          "exit_price": 12160.5,
+          "pnl": -190.5,
+          "outcome": "expired_short_loss"
         },
         {
           "date": "2023-01-12",
@@ -12973,10 +12973,10 @@
           "filled_side": "long",
           "fill_ts": "2023-03-14T12:30:00+00:00",
           "fill_price": 12070.0,
-          "exit_ts": "2023-03-14T13:30:00+00:00",
-          "exit_price": 12095.0,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2023-03-14T13:00:00+00:00",
+          "exit_price": 12060.75,
+          "pnl": -9.25,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2023-04-12",
@@ -13117,9 +13117,9 @@
           "filled_side": "short",
           "fill_ts": "2023-11-14T13:30:00+00:00",
           "fill_price": 15562.5,
-          "exit_ts": "2023-11-14T18:35:00+00:00",
-          "exit_price": 15877.0,
-          "pnl": -314.5,
+          "exit_ts": "2023-11-14T14:00:00+00:00",
+          "exit_price": 15806.75,
+          "pnl": -244.25,
           "outcome": "expired_short_loss"
         },
         {
@@ -13153,9 +13153,9 @@
           "filled_side": "long",
           "fill_ts": "2024-01-11T13:30:00+00:00",
           "fill_price": 17055.75,
-          "exit_ts": "2024-01-11T18:35:00+00:00",
-          "exit_price": 16896.25,
-          "pnl": -159.5,
+          "exit_ts": "2024-01-11T14:00:00+00:00",
+          "exit_price": 16910.25,
+          "pnl": -145.5,
           "outcome": "expired_long_loss"
         },
         {
@@ -13333,10 +13333,10 @@
           "filled_side": "long",
           "fill_ts": "2024-10-10T12:30:00+00:00",
           "fill_price": 20472.5,
-          "exit_ts": "2024-10-10T16:11:00+00:00",
-          "exit_price": 20497.5,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2024-10-10T13:00:00+00:00",
+          "exit_price": 20361.0,
+          "pnl": -111.5,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2024-11-13",
@@ -13459,9 +13459,9 @@
           "filled_side": "short",
           "fill_ts": "2025-05-13T12:30:00+00:00",
           "fill_price": 20957.75,
-          "exit_ts": "2025-05-13T17:35:00+00:00",
-          "exit_price": 21341.0,
-          "pnl": -383.25,
+          "exit_ts": "2025-05-13T13:00:00+00:00",
+          "exit_price": 21000.5,
+          "pnl": -42.75,
           "outcome": "expired_short_loss"
         },
         {
@@ -13639,10 +13639,10 @@
           "filled_side": "short",
           "fill_ts": "2026-04-10T12:30:00+00:00",
           "fill_price": 25306.25,
-          "exit_ts": "2026-04-10T14:07:00+00:00",
-          "exit_price": 25281.25,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2026-04-10T13:00:00+00:00",
+          "exit_price": 25303.75,
+          "pnl": 2.5,
+          "outcome": "expired_short_win"
         }
       ]
     },
@@ -14185,10 +14185,10 @@
           "filled_side": "long",
           "fill_ts": "2018-10-11T12:30:00+00:00",
           "fill_price": 7041.5,
-          "exit_ts": "2018-10-11T13:24:00+00:00",
-          "exit_price": 7056.5,
-          "pnl": 15.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2018-10-11T13:00:00+00:00",
+          "exit_price": 7028.25,
+          "pnl": -13.25,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2018-11-14",
@@ -15175,10 +15175,10 @@
           "filled_side": "short",
           "fill_ts": "2022-12-13T13:30:00+00:00",
           "fill_price": 11965.0,
-          "exit_ts": "2022-12-13T15:38:00+00:00",
-          "exit_price": 11950.0,
-          "pnl": 15.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2022-12-13T14:00:00+00:00",
+          "exit_price": 12160.5,
+          "pnl": -195.5,
+          "outcome": "expired_short_loss"
         },
         {
           "date": "2023-01-12",
@@ -15391,9 +15391,9 @@
           "filled_side": "short",
           "fill_ts": "2023-11-14T13:30:00+00:00",
           "fill_price": 15557.5,
-          "exit_ts": "2023-11-14T18:35:00+00:00",
-          "exit_price": 15877.0,
-          "pnl": -319.5,
+          "exit_ts": "2023-11-14T14:00:00+00:00",
+          "exit_price": 15806.75,
+          "pnl": -249.25,
           "outcome": "expired_short_loss"
         },
         {
@@ -15607,10 +15607,10 @@
           "filled_side": "long",
           "fill_ts": "2024-10-10T12:30:00+00:00",
           "fill_price": 20477.5,
-          "exit_ts": "2024-10-10T16:11:00+00:00",
-          "exit_price": 20492.5,
-          "pnl": 15.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2024-10-10T13:00:00+00:00",
+          "exit_price": 20361.0,
+          "pnl": -116.5,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2024-11-13",
@@ -15733,9 +15733,9 @@
           "filled_side": "short",
           "fill_ts": "2025-05-13T12:30:00+00:00",
           "fill_price": 20952.75,
-          "exit_ts": "2025-05-13T17:35:00+00:00",
-          "exit_price": 21341.0,
-          "pnl": -388.25,
+          "exit_ts": "2025-05-13T13:00:00+00:00",
+          "exit_price": 21000.5,
+          "pnl": -47.75,
           "outcome": "expired_short_loss"
         },
         {
@@ -15913,10 +15913,10 @@
           "filled_side": "long",
           "fill_ts": "2026-04-10T12:30:00+00:00",
           "fill_price": 25371.25,
-          "exit_ts": "2026-04-10T15:23:00+00:00",
-          "exit_price": 25386.25,
-          "pnl": 15.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2026-04-10T13:00:00+00:00",
+          "exit_price": 25303.75,
+          "pnl": -67.5,
+          "outcome": "expired_long_loss"
         }
       ]
     },
@@ -16459,10 +16459,10 @@
           "filled_side": "long",
           "fill_ts": "2018-10-11T12:30:00+00:00",
           "fill_price": 7041.5,
-          "exit_ts": "2018-10-11T13:25:00+00:00",
-          "exit_price": 7061.5,
-          "pnl": 20.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2018-10-11T13:00:00+00:00",
+          "exit_price": 7028.25,
+          "pnl": -13.25,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2018-11-14",
@@ -17449,10 +17449,10 @@
           "filled_side": "short",
           "fill_ts": "2022-12-13T13:30:00+00:00",
           "fill_price": 11965.0,
-          "exit_ts": "2022-12-13T15:39:00+00:00",
-          "exit_price": 11945.0,
-          "pnl": 20.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2022-12-13T14:00:00+00:00",
+          "exit_price": 12160.5,
+          "pnl": -195.5,
+          "outcome": "expired_short_loss"
         },
         {
           "date": "2023-01-12",
@@ -17665,9 +17665,9 @@
           "filled_side": "short",
           "fill_ts": "2023-11-14T13:30:00+00:00",
           "fill_price": 15557.5,
-          "exit_ts": "2023-11-14T18:35:00+00:00",
-          "exit_price": 15877.0,
-          "pnl": -319.5,
+          "exit_ts": "2023-11-14T14:00:00+00:00",
+          "exit_price": 15806.75,
+          "pnl": -249.25,
           "outcome": "expired_short_loss"
         },
         {
@@ -17881,10 +17881,10 @@
           "filled_side": "long",
           "fill_ts": "2024-10-10T12:30:00+00:00",
           "fill_price": 20477.5,
-          "exit_ts": "2024-10-10T16:11:00+00:00",
-          "exit_price": 20497.5,
-          "pnl": 20.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2024-10-10T13:00:00+00:00",
+          "exit_price": 20361.0,
+          "pnl": -116.5,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2024-11-13",
@@ -18007,9 +18007,9 @@
           "filled_side": "short",
           "fill_ts": "2025-05-13T12:30:00+00:00",
           "fill_price": 20952.75,
-          "exit_ts": "2025-05-13T17:35:00+00:00",
-          "exit_price": 21341.0,
-          "pnl": -388.25,
+          "exit_ts": "2025-05-13T13:00:00+00:00",
+          "exit_price": 21000.5,
+          "pnl": -47.75,
           "outcome": "expired_short_loss"
         },
         {
@@ -18187,10 +18187,10 @@
           "filled_side": "long",
           "fill_ts": "2026-04-10T12:30:00+00:00",
           "fill_price": 25371.25,
-          "exit_ts": "2026-04-10T15:24:00+00:00",
-          "exit_price": 25391.25,
-          "pnl": 20.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2026-04-10T13:00:00+00:00",
+          "exit_price": 25303.75,
+          "pnl": -67.5,
+          "outcome": "expired_long_loss"
         }
       ]
     },
@@ -18733,10 +18733,10 @@
           "filled_side": "long",
           "fill_ts": "2018-10-11T12:30:00+00:00",
           "fill_price": 7041.5,
-          "exit_ts": "2018-10-11T13:31:00+00:00",
-          "exit_price": 7066.5,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2018-10-11T13:00:00+00:00",
+          "exit_price": 7028.25,
+          "pnl": -13.25,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2018-11-14",
@@ -19669,9 +19669,9 @@
           "filled_side": "long",
           "fill_ts": "2022-09-13T12:30:00+00:00",
           "fill_price": 12868.5,
-          "exit_ts": "2022-09-13T17:35:00+00:00",
-          "exit_price": 12245.25,
-          "pnl": -623.25,
+          "exit_ts": "2022-09-13T13:00:00+00:00",
+          "exit_price": 12376.5,
+          "pnl": -492.0,
           "outcome": "expired_long_loss"
         },
         {
@@ -19723,10 +19723,10 @@
           "filled_side": "short",
           "fill_ts": "2022-12-13T13:30:00+00:00",
           "fill_price": 11965.0,
-          "exit_ts": "2022-12-13T15:39:00+00:00",
-          "exit_price": 11940.0,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2022-12-13T14:00:00+00:00",
+          "exit_price": 12160.5,
+          "pnl": -195.5,
+          "outcome": "expired_short_loss"
         },
         {
           "date": "2023-01-12",
@@ -19939,9 +19939,9 @@
           "filled_side": "short",
           "fill_ts": "2023-11-14T13:30:00+00:00",
           "fill_price": 15557.5,
-          "exit_ts": "2023-11-14T18:35:00+00:00",
-          "exit_price": 15877.0,
-          "pnl": -319.5,
+          "exit_ts": "2023-11-14T14:00:00+00:00",
+          "exit_price": 15806.75,
+          "pnl": -249.25,
           "outcome": "expired_short_loss"
         },
         {
@@ -20119,10 +20119,10 @@
           "filled_side": "long",
           "fill_ts": "2024-08-14T12:30:00+00:00",
           "fill_price": 19140.25,
-          "exit_ts": "2024-08-14T13:30:00+00:00",
-          "exit_price": 19165.25,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2024-08-14T13:00:00+00:00",
+          "exit_price": 19138.5,
+          "pnl": -1.75,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2024-09-11",
@@ -20155,10 +20155,10 @@
           "filled_side": "long",
           "fill_ts": "2024-10-10T12:30:00+00:00",
           "fill_price": 20477.5,
-          "exit_ts": "2024-10-10T16:16:00+00:00",
-          "exit_price": 20502.5,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2024-10-10T13:00:00+00:00",
+          "exit_price": 20361.0,
+          "pnl": -116.5,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2024-11-13",
@@ -20281,9 +20281,9 @@
           "filled_side": "short",
           "fill_ts": "2025-05-13T12:30:00+00:00",
           "fill_price": 20952.75,
-          "exit_ts": "2025-05-13T17:35:00+00:00",
-          "exit_price": 21341.0,
-          "pnl": -388.25,
+          "exit_ts": "2025-05-13T13:00:00+00:00",
+          "exit_price": 21000.5,
+          "pnl": -47.75,
           "outcome": "expired_short_loss"
         },
         {
@@ -20317,10 +20317,10 @@
           "filled_side": "long",
           "fill_ts": "2025-07-15T12:30:00+00:00",
           "fill_price": 23186.0,
-          "exit_ts": "2025-07-15T13:20:00+00:00",
-          "exit_price": 23211.0,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2025-07-15T13:00:00+00:00",
+          "exit_price": 23192.0,
+          "pnl": 6.0,
+          "outcome": "expired_long_win"
         },
         {
           "date": "2025-08-12",
@@ -20443,10 +20443,10 @@
           "filled_side": "long",
           "fill_ts": "2026-03-11T12:30:00+00:00",
           "fill_price": 25035.0,
-          "exit_ts": "2026-03-11T13:30:00+00:00",
-          "exit_price": 25060.0,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2026-03-11T13:00:00+00:00",
+          "exit_price": 24962.5,
+          "pnl": -72.5,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2026-04-10",
@@ -20461,9 +20461,9 @@
           "filled_side": "long",
           "fill_ts": "2026-04-10T12:30:00+00:00",
           "fill_price": 25371.25,
-          "exit_ts": "2026-04-10T17:35:00+00:00",
-          "exit_price": 25238.25,
-          "pnl": -133.0,
+          "exit_ts": "2026-04-10T13:00:00+00:00",
+          "exit_price": 25303.75,
+          "pnl": -67.5,
           "outcome": "expired_long_loss"
         }
       ]
@@ -21007,10 +21007,10 @@
           "filled_side": "long",
           "fill_ts": "2018-10-11T12:30:00+00:00",
           "fill_price": 7046.5,
-          "exit_ts": "2018-10-11T13:25:00+00:00",
-          "exit_price": 7061.5,
-          "pnl": 15.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2018-10-11T13:00:00+00:00",
+          "exit_price": 7028.25,
+          "pnl": -18.25,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2018-11-14",
@@ -21997,10 +21997,10 @@
           "filled_side": "short",
           "fill_ts": "2022-12-13T13:30:00+00:00",
           "fill_price": 11960.0,
-          "exit_ts": "2022-12-13T15:39:00+00:00",
-          "exit_price": 11945.0,
-          "pnl": 15.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2022-12-13T14:00:00+00:00",
+          "exit_price": 12160.5,
+          "pnl": -200.5,
+          "outcome": "expired_short_loss"
         },
         {
           "date": "2023-01-12",
@@ -22213,9 +22213,9 @@
           "filled_side": "short",
           "fill_ts": "2023-11-14T13:30:00+00:00",
           "fill_price": 15552.5,
-          "exit_ts": "2023-11-14T18:35:00+00:00",
-          "exit_price": 15877.0,
-          "pnl": -324.5,
+          "exit_ts": "2023-11-14T14:00:00+00:00",
+          "exit_price": 15806.75,
+          "pnl": -254.25,
           "outcome": "expired_short_loss"
         },
         {
@@ -22555,9 +22555,9 @@
           "filled_side": "short",
           "fill_ts": "2025-05-13T12:30:00+00:00",
           "fill_price": 20947.75,
-          "exit_ts": "2025-05-13T17:35:00+00:00",
-          "exit_price": 21341.0,
-          "pnl": -393.25,
+          "exit_ts": "2025-05-13T13:00:00+00:00",
+          "exit_price": 21000.5,
+          "pnl": -52.75,
           "outcome": "expired_short_loss"
         },
         {
@@ -23281,10 +23281,10 @@
           "filled_side": "long",
           "fill_ts": "2018-10-11T12:30:00+00:00",
           "fill_price": 7046.5,
-          "exit_ts": "2018-10-11T13:31:00+00:00",
-          "exit_price": 7066.5,
-          "pnl": 20.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2018-10-11T13:00:00+00:00",
+          "exit_price": 7028.25,
+          "pnl": -18.25,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2018-11-14",
@@ -24217,9 +24217,9 @@
           "filled_side": "long",
           "fill_ts": "2022-09-13T12:30:00+00:00",
           "fill_price": 12873.5,
-          "exit_ts": "2022-09-13T17:35:00+00:00",
-          "exit_price": 12245.25,
-          "pnl": -628.25,
+          "exit_ts": "2022-09-13T13:00:00+00:00",
+          "exit_price": 12376.5,
+          "pnl": -497.0,
           "outcome": "expired_long_loss"
         },
         {
@@ -24271,10 +24271,10 @@
           "filled_side": "short",
           "fill_ts": "2022-12-13T13:30:00+00:00",
           "fill_price": 11960.0,
-          "exit_ts": "2022-12-13T15:39:00+00:00",
-          "exit_price": 11940.0,
-          "pnl": 20.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2022-12-13T14:00:00+00:00",
+          "exit_price": 12160.5,
+          "pnl": -200.5,
+          "outcome": "expired_short_loss"
         },
         {
           "date": "2023-01-12",
@@ -24487,9 +24487,9 @@
           "filled_side": "short",
           "fill_ts": "2023-11-14T13:30:00+00:00",
           "fill_price": 15552.5,
-          "exit_ts": "2023-11-14T18:35:00+00:00",
-          "exit_price": 15877.0,
-          "pnl": -324.5,
+          "exit_ts": "2023-11-14T14:00:00+00:00",
+          "exit_price": 15806.75,
+          "pnl": -254.25,
           "outcome": "expired_short_loss"
         },
         {
@@ -24667,10 +24667,10 @@
           "filled_side": "long",
           "fill_ts": "2024-08-14T12:30:00+00:00",
           "fill_price": 19145.25,
-          "exit_ts": "2024-08-14T13:30:00+00:00",
-          "exit_price": 19165.25,
-          "pnl": 20.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2024-08-14T13:00:00+00:00",
+          "exit_price": 19138.5,
+          "pnl": -6.75,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2024-09-11",
@@ -24829,9 +24829,9 @@
           "filled_side": "short",
           "fill_ts": "2025-05-13T12:30:00+00:00",
           "fill_price": 20947.75,
-          "exit_ts": "2025-05-13T17:35:00+00:00",
-          "exit_price": 21341.0,
-          "pnl": -393.25,
+          "exit_ts": "2025-05-13T13:00:00+00:00",
+          "exit_price": 21000.5,
+          "pnl": -52.75,
           "outcome": "expired_short_loss"
         },
         {
@@ -24865,10 +24865,10 @@
           "filled_side": "long",
           "fill_ts": "2025-07-15T12:30:00+00:00",
           "fill_price": 23191.0,
-          "exit_ts": "2025-07-15T13:20:00+00:00",
-          "exit_price": 23211.0,
-          "pnl": 20.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2025-07-15T13:00:00+00:00",
+          "exit_price": 23192.0,
+          "pnl": 1.0,
+          "outcome": "expired_long_win"
         },
         {
           "date": "2025-08-12",
@@ -24991,10 +24991,10 @@
           "filled_side": "long",
           "fill_ts": "2026-03-11T12:30:00+00:00",
           "fill_price": 25040.0,
-          "exit_ts": "2026-03-11T13:30:00+00:00",
-          "exit_price": 25060.0,
-          "pnl": 20.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2026-03-11T13:00:00+00:00",
+          "exit_price": 24962.5,
+          "pnl": -77.5,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2026-04-10",
@@ -25555,10 +25555,10 @@
           "filled_side": "long",
           "fill_ts": "2018-10-11T12:30:00+00:00",
           "fill_price": 7046.5,
-          "exit_ts": "2018-10-11T13:31:00+00:00",
-          "exit_price": 7071.5,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2018-10-11T13:00:00+00:00",
+          "exit_price": 7028.25,
+          "pnl": -18.25,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2018-11-14",
@@ -26203,9 +26203,9 @@
           "filled_side": "short",
           "fill_ts": "2021-06-10T12:30:00+00:00",
           "fill_price": 13746.75,
-          "exit_ts": "2021-06-10T17:35:00+00:00",
-          "exit_price": 13930.0,
-          "pnl": -183.25,
+          "exit_ts": "2021-06-10T13:00:00+00:00",
+          "exit_price": 13826.0,
+          "pnl": -79.25,
           "outcome": "expired_short_loss"
         },
         {
@@ -26491,9 +26491,9 @@
           "filled_side": "long",
           "fill_ts": "2022-09-13T12:30:00+00:00",
           "fill_price": 12873.5,
-          "exit_ts": "2022-09-13T17:35:00+00:00",
-          "exit_price": 12245.25,
-          "pnl": -628.25,
+          "exit_ts": "2022-09-13T13:00:00+00:00",
+          "exit_price": 12376.5,
+          "pnl": -497.0,
           "outcome": "expired_long_loss"
         },
         {
@@ -26545,10 +26545,10 @@
           "filled_side": "short",
           "fill_ts": "2022-12-13T13:30:00+00:00",
           "fill_price": 11960.0,
-          "exit_ts": "2022-12-13T15:39:00+00:00",
-          "exit_price": 11935.0,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2022-12-13T14:00:00+00:00",
+          "exit_price": 12160.5,
+          "pnl": -200.5,
+          "outcome": "expired_short_loss"
         },
         {
           "date": "2023-01-12",
@@ -26761,9 +26761,9 @@
           "filled_side": "short",
           "fill_ts": "2023-11-14T13:30:00+00:00",
           "fill_price": 15552.5,
-          "exit_ts": "2023-11-14T18:35:00+00:00",
-          "exit_price": 15877.0,
-          "pnl": -324.5,
+          "exit_ts": "2023-11-14T14:00:00+00:00",
+          "exit_price": 15806.75,
+          "pnl": -254.25,
           "outcome": "expired_short_loss"
         },
         {
@@ -26941,10 +26941,10 @@
           "filled_side": "long",
           "fill_ts": "2024-08-14T12:30:00+00:00",
           "fill_price": 19145.25,
-          "exit_ts": "2024-08-14T13:31:00+00:00",
-          "exit_price": 19170.25,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2024-08-14T13:00:00+00:00",
+          "exit_price": 19138.5,
+          "pnl": -6.75,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2024-09-11",
@@ -27103,9 +27103,9 @@
           "filled_side": "short",
           "fill_ts": "2025-05-13T12:30:00+00:00",
           "fill_price": 20947.75,
-          "exit_ts": "2025-05-13T17:35:00+00:00",
-          "exit_price": 21341.0,
-          "pnl": -393.25,
+          "exit_ts": "2025-05-13T13:00:00+00:00",
+          "exit_price": 21000.5,
+          "pnl": -52.75,
           "outcome": "expired_short_loss"
         },
         {
@@ -27139,10 +27139,10 @@
           "filled_side": "long",
           "fill_ts": "2025-07-15T12:30:00+00:00",
           "fill_price": 23191.0,
-          "exit_ts": "2025-07-15T13:23:00+00:00",
-          "exit_price": 23216.0,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2025-07-15T13:00:00+00:00",
+          "exit_price": 23192.0,
+          "pnl": 1.0,
+          "outcome": "expired_long_win"
         },
         {
           "date": "2025-08-12",
@@ -27265,10 +27265,10 @@
           "filled_side": "long",
           "fill_ts": "2026-03-11T12:30:00+00:00",
           "fill_price": 25040.0,
-          "exit_ts": "2026-03-11T13:30:00+00:00",
-          "exit_price": 25065.0,
-          "pnl": 25.0,
-          "outcome": "tp_hit"
+          "exit_ts": "2026-03-11T13:00:00+00:00",
+          "exit_price": 24962.5,
+          "pnl": -77.5,
+          "outcome": "expired_long_loss"
         },
         {
           "date": "2026-04-10",

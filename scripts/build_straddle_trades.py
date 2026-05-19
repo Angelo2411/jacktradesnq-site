@@ -32,6 +32,9 @@ OUT_DIR = Path("/Users/angelo/jtnq-hub-v3/public/data")
 CPI_COMBOS = [(X, Y) for X in [25, 30, 35, 40] for Y in [15, 20, 25]]
 NFP_COMBOS = [(X, Y) for X in [45, 60, 80, 100, 120, 150] for Y in [20, 30, 50, 75]]
 
+# Expiry: position closes 30 min after release (matches original CPI/NFP straddle sim).
+MAX_HOLD_MINUTES = 30
+
 
 def simulate_trade(event_entry: dict, X: int, Y: int) -> dict | None:
     """Return per-trade record for one event × one combo."""
@@ -125,8 +128,8 @@ def simulate_trade(event_entry: dict, X: int, Y: int) -> dict | None:
             "outcome": "tp_hit",
         }
 
-    # Scan forward bars
-    for bb in bars[release_idx + 1:]:
+    # Scan forward bars — capped at MAX_HOLD_MINUTES after release
+    for bb in [b for b in bars[release_idx + 1:] if b["m"] <= MAX_HOLD_MINUTES]:
         if filled == "long" and bb["h"] >= tp_buy:
             return {
                 **base,
@@ -150,8 +153,9 @@ def simulate_trade(event_entry: dict, X: int, Y: int) -> dict | None:
                 "outcome": "tp_hit",
             }
 
-    # Expired: filled but TP never hit → exit at last bar close
-    last = bars[-1]
+    # Expired: filled but TP never hit → exit at MAX_HOLD_MINUTES bar close
+    capped = [b for b in bars if b["m"] <= MAX_HOLD_MINUTES]
+    last = capped[-1] if capped else bars[-1]
     last_close = last["c"]
     pnl = last_close - fill_price if filled == "long" else fill_price - last_close
     outcome = (
