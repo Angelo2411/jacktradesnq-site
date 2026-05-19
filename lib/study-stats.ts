@@ -109,7 +109,7 @@ function computeIfvgStats(
     (t) => t.smt === true && t.variant === variant
   );
   const n = trades.length;
-  const wins = trades.filter((t) => t.outcome === 'win').length;
+  const wins = trades.filter((t) => t.pnl_pts > 0).length;
   const net = trades.reduce((s, t) => s + t.pnl_pts, 0);
   const wr = n > 0 ? wins / n : 0;
   const winPnl = trades.filter((t) => t.pnl_pts > 0).reduce((s, t) => s + t.pnl_pts, 0);
@@ -122,8 +122,8 @@ function computeIfvgStats(
   // Simple bias: if more long trades win than short, bias is Long
   const longs = trades.filter((t) => t.side === 'LONG');
   const shorts = trades.filter((t) => t.side === 'SHORT');
-  const longWr = longs.length > 0 ? longs.filter((t) => t.outcome === 'win').length / longs.length : 0;
-  const shortWr = shorts.length > 0 ? shorts.filter((t) => t.outcome === 'win').length / shorts.length : 0;
+  const longWr = longs.length > 0 ? longs.filter((t) => t.pnl_pts > 0).length / longs.length : 0;
+  const shortWr = shorts.length > 0 ? shorts.filter((t) => t.pnl_pts > 0).length / shorts.length : 0;
   const bias = longWr > shortWr + 0.05 ? 'Long' : shortWr > longWr + 0.05 ? 'Short' : 'Both';
 
   return {
@@ -347,7 +347,7 @@ export function getWeekdayBreakdown(slug: string, smtOn = true): WeekdayBreakdow
     const day = dayJs - 1; // Mon=0, Fri=4
     if (day < 0 || day > 4) continue; // skip weekends
     acc[day].n++;
-    if (t.outcome === 'win') acc[day].w++;
+    if (t.pnl_pts > 0) acc[day].w++;
     acc[day].net += t.pnl_pts;
   }
 
@@ -388,10 +388,10 @@ export function getYearBreakdown(slug: string, smtOn = true): YearBreakdown {
     const yr = typeof t.year === 'number' ? t.year : (t.year ? Number(t.year) : new Date(t.ts).getUTCFullYear());
     if (!acc[yr]) acc[yr] = { n: 0, w: 0, winPts: 0, lossPts: 0, net: 0 };
     acc[yr].n++;
-    if (t.outcome === 'win') {
+    if (t.pnl_pts > 0) {
       acc[yr].w++;
       acc[yr].winPts += t.pnl_pts;
-    } else if (t.outcome === 'loss') {
+    } else if (t.pnl_pts < 0) {
       acc[yr].lossPts += Math.abs(t.pnl_pts);
     }
     acc[yr].net += t.pnl_pts;
