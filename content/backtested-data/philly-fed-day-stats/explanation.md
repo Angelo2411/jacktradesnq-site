@@ -22,6 +22,8 @@ The Philadelphia Fed Manufacturing is released by Philadelphia Fed at 08:30 ET. 
 
 Across **48 sweep-qualified setups** 2016–2026, average release-bar range was **25.5 pts** with a max of **90.5 pts**. This is the 1m candle volatility you must respect when fading the release.
 
+<a class="bd-btn bd-btn-secondary" href="/downloads/backtested-data/philly-fed-points.pdf" download>Download — Philly Fed Points PDF</a>
+
 ### Related
 
 - [Full IFVG + SMT NQ backtest](/backtested-data/philly-fed-ifvg-smt/) — sweep + IFVG entry on this event.

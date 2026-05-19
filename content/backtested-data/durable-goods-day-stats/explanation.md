@@ -20,6 +20,8 @@ The Durable Goods Orders is released by US Census Bureau at 08:30 ET. This study
 
 Across **34 sweep-qualified setups** 2016–2026, average release-bar range was **24.2 pts** with a max of **97.2 pts**. This is the 1m candle volatility you must respect when fading the release.
 
+<a class="bd-btn bd-btn-secondary" href="/downloads/backtested-data/durable-goods-points.pdf" download>Download — Durable Goods Points PDF</a>
+
 ### Related
 
 - [Full IFVG + SMT NQ backtest](/backtested-data/durable-goods-ifvg-smt/) — sweep + IFVG entry on this event.
