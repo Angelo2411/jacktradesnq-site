@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { getEventStudyMap } from '@/lib/study-stats';
 import { loadNewsWeek } from '@/lib/news-week-server';
 import { RED_FOLDER_WHITELIST } from '@/lib/news-week';
@@ -47,18 +48,30 @@ export default function CalendarPage() {
             No red-folder events scheduled this week. Quiet macro week.
           </p>
         ) : (
-          <table className="v3-news-tbl">
-            <tbody>
-              {redFolder.map((row: NewsItem, i: number) => (
-                <tr key={i}>
-                  <td className="v3-news-td-d">{row.day}</td>
-                  <td className="v3-news-td-t">{row.time}</td>
-                  <td className="v3-news-td-e">{row.event}</td>
-                  <td className={'v3-news-td-imp ' + impClass(row.imp)}>{row.imp}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <ul className="v3-news-list">
+            {redFolder.map((row: NewsItem, i: number) => {
+              const slug = studyMap[row.event]?.slug ?? null;
+              const inner = (
+                <>
+                  <span className="v3-news-td-d">{row.day}</span>
+                  <span className="v3-news-td-t">{row.time}</span>
+                  <span className="v3-news-td-e">{row.event}</span>
+                  <span className={'v3-news-td-imp ' + impClass(row.imp)}>{row.imp}</span>
+                </>
+              );
+              return (
+                <li key={i}>
+                  {slug ? (
+                    <Link href={`/backtested-data/${slug}/`} className="v3-news-row v3-news-row-link">
+                      {inner}
+                    </Link>
+                  ) : (
+                    <div className="v3-news-row">{inner}</div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
         )}
       </section>
     </>
