@@ -123,7 +123,7 @@ function WeekdayBlock({
   );
 }
 
-function YearBlock({ breakdown }: { breakdown: YearBreakdown }) {
+function YearBlock({ breakdown, slug }: { breakdown: YearBreakdown; slug: string }) {
   if (breakdown.length === 0) {
     return <div className="v3-coming-soon">No year data available.</div>;
   }
@@ -163,7 +163,12 @@ function YearBlock({ breakdown }: { breakdown: YearBreakdown }) {
             {breakdown.map((y) => {
               const barW = Math.round((Math.abs(y.net) / maxAbsNet) * 100);
               return (
-                <tr key={y.year} className="v3-yr-row">
+                <tr
+                  key={y.year}
+                  className="v3-yr-row"
+                  onClick={() => { window.location.href = `/backtested-data/${slug}/?tab=trades&year=${y.year}`; }}
+                  style={{ cursor: 'pointer' }}
+                >
                   <td className="v3-yr-year">{y.year}</td>
                   <td className="v3-yr-num">{y.n}</td>
                   <td className="v3-yr-num">{y.wr}%</td>
@@ -223,6 +228,7 @@ function TradesBlock({
   variant,
   setVariant,
   dayFilter = '',
+  yearFilter = '',
   slug,
   eventShort,
   asset,
@@ -232,14 +238,18 @@ function TradesBlock({
   variant: VariantKey;
   setVariant: (v: VariantKey) => void;
   dayFilter?: string;
+  yearFilter?: string;
   slug: string;
   eventShort: string;
   asset: 'nq' | 'gc';
 }) {
   const activeTrades = tradesByVariant ? tradesByVariant[variant] : trades;
-  const filtered = dayFilter && DAY_KEY_TO_NUM[dayFilter] !== undefined
+  const dayFiltered = dayFilter && DAY_KEY_TO_NUM[dayFilter] !== undefined
     ? activeTrades.filter((t) => tradeWeekday(t.ts) === DAY_KEY_TO_NUM[dayFilter])
     : activeTrades;
+  const filtered = yearFilter
+    ? dayFiltered.filter((t) => t.ts.slice(0, 4) === yearFilter)
+    : dayFiltered;
 
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
@@ -341,6 +351,12 @@ function TradesBlock({
           <Link href={`/backtested-data/${slug}/?tab=trades`} className="v3-tr-clear">× clear</Link>
         </div>
       )}
+      {yearFilter && (
+        <div className="v3-tr-filter-badge">
+          Filtered by year {yearFilter} ·{' '}
+          <Link href={`/backtested-data/${slug}/?tab=trades`} className="v3-tr-clear">× clear</Link>
+        </div>
+      )}
       {visible < filtered.length && (
         <button
           className="v3-tr-load-more"
@@ -385,6 +401,7 @@ export default function V3Tabs({
   const tab = (searchParams.get('tab') ?? 'overview') as Tab;
   const activeTab: Tab = TAB_LIST.some((t) => t.key === tab) ? tab : 'overview';
   const dayFilter = searchParams.get('day') ?? '';
+  const yearFilter = searchParams.get('year') ?? '';
 
   function tabHref(t: string) {
     return `/backtested-data/${slug}/?tab=${t}`;
@@ -451,9 +468,9 @@ export default function V3Tabs({
       {activeTab === 'weekday' ? (
         <WeekdayBlock breakdown={breakdown} slug={slug} />
       ) : activeTab === 'year' ? (
-        <YearBlock breakdown={yearBreakdown} />
+        <YearBlock breakdown={yearBreakdown} slug={slug} />
       ) : activeTab === 'trades' ? (
-        <TradesBlock trades={trades} tradesByVariant={tradesByVariant} variant={variant} setVariant={setVariant} dayFilter={dayFilter} slug={slug} eventShort={eventShort} asset={asset} />
+        <TradesBlock trades={trades} tradesByVariant={tradesByVariant} variant={variant} setVariant={setVariant} dayFilter={dayFilter} yearFilter={yearFilter} slug={slug} eventShort={eventShort} asset={asset} />
       ) : activeTab === 'methodology' ? (
         <div className="v3-meth-link">
           <Link href="/backtested-data/methodology/">Read full methodology →</Link>

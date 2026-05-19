@@ -198,7 +198,11 @@ export default function DataTables({ strats, marketStudies, totalTrades, period,
             </thead>
             <tbody>
               {filteredStudies.map((ms) => (
-                <tr key={ms.slug}>
+                <tr
+                  key={ms.slug}
+                  onClick={() => { window.location.href = `/backtested-data/${ms.slug}/`; }}
+                  style={{ cursor: 'pointer' }}
+                >
                   <td>
                     <Link href={`/backtested-data/${ms.slug}/`} style={{ fontFamily: 'var(--f-serif)', fontWeight: 600, fontSize: '0.9rem' }}>
                       {ms.title}
