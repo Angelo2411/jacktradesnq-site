@@ -104,9 +104,10 @@ function computeIfvgStats(
   json: IfvgJson,
   slugEntry: { slug: string; event: string; asset: string; releaseTime?: string },
   variant: 'tp1_be' | 'be_50' | 'no_be' = 'tp1_be',
+  smtOn = true,
 ): StrategyStats {
   const trades = (json.trades ?? []).filter(
-    (t) => t.smt === true && t.variant === variant
+    (t) => t.variant === variant && (smtOn ? t.smt === true : true)
   );
   const n = trades.length;
   const wins = trades.filter((t) => t.pnl_pts > 0).length;
@@ -169,6 +170,27 @@ export function getStrategyStatsByVariant(slug: string): { tp1_be: StrategyStats
     tp1_be: computeIfvgStats(json, entry, 'tp1_be'),
     be_50:  computeIfvgStats(json, entry, 'be_50'),
     no_be:  computeIfvgStats(json, entry, 'no_be'),
+  };
+}
+
+export type VariantStatsTriplet = { tp1_be: StrategyStats; be_50: StrategyStats; no_be: StrategyStats };
+
+export function getStrategyStatsByVariantAndSmt(slug: string): { smtOn: VariantStatsTriplet; smtOff: VariantStatsTriplet } | null {
+  const entry = IFVG_SLUGS.find((e) => e.slug === slug);
+  if (!entry) return null;
+  const json = loadIfvgJson(slug);
+  if (!json) return null;
+  return {
+    smtOn: {
+      tp1_be: computeIfvgStats(json, entry, 'tp1_be', true),
+      be_50:  computeIfvgStats(json, entry, 'be_50', true),
+      no_be:  computeIfvgStats(json, entry, 'no_be', true),
+    },
+    smtOff: {
+      tp1_be: computeIfvgStats(json, entry, 'tp1_be', false),
+      be_50:  computeIfvgStats(json, entry, 'be_50', false),
+      no_be:  computeIfvgStats(json, entry, 'no_be', false),
+    },
   };
 }
 

@@ -19,9 +19,11 @@ const TAB_LIST: Array<{ key: Tab; label: string }> = [
 function WeekdayBlock({
   breakdown,
   slug,
+  smtLabel = 'SMT-on',
 }: {
   breakdown: WeekdayBreakdown;
   slug: string;
+  smtLabel?: string;
 }) {
   const days: Array<{ key: keyof WeekdayBreakdown; label: string }> = [
     { key: 'mon', label: 'Mon' },
@@ -71,7 +73,7 @@ function WeekdayBlock({
   return (
     <div>
       <div className="v3-wd-h">Performance by day of the week</div>
-      <div className="v3-wd-sub">Real data — SMT-on variant · tp1_be.</div>
+      <div className="v3-wd-sub">Real data — {smtLabel} variant · tp1_be.</div>
       <div className="v3-wd-grid">
         {days.map((d) => {
           const st = breakdown[d.key];
@@ -123,7 +125,7 @@ function WeekdayBlock({
   );
 }
 
-function YearBlock({ breakdown, slug }: { breakdown: YearBreakdown; slug: string }) {
+function YearBlock({ breakdown, slug, smtLabel = 'SMT-on' }: { breakdown: YearBreakdown; slug: string; smtLabel?: string }) {
   if (breakdown.length === 0) {
     return <div className="v3-coming-soon">No year data available.</div>;
   }
@@ -147,7 +149,7 @@ function YearBlock({ breakdown, slug }: { breakdown: YearBreakdown; slug: string
   return (
     <div>
       <div className="v3-wd-h">Performance by year</div>
-      <div className="v3-wd-sub">Real data — SMT-on variant · tp1_be.</div>
+      <div className="v3-wd-sub">Real data — {smtLabel} variant · tp1_be.</div>
       <div className="v3-yr-table-wrap">
         <table className="v3-yr-table">
           <thead>
@@ -232,6 +234,7 @@ function TradesBlock({
   slug,
   eventShort,
   asset,
+  smtLabel = 'SMT-on',
 }: {
   trades: TradeRow[];
   tradesByVariant?: { tp1_be: TradeRow[]; be_50: TradeRow[]; no_be: TradeRow[] };
@@ -242,6 +245,7 @@ function TradesBlock({
   slug: string;
   eventShort: string;
   asset: 'nq' | 'gc';
+  smtLabel?: string;
 }) {
   const activeTrades = tradesByVariant ? tradesByVariant[variant] : trades;
   const dayFiltered = dayFilter && DAY_KEY_TO_NUM[dayFilter] !== undefined
@@ -278,7 +282,7 @@ function TradesBlock({
     <div>
       <div className="v3-wd-h">Trade list</div>
       <div className="v3-wd-sub">
-        {VARIANT_LABELS[variant]} · SMT-on variant{hasStructuralPrices ? ' · SL = sweep ± 1 tick · TP = pre-news pivot (structural, varies per trade)' : ''} · most recent first.
+        {VARIANT_LABELS[variant]} · {smtLabel} variant{hasStructuralPrices ? ' · SL = sweep ± 1 tick · TP = pre-news pivot (structural, varies per trade)' : ''} · most recent first.
       </div>
       <div className="v3-tr-table-wrap">
         <table className="v3-tr-table">
@@ -373,10 +377,14 @@ function TradesBlock({
 export default function V3Tabs({
   slug,
   breakdown,
+  breakdownOff,
   yearBreakdown,
+  yearBreakdownOff,
   trades,
   tradesByVariant,
+  tradesByVariantOff,
   statsByVariant,
+  statsByVariantAndSmt,
   dateFrom,
   dateTo,
   overviewContent,
@@ -385,10 +393,17 @@ export default function V3Tabs({
 }: {
   slug: string;
   breakdown: WeekdayBreakdown;
+  breakdownOff?: WeekdayBreakdown;
   yearBreakdown: YearBreakdown;
+  yearBreakdownOff?: YearBreakdown;
   trades: TradeRow[];
   tradesByVariant?: { tp1_be: TradeRow[]; be_50: TradeRow[]; no_be: TradeRow[] };
+  tradesByVariantOff?: { tp1_be: TradeRow[]; be_50: TradeRow[]; no_be: TradeRow[] };
   statsByVariant?: { tp1_be: StrategyStats; be_50: StrategyStats; no_be: StrategyStats } | null;
+  statsByVariantAndSmt?: {
+    smtOn: { tp1_be: StrategyStats; be_50: StrategyStats; no_be: StrategyStats };
+    smtOff: { tp1_be: StrategyStats; be_50: StrategyStats; no_be: StrategyStats };
+  } | null;
   dateFrom?: string;
   dateTo?: string;
   overviewContent: React.ReactNode;
@@ -396,7 +411,17 @@ export default function V3Tabs({
   asset: 'nq' | 'gc';
 }) {
   const [variant, setVariant] = useState<VariantKey>('tp1_be');
-  const activeStats = statsByVariant ? statsByVariant[variant] : null;
+  const [smtOn, setSmtOn] = useState<boolean>(true);
+  const activeStats = statsByVariantAndSmt
+    ? statsByVariantAndSmt[smtOn ? 'smtOn' : 'smtOff'][variant]
+    : statsByVariant
+      ? statsByVariant[variant]
+      : null;
+  const activeBreakdown = !smtOn && breakdownOff ? breakdownOff : breakdown;
+  const activeYearBreakdown = !smtOn && yearBreakdownOff ? yearBreakdownOff : yearBreakdown;
+  const activeTradesByVariant = !smtOn && tradesByVariantOff ? tradesByVariantOff : tradesByVariant;
+  const activeTrades = activeTradesByVariant ? activeTradesByVariant[variant] : trades;
+  const smtLabel = smtOn ? 'SMT-on' : 'SMT-off';
   const searchParams = useSearchParams();
   const tab = (searchParams.get('tab') ?? 'overview') as Tab;
   const activeTab: Tab = TAB_LIST.some((t) => t.key === tab) ? tab : 'overview';
@@ -433,13 +458,13 @@ export default function V3Tabs({
           <div className="v3-kpi-cell">
             <div className="v3-kpi-band-lbl">Win rate</div>
             <div className="v3-kpi-band-val gold">{activeStats.wr}%</div>
-            <div className="v3-kpi-band-foot">{VARIANT_LABELS[variant]} · SMT-on variant</div>
+            <div className="v3-kpi-band-foot">{VARIANT_LABELS[variant]} · {smtLabel} variant</div>
           </div>
         </div>
       )}
 
       {statsByVariant && (
-        <div className="v3-flt-row" style={{ margin: '0 0 12px' }}>
+        <div className="v3-flt-row" style={{ margin: '0 0 12px', flexWrap: 'wrap', gap: 8 }}>
           {(['tp1_be', 'be_50', 'no_be'] as VariantKey[]).map((v) => (
             <button
               key={v}
@@ -450,6 +475,26 @@ export default function V3Tabs({
               {VARIANT_LABELS[v]}
             </button>
           ))}
+          {statsByVariantAndSmt && (
+            <span style={{ display: 'inline-flex', gap: 4, marginLeft: 8, paddingLeft: 12, borderLeft: '1px solid oklch(0.85 0.02 85)' }}>
+              <button
+                type="button"
+                className={'v3-flt-pill' + (smtOn ? ' active' : '')}
+                onClick={() => setSmtOn(true)}
+                aria-pressed={smtOn}
+              >
+                SMT on
+              </button>
+              <button
+                type="button"
+                className={'v3-flt-pill' + (!smtOn ? ' active' : '')}
+                onClick={() => setSmtOn(false)}
+                aria-pressed={!smtOn}
+              >
+                SMT off
+              </button>
+            </span>
+          )}
         </div>
       )}
 
@@ -466,11 +511,11 @@ export default function V3Tabs({
       </div>
 
       {activeTab === 'weekday' ? (
-        <WeekdayBlock breakdown={breakdown} slug={slug} />
+        <WeekdayBlock breakdown={activeBreakdown} slug={slug} smtLabel={smtLabel} />
       ) : activeTab === 'year' ? (
-        <YearBlock breakdown={yearBreakdown} slug={slug} />
+        <YearBlock breakdown={activeYearBreakdown} slug={slug} smtLabel={smtLabel} />
       ) : activeTab === 'trades' ? (
-        <TradesBlock trades={trades} tradesByVariant={tradesByVariant} variant={variant} setVariant={setVariant} dayFilter={dayFilter} yearFilter={yearFilter} slug={slug} eventShort={eventShort} asset={asset} />
+        <TradesBlock trades={activeTrades} tradesByVariant={activeTradesByVariant} variant={variant} setVariant={setVariant} dayFilter={dayFilter} yearFilter={yearFilter} slug={slug} eventShort={eventShort} asset={asset} smtLabel={smtLabel} />
       ) : activeTab === 'methodology' ? (
         <div className="v3-meth-link">
           <Link href="/backtested-data/methodology/">Read full methodology →</Link>

@@ -15,7 +15,7 @@ import BilingualPdfLink from '../_components/BilingualPdfLink';
 import BilingualLede from '../_components/BilingualLede';
 import BilingualTitle from '../_components/BilingualTitle';
 import V3Tabs from '../_components/V3Tabs';
-import { getStrategyStats, getStrategyStatsByVariant, getWeekdayBreakdown, getYearBreakdown, getTradeList } from '@/lib/study-stats';
+import { getStrategyStats, getStrategyStatsByVariant, getStrategyStatsByVariantAndSmt, getWeekdayBreakdown, getYearBreakdown, getTradeList } from '@/lib/study-stats';
 
 const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
   cpi: {
@@ -297,14 +297,22 @@ export default async function BacktestedDetail({ params }: PageProps) {
   if (isIfvg) {
     const stratStats = getStrategyStats(slug);
     const breakdown = getWeekdayBreakdown(slug, true);
+    const breakdownOff = getWeekdayBreakdown(slug, false);
     const yearBreakdown = getYearBreakdown(slug, true);
+    const yearBreakdownOff = getYearBreakdown(slug, false);
     const tradesByVariant = {
       tp1_be: getTradeList(slug, true, 'tp1_be'),
       be_50:  getTradeList(slug, true, 'be_50'),
       no_be:  getTradeList(slug, true, 'no_be'),
     };
+    const tradesByVariantOff = {
+      tp1_be: getTradeList(slug, false, 'tp1_be'),
+      be_50:  getTradeList(slug, false, 'be_50'),
+      no_be:  getTradeList(slug, false, 'no_be'),
+    };
     const trades = tradesByVariant.tp1_be;
     const statsByVariant = getStrategyStatsByVariant(slug);
+    const statsByVariantAndSmt = getStrategyStatsByVariantAndSmt(slug);
     const eventLabel = stratStats?.event ?? entry.title;
     const assetLabel = stratStats?.asset ?? 'NQ';
     const dateFrom = stratStats?.dateFrom ? stratStats.dateFrom.slice(0, 4) : '2016';
@@ -327,7 +335,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
 
         {/* V3Tabs is a client component that reads ?tab from URL and renders the KPI band + tabs */}
         <Suspense fallback={<div className="v3-tabs" style={{ height: 48 }} />}>
-          <V3Tabs slug={slug} breakdown={breakdown} yearBreakdown={yearBreakdown} trades={trades} tradesByVariant={tradesByVariant} statsByVariant={statsByVariant} dateFrom={dateFrom} dateTo={dateTo} overviewContent={overviewNode} eventShort={stratStats?.event ?? ''} asset={(stratStats?.asset?.toLowerCase() ?? 'nq') as 'nq' | 'gc'} />
+          <V3Tabs slug={slug} breakdown={breakdown} breakdownOff={breakdownOff} yearBreakdown={yearBreakdown} yearBreakdownOff={yearBreakdownOff} trades={trades} tradesByVariant={tradesByVariant} tradesByVariantOff={tradesByVariantOff} statsByVariant={statsByVariant} statsByVariantAndSmt={statsByVariantAndSmt} dateFrom={dateFrom} dateTo={dateTo} overviewContent={overviewNode} eventShort={stratStats?.event ?? ''} asset={(stratStats?.asset?.toLowerCase() ?? 'nq') as 'nq' | 'gc'} />
         </Suspense>
 
         {pager}
