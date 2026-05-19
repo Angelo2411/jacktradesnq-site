@@ -85,6 +85,7 @@ const IFVG_SLUGS: Array<{ slug: string; event: string; asset: string }> = [
   { slug: 'empirestate-ifvg-smt',        event: 'Empire State',         asset: 'NQ' },
   { slug: 'employmentcostindex-ifvg-smt',event: 'Employment Cost',      asset: 'NQ' },
   { slug: 'gdp-ifvg-smt',               event: 'GDP',                  asset: 'NQ' },
+  { slug: 'fomc-ifvg-smt',              event: 'FOMC',                 asset: 'NQ' },
   { slug: 'gc-ifvg-smt',                event: 'Multi-event',          asset: 'GC' },
   { slug: 'cpi-ifvg-smt-gc',                 event: 'CPI',             asset: 'GC' },
   { slug: 'nfp-ifvg-smt-gc',                 event: 'NFP',             asset: 'GC' },
@@ -242,6 +243,21 @@ export function getMarketStudyStats(): MarketStudyStats[] {
     });
   }
 
+  // fomc event bars
+  const fomcEbPath = path.join(dataDir, 'fomc_event_bars.json');
+  if (fs.existsSync(fomcEbPath)) {
+    const d = JSON.parse(fs.readFileSync(fomcEbPath, 'utf-8'));
+    const events = Array.isArray(d) ? d : d.events ?? [];
+    results.push({
+      slug: 'fomc-day-stats',
+      title: 'FOMC Event Bars',
+      asset: 'NQ',
+      headline: `${events.length} FOMC releases charted`,
+      sample: `${events.length} events`,
+      detail: 'Per-release bar chart · 10y',
+    });
+  }
+
   return results;
 }
 
@@ -258,8 +274,8 @@ const EVENT_SLUG_MAP: Record<string, string | null> = {
   'Employment Cost Index':      'employmentcostindex-ifvg-smt',
   'GDP':                        'gdp-ifvg-smt',
   'FOMC Minutes':               null,
-  'FOMC Statement':             null,
-  'Federal Funds Rate':         null,
+  'FOMC Statement':             'fomc-ifvg-smt',
+  'Federal Funds Rate':         'fomc-ifvg-smt',
 };
 
 export type EventStudyStats = {
