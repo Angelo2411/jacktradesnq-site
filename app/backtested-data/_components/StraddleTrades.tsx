@@ -180,7 +180,11 @@ export default function StraddleTrades({
             {shown.map((t, i) => {
               const isOpen = expandedIdx === i;
               const filledLabel = t.filled_side ? t.filled_side.toUpperCase() : '—';
-              const outcomeLabel = t.outcome.replace(/_/g, ' ');
+              const outcomeLabel =
+                t.outcome === 'tp_hit' ? 'TP hit'
+                : t.outcome === 'no_fill' ? 'no fill'
+                : t.outcome.startsWith('expired') ? (t.pnl > 0 ? 'expired win' : 'expired loss')
+                : t.outcome.replace(/_/g, ' ');
               const outcomeClass =
                 t.outcome === 'tp_hit' ? 'v3-tr-badge win'
                 : t.outcome === 'no_fill' ? 'v3-tr-badge be'

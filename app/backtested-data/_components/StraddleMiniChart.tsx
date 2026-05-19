@@ -252,7 +252,12 @@ export default function StraddleMiniChart({
     : outcome === 'no_fill' ? '#7d7a86'
     : pnl > 0 ? '#4a8c3f' : '#b8452a';
   const pnlSign = pnl >= 0 ? '+' : '';
-  const outcomeLabel = outcome.replace(/_/g, ' ').toUpperCase();
+  const outcomeLabel = (
+    outcome === 'tp_hit' ? 'TP HIT'
+    : outcome === 'no_fill' ? 'NO FILL'
+    : outcome.startsWith('expired') ? (pnl > 0 ? 'EXPIRED WIN' : 'EXPIRED LOSS')
+    : outcome.replace(/_/g, ' ').toUpperCase()
+  );
 
   return (
     <div className="v3-tr-chart-wrap">
