@@ -87,6 +87,7 @@ const IFVG_SLUGS: Array<{ slug: string; event: string; asset: string; releaseTim
   { slug: 'employmentcostindex-ifvg-smt',event: 'Employment Cost',      asset: 'NQ' },
   { slug: 'gdp-ifvg-smt',               event: 'GDP',                  asset: 'NQ' },
   { slug: 'fomc-ifvg-smt',              event: 'FOMC',                 asset: 'NQ', releaseTime: '14:00 ET' },
+  { slug: 'adp-ifvg-smt',               event: 'ADP',                  asset: 'NQ', releaseTime: '8:15 ET' },
   { slug: 'gc-ifvg-smt',                event: 'Multi-event',          asset: 'GC' },
   { slug: 'cpi-ifvg-smt-gc',                 event: 'CPI',             asset: 'GC' },
   { slug: 'nfp-ifvg-smt-gc',                 event: 'NFP',             asset: 'GC' },
@@ -98,6 +99,7 @@ const IFVG_SLUGS: Array<{ slug: string; event: string; asset: string; releaseTim
   { slug: 'empirestate-ifvg-smt-gc',         event: 'Empire State',    asset: 'GC' },
   { slug: 'employmentcostindex-ifvg-smt-gc', event: 'Employment Cost', asset: 'GC' },
   { slug: 'fomc-ifvg-smt-gc',                event: 'FOMC',            asset: 'GC', releaseTime: '14:00 ET' },
+  { slug: 'adp-ifvg-smt-gc',                 event: 'ADP',             asset: 'GC', releaseTime: '8:15 ET' },
 ];
 
 function computeIfvgStats(
@@ -306,6 +308,8 @@ const EVENT_SLUG_MAP: Record<string, { nq: string | null; gc: string | null }> =
   'GDP':                              { nq: 'gdp-ifvg-smt',                gc: 'gdp-ifvg-smt-gc' },
   'FOMC Statement':                   { nq: 'fomc-ifvg-smt',               gc: 'fomc-ifvg-smt-gc' },
   'Federal Funds Rate':               { nq: 'fomc-ifvg-smt',               gc: 'fomc-ifvg-smt-gc' },
+  'ADP Non-Farm Employment Change':   { nq: 'adp-ifvg-smt',                gc: 'adp-ifvg-smt-gc' },
+  'ADP':                              { nq: 'adp-ifvg-smt',                gc: 'adp-ifvg-smt-gc' },
   // ── FF red folder, no backtest yet (visible with "No backtest yet" badge) ─
   'FOMC Minutes':                          { nq: null, gc: null },
   'Unemployment Rate':                     { nq: null, gc: null },
@@ -313,7 +317,6 @@ const EVENT_SLUG_MAP: Record<string, { nq: string | null; gc: string | null }> =
   'ISM Manufacturing PMI':                 { nq: null, gc: null },
   'ISM Services PMI':                      { nq: null, gc: null },
   'ISM Non-Manufacturing PMI':             { nq: null, gc: null },
-  'ADP Non-Farm Employment Change':        { nq: null, gc: null },
   'JOLTS Job Openings':                    { nq: null, gc: null },
   'CB Consumer Confidence':                { nq: null, gc: null },
   'Philadelphia Fed Manufacturing Index':  { nq: null, gc: null },
