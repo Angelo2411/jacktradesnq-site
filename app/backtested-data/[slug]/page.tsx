@@ -321,7 +321,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
           {' · IFVG + SMT'}
         </h1>
         <p className="v3-sub-sub">
-          {assetLabel} futures · 8:30 ET release · {dateFrom}–{dateTo} backtest
+          {assetLabel} futures · {stratStats?.releaseTime ?? '8:30 ET'} release · {dateFrom}–{dateTo} backtest
           {stratStats ? ` · ${stratStats.n} events` : ''}
         </p>
 
