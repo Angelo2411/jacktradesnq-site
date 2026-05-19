@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-19T18:41:08Z",
+  "generated_at": "2026-05-19T18:50:24Z",
   "window_start": "2026-05-11",
   "window_end": "2026-06-21",
   "source": "news_red_folder_full.csv + upcoming_events.csv",
