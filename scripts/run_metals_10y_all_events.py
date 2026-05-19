@@ -59,6 +59,7 @@ EVENTS = [
     "JoblessClaims",
     "EmpireState",
     "EmploymentCostIndex",
+    "FOMC",
 ]
 
 # Mapping event_type → site slug (used to generate per-event _gc.json files)
@@ -72,6 +73,24 @@ EVENT_SLUG: dict[str, str] = {
     "JoblessClaims":        "joblessclaims-ifvg-smt",
     "EmpireState":          "empirestate-ifvg-smt",
     "EmploymentCostIndex":  "employmentcostindex-ifvg-smt",
+    "FOMC":                 "fomc-ifvg-smt",
+}
+
+
+# Release time (hour, minute) per event type, Eastern time
+EVENT_RELEASE_TIME: dict[str, tuple[int, int]] = {
+    "CPI": (8, 30), "NFP": (8, 30), "PPI": (8, 30), "RetailSales": (8, 30),
+    "PCE": (8, 30), "GDP": (8, 30), "JoblessClaims": (8, 30),
+    "EmpireState": (8, 30), "EmploymentCostIndex": (8, 30),
+    "FOMC": (14, 0),
+}
+
+# Sweep window: release hour + N hours offset per event type
+EVENT_SWEEP_HOURS: dict[str, int] = {
+    "CPI": 3, "NFP": 3, "PPI": 3, "RetailSales": 3,
+    "PCE": 3, "GDP": 3, "JoblessClaims": 3,
+    "EmpireState": 3, "EmploymentCostIndex": 3,
+    "FOMC": 3,
 }
 
 
@@ -134,7 +153,9 @@ def load_si_bars() -> dict[int, dict]:
 # ---------------------------------------------------------------------------
 
 def load_events(event_type: str) -> list[dict]:
-    """Read NEWS_CSV; keep rows with event_type==X and time_et==08:30 inside window."""
+    """Read NEWS_CSV; keep rows with event_type==X and matching release time inside window."""
+    rel_h, rel_m = EVENT_RELEASE_TIME[event_type]
+    expected_time = f"{rel_h:02d}:{rel_m:02d}"
     from_dt = datetime.strptime(DATE_FROM, "%Y-%m-%d").date()
     to_dt   = datetime.strptime(DATE_TO,   "%Y-%m-%d").date()
 
@@ -144,7 +165,7 @@ def load_events(event_type: str) -> list[dict]:
         for row in rdr:
             if row["event_type"] != event_type:
                 continue
-            if row["time_et"] != "08:30":
+            if row["time_et"] != expected_time:
                 continue
             try:
                 d = datetime.strptime(row["date"], "%Y-%m-%d").date()
@@ -155,7 +176,7 @@ def load_events(event_type: str) -> list[dict]:
             # GDP advance-only filter: keep only Q1/Q2/Q3/Q4 release months
             if event_type == "GDP" and d.month not in (1, 4, 7, 10):
                 continue
-            et_dt  = datetime(d.year, d.month, d.day, 8, 30, tzinfo=ET)
+            et_dt  = datetime(d.year, d.month, d.day, rel_h, rel_m, tzinfo=ET)
             utc_dt = et_dt.astimezone(timezone.utc)
             date_str = d.strftime("%Y-%m-%d")
             events.append({
@@ -179,7 +200,9 @@ def detect_setup_metals(ev: dict, bars_idx: dict[int, dict]) -> dict:
 
     Structurally identical to detect_setup in run_news_830_variants.py.
     Cloned locally because TICK is hardcoded at module level in that file as 0.25 (NQ).
+    Sweep/resolve windows are per-event-type (FOMC=14:00 release uses 17:00/18:00).
     """
+    event_type = ev["event_type"]
     t0 = ev["t0_utc"]
     et_date = ev["et_date"]
     out = {
@@ -189,7 +212,12 @@ def detect_setup_metals(ev: dict, bars_idx: dict[int, dict]) -> dict:
         "t0_utc": t0,
     }
 
-    # Release-bar range: single 8:30 ET 1m candle at t0
+    release_h, release_m = EVENT_RELEASE_TIME[event_type]
+    sweep_offset = EVENT_SWEEP_HOURS[event_type]
+    sweep_h = release_h + sweep_offset
+    resolve_h = sweep_h + 1  # resolve = sweep + 1h
+
+    # Release-bar range: single release-time ET 1m candle at t0
     release_bar = bars_idx.get(t0)
     if release_bar is None:
         out["status"] = "SKIP_NO_PRE"
@@ -199,11 +227,11 @@ def detect_setup_metals(ev: dict, bars_idx: dict[int, dict]) -> dict:
 
     deadline_et = datetime.combine(
         datetime.strptime(et_date, "%Y-%m-%d").date(),
-        time(TIMEOUT_SWEEP_HOUR_ET, 0),
+        time(sweep_h, 0),
         tzinfo=ET,
     )
     sweep_deadline_ts   = int(deadline_et.timestamp())
-    resolve_deadline_ts = int(deadline_et.replace(hour=TIMEOUT_RESOLVE_HOUR_ET).timestamp())
+    resolve_deadline_ts = int(deadline_et.replace(hour=resolve_h).timestamp())
 
     # Sweep watch starts at t0+1 (8:31), AFTER the release bar closes
     sweep_dir = sweep_price = sweep_ts = None
@@ -327,13 +355,17 @@ def detect_setup_metals(ev: dict, bars_idx: dict[int, dict]) -> dict:
 # ---------------------------------------------------------------------------
 
 def compute_si_smt(ev: dict, si_idx: dict[int, dict], side: str) -> bool:
-    """Did SI take its target during 8:30-11:00 ET window?
+    """Did SI take its target during release→sweep_deadline window?
     GC SHORT (GC swept UP) → SI low < SI pre_low.
     GC LONG  (GC swept DOWN) → SI high > SI pre_high.
     SI is sparse: missing release bar → return False (no confirmation, not a disqualifier).
     """
+    event_type = ev["event_type"]
     t0 = ev["t0_utc"]
     et_date = ev["et_date"]
+
+    release_h, release_m = EVENT_RELEASE_TIME[event_type]
+    sweep_h = release_h + EVENT_SWEEP_HOURS[event_type]
 
     si_release = si_idx.get(t0)
     if si_release is None:
@@ -343,7 +375,7 @@ def compute_si_smt(ev: dict, si_idx: dict[int, dict], side: str) -> bool:
 
     deadline_et = datetime.combine(
         datetime.strptime(et_date, "%Y-%m-%d").date(),
-        time(TIMEOUT_SWEEP_HOUR_ET, 0),
+        time(sweep_h, 0),
         tzinfo=ET,
     )
     sweep_deadline_ts = int(deadline_et.timestamp())
