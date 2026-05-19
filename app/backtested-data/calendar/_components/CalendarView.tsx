@@ -13,9 +13,11 @@ import {
 import { RED_FOLDER_WHITELIST } from '@/lib/news-week';
 import type { EventStudyStats } from '@/lib/study-stats';
 
+type StudyMap = Record<string, EventStudyStats | null>;
+
 type Props = {
   events: NewsCalendarItem[];
-  studyMap: Record<string, EventStudyStats | null>;
+  studyMapByAsset: { nq: StudyMap; gc: StudyMap };
 };
 
 function impClass(imp: string): string {
@@ -33,9 +35,11 @@ function DayCard({
   asset: string;
   href: string | null;
 }) {
+  // GC pill: only show events that have a GC-backed study.
+  // NQ / All: show all events (study may be null for unknown events).
   const filtered =
     asset === 'gc'
-      ? day.events.filter((e) => e.study?.asset === 'GC')
+      ? day.events.filter((e) => e.study != null)
       : day.events;
 
   const cardClass = 'v3-day-card' + (day.isToday ? ' today' : '');
@@ -95,7 +99,7 @@ function DayCard({
 function MonthCell({ day, asset }: { day: DayBucket; asset: string }) {
   const filtered =
     asset === 'gc'
-      ? day.events.filter((e) => e.study?.asset === 'GC')
+      ? day.events.filter((e) => e.study != null)
       : day.events;
   const inMonth = day.iso.slice(0, 7) === new Date().toISOString().slice(0, 7);
 
@@ -135,9 +139,12 @@ function MonthCell({ day, asset }: { day: DayBucket; asset: string }) {
   );
 }
 
-export default function CalendarViewComponent({ events, studyMap }: Props) {
+export default function CalendarViewComponent({ events, studyMapByAsset }: Props) {
   const { asset } = useAsset();
   const [view, setView] = useState<CalendarView>('this');
+
+  // 'all' falls back to NQ map (NQ covers the canonical event set).
+  const studyMap = asset === 'gc' ? studyMapByAsset.gc : studyMapByAsset.nq;
 
   const weekBuckets = useMemo(() => {
     if (view === 'this') return buildWeekBuckets(events, 0, studyMap);
@@ -150,10 +157,12 @@ export default function CalendarViewComponent({ events, studyMap }: Props) {
     [events, studyMap, view],
   );
 
-  const redFolder = useMemo(
-    () => getRedFolderForView(events, view, RED_FOLDER_WHITELIST),
-    [events, view],
-  );
+  const redFolder = useMemo(() => {
+    const base = getRedFolderForView(events, view, RED_FOLDER_WHITELIST);
+    // GC pill: drop events that don't have a GC-backed study.
+    if (asset === 'gc') return base.filter((e) => studyMap[e.event] != null);
+    return base;
+  }, [events, view, asset, studyMap]);
 
   const subhead =
     view === 'this' ? 'This week' : view === 'next' ? 'Next week' : 'Month view';
@@ -201,11 +210,7 @@ export default function CalendarViewComponent({ events, studyMap }: Props) {
       {view !== 'month' ? (
         <div className="v3-day-cards">
           {weekBuckets.map((day) => {
-            const firstStudy =
-              (asset === 'gc'
-                ? day.events.filter((e) => e.study?.asset === 'GC')
-                : day.events
-              ).find((e) => e.study != null)?.study ?? null;
+            const firstStudy = day.events.find((e) => e.study != null)?.study ?? null;
             const href = firstStudy ? `/backtested-data/${firstStudy.slug}/` : null;
             return <DayCard key={day.iso} day={day} asset={asset} href={href} />;
           })}

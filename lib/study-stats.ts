@@ -286,21 +286,21 @@ export function getMarketStudyStats(): MarketStudyStats[] {
   return results;
 }
 
-// Event name → IFVG SMT slug mapping (NQ only for now; GC mapped later)
-const EVENT_SLUG_MAP: Record<string, string | null> = {
-  'CPI':                        'cpi-ifvg-smt',
-  'NFP':                        'nfp-ifvg-smt',
-  'Non-Farm Payrolls':          'nfp-ifvg-smt',
-  'PPI':                        'ppi-ifvg-smt',
-  'PCE':                        'pce-ifvg-smt',
-  'Jobless Claims':             'joblessclaims-ifvg-smt',
-  'Retail Sales':               'retailsales-ifvg-smt',
-  'Empire State Manufacturing': 'empirestate-ifvg-smt',
-  'Employment Cost Index':      'employmentcostindex-ifvg-smt',
-  'GDP':                        'gdp-ifvg-smt',
-  'FOMC Minutes':               null,
-  'FOMC Statement':             'fomc-ifvg-smt',
-  'Federal Funds Rate':         'fomc-ifvg-smt',
+// Event name → IFVG SMT slug mapping per asset (NQ + GC)
+const EVENT_SLUG_MAP: Record<string, { nq: string | null; gc: string | null }> = {
+  'CPI':                        { nq: 'cpi-ifvg-smt',                gc: 'cpi-ifvg-smt-gc' },
+  'NFP':                        { nq: 'nfp-ifvg-smt',                gc: 'nfp-ifvg-smt-gc' },
+  'Non-Farm Payrolls':          { nq: 'nfp-ifvg-smt',                gc: 'nfp-ifvg-smt-gc' },
+  'PPI':                        { nq: 'ppi-ifvg-smt',                gc: 'ppi-ifvg-smt-gc' },
+  'PCE':                        { nq: 'pce-ifvg-smt',                gc: 'pce-ifvg-smt-gc' },
+  'Jobless Claims':             { nq: 'joblessclaims-ifvg-smt',      gc: 'joblessclaims-ifvg-smt-gc' },
+  'Retail Sales':               { nq: 'retailsales-ifvg-smt',        gc: 'retailsales-ifvg-smt-gc' },
+  'Empire State Manufacturing': { nq: 'empirestate-ifvg-smt',        gc: 'empirestate-ifvg-smt-gc' },
+  'Employment Cost Index':      { nq: 'employmentcostindex-ifvg-smt',gc: 'employmentcostindex-ifvg-smt-gc' },
+  'GDP':                        { nq: 'gdp-ifvg-smt',                gc: 'gdp-ifvg-smt-gc' },
+  'FOMC Minutes':               { nq: null,                          gc: null },
+  'FOMC Statement':             { nq: 'fomc-ifvg-smt',               gc: 'fomc-ifvg-smt-gc' },
+  'Federal Funds Rate':         { nq: 'fomc-ifvg-smt',               gc: 'fomc-ifvg-smt-gc' },
 };
 
 export type EventStudyStats = {
@@ -313,21 +313,26 @@ export type EventStudyStats = {
 };
 
 export function getEventStudyMap(
-  news: Array<{ event: string }>
+  news: Array<{ event: string }>,
+  asset: 'nq' | 'gc' = 'nq',
 ): Record<string, EventStudyStats | null> {
   const map: Record<string, EventStudyStats | null> = {};
   for (const item of news) {
     if (!(item.event in map)) {
-      map[item.event] = getStudyForEvent(item.event);
+      map[item.event] = getStudyForEvent(item.event, asset);
     }
   }
   return map;
 }
 
-export function getStudyForEvent(eventName: string): EventStudyStats | null {
-  const slug = EVENT_SLUG_MAP[eventName];
-  if (slug === undefined) return null; // unknown event — treat same as no study
-  if (slug === null) return null;       // known event, no study yet
+export function getStudyForEvent(
+  eventName: string,
+  asset: 'nq' | 'gc' = 'nq',
+): EventStudyStats | null {
+  const entry = EVENT_SLUG_MAP[eventName];
+  if (!entry) return null;                // unknown event
+  const slug = entry[asset];
+  if (!slug) return null;                  // known event, no study for this asset
   const stats = getStrategyStats(slug);
   if (!stats) return null;
   return { slug, pf: stats.pf, n: stats.n, net: stats.net, wr: stats.wr, asset: stats.asset };

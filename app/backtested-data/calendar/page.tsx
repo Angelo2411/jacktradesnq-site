@@ -5,12 +5,16 @@ import CalendarView from './_components/CalendarView';
 export default function CalendarPage() {
   // Server-side: load multi-week calendar (prev week → +4 weeks).
   const events = loadNewsCalendar();
-  const studyMap = getEventStudyMap(events);
+  const studyMapNq = getEventStudyMap(events, 'nq');
+  const studyMapGc = getEventStudyMap(events, 'gc');
 
   return (
     <>
       <div className="v3-hero-crumb">Calendar</div>
-      <CalendarView events={events} studyMap={studyMap} />
+      <CalendarView
+        events={events}
+        studyMapByAsset={{ nq: studyMapNq, gc: studyMapGc }}
+      />
     </>
   );
 }
