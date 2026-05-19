@@ -31,10 +31,14 @@ export default function StraddleTrades({
   eventShort,
   jsonUrl,
   offsetLabel,
+  pdfUrl,
+  pdfLabel,
 }: {
   eventShort: 'cpi' | 'nfp';
   jsonUrl: string;
-  offsetLabel: string;  // "Stop offset" for CPI, "Entry offset" for NFP
+  offsetLabel: string;
+  pdfUrl?: string;
+  pdfLabel?: string;
 }) {
   const [payload, setPayload] = useState<Payload | null>(null);
   const [selectedX, setSelectedX] = useState<number | null>(null);
@@ -98,6 +102,13 @@ export default function StraddleTrades({
 
   return (
     <div className="v3-straddle-trades">
+      {pdfUrl ? (
+        <div style={{ marginBottom: 16 }}>
+          <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="bd-link-gold" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.85rem', fontWeight: 600 }}>
+            ↓ {pdfLabel ?? 'Download — Full report PDF'}
+          </a>
+        </div>
+      ) : null}
       {stats && (
         <div className="v3-kpi-band" style={{ marginBottom: 12 }}>
           <div className="v3-kpi-cell">

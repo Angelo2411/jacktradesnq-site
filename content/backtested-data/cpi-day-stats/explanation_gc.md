@@ -35,5 +35,4 @@ Gold CPI straddles tested: offsets {2, 3, 4, 5} pts Ã— TPs {1.5, 2.0, 2.5} pts â
 
 Pick a year, stop offset, TP target and side; the table refreshes live and you can download a tailored PDF report.
 
-<div data-explorer="cpi"></div>
 

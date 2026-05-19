@@ -43,7 +43,6 @@ Fill rate ~97.7% — you're in on virtually every release. Gold NFP is a high-pr
 
 Pick a year, entry offset, TP target and side; the table refreshes live and you can download a tailored PDF report.
 
-<div data-explorer="nfp"></div>
 
 ### Why Offset Size Matters (Gold vs NQ)
 

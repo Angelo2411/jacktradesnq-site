@@ -53,5 +53,4 @@ All values below are in **NQ points** (1 pt ≈ $20 on 1 NQ contract / $2 on 1 M
 
 Pick a year, stop offset, TP target and side; the table refreshes live and you can download a tailored PDF report.
 
-<div data-explorer="cpi"></div>
 

@@ -30,6 +30,5 @@ Bilateral straddle, full-port, **no stop loss**. AI-gathered data, not financial
 
 ### Explore the data — your filters, your PDF
 
-<div data-explorer="cpi"></div>
 
 <a class="bd-btn bd-btn-secondary" href="/downloads/backtested-data/cpi-fullport.pdf" download>Download — CPI Fullport PDF</a>

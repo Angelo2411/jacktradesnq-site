@@ -422,21 +422,25 @@ export default async function BacktestedDetail({ params }: PageProps) {
         </p>
       </div>
 
-      {isStraddleSwitcher && explorerKey === 'cpi' ? (
+      {slug === 'cpi-day-stats' ? (
         <div style={{ marginTop: 48 }}>
           <StraddleTrades
             eventShort="cpi"
             jsonUrl="/data/cpi-straddle-trades.json"
             offsetLabel="Stop offset"
+            pdfUrl="/downloads/backtested-data/cpi-fullport.pdf"
+            pdfLabel="Download — CPI Fullport PDF"
           />
         </div>
       ) : null}
-      {isStraddleSwitcher && explorerKey === 'nfp' ? (
+      {slug === 'nfp' ? (
         <div style={{ marginTop: 48 }}>
           <StraddleTrades
             eventShort="nfp"
             jsonUrl="/data/nfp-straddle-trades.json"
             offsetLabel="Entry offset"
+            pdfUrl="/downloads/backtested-data/nfp-fullport.pdf"
+            pdfLabel="Download — NFP Fullport PDF"
           />
         </div>
       ) : null}

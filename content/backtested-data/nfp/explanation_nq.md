@@ -63,7 +63,6 @@ Fill rate ~24% — you skip the NFPs that don't reach ±100 pts in 60 seconds. W
 
 Pick a year, entry offset, TP target and side; the table refreshes live and you can download a tailored PDF report.
 
-<div data-explorer="nfp"></div>
 
 ### Why Offset Size Matters
 
