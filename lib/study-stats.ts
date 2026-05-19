@@ -57,6 +57,7 @@ export type StrategyStats = {
   bias: string;
   dateFrom: string;
   dateTo: string;
+  releaseTime?: string;
 };
 
 export type WeekdayStats = {
@@ -75,7 +76,7 @@ export type WeekdayBreakdown = {
 };
 
 // IFVG SMT slugs that have a trades[] array we can derive stats from
-const IFVG_SLUGS: Array<{ slug: string; event: string; asset: string }> = [
+const IFVG_SLUGS: Array<{ slug: string; event: string; asset: string; releaseTime?: string }> = [
   { slug: 'cpi-ifvg-smt',                event: 'CPI',                  asset: 'NQ' },
   { slug: 'nfp-ifvg-smt',                event: 'NFP',                  asset: 'NQ' },
   { slug: 'ppi-ifvg-smt',                event: 'PPI',                  asset: 'NQ' },
@@ -85,7 +86,7 @@ const IFVG_SLUGS: Array<{ slug: string; event: string; asset: string }> = [
   { slug: 'empirestate-ifvg-smt',        event: 'Empire State',         asset: 'NQ' },
   { slug: 'employmentcostindex-ifvg-smt',event: 'Employment Cost',      asset: 'NQ' },
   { slug: 'gdp-ifvg-smt',               event: 'GDP',                  asset: 'NQ' },
-  { slug: 'fomc-ifvg-smt',              event: 'FOMC',                 asset: 'NQ' },
+  { slug: 'fomc-ifvg-smt',              event: 'FOMC',                 asset: 'NQ', releaseTime: '14:00 ET' },
   { slug: 'gc-ifvg-smt',                event: 'Multi-event',          asset: 'GC' },
   { slug: 'cpi-ifvg-smt-gc',                 event: 'CPI',             asset: 'GC' },
   { slug: 'nfp-ifvg-smt-gc',                 event: 'NFP',             asset: 'GC' },
@@ -96,11 +97,12 @@ const IFVG_SLUGS: Array<{ slug: string; event: string; asset: string }> = [
   { slug: 'retailsales-ifvg-smt-gc',         event: 'Retail Sales',    asset: 'GC' },
   { slug: 'empirestate-ifvg-smt-gc',         event: 'Empire State',    asset: 'GC' },
   { slug: 'employmentcostindex-ifvg-smt-gc', event: 'Employment Cost', asset: 'GC' },
+  { slug: 'fomc-ifvg-smt-gc',                event: 'FOMC',            asset: 'GC', releaseTime: '14:00 ET' },
 ];
 
 function computeIfvgStats(
   json: IfvgJson,
-  slugEntry: { slug: string; event: string; asset: string },
+  slugEntry: { slug: string; event: string; asset: string; releaseTime?: string },
   variant: 'tp1_be' | 'be_50' | 'no_be' = 'tp1_be',
 ): StrategyStats {
   const trades = (json.trades ?? []).filter(
@@ -135,6 +137,7 @@ function computeIfvgStats(
     bias,
     dateFrom,
     dateTo,
+    releaseTime: slugEntry.releaseTime,
   };
 }
 
