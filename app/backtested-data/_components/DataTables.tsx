@@ -7,7 +7,7 @@ import type { StrategyStats, MarketStudyStats } from '@/lib/study-stats';
 function pct(v: number) { return `${v}%`; }
 function netFmt(v: number) { const sign = v >= 0 ? '+' : ''; return `${sign}${v.toFixed(1)}`; }
 
-type SortBy = 'pf' | 'n' | 'net' | 'wr';
+type SortBy = 'alpha' | 'pf' | 'n' | 'net' | 'wr';
 
 
 type Props = {
@@ -23,7 +23,7 @@ export default function DataTables({ strats, marketStudies, totalTrades, period,
   const [family, setFamily] = useState('');
   const [event, setEvent] = useState('');
   const [session, setSession] = useState('');
-  const [sortBy, setSortBy] = useState<SortBy>('pf');
+  const [sortBy, setSortBy] = useState<SortBy>('alpha');
   const [showNoEdge, setShowNoEdge] = useState(false);
 
   const filteredStrats = useMemo(() => {
@@ -35,7 +35,9 @@ export default function DataTables({ strats, marketStudies, totalTrades, period,
     if (family === 'Market structure') list = [];
     // family === '8:30 News' → all strats, no-op
     if (!showNoEdge) list = list.filter((s) => s.pf >= 1.2);
-    return [...list].sort((a, b) => b[sortBy] - a[sortBy]);
+    return [...list].sort((a, b) =>
+      sortBy === 'alpha' ? a.event.localeCompare(b.event) : b[sortBy] - a[sortBy]
+    );
   }, [strats, asset, family, event, session, sortBy, showNoEdge]);
 
   const filteredStudies = useMemo(() => {
@@ -84,6 +86,7 @@ export default function DataTables({ strats, marketStudies, totalTrades, period,
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value as SortBy)}
         >
+          <option value="alpha">↑ Sort: A–Z</option>
           <option value="pf">↑ Sort: PF</option>
           <option value="n">↑ Sort: N</option>
           <option value="net">↑ Sort: Net</option>
