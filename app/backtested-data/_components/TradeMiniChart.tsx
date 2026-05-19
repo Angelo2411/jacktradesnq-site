@@ -37,6 +37,14 @@ const EVENT_SHORT: Record<string, string> = {
   'Retail Sales':     'retailsales',
   'Empire State':     'empirestate',
   'Employment Cost':  'employmentcostindex',
+  'FOMC':                                  'fomc',
+  'ADP':                                   'adp',
+  'JOLTS':                                 'jolts',
+  'ISM Manufacturing PMI':                 'ism_mfg',
+  'ISM Services PMI':                      'ism_services',
+  'CB Consumer Confidence':                'cb_confidence',
+  'Philadelphia Fed Manufacturing':        'philly_fed',
+  'Durable Goods Orders':                  'durable_goods',
 };
 
 interface Props {
