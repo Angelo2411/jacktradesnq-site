@@ -13,6 +13,10 @@ export default function BacktestedLayout({
     <div className="bd-root">
       {/* Topbar */}
       <header className="v3-topbar">
+        <Link href="/" className="v3-back-home" aria-label="Back to home">
+          <span aria-hidden="true">←</span>
+          <span className="v3-back-home-label">Home</span>
+        </Link>
         <Link href="/backtested-data/" className="v3-logo">
           J<span className="v3-logo-dot">.</span>
         </Link>
