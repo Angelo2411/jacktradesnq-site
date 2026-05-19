@@ -272,18 +272,21 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         { time: exitSec, value: slPrice },
       ]);
 
-      const tpSegment = chart.addSeries(LineSeries, {
-        color: cUp,
-        lineWidth: 1,
-        lineStyle: LineStyle.Dashed,
-        priceLineVisible: false,
-        lastValueVisible: true,
-        title: 'Take profit',
-      });
-      tpSegment.setData([
-        { time: entrySec, value: tpPrice },
-        { time: exitSec, value: tpPrice },
-      ]);
+      // tp1_be variant: full TP = data_high/low so showing both is redundant — Data H/L lines carry it.
+      if (variant !== 'tp1_be') {
+        const tpSegment = chart.addSeries(LineSeries, {
+          color: cUp,
+          lineWidth: 1,
+          lineStyle: LineStyle.Dashed,
+          priceLineVisible: false,
+          lastValueVisible: true,
+          title: 'Take profit',
+        });
+        tpSegment.setData([
+          { time: entrySec, value: tpPrice },
+          { time: exitSec, value: tpPrice },
+        ]);
+      }
 
       // TP1 line: half-close threshold at +50% TP distance — only drawn for tp1_be variant.
       if (variant === 'tp1_be') {
@@ -529,7 +532,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
             {pnlSign}{pnl_pts.toFixed(2)} pts
           </span>
           <span style={{ marginLeft: 'auto', display: 'flex', gap: 10, flexWrap: 'wrap', fontVariantNumeric: 'tabular-nums' }}>
-            {tpPrice !== undefined && (<LegendPill color="#4a8c3f" label="TP" value={tpPrice} />)}
+            {variant !== 'tp1_be' && tpPrice !== undefined && (<LegendPill color="#4a8c3f" label="TP" value={tpPrice} />)}
             {variant === 'tp1_be' && tpPrice !== undefined && entryPriceProp !== undefined && (
               <LegendPill color="#4a8c3f" label="TP1" value={(entryPriceProp + 0.5 * (tpPrice - entryPriceProp)).toFixed(2)} />
             )}
