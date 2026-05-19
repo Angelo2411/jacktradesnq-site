@@ -16,19 +16,7 @@ These datas were my own tests to see which metrics are the best to fullport acco
 
 ### Setup
 
-Bilateral straddle, full-port, **no stop loss**:
-- Buy stop pending order at release price **+ Offset** (in pts)
-- Sell stop pending order at release price **− Offset** (OCO)
-- Take Profit at fill price **± TP**
-- If TP is not hit within 30 min → position closed
-- Entry offsets tested in {2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0} pts, TPs in {2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0} pts → 49 combos
-
-All values below are in **pts**.
-
-**Quick glossary:**
-- **Offset** — distance in pts between the release price and where each pending stop order is placed.
-- **OCO** ("One Cancels Other") — the two pending stops are linked. Whichever gets touched first fills, the other auto-cancels.
-- **Filled** — the market triggered one of your stops; you have an open position. Not filled = no position, PnL stays 0.
+OCO buy-stop / sell-stop ±Offset from release close, TP at fill ±TP, no SL, 30-min expiry. 49 combos tested (Offset × TP ∈ {2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0} pts).
 
 ### Where to place your stop and TP
 
@@ -38,11 +26,6 @@ After testing 49 combos across 124 NFP Gold releases:
 - **Take profit: 2.0 pts** — large enough to clear noise on GC, tight enough that the move actually reaches it.
 
 Fill rate ~97.7% — you're in on virtually every release. Gold NFP is a high-probability event; the challenge isn't getting filled, it's picking the right TP.
-
-### Explore the data — your filters, your PDF
-
-Pick a year, entry offset, TP target and side; the table refreshes live and you can download a tailored PDF report.
-
 
 ### Why Offset Size Matters (Gold vs NQ)
 

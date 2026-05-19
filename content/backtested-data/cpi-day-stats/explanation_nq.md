@@ -34,23 +34,8 @@ These datas were my own tests to see which metrics are the best to fullport acco
 
 ### Setup
 
-Bilateral straddle, full-port, **no stop loss**:
-- Buy stop pending order at release price **+ Offset** (in NQ points)
-- Sell stop pending order at release price **− Offset** (OCO with the buy stop — first touched fills, the other cancels)
-- Take Profit at fill price **± TP**
-- If TP is not hit within 30 min → position closed
+OCO buy-stop / sell-stop ±Offset from release close, TP at fill ±TP, no SL, 30-min expiry. 1 NQ pt ≈ $20 / 1 MNQ pt ≈ $2.
 
-All values below are in **NQ points** (1 pt ≈ $20 on 1 NQ contract / $2 on 1 MNQ).
-
-**Quick glossary:**
-- **Offset** — distance in points between the release price and where each pending stop order is placed. Offset 25 = buy stop 25 pts above, sell stop 25 pts below.
-- **OCO** ("One Cancels Other") — the two pending stops are linked. Whichever gets touched first fills, the other auto-cancels.
-- **Filled** — the market triggered one of your stops; you have an open position. Not filled = no position, PnL stays 0.
-
-> **Pre-2020 note:** CPI was a non-event before the inflation regime. Offsets ≥25 pts rarely filled in 2016–2019. Data kept for transparency — use **2022 onwards** as your baseline.
-
-### Explore the data — your filters, your PDF
-
-Pick a year, stop offset, TP target and side; the table refreshes live and you can download a tailored PDF report.
+> **Pre-2020 note:** CPI was a non-event before the inflation regime. Offsets ≥25 pts rarely filled in 2016–2019. Use **2022 onwards** as your baseline.
 
 
