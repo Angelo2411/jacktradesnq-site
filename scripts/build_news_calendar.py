@@ -38,12 +38,38 @@ OUTPUT       = Path("/Users/angelo/jtnq-hub-v3/public/data/news-calendar.json")
 
 # ── Normalisation des noms d'événements ──────────────────────────────────────
 EVENT_NORMALIZE = {
-    "Core CPI":               "CPI",
-    "Non-Farm Payrolls":      "NFP",
-    "Initial Jobless Claims": "Jobless Claims",
-    "Core Retail Sales":      "Retail Sales",
-    "FOMC":                   "FOMC Statement",
-    "Fed Rate Decision":      "FOMC Statement",
+    "Core CPI":                  "CPI",
+    "Non-Farm Payrolls":         "NFP",
+    "Initial Jobless Claims":    "Jobless Claims",
+    "Core Retail Sales":         "Retail Sales",
+    "FOMC":                      "FOMC Statement",
+    "Fed Rate Decision":         "FOMC Statement",
+    "ISM Non-Manufacturing PMI": "ISM Services PMI",
+    "UoM Consumer Sentiment":    "University of Michigan Consumer Sentiment",
+}
+
+# ── FF red folder whitelist (drop everything else: Crude/PMI/Bond/etc.) ──────
+# Names below are POST-normalisation canonical strings.
+BACKTESTED_EVENTS = {
+    # backtested
+    "CPI", "NFP", "PPI", "PCE", "GDP",
+    "Jobless Claims", "Retail Sales",
+    "Empire State Manufacturing Index",
+    "Employment Cost Index",
+    "FOMC Statement", "Federal Funds Rate", "FOMC Minutes",
+    # FF red folder, not backtested yet (visible with "No backtest yet"):
+    "Unemployment Rate",
+    "Average Hourly Earnings",
+    "ISM Manufacturing PMI",
+    "ISM Services PMI",
+    "ADP Non-Farm Employment Change",
+    "JOLTS Job Openings",
+    "CB Consumer Confidence",
+    "Philadelphia Fed Manufacturing Index",
+    "Durable Goods Orders", "Core Durable Goods Orders",
+    "Existing Home Sales", "New Home Sales",
+    "Trade Balance",
+    "University of Michigan Consumer Sentiment",
 }
 
 # ── Canonical timing whitelist (ET, leading-zero stripped) ───────────────────
@@ -137,6 +163,10 @@ def main() -> None:
             continue
 
         norm_event = EVENT_NORMALIZE.get(raw_event, raw_event)
+
+        # FF red folder whitelist: drop Crude Oil/Bond/PMI medium/etc.
+        if norm_event not in BACKTESTED_EVENTS:
+            continue
 
         # Canonical ET time override (handles UTC entries in master CSV)
         canonical_t = CANONICAL_TIME.get(norm_event) or CANONICAL_TIME.get(raw_event)

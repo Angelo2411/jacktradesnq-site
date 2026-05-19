@@ -56,8 +56,9 @@ export function getWeekDates(): Array<{
 // Whitelist of true red-folder events for NQ/GC. Crude Oil, PMI, Philly Fed
 // etc. are flagged "High" by the upstream feed but not relevant for our setups.
 export const RED_FOLDER_WHITELIST = new Set([
+  // ── Backtested (10 canonical) ─────────────────────────────────────────────
   'CPI', 'Core CPI',
-  'NFP', 'Non-Farm Payrolls', 'Employment Situation', 'Average Hourly Earnings', 'Unemployment Rate',
+  'NFP', 'Non-Farm Payrolls', 'Employment Situation',
   'PPI', 'Core PPI',
   'PCE', 'Core PCE',
   'GDP', 'GDP Advance', 'GDP (Advance)',
@@ -66,6 +67,20 @@ export const RED_FOLDER_WHITELIST = new Set([
   'Empire State Manufacturing Index', 'Empire State Manufacturing', 'Empire State',
   'Employment Cost Index',
   'FOMC Statement', 'FOMC Rate Decision', 'FOMC Press Conference', 'Fed Interest Rate Decision',
+  'Federal Funds Rate', 'FOMC Minutes',
+  // ── FF red folder, NOT backtested yet (show with "No backtest yet" badge) ─
+  'Unemployment Rate',
+  'Average Hourly Earnings',
+  'ISM Manufacturing PMI',
+  'ISM Services PMI', 'ISM Non-Manufacturing PMI',
+  'ADP Non-Farm Employment Change',
+  'JOLTS Job Openings',
+  'CB Consumer Confidence',
+  'Philadelphia Fed Manufacturing Index',
+  'Durable Goods Orders', 'Core Durable Goods Orders',
+  'Existing Home Sales', 'New Home Sales',
+  'Trade Balance',
+  'University of Michigan Consumer Sentiment', 'UoM Consumer Sentiment',
 ]);
 
 // Pure client-safe: match news items to week dates, attach study from map.
