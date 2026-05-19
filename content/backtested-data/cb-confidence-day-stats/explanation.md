@@ -20,6 +20,8 @@ The CB Consumer Confidence is released by Conference Board at 10:00 ET. This stu
 
 Across **35 sweep-qualified setups** 2016–2026, average release-bar range was **31.0 pts** with a max of **66.2 pts**. This is the 1m candle volatility you must respect when fading the release.
 
+<a class="bd-btn bd-btn-secondary" href="/downloads/backtested-data/cb-confidence-points.pdf" download>Download — CB Consumer Confidence Points PDF</a>
+
 ### Related
 
 - [Full IFVG + SMT NQ backtest](/backtested-data/cb-confidence-ifvg-smt/) — sweep + IFVG entry on this event.

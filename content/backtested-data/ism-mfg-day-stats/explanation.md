@@ -22,6 +22,8 @@ The ISM Manufacturing PMI is released by Institute for Supply Management at 10:0
 
 Across **51 sweep-qualified setups** 2016–2026, average release-bar range was **35.5 pts** with a max of **85.0 pts**. This is the 1m candle volatility you must respect when fading the release.
 
+<a class="bd-btn bd-btn-secondary" href="/downloads/backtested-data/ism-mfg-points.pdf" download>Download — ISM Manufacturing PMI Points PDF</a>
+
 ### Related
 
 - [Full IFVG + SMT NQ backtest](/backtested-data/ism-mfg-ifvg-smt/) — sweep + IFVG entry on this event.
