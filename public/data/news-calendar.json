@@ -1,0 +1,176 @@
+{
+  "generated_at": "2026-05-19T17:45:28Z",
+  "window_start": "2026-05-11",
+  "window_end": "2026-06-21",
+  "source": "news_red_folder_full.csv + upcoming_events.csv",
+  "events": [
+    {
+      "date": "2026-05-11",
+      "day": "Mon 11",
+      "time": "10:00",
+      "event": "Existing Home Sales",
+      "imp": "High",
+      "weekday": 0
+    },
+    {
+      "date": "2026-05-12",
+      "day": "Tue 12",
+      "time": "8:30",
+      "event": "CPI",
+      "imp": "High",
+      "weekday": 1
+    },
+    {
+      "date": "2026-05-12",
+      "day": "Tue 12",
+      "time": "13:00",
+      "event": "10-Year Note Auction",
+      "imp": "High",
+      "weekday": 1
+    },
+    {
+      "date": "2026-05-13",
+      "day": "Wed 13",
+      "time": "8:30",
+      "event": "PPI",
+      "imp": "High",
+      "weekday": 2
+    },
+    {
+      "date": "2026-05-13",
+      "day": "Wed 13",
+      "time": "10:30",
+      "event": "Crude Oil Inventories",
+      "imp": "High",
+      "weekday": 2
+    },
+    {
+      "date": "2026-05-13",
+      "day": "Wed 13",
+      "time": "13:00",
+      "event": "30y Bond Auction",
+      "imp": "High",
+      "weekday": 2
+    },
+    {
+      "date": "2026-05-14",
+      "day": "Thu 14",
+      "time": "8:30",
+      "event": "Retail Sales",
+      "imp": "High",
+      "weekday": 3
+    },
+    {
+      "date": "2026-05-14",
+      "day": "Thu 14",
+      "time": "8:30",
+      "event": "Jobless Claims",
+      "imp": "High",
+      "weekday": 3
+    },
+    {
+      "date": "2026-05-20",
+      "day": "Wed 20",
+      "time": "10:30",
+      "event": "Crude Oil Inventories",
+      "imp": "High",
+      "weekday": 2
+    },
+    {
+      "date": "2026-05-20",
+      "day": "Wed 20",
+      "time": "14:00",
+      "event": "FOMC Statement",
+      "imp": "High",
+      "weekday": 2
+    },
+    {
+      "date": "2026-05-21",
+      "day": "Thu 21",
+      "time": "8:30",
+      "event": "Philadelphia Fed Manufacturing Index",
+      "imp": "High",
+      "weekday": 3
+    },
+    {
+      "date": "2026-05-21",
+      "day": "Thu 21",
+      "time": "8:30",
+      "event": "Jobless Claims",
+      "imp": "High",
+      "weekday": 3
+    },
+    {
+      "date": "2026-05-21",
+      "day": "Thu 21",
+      "time": "9:45",
+      "event": "S&P Global Manufacturing PMI",
+      "imp": "High",
+      "weekday": 3
+    },
+    {
+      "date": "2026-05-21",
+      "day": "Thu 21",
+      "time": "9:45",
+      "event": "S&P Global Services PMI",
+      "imp": "High",
+      "weekday": 3
+    },
+    {
+      "date": "2026-05-21",
+      "day": "Thu 21",
+      "time": "13:00",
+      "event": "30y Bond Auction",
+      "imp": "High",
+      "weekday": 3
+    },
+    {
+      "date": "2026-05-26",
+      "day": "Tue 26",
+      "time": "10:00",
+      "event": "CB Consumer Confidence",
+      "imp": "High",
+      "weekday": 1
+    },
+    {
+      "date": "2026-05-28",
+      "day": "Thu 28",
+      "time": "8:30",
+      "event": "Jobless Claims",
+      "imp": "High",
+      "weekday": 3
+    },
+    {
+      "date": "2026-06-04",
+      "day": "Thu 4",
+      "time": "8:30",
+      "event": "Jobless Claims",
+      "imp": "High",
+      "weekday": 3
+    },
+    {
+      "date": "2026-06-11",
+      "day": "Thu 11",
+      "time": "8:30",
+      "event": "Jobless Claims",
+      "imp": "High",
+      "weekday": 3
+    },
+    {
+      "date": "2026-06-17",
+      "day": "Wed 17",
+      "time": "14:00",
+      "event": "FOMC Statement",
+      "imp": "High",
+      "weekday": 2
+    },
+    {
+      "date": "2026-06-18",
+      "day": "Thu 18",
+      "time": "8:30",
+      "event": "Jobless Claims",
+      "imp": "High",
+      "weekday": 3
+    }
+  ]
+}
