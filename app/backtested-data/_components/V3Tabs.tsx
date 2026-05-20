@@ -5,6 +5,9 @@ import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import type { WeekdayBreakdown, WeekdayStats, YearBreakdown, TradeRow, StrategyStats } from '@/lib/study-stats';
 import TradeMiniChart from './TradeMiniChart';
+import WeekdayBars from './WeekdayBars';
+import EquityCurve from './EquityCurve';
+import DailyPnlBars from './DailyPnlBars';
 
 type Tab = 'overview' | 'weekday' | 'year' | 'trades' | 'methodology';
 
@@ -72,6 +75,7 @@ function WeekdayBlock({
 
   return (
     <div>
+      <WeekdayBars breakdown={breakdown} title="Net PnL by weekday" subtitle={smtLabel} />
       <div className="v3-wd-h">Performance by day of the week</div>
       <div className="v3-wd-sub">Real data — {smtLabel} variant · tp1_be.</div>
       <div className="v3-wd-grid">
@@ -125,7 +129,7 @@ function WeekdayBlock({
   );
 }
 
-function YearBlock({ breakdown, slug, smtLabel = 'SMT-on' }: { breakdown: YearBreakdown; slug: string; smtLabel?: string }) {
+function YearBlock({ breakdown, slug, smtLabel = 'SMT-on', trades = [] }: { breakdown: YearBreakdown; slug: string; smtLabel?: string; trades?: TradeRow[] }) {
   if (breakdown.length === 0) {
     return <div className="v3-coming-soon">No year data available.</div>;
   }
@@ -198,6 +202,12 @@ function YearBlock({ breakdown, slug, smtLabel = 'SMT-on' }: { breakdown: YearBr
           <> Worst: <strong>{worst.year}</strong> ({worst.wr}% WR · {worst.net} pts net).</>
         )}
       </div>
+      {trades.length > 0 && (
+        <div className="eq-pair-wrap">
+          <EquityCurve trades={trades} title="Equity curve" subtitle={`Cumulative PnL · ${smtLabel}`} />
+          <DailyPnlBars trades={trades} title="Trade-by-trade PnL" subtitle={`Per trade · ${smtLabel}`} />
+        </div>
+      )}
     </div>
   );
 }
@@ -513,7 +523,7 @@ export default function V3Tabs({
       {activeTab === 'weekday' ? (
         <WeekdayBlock breakdown={activeBreakdown} slug={slug} smtLabel={smtLabel} />
       ) : activeTab === 'year' ? (
-        <YearBlock breakdown={activeYearBreakdown} slug={slug} smtLabel={smtLabel} />
+        <YearBlock breakdown={activeYearBreakdown} slug={slug} smtLabel={smtLabel} trades={activeTrades} />
       ) : activeTab === 'trades' ? (
         <TradesBlock trades={activeTrades} tradesByVariant={activeTradesByVariant} variant={variant} setVariant={setVariant} dayFilter={dayFilter} yearFilter={yearFilter} slug={slug} eventShort={eventShort} asset={asset} smtLabel={smtLabel} />
       ) : activeTab === 'methodology' ? (
