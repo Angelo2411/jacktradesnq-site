@@ -22,7 +22,7 @@ export default function HubTopBar({
       {/* Asset toggle */}
       <div className="bd-hub-topbar-group">
         <div className="bd-flt-asset-toggle bd-flt-asset-toggle--inline">
-          {(['All', 'NQ', 'GC'] as AssetFilter[]).map((a) => (
+          {(['All', 'NQ', 'GC', 'ES', 'SI'] as AssetFilter[]).map((a) => (
             <button
               key={a}
               className={`bd-flt-asset-btn${asset === a ? ' on' : ''}`}
@@ -34,26 +34,16 @@ export default function HubTopBar({
         </div>
       </div>
 
-      {/* Edge / No-edge segmented — pushed to the right */}
+      {/* Edge-only toggle — single button, pushed to the right */}
       <div className="bd-hub-topbar-group bd-hub-topbar-group--end">
-        <div className="bd-edge-segmented" role="group" aria-label="Filter by edge">
-          <button
-            type="button"
-            className={`bd-edge-seg-btn${!showNoEdge ? ' on' : ''}`}
-            aria-pressed={!showNoEdge}
-            onClick={() => onShowNoEdge(false)}
-          >
-            Edge only
-          </button>
-          <button
-            type="button"
-            className={`bd-edge-seg-btn${showNoEdge ? ' on' : ''}`}
-            aria-pressed={showNoEdge}
-            onClick={() => onShowNoEdge(true)}
-          >
-            All studies
-          </button>
-        </div>
+        <button
+          type="button"
+          className={`bd-edge-toggle${!showNoEdge ? ' on' : ''}`}
+          aria-pressed={!showNoEdge}
+          onClick={() => onShowNoEdge(!showNoEdge)}
+        >
+          Edge only
+        </button>
       </div>
     </div>
   );

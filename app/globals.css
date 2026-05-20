@@ -1755,33 +1755,25 @@ a { color: inherit; text-decoration: none; }
   gap: 10px;
   white-space: nowrap;
 }
-/* ── Edge/No-edge segmented toggle (replaces tiny switch) ── */
-.bd-edge-segmented {
-  display: inline-flex;
-  gap: 0;
-  border: 1px solid var(--c-ink);
-  border-radius: 999px;
-  padding: 2px;
-  background: oklch(1 0 0 / 0.3);
-}
-.bd-edge-seg-btn {
+/* ── Edge-only single toggle ── */
+.bd-edge-toggle {
   font-family: var(--f-serif);
-  font-size: 0.78rem;
+  font-size: 0.85rem;
   font-weight: 600;
-  padding: 5px 14px;
+  padding: 7px 18px;
   border-radius: 999px;
-  border: none;
+  border: 1px solid var(--c-ink);
   background: transparent;
   color: var(--c-ink);
   cursor: pointer;
   transition: background 140ms ease, color 140ms ease;
   white-space: nowrap;
 }
-.bd-edge-seg-btn.on {
+.bd-edge-toggle.on {
   background: var(--c-ink);
   color: var(--c-surface);
 }
-.bd-edge-seg-btn:not(.on):hover {
+.bd-edge-toggle:not(.on):hover {
   background: oklch(0 0 0 / 0.05);
 }
 
