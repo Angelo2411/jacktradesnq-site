@@ -2366,6 +2366,40 @@ a { color: inherit; text-decoration: none; }
 .v3-yr-net.pos { color: var(--c-sage); }
 .v3-yr-net.neg { color: var(--c-terra); }
 .v3-yr-net.zero { color: var(--c-muted); }
+.v3-yr-table thead th, .v3-yr-row td { font-size: 0.85rem; }
+.v3-yr-num.sage { color: var(--c-sage); text-align: right; font-variant-numeric: tabular-nums; }
+.v3-yr-num.terra { color: var(--c-terra); text-align: right; font-variant-numeric: tabular-nums; }
+.v3-yr-num.gold { color: var(--c-accent-deep); text-align: right; font-variant-numeric: tabular-nums; }
+.v3-yr-row.selected td { background: oklch(0.93 0.03 145 / 0.4); }
+.v3-yr-row.selected td:first-child { border-left: 2px solid var(--c-sage); }
+.v3-yr-row.total td { font-weight: 600; background: oklch(0.96 0.015 70 / 0.7); border-top: 2px solid var(--c-border); cursor: default; }
+.v3-yr-row.total:hover td { background: oklch(0.96 0.015 70 / 0.7); }
+.v3-yr-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: oklch(0.93 0.03 145 / 0.3);
+  border: 1px solid oklch(0.55 0.10 145 / 0.35);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-family: var(--f-serif);
+  font-style: italic;
+  color: var(--c-ink);
+  margin-bottom: 12px;
+}
+.v3-yr-filter-pill button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--c-muted);
+  padding: 0 2px;
+  border-radius: 999px;
+  transition: color 0.15s;
+}
+.v3-yr-filter-pill button:hover { color: var(--c-terra); }
 
 /* ── Trade list table ─────────────────────────────────────────────────────── */
 .v3-tr-table-wrap {

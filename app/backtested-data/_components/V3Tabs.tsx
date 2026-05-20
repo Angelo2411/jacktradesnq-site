@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import type { WeekdayBreakdown, WeekdayStats, YearBreakdown, TradeRow, StrategyStats } from '@/lib/study-stats';
+import { aggregateYearTotals } from '@/lib/year-stats-utils';
 import TradeMiniChart from './TradeMiniChart';
 import WeekdayBars from './WeekdayBars';
 import EquityCurve from './EquityCurve';
@@ -130,69 +131,74 @@ function WeekdayBlock({
 }
 
 function YearBlock({ breakdown, slug, smtLabel = 'SMT-on', trades = [] }: { breakdown: YearBreakdown; slug: string; smtLabel?: string; trades?: TradeRow[] }) {
+  const [selectedYear, setSelectedYear] = useState<number | null>(null);
+
+  const filteredTrades = useMemo(
+    () => (selectedYear !== null ? trades.filter((t) => t.year === selectedYear) : trades),
+    [trades, selectedYear]
+  );
+
   if (breakdown.length === 0) {
     return <div className="v3-coming-soon">No year data available.</div>;
   }
 
-  const maxAbsNet = Math.max(...breakdown.map((y) => Math.abs(y.net)), 1);
-
   const best = breakdown.reduce((a, b) => (a.net >= b.net ? a : b));
   const worst = breakdown.reduce((a, b) => (a.net <= b.net ? a : b));
+  const total = aggregateYearTotals(breakdown);
 
-  function netBarClass(net: number) {
-    if (Math.abs(net) <= 5) return 'v3-yr-bar gold';
-    return net > 0 ? 'v3-yr-bar pos' : 'v3-yr-bar neg';
+  function pctClass(val: number, type: 'win' | 'be' | 'loss') {
+    if (type === 'win') return val >= 50 ? 'v3-yr-num sage' : 'v3-yr-num';
+    if (type === 'loss') return val >= 50 ? 'v3-yr-num terra' : 'v3-yr-num';
+    return 'v3-yr-num gold';
   }
 
-  function netValClass(net: number) {
-    if (net > 0) return 'v3-yr-net pos';
-    if (net < 0) return 'v3-yr-net neg';
-    return 'v3-yr-net zero';
+  function renderRow(y: typeof breakdown[0] | typeof total, isTotal = false) {
+    const cls = 'v3-yr-row' +
+      (isTotal ? ' total' : selectedYear === y.year ? ' selected' : '');
+    const onClick = isTotal ? undefined : () => setSelectedYear(selectedYear === y.year ? null : y.year);
+
+    return (
+      <tr
+        key={isTotal ? 'total' : y.year}
+        className={cls}
+        onClick={onClick}
+        style={isTotal ? { cursor: 'default' } : { cursor: 'pointer' }}
+      >
+        <td className="v3-yr-year">{isTotal ? 'Total' : y.year}</td>
+        <td className="v3-yr-num">{y.n}</td>
+        <td className={pctClass(y.wr, 'win')}>{y.wr}%</td>
+        <td className={pctClass(y.bePct, 'be')}>{y.bePct}%</td>
+        <td className={pctClass(y.lPct, 'loss')}>{y.lPct}%</td>
+        <td className="v3-yr-num">{y.pf.toFixed(2)}</td>
+        <td className="v3-yr-num sage">{y.avgWin > 0 ? `+${y.avgWin}` : '—'}</td>
+        <td className="v3-yr-num terra">{y.avgLoss > 0 ? `-${y.avgLoss}` : '—'}</td>
+        <td className="v3-yr-num terra">{y.maxDD < 0 ? y.maxDD.toFixed(1) : '—'}</td>
+      </tr>
+    );
   }
 
   return (
     <div>
       <div className="v3-wd-h">Performance by year</div>
-      <div className="v3-wd-sub">Real data — {smtLabel} variant · tp1_be.</div>
+      <div className="v3-wd-sub">Real data — {smtLabel} variant · tp1_be. Click a row to filter charts.</div>
       <div className="v3-yr-table-wrap">
         <table className="v3-yr-table">
           <thead>
             <tr>
               <th>Year</th>
               <th>N</th>
-              <th>WR</th>
-              <th>Net pts</th>
+              <th>Win%</th>
+              <th>BE%</th>
+              <th>Loss%</th>
               <th>PF</th>
+              <th>Avg Win</th>
+              <th>Avg Loss</th>
+              <th>Max DD</th>
             </tr>
           </thead>
           <tbody>
-            {breakdown.map((y) => {
-              const barW = Math.round((Math.abs(y.net) / maxAbsNet) * 100);
-              return (
-                <tr
-                  key={y.year}
-                  className="v3-yr-row"
-                  onClick={() => { window.location.href = `/backtested-data/${slug}/?tab=trades&year=${y.year}`; }}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <td className="v3-yr-year">{y.year}</td>
-                  <td className="v3-yr-num">{y.n}</td>
-                  <td className="v3-yr-num">{y.wr}%</td>
-                  <td className="v3-yr-net-cell">
-                    <div className="v3-yr-net-inner">
-                      <div
-                        className={netBarClass(y.net)}
-                        style={{ width: `${barW}%` }}
-                      />
-                      <span className={netValClass(y.net)}>
-                        {y.net >= 0 ? '+' : ''}{y.net}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="v3-yr-num">{y.pf.toFixed(2)}</td>
-                </tr>
-              );
-            })}
+            {breakdown.map((y) => renderRow(y, false))}
+            {renderRow(total, true)}
           </tbody>
         </table>
       </div>
@@ -203,10 +209,24 @@ function YearBlock({ breakdown, slug, smtLabel = 'SMT-on', trades = [] }: { brea
         )}
       </div>
       {trades.length > 0 && (
-        <div className="eq-pair-wrap">
-          <EquityCurve trades={trades} title="Equity curve" subtitle={`Cumulative PnL · ${smtLabel}`} />
-          <DailyPnlBars trades={trades} title="Trade-by-trade PnL" subtitle={`Per trade · ${smtLabel}`} />
-        </div>
+        <>
+          {selectedYear !== null && (
+            <div className="v3-yr-filter-pill">
+              <span>Filtered on {selectedYear}</span>
+              <button
+                type="button"
+                onClick={() => setSelectedYear(null)}
+                aria-label="Reset year filter"
+              >
+                ×
+              </button>
+            </div>
+          )}
+          <div className="eq-pair-wrap">
+            <EquityCurve trades={filteredTrades} title="Equity curve" subtitle={selectedYear ? `${selectedYear} · ${smtLabel}` : `Cumulative PnL · ${smtLabel}`} />
+            <DailyPnlBars trades={filteredTrades} title="Trade-by-trade PnL" subtitle={selectedYear ? `${selectedYear} · per trade` : `Per trade · ${smtLabel}`} />
+          </div>
+        </>
       )}
     </div>
   );
