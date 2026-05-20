@@ -130,6 +130,25 @@ const IFVG_SLUGS: Array<{ slug: string; event: string; asset: string; releaseTim
   { slug: 'cb-confidence-ifvg-smt-es',       event: 'CB Consumer Confidence', asset: 'ES', releaseTime: '10:00 ET' },
   { slug: 'philly-fed-ifvg-smt-es',          event: 'Philadelphia Fed Manufacturing', asset: 'ES', releaseTime: '8:30 ET' },
   { slug: 'durable-goods-ifvg-smt-es',       event: 'Durable Goods Orders', asset: 'ES', releaseTime: '8:30 ET' },
+  // 17 individual YM event slugs + 1 combined
+  { slug: 'ym-ifvg-smt',                     event: 'Multi-event',          asset: 'YM' },
+  { slug: 'cpi-ifvg-smt-ym',                 event: 'CPI',             asset: 'YM' },
+  { slug: 'nfp-ifvg-smt-ym',                 event: 'NFP',             asset: 'YM' },
+  { slug: 'ppi-ifvg-smt-ym',                 event: 'PPI',             asset: 'YM' },
+  { slug: 'pce-ifvg-smt-ym',                 event: 'PCE',             asset: 'YM' },
+  { slug: 'gdp-ifvg-smt-ym',                 event: 'GDP',             asset: 'YM' },
+  { slug: 'joblessclaims-ifvg-smt-ym',       event: 'Jobless Claims',  asset: 'YM' },
+  { slug: 'retailsales-ifvg-smt-ym',         event: 'Retail Sales',    asset: 'YM' },
+  { slug: 'empirestate-ifvg-smt-ym',         event: 'Empire State',    asset: 'YM' },
+  { slug: 'employmentcostindex-ifvg-smt-ym', event: 'Employment Cost', asset: 'YM' },
+  { slug: 'fomc-ifvg-smt-ym',                event: 'FOMC',            asset: 'YM', releaseTime: '14:00 ET' },
+  { slug: 'adp-ifvg-smt-ym',                 event: 'ADP',             asset: 'YM', releaseTime: '8:15 ET' },
+  { slug: 'jolts-ifvg-smt-ym',               event: 'JOLTS',           asset: 'YM', releaseTime: '10:00 ET' },
+  { slug: 'ism-mfg-ifvg-smt-ym',             event: 'ISM Manufacturing PMI', asset: 'YM', releaseTime: '10:00 ET' },
+  { slug: 'ism-services-ifvg-smt-ym',        event: 'ISM Services PMI',      asset: 'YM', releaseTime: '10:00 ET' },
+  { slug: 'cb-confidence-ifvg-smt-ym',       event: 'CB Consumer Confidence', asset: 'YM', releaseTime: '10:00 ET' },
+  { slug: 'philly-fed-ifvg-smt-ym',          event: 'Philadelphia Fed Manufacturing', asset: 'YM', releaseTime: '8:30 ET' },
+  { slug: 'durable-goods-ifvg-smt-ym',       event: 'Durable Goods Orders', asset: 'YM', releaseTime: '8:30 ET' },
 ];
 
 function computeIfvgStats(
@@ -318,39 +337,39 @@ export function getMarketStudyStats(): MarketStudyStats[] {
   return results;
 }
 
-// Event name → IFVG SMT slug mapping per asset (NQ + GC)
-const EVENT_SLUG_MAP: Record<string, { nq: string | null; gc: string | null; es: string | null }> = {
+// Event name → IFVG SMT slug mapping per asset (NQ + GC + ES + YM)
+const EVENT_SLUG_MAP: Record<string, { nq: string | null; gc: string | null; es: string | null; ym: string | null }> = {
   // ── Backtested (have IFVG SMT JSONs) ──────────────────────────────────────
-  'CPI':                              { nq: 'cpi-ifvg-smt',                gc: 'cpi-ifvg-smt-gc',                es: 'cpi-ifvg-smt-es' },
-  'Core CPI':                         { nq: 'cpi-ifvg-smt',                gc: 'cpi-ifvg-smt-gc',                es: 'cpi-ifvg-smt-es' },
-  'NFP':                              { nq: 'nfp-ifvg-smt',                gc: 'nfp-ifvg-smt-gc',                es: 'nfp-ifvg-smt-es' },
-  'Non-Farm Payrolls':                { nq: 'nfp-ifvg-smt',                gc: 'nfp-ifvg-smt-gc',                es: 'nfp-ifvg-smt-es' },
-  'PPI':                              { nq: 'ppi-ifvg-smt',                gc: 'ppi-ifvg-smt-gc',                es: 'ppi-ifvg-smt-es' },
-  'PCE':                              { nq: 'pce-ifvg-smt',                gc: 'pce-ifvg-smt-gc',                es: 'pce-ifvg-smt-es' },
-  'Core PCE':                         { nq: 'pce-ifvg-smt',                gc: 'pce-ifvg-smt-gc',                es: 'pce-ifvg-smt-es' },
-  'Jobless Claims':                   { nq: 'joblessclaims-ifvg-smt',      gc: 'joblessclaims-ifvg-smt-gc',      es: 'joblessclaims-ifvg-smt-es' },
-  'Initial Jobless Claims':           { nq: 'joblessclaims-ifvg-smt',      gc: 'joblessclaims-ifvg-smt-gc',      es: 'joblessclaims-ifvg-smt-es' },
-  'Retail Sales':                     { nq: 'retailsales-ifvg-smt',        gc: 'retailsales-ifvg-smt-gc',        es: 'retailsales-ifvg-smt-es' },
-  'Core Retail Sales':                { nq: 'retailsales-ifvg-smt',        gc: 'retailsales-ifvg-smt-gc',        es: 'retailsales-ifvg-smt-es' },
-  'Empire State Manufacturing':       { nq: 'empirestate-ifvg-smt',        gc: 'empirestate-ifvg-smt-gc',        es: 'empirestate-ifvg-smt-es' },
-  'Empire State Manufacturing Index': { nq: 'empirestate-ifvg-smt',        gc: 'empirestate-ifvg-smt-gc',        es: 'empirestate-ifvg-smt-es' },
-  'Employment Cost Index':            { nq: 'employmentcostindex-ifvg-smt',gc: 'employmentcostindex-ifvg-smt-gc',es: 'employmentcostindex-ifvg-smt-es' },
-  'GDP':                              { nq: 'gdp-ifvg-smt',                gc: 'gdp-ifvg-smt-gc',                es: 'gdp-ifvg-smt-es' },
-  'FOMC Statement':                   { nq: 'fomc-ifvg-smt',               gc: 'fomc-ifvg-smt-gc',               es: 'fomc-ifvg-smt-es' },
-  'Federal Funds Rate':               { nq: 'fomc-ifvg-smt',               gc: 'fomc-ifvg-smt-gc',               es: 'fomc-ifvg-smt-es' },
-  'ADP Non-Farm Employment Change':   { nq: 'adp-ifvg-smt',                gc: 'adp-ifvg-smt-gc',                es: 'adp-ifvg-smt-es' },
-  'ADP':                              { nq: 'adp-ifvg-smt',                gc: 'adp-ifvg-smt-gc',                es: 'adp-ifvg-smt-es' },
-  'JOLTS Job Openings':               { nq: 'jolts-ifvg-smt',              gc: 'jolts-ifvg-smt-gc',              es: 'jolts-ifvg-smt-es' },
-  'JOLTS':                            { nq: 'jolts-ifvg-smt',              gc: 'jolts-ifvg-smt-gc',              es: 'jolts-ifvg-smt-es' },
-  'ISM Manufacturing PMI':                 { nq: 'ism-mfg-ifvg-smt',      gc: 'ism-mfg-ifvg-smt-gc',            es: 'ism-mfg-ifvg-smt-es' },
-  'ISM Services PMI':                      { nq: 'ism-services-ifvg-smt', gc: 'ism-services-ifvg-smt-gc',       es: 'ism-services-ifvg-smt-es' },
-  'ISM Non-Manufacturing PMI':             { nq: 'ism-services-ifvg-smt', gc: 'ism-services-ifvg-smt-gc',       es: 'ism-services-ifvg-smt-es' },
-  'CB Consumer Confidence':                { nq: 'cb-confidence-ifvg-smt', gc: 'cb-confidence-ifvg-smt-gc',       es: 'cb-confidence-ifvg-smt-es' },
-  'Philadelphia Fed Manufacturing Index':  { nq: 'philly-fed-ifvg-smt',   gc: 'philly-fed-ifvg-smt-gc',         es: 'philly-fed-ifvg-smt-es' },
-  'Durable Goods Orders':                  { nq: 'durable-goods-ifvg-smt', gc: 'durable-goods-ifvg-smt-gc',       es: 'durable-goods-ifvg-smt-es' },
-  'Core Durable Goods Orders':             { nq: 'durable-goods-ifvg-smt', gc: 'durable-goods-ifvg-smt-gc',       es: 'durable-goods-ifvg-smt-es' },
+  'CPI':                              { nq: 'cpi-ifvg-smt',                gc: 'cpi-ifvg-smt-gc',                es: 'cpi-ifvg-smt-es',                ym: 'cpi-ifvg-smt-ym' },
+  'Core CPI':                         { nq: 'cpi-ifvg-smt',                gc: 'cpi-ifvg-smt-gc',                es: 'cpi-ifvg-smt-es',                ym: 'cpi-ifvg-smt-ym' },
+  'NFP':                              { nq: 'nfp-ifvg-smt',                gc: 'nfp-ifvg-smt-gc',                es: 'nfp-ifvg-smt-es',                ym: 'nfp-ifvg-smt-ym' },
+  'Non-Farm Payrolls':                { nq: 'nfp-ifvg-smt',                gc: 'nfp-ifvg-smt-gc',                es: 'nfp-ifvg-smt-es',                ym: 'nfp-ifvg-smt-ym' },
+  'PPI':                              { nq: 'ppi-ifvg-smt',                gc: 'ppi-ifvg-smt-gc',                es: 'ppi-ifvg-smt-es',                ym: 'ppi-ifvg-smt-ym' },
+  'PCE':                              { nq: 'pce-ifvg-smt',                gc: 'pce-ifvg-smt-gc',                es: 'pce-ifvg-smt-es',                ym: 'pce-ifvg-smt-ym' },
+  'Core PCE':                         { nq: 'pce-ifvg-smt',                gc: 'pce-ifvg-smt-gc',                es: 'pce-ifvg-smt-es',                ym: 'pce-ifvg-smt-ym' },
+  'Jobless Claims':                   { nq: 'joblessclaims-ifvg-smt',      gc: 'joblessclaims-ifvg-smt-gc',      es: 'joblessclaims-ifvg-smt-es',      ym: 'joblessclaims-ifvg-smt-ym' },
+  'Initial Jobless Claims':           { nq: 'joblessclaims-ifvg-smt',      gc: 'joblessclaims-ifvg-smt-gc',      es: 'joblessclaims-ifvg-smt-es',      ym: 'joblessclaims-ifvg-smt-ym' },
+  'Retail Sales':                     { nq: 'retailsales-ifvg-smt',        gc: 'retailsales-ifvg-smt-gc',        es: 'retailsales-ifvg-smt-es',        ym: 'retailsales-ifvg-smt-ym' },
+  'Core Retail Sales':                { nq: 'retailsales-ifvg-smt',        gc: 'retailsales-ifvg-smt-gc',        es: 'retailsales-ifvg-smt-es',        ym: 'retailsales-ifvg-smt-ym' },
+  'Empire State Manufacturing':       { nq: 'empirestate-ifvg-smt',        gc: 'empirestate-ifvg-smt-gc',        es: 'empirestate-ifvg-smt-es',        ym: 'empirestate-ifvg-smt-ym' },
+  'Empire State Manufacturing Index': { nq: 'empirestate-ifvg-smt',        gc: 'empirestate-ifvg-smt-gc',        es: 'empirestate-ifvg-smt-es',        ym: 'empirestate-ifvg-smt-ym' },
+  'Employment Cost Index':            { nq: 'employmentcostindex-ifvg-smt',gc: 'employmentcostindex-ifvg-smt-gc',es: 'employmentcostindex-ifvg-smt-es',ym: 'employmentcostindex-ifvg-smt-ym' },
+  'GDP':                              { nq: 'gdp-ifvg-smt',                gc: 'gdp-ifvg-smt-gc',                es: 'gdp-ifvg-smt-es',                ym: 'gdp-ifvg-smt-ym' },
+  'FOMC Statement':                   { nq: 'fomc-ifvg-smt',               gc: 'fomc-ifvg-smt-gc',               es: 'fomc-ifvg-smt-es',               ym: 'fomc-ifvg-smt-ym' },
+  'Federal Funds Rate':               { nq: 'fomc-ifvg-smt',               gc: 'fomc-ifvg-smt-gc',               es: 'fomc-ifvg-smt-es',               ym: 'fomc-ifvg-smt-ym' },
+  'ADP Non-Farm Employment Change':   { nq: 'adp-ifvg-smt',                gc: 'adp-ifvg-smt-gc',                es: 'adp-ifvg-smt-es',                ym: 'adp-ifvg-smt-ym' },
+  'ADP':                              { nq: 'adp-ifvg-smt',                gc: 'adp-ifvg-smt-gc',                es: 'adp-ifvg-smt-es',                ym: 'adp-ifvg-smt-ym' },
+  'JOLTS Job Openings':               { nq: 'jolts-ifvg-smt',              gc: 'jolts-ifvg-smt-gc',              es: 'jolts-ifvg-smt-es',              ym: 'jolts-ifvg-smt-ym' },
+  'JOLTS':                            { nq: 'jolts-ifvg-smt',              gc: 'jolts-ifvg-smt-gc',              es: 'jolts-ifvg-smt-es',              ym: 'jolts-ifvg-smt-ym' },
+  'ISM Manufacturing PMI':                 { nq: 'ism-mfg-ifvg-smt',      gc: 'ism-mfg-ifvg-smt-gc',            es: 'ism-mfg-ifvg-smt-es',            ym: 'ism-mfg-ifvg-smt-ym' },
+  'ISM Services PMI':                      { nq: 'ism-services-ifvg-smt', gc: 'ism-services-ifvg-smt-gc',       es: 'ism-services-ifvg-smt-es',       ym: 'ism-services-ifvg-smt-ym' },
+  'ISM Non-Manufacturing PMI':             { nq: 'ism-services-ifvg-smt', gc: 'ism-services-ifvg-smt-gc',       es: 'ism-services-ifvg-smt-es',       ym: 'ism-services-ifvg-smt-ym' },
+  'CB Consumer Confidence':                { nq: 'cb-confidence-ifvg-smt', gc: 'cb-confidence-ifvg-smt-gc',      es: 'cb-confidence-ifvg-smt-es',      ym: 'cb-confidence-ifvg-smt-ym' },
+  'Philadelphia Fed Manufacturing Index':  { nq: 'philly-fed-ifvg-smt',   gc: 'philly-fed-ifvg-smt-gc',         es: 'philly-fed-ifvg-smt-es',         ym: 'philly-fed-ifvg-smt-ym' },
+  'Durable Goods Orders':                  { nq: 'durable-goods-ifvg-smt', gc: 'durable-goods-ifvg-smt-gc',      es: 'durable-goods-ifvg-smt-es',      ym: 'durable-goods-ifvg-smt-ym' },
+  'Core Durable Goods Orders':             { nq: 'durable-goods-ifvg-smt', gc: 'durable-goods-ifvg-smt-gc',      es: 'durable-goods-ifvg-smt-es',      ym: 'durable-goods-ifvg-smt-ym' },
   // ── FF red folder, no backtest yet (visible with "No backtest yet" badge) ─
-  'FOMC Minutes':                          { nq: null, gc: null, es: null },
+  'FOMC Minutes':                          { nq: null, gc: null, es: null, ym: null },
 };
 
 export type EventStudyStats = {
@@ -364,7 +383,7 @@ export type EventStudyStats = {
 
 export function getEventStudyMap(
   news: Array<{ event: string }>,
-  asset: 'nq' | 'gc' | 'es' = 'nq',
+  asset: 'nq' | 'gc' | 'es' | 'ym' = 'nq',
 ): Record<string, EventStudyStats | null> {
   const map: Record<string, EventStudyStats | null> = {};
   for (const item of news) {
@@ -377,7 +396,7 @@ export function getEventStudyMap(
 
 export function getStudyForEvent(
   eventName: string,
-  asset: 'nq' | 'gc' | 'es' = 'nq',
+  asset: 'nq' | 'gc' | 'es' | 'ym' = 'nq',
 ): EventStudyStats | null {
   const entry = EVENT_SLUG_MAP[eventName];
   if (!entry) return null;                // unknown event

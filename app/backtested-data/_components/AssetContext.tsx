@@ -1,7 +1,7 @@
 'use client';
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 
-export type AssetKey = 'nq' | 'gc' | 'es' | 'all';
+export type AssetKey = 'nq' | 'gc' | 'es' | 'ym' | 'all';
 
 type Ctx = { asset: AssetKey; setAsset: (a: AssetKey) => void };
 const AssetCtx = createContext<Ctx | null>(null);
@@ -13,12 +13,13 @@ export function AssetProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const fromUrl = params.get('asset');
-    if (fromUrl === 'gc' || fromUrl === 'nq' || fromUrl === 'es' || fromUrl === 'all') { setAssetState(fromUrl); return; }
+    if (fromUrl === 'gc' || fromUrl === 'nq' || fromUrl === 'es' || fromUrl === 'ym' || fromUrl === 'all') { setAssetState(fromUrl); return; }
     const path = window.location.pathname.replace(/\/+$/, '');
+    if (/-ym$/.test(path)) { setAssetState('ym'); return; }
     if (/-es$/.test(path)) { setAssetState('es'); return; }
     if (/-gc$/.test(path)) { setAssetState('gc'); return; }
     const stored = localStorage.getItem('jtnq-asset');
-    if (stored === 'gc' || stored === 'nq' || stored === 'es' || stored === 'all') setAssetState(stored as AssetKey);
+    if (stored === 'gc' || stored === 'nq' || stored === 'es' || stored === 'ym' || stored === 'all') setAssetState(stored as AssetKey);
   }, []);
 
   const setAsset = (a: AssetKey) => {

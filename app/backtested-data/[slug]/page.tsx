@@ -83,6 +83,13 @@ const IFVG_SLUGS = new Set([
   'fomc-ifvg-smt-es', 'adp-ifvg-smt-es', 'jolts-ifvg-smt-es',
   'ism-mfg-ifvg-smt-es', 'ism-services-ifvg-smt-es', 'cb-confidence-ifvg-smt-es',
   'philly-fed-ifvg-smt-es', 'durable-goods-ifvg-smt-es', 'es-ifvg-smt',
+  // 17 individual YM event slugs + 1 combined
+  'cpi-ifvg-smt-ym', 'nfp-ifvg-smt-ym', 'ppi-ifvg-smt-ym', 'pce-ifvg-smt-ym',
+  'gdp-ifvg-smt-ym', 'joblessclaims-ifvg-smt-ym', 'retailsales-ifvg-smt-ym',
+  'empirestate-ifvg-smt-ym', 'employmentcostindex-ifvg-smt-ym',
+  'fomc-ifvg-smt-ym', 'adp-ifvg-smt-ym', 'jolts-ifvg-smt-ym',
+  'ism-mfg-ifvg-smt-ym', 'ism-services-ifvg-smt-ym', 'cb-confidence-ifvg-smt-ym',
+  'philly-fed-ifvg-smt-ym', 'durable-goods-ifvg-smt-ym', 'ym-ifvg-smt',
 ]);
 
 const catLabel = (c: string) => (c === 'tradingview' ? 'TRADINGVIEW' : 'DATA');
@@ -346,7 +353,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
 
         {/* V3Tabs is a client component that reads ?tab from URL and renders the KPI band + tabs */}
         <Suspense fallback={<div className="v3-tabs" style={{ height: 48 }} />}>
-          <V3Tabs slug={slug} breakdown={breakdown} breakdownOff={breakdownOff} yearBreakdown={yearBreakdown} yearBreakdownOff={yearBreakdownOff} trades={trades} tradesByVariant={tradesByVariant} tradesByVariantOff={tradesByVariantOff} statsByVariant={statsByVariant} statsByVariantAndSmt={statsByVariantAndSmt} dateFrom={dateFrom} dateTo={dateTo} overviewContent={overviewNode} eventShort={stratStats?.event ?? ''} asset={(stratStats?.asset?.toLowerCase() ?? 'nq') as 'nq' | 'gc' | 'es'} />
+          <V3Tabs slug={slug} breakdown={breakdown} breakdownOff={breakdownOff} yearBreakdown={yearBreakdown} yearBreakdownOff={yearBreakdownOff} trades={trades} tradesByVariant={tradesByVariant} tradesByVariantOff={tradesByVariantOff} statsByVariant={statsByVariant} statsByVariantAndSmt={statsByVariantAndSmt} dateFrom={dateFrom} dateTo={dateTo} overviewContent={overviewNode} eventShort={stratStats?.event ?? ''} asset={(stratStats?.asset?.toLowerCase() ?? 'nq') as 'nq' | 'gc' | 'es' | 'ym'} />
         </Suspense>
 
         {pager}

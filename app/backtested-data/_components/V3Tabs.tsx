@@ -244,9 +244,10 @@ function TradesBlock({
   yearFilter?: string;
   slug: string;
   eventShort: string;
-  asset: 'nq' | 'gc' | 'es';
+  asset: 'nq' | 'gc' | 'es' | 'ym';
   smtLabel?: string;
 }) {
+
   const activeTrades = tradesByVariant ? tradesByVariant[variant] : trades;
   const dayFiltered = dayFilter && DAY_KEY_TO_NUM[dayFilter] !== undefined
     ? activeTrades.filter((t) => tradeWeekday(t.ts) === DAY_KEY_TO_NUM[dayFilter])
@@ -408,7 +409,7 @@ export default function V3Tabs({
   dateTo?: string;
   overviewContent: React.ReactNode;
   eventShort: string;
-  asset: 'nq' | 'gc' | 'es';
+  asset: 'nq' | 'gc' | 'es' | 'ym';
 }) {
   const [variant, setVariant] = useState<VariantKey>('tp1_be');
   const [smtOn, setSmtOn] = useState<boolean>(true);

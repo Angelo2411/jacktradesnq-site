@@ -5,6 +5,7 @@ const PILLS: { label: string; value: AssetKey }[] = [
   { label: 'NQ', value: 'nq' },
   { label: 'GC', value: 'gc' },
   { label: 'ES', value: 'es' },
+  { label: 'YM', value: 'ym' },
   { label: 'All', value: 'all' },
 ];
 
