@@ -263,7 +263,9 @@ def detect_setup_es(ev: dict, bars_idx: dict[int, dict]) -> dict:
         return out
 
     side = "SHORT" if sweep_dir == "UP" else "LONG"
-    sl = sweep_price + ES_TICK if sweep_dir == "UP" else sweep_price - ES_TICK
+    # SL computed AFTER entry_ts known: full sweep displacement extreme between
+    # sweep_ts and entry_ts (inclusive) + 1 tick padding. Placeholder until matched.
+    sl = None
     tp = pre_low if sweep_dir == "UP" else pre_high
 
     scan_bars = []
@@ -324,6 +326,16 @@ def detect_setup_es(ev: dict, bars_idx: dict[int, dict]) -> dict:
     if entry_ts is None:
         out["status"] = "SKIP_NO_IFVG"
         return out
+
+    # SL = full sweep displacement extreme (between sweep_ts and entry_ts inclusive) + 1 tick padding.
+    sweep_disp_bars = [b for b in scan_bars if sweep_ts <= b["ts"] <= entry_ts]
+    if not sweep_disp_bars:
+        out["status"] = "SKIP_NO_SWEEP_DISP"
+        return out
+    if sweep_dir == "UP":
+        sl = max(b["high"] for b in sweep_disp_bars) + ES_TICK
+    else:
+        sl = min(b["low"] for b in sweep_disp_bars) - ES_TICK
 
     if side == "SHORT":
         if entry_price >= sl or entry_price <= tp:
@@ -563,7 +575,7 @@ def main():
         print(f"[ERROR] Only {len(all_trade_db)} raw trade records — check bar lookup!", file=sys.stderr)
         sys.exit(1)
 
-    out_dir = "/Users/angelo/jtnq-hub-v3-es/public/data"
+    out_dir = "/Users/angelo/jtnq-hub-v3/public/data"
     os.makedirs(out_dir, exist_ok=True)
     per_event_paths = []
     for event_type, evr in per_event_results.items():
@@ -671,7 +683,7 @@ def main():
         "trades": all_trades,
     }
 
-    out_path = "/Users/angelo/jtnq-hub-v3-es/public/data/es-ifvg-smt.json"
+    out_path = "/Users/angelo/jtnq-hub-v3/public/data/es-ifvg-smt.json"
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     with open(out_path, "w") as f:
         json.dump(out, f, indent=2, default=str)
