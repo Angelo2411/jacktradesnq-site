@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
@@ -16,6 +18,7 @@ import BilingualPdfLink from '../_components/BilingualPdfLink';
 import BilingualLede from '../_components/BilingualLede';
 import BilingualTitle from '../_components/BilingualTitle';
 import V3Tabs from '../_components/V3Tabs';
+import PerformanceTearsheet from '../_components/PerformanceTearsheet';
 import { getStrategyStats, getStrategyStatsByVariant, getStrategyStatsByVariantAndSmt, getWeekdayBreakdown, getYearBreakdown, getTradeList } from '@/lib/study-stats';
 
 const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
@@ -122,6 +125,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
   const { slug } = await params;
   const entry = getEntry(slug);
   if (!entry) notFound();
+  const hasTearsheet = fs.existsSync(path.join(process.cwd(), 'content', 'studies', slug, 'tearsheet.json'));
 
   const entries = getAllEntries();
   const idx = entries.findIndex((e) => e.slug === slug);
@@ -359,9 +363,12 @@ export default async function BacktestedDetail({ params }: PageProps) {
           {stratStats ? ` · ${stratStats.n} events` : ''}
         </p>
 
+        {/* Performance Tearsheet — pilot: fomc-ifvg-smt only. Extend by running gen_tearsheet.py for other slugs. */}
+        <PerformanceTearsheet slug={slug} />
+
         {/* V3Tabs is a client component that reads ?tab from URL and renders the KPI band + tabs */}
         <Suspense fallback={<div className="v3-tabs" style={{ height: 48 }} />}>
-          <V3Tabs slug={slug} breakdown={breakdown} breakdownOff={breakdownOff} yearBreakdown={yearBreakdown} yearBreakdownOff={yearBreakdownOff} trades={trades} tradesByVariant={tradesByVariant} tradesByVariantOff={tradesByVariantOff} statsByVariant={statsByVariant} statsByVariantAndSmt={statsByVariantAndSmt} dateFrom={dateFrom} dateTo={dateTo} overviewContent={overviewNode} eventShort={stratStats?.event ?? ''} asset={(stratStats?.asset?.toLowerCase() ?? 'nq') as 'nq' | 'gc' | 'es'} />
+          <V3Tabs slug={slug} breakdown={breakdown} breakdownOff={breakdownOff} yearBreakdown={yearBreakdown} yearBreakdownOff={yearBreakdownOff} trades={trades} tradesByVariant={tradesByVariant} tradesByVariantOff={tradesByVariantOff} statsByVariant={statsByVariant} statsByVariantAndSmt={statsByVariantAndSmt} dateFrom={dateFrom} dateTo={dateTo} overviewContent={overviewNode} eventShort={stratStats?.event ?? ''} asset={(stratStats?.asset?.toLowerCase() ?? 'nq') as 'nq' | 'gc' | 'es'} hideKpiBand={hasTearsheet} />
         </Suspense>
 
         {pager}
