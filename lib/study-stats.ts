@@ -95,7 +95,6 @@ const IFVG_SLUGS: Array<{ slug: string; event: string; asset: string; releaseTim
   { slug: 'cb-confidence-ifvg-smt',     event: 'CB Consumer Confidence', asset: 'NQ', releaseTime: '10:00 ET' },
   { slug: 'philly-fed-ifvg-smt',        event: 'Philadelphia Fed Manufacturing', asset: 'NQ', releaseTime: '8:30 ET' },
   { slug: 'durable-goods-ifvg-smt',     event: 'Durable Goods Orders', asset: 'NQ', releaseTime: '8:30 ET' },
-  { slug: 'gc-ifvg-smt',                event: 'Multi-event',          asset: 'GC' },
   { slug: 'cpi-ifvg-smt-gc',                 event: 'CPI',             asset: 'GC' },
   { slug: 'nfp-ifvg-smt-gc',                 event: 'NFP',             asset: 'GC' },
   { slug: 'ppi-ifvg-smt-gc',                 event: 'PPI',             asset: 'GC' },
@@ -687,8 +686,6 @@ export function getCalendarWeekday(): Record<string, CalendarDayEntry[]> {
   }> = [];
 
   for (const entry of IFVG_SLUGS) {
-    // Skip multi-event aggregate (gc-ifvg-smt covers all 9 events, not day-specific)
-    if (entry.slug === 'gc-ifvg-smt') continue;
     const json = loadIfvgJson(entry.slug);
     if (!json || !json.trades?.length) continue;
 
