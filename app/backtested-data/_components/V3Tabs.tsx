@@ -69,7 +69,7 @@ function WeekdayBlock({
     const parts: string[] = [
       `Best day: ${bestDay.label} (${bestSt.wr}% WR · ${bestSt.net >= 0 ? '+' : ''}${bestSt.net} pts net, N=${bestSt.n}).`,
     ];
-    if (worstDay) {
+    if (worstDay && worstDay.key !== bestDay.key) {
       const wSt = breakdown[worstDay.key];
       parts.push(`Worst: ${worstDay.label} (${wSt.wr}% WR · ${wSt.net} pts net).`);
     }
@@ -124,7 +124,7 @@ function WeekdayBlock({
           <>
             Best day: <strong>{bestDay.label}</strong>
             {' '}({breakdown[bestDay.key].wr}% WR · {breakdown[bestDay.key].net >= 0 ? '+' : ''}{breakdown[bestDay.key].net} pts net, N={breakdown[bestDay.key].n}).
-            {worstDay && ` Worst: ${worstDay.label} (${breakdown[worstDay.key].wr}% WR · ${breakdown[worstDay.key].net} pts net).`}
+            {worstDay && worstDay.key !== bestDay.key && ` Worst: ${worstDay.label} (${breakdown[worstDay.key].wr}% WR · ${breakdown[worstDay.key].net} pts net).`}
           </>
         ) : verdict}
       </div>
@@ -305,6 +305,7 @@ function TradesBlock({
   function outcomeClass(outcome: string) {
     if (outcome === 'win') return 'v3-tr-badge win';
     if (outcome === 'loss') return 'v3-tr-badge loss';
+    if (outcome === 'timeout') return 'v3-tr-badge timeout';
     return 'v3-tr-badge be';
   }
 
