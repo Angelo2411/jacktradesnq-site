@@ -287,8 +287,9 @@ def detect_setup_metals(ev: dict, bars_idx: dict[int, dict]) -> dict:
         return out
 
     side = "SHORT" if sweep_dir == "UP" else "LONG"
-    # GC_TICK = 0.10 (not 0.25 as in NQ version)
-    sl = sweep_price + GC_TICK if sweep_dir == "UP" else sweep_price - GC_TICK
+    # SL computed AFTER entry_ts known: full sweep displacement extreme between
+    # sweep_ts and entry_ts (inclusive) + 1 GC_TICK padding. Placeholder until matched.
+    sl = None
     tp = pre_low if sweep_dir == "UP" else pre_high
 
     scan_bars = []
@@ -351,6 +352,16 @@ def detect_setup_metals(ev: dict, bars_idx: dict[int, dict]) -> dict:
     if entry_ts is None:
         out["status"] = "SKIP_NO_IFVG"
         return out
+
+    # SL = full sweep displacement extreme (between sweep_ts and entry_ts inclusive) + 1 GC_TICK padding.
+    sweep_disp_bars = [b for b in scan_bars if sweep_ts <= b["ts"] <= entry_ts]
+    if not sweep_disp_bars:
+        out["status"] = "SKIP_NO_SWEEP_DISP"
+        return out
+    if sweep_dir == "UP":
+        sl = max(b["high"] for b in sweep_disp_bars) + GC_TICK
+    else:
+        sl = min(b["low"] for b in sweep_disp_bars) - GC_TICK
 
     if side == "SHORT":
         if entry_price >= sl or entry_price <= tp:
