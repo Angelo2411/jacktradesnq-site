@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { StudyStats } from '@/lib/study-stats';
-import WeekdayBars from './WeekdayBars';
+import { WeekdayBarsSimple } from './WeekdayBars';
 
 function pfClass(pf: number): string {
   if (pf >= 2.5) return 'bd-sc-val--pos';
@@ -142,7 +142,7 @@ function StrategyCard({ s }: { s: StudyStats }) {
         </div>
       </div>
 
-      <WeekdayBars wr={s.wrByWeekday} n={s.nByWeekday} asset={s.asset} />
+      <WeekdayBarsSimple wr={s.wrByWeekday} n={s.nByWeekday} asset={s.asset} />
 
       <div className="bd-sc-foot">
         {isMarginal ? (
