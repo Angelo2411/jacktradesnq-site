@@ -24,7 +24,7 @@ export function WeekdayBarsSimple({ wr, n, asset }: SimpleProps) {
   return (
     <div className="bd-wd-block">
       <div className="bd-wd-cap">
-        <span>win rate \u00b7 weekday</span>
+        <span>win rate · weekday</span>
         {asset && <span>{asset}</span>}
       </div>
       <div className="bd-wd-bars">

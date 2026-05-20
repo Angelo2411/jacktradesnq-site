@@ -19,16 +19,27 @@ function computeTargetSlug(currentPath: string, asset: AssetKey): string | null 
   return null;
 }
 
-export default function AssetPills() {
+function slugFromTarget(target: string): string {
+  return target.replace(/^\/studies\//, '').replace(/\/$/, '');
+}
+
+export default function AssetPills({ availableSlugs }: { availableSlugs: string[] }) {
   const { asset, setAsset } = useAsset();
   const router = useRouter();
   const pathname = usePathname();
+
+  const slugSet = new Set(availableSlugs);
+  const onSlugRoute = /^\/studies\/[^\/]+\/?$/.test(pathname);
+
+  if (!onSlugRoute) return null;
 
   function handleClick(value: AssetKey) {
     setAsset(value);
     const target = computeTargetSlug(pathname, value);
     const normPath = pathname.replace(/\/$/, '');
     if (!target || target.replace(/\/$/, '') === normPath) return;
+    const targetSlug = slugFromTarget(target);
+    if (!slugSet.has(targetSlug)) return;
     const params = new URLSearchParams(window.location.search);
     params.delete('asset');
     params.delete('year');
@@ -38,15 +49,21 @@ export default function AssetPills() {
 
   return (
     <div className="v3-asset-pills">
-      {PILLS.map((p) => (
-        <button
-          key={p.value}
-          onClick={() => handleClick(p.value)}
-          className={'v3-asset-pill' + (asset === p.value ? ' active' : '')}
-        >
-          {p.label}
-        </button>
-      ))}
+      {PILLS.map((p) => {
+        const target = computeTargetSlug(pathname, p.value);
+        const targetSlug = target ? slugFromTarget(target) : '';
+        const exists = p.value === 'all' || slugSet.has(targetSlug);
+        if (!exists) return null;
+        return (
+          <button
+            key={p.value}
+            onClick={() => handleClick(p.value)}
+            className={'v3-asset-pill' + (asset === p.value ? ' active' : '')}
+          >
+            {p.label}
+          </button>
+        );
+      })}
     </div>
   );
 }
