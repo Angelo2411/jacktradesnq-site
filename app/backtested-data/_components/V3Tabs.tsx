@@ -5,6 +5,8 @@ import { useSearchParams } from 'next/navigation';
 import { useState, useMemo } from 'react';
 import type { WeekdayBreakdown, WeekdayStats, YearBreakdown, TradeRow, StrategyStats } from '@/lib/study-stats';
 import { aggregateYearTotals } from '@/lib/year-stats-utils';
+import { filterTradesByLookback, computeKPI, computeYearBreakdown, computeWeekdayBreakdown } from '@/lib/client-stats';
+import FilterBar, { useFilterState } from './FilterBar';
 import TradeMiniChart from './TradeMiniChart';
 import WeekdayBars from './WeekdayBars';
 import EquityCurve from './EquityCurve';
@@ -440,94 +442,107 @@ export default function V3Tabs({
   eventShort: string;
   asset: 'nq' | 'gc' | 'es';
 }) {
-  const [variant, setVariant] = useState<VariantKey>('tp1_be');
-  const [smtOn, setSmtOn] = useState<boolean>(true);
-  const activeStats = statsByVariantAndSmt
-    ? statsByVariantAndSmt[smtOn ? 'smtOn' : 'smtOff'][variant]
-    : statsByVariant
-      ? statsByVariant[variant]
-      : null;
-  const activeBreakdown = !smtOn && breakdownOff ? breakdownOff : breakdown;
-  const activeYearBreakdown = !smtOn && yearBreakdownOff ? yearBreakdownOff : yearBreakdown;
-  const activeTradesByVariant = !smtOn && tradesByVariantOff ? tradesByVariantOff : tradesByVariant;
-  const activeTrades = activeTradesByVariant ? activeTradesByVariant[variant] : trades;
-  const smtLabel = smtOn ? 'SMT-on' : 'SMT-off';
+  // ── URL-driven filter state ──────────────────────────────────────────
+  const { variant, smtOn, lookback } = useFilterState();
+  const hasSmtToggle = !!statsByVariantAndSmt;
+
   const searchParams = useSearchParams();
   const tab = (searchParams.get('tab') ?? 'overview') as Tab;
   const activeTab: Tab = TAB_LIST.some((t) => t.key === tab) ? tab : 'overview';
   const dayFilter = searchParams.get('day') ?? '';
   const yearFilter = searchParams.get('year') ?? '';
 
+  const smtLabel = smtOn ? 'SMT-on' : 'SMT-off';
+
+  // ── Raw trade pool by smt toggle ─────────────────────────────────────
+  const rawByVariant = useMemo(
+    () => (!smtOn && tradesByVariantOff ? tradesByVariantOff : tradesByVariant),
+    [smtOn, tradesByVariant, tradesByVariantOff]
+  );
+
+  // ── Apply lookback filter ─────────────────────────────────────────────
+  const filteredByVariant = useMemo(() => {
+    if (!rawByVariant) return undefined;
+    return {
+      tp1_be: filterTradesByLookback(rawByVariant.tp1_be, lookback),
+      be_50:  filterTradesByLookback(rawByVariant.be_50,  lookback),
+      no_be:  filterTradesByLookback(rawByVariant.no_be,  lookback),
+    };
+  }, [rawByVariant, lookback]);
+
+  const activeTrades = useMemo(
+    () => filteredByVariant ? filteredByVariant[variant] : filterTradesByLookback(trades, lookback),
+    [filteredByVariant, variant, trades, lookback]
+  );
+
+  // ── KPI: recomputed client-side from filtered trades ──────────────────
+  const kpi = useMemo(() => computeKPI(activeTrades), [activeTrades]);
+
+  // ── Breakdowns: recomputed from filtered trades ───────────────────────
+  const activeYearBreakdown = useMemo(
+    () => computeYearBreakdown(activeTrades),
+    [activeTrades]
+  );
+  const activeBreakdown = useMemo(
+    () => computeWeekdayBreakdown(activeTrades),
+    [activeTrades]
+  );
+
+  // Preserve server-side breakdowns for reference when lookback=all (identity check)
+  // but we always use client-computed for consistency with lookback filter.
+
   function tabHref(t: string) {
-    return `/backtested-data/${slug}/?tab=${t}`;
+    // Preserve existing filter params when switching tabs
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('tab', t);
+    // Clear day/year filters on tab switch (they belong to specific tabs)
+    params.delete('day');
+    params.delete('year');
+    return `/backtested-data/${slug}/?${params.toString()}`;
   }
+
+  const hasTradeData = (tradesByVariant?.tp1_be?.length ?? 0) > 0;
 
   return (
     <>
-      {activeStats && (
-        <div className="v3-kpi-band">
+      {/* ── Sticky FilterBar ── */}
+      {hasTradeData && (
+        <div className="fb-sticky-wrap">
+          <FilterBar hasSmtToggle={hasSmtToggle} />
+        </div>
+      )}
+
+      {/* ── KPI band ── */}
+      {hasTradeData && (
+        <div className="v3-kpi-band fb-animated">
           <div className="v3-kpi-cell">
             <div className="v3-kpi-band-lbl">Profit factor</div>
-            <div className={'v3-kpi-band-val' + (activeStats.pf >= 1.5 ? ' pos' : '')}>
-              {activeStats.pf.toFixed(2)}
+            <div className={'v3-kpi-band-val' + (kpi.pf >= 1.5 ? ' pos' : '')}>
+              {kpi.pf.toFixed(2)}
             </div>
             <div className="v3-kpi-band-foot">winners $ ÷ losers $</div>
           </div>
           <div className="v3-kpi-cell">
             <div className="v3-kpi-band-lbl">Sample size</div>
-            <div className="v3-kpi-band-val">{activeStats.n}</div>
+            <div className="v3-kpi-band-val">{kpi.n}</div>
             <div className="v3-kpi-band-foot">events tested</div>
           </div>
           <div className="v3-kpi-cell">
             <div className="v3-kpi-band-lbl">Net (pts)</div>
-            <div className={'v3-kpi-band-val' + (activeStats.net > 0 ? ' pos' : '')}>
-              {activeStats.net >= 0 ? '+' : ''}{activeStats.net.toFixed(1)}
+            <div className={'v3-kpi-band-val' + (kpi.net > 0 ? ' pos' : '')}>
+              {kpi.net >= 0 ? '+' : ''}{kpi.net.toFixed(1)}
             </div>
             <div className="v3-kpi-band-foot">total over {dateFrom}–{dateTo}</div>
           </div>
           <div className="v3-kpi-cell">
             <div className="v3-kpi-band-lbl">Win rate</div>
-            <div className="v3-kpi-band-val gold">{activeStats.wr}%</div>
-            <div className="v3-kpi-band-foot">{VARIANT_LABELS[variant]} · {smtLabel} variant</div>
+            <div className="v3-kpi-band-val gold">{kpi.wr}%</div>
+            <div className="v3-kpi-band-foot">{VARIANT_LABELS[variant]} · {smtLabel}</div>
           </div>
         </div>
       )}
 
-      {statsByVariant && (
-        <div className="v3-flt-row" style={{ margin: '0 0 12px', flexWrap: 'wrap', gap: 8 }}>
-          {(['tp1_be', 'be_50', 'no_be'] as VariantKey[]).map((v) => (
-            <button
-              key={v}
-              type="button"
-              className={'v3-flt-pill' + (variant === v ? ' active' : '')}
-              onClick={() => setVariant(v)}
-            >
-              {VARIANT_LABELS[v]}
-            </button>
-          ))}
-          {statsByVariantAndSmt && (
-            <span style={{ display: 'inline-flex', gap: 4, marginLeft: 8, paddingLeft: 12, borderLeft: '1px solid oklch(0.85 0.02 85)' }}>
-              <button
-                type="button"
-                className={'v3-flt-pill' + (smtOn ? ' active' : '')}
-                onClick={() => setSmtOn(true)}
-                aria-pressed={smtOn}
-              >
-                SMT on
-              </button>
-              <button
-                type="button"
-                className={'v3-flt-pill' + (!smtOn ? ' active' : '')}
-                onClick={() => setSmtOn(false)}
-                aria-pressed={!smtOn}
-              >
-                SMT off
-              </button>
-            </span>
-          )}
-        </div>
-      )}
-
+      {/* ── Tabs nav ── */}
       <div className="v3-tabs">
         {TAB_LIST.map((t) => (
           <Link
@@ -540,20 +555,34 @@ export default function V3Tabs({
         ))}
       </div>
 
-      {activeTab === 'weekday' ? (
-        <WeekdayBlock breakdown={activeBreakdown} slug={slug} smtLabel={smtLabel} />
-      ) : activeTab === 'year' ? (
-        <YearBlock breakdown={activeYearBreakdown} slug={slug} smtLabel={smtLabel} trades={activeTrades} />
-      ) : activeTab === 'trades' ? (
-        <TradesBlock trades={activeTrades} tradesByVariant={activeTradesByVariant} variant={variant} setVariant={setVariant} dayFilter={dayFilter} yearFilter={yearFilter} slug={slug} eventShort={eventShort} asset={asset} smtLabel={smtLabel} />
-      ) : activeTab === 'methodology' ? (
-        <div className="v3-meth-link">
-          <Link href="/backtested-data/methodology/">Read full methodology →</Link>
-          <p>Data sources, backtest engine, assumptions, what this is not.</p>
-        </div>
-      ) : (
-        <div className="v3-prose">{overviewContent}</div>
-      )}
+      {/* ── Tab content ── */}
+      <div className="fb-animated">
+        {activeTab === 'weekday' ? (
+          <WeekdayBlock breakdown={activeBreakdown} slug={slug} smtLabel={smtLabel} />
+        ) : activeTab === 'year' ? (
+          <YearBlock breakdown={activeYearBreakdown} slug={slug} smtLabel={smtLabel} trades={activeTrades} />
+        ) : activeTab === 'trades' ? (
+          <TradesBlock
+            trades={activeTrades}
+            tradesByVariant={filteredByVariant}
+            variant={variant}
+            setVariant={() => {/* variant now URL-driven */}}
+            dayFilter={dayFilter}
+            yearFilter={yearFilter}
+            slug={slug}
+            eventShort={eventShort}
+            asset={asset}
+            smtLabel={smtLabel}
+          />
+        ) : activeTab === 'methodology' ? (
+          <div className="v3-meth-link">
+            <Link href="/backtested-data/methodology/">Read full methodology →</Link>
+            <p>Data sources, backtest engine, assumptions, what this is not.</p>
+          </div>
+        ) : (
+          <div className="v3-prose">{overviewContent}</div>
+        )}
+      </div>
     </>
   );
 }
