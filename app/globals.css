@@ -3000,6 +3000,121 @@ a { color: inherit; text-decoration: none; }
 .wdb-val-pos { fill: oklch(0.38 0.12 145); }
 .wdb-val-neg { fill: oklch(0.40 0.17 25); }
 .wdb-val-zero { fill: var(--c-muted); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Equity Curve Widget — .ec-* namespace
+   Server-rendered SVG, warm-editorial palette
+   ═══════════════════════════════════════════════════════════════════ */
+.ec-widget {
+  margin: var(--s-7) 0 var(--s-6);
+  padding: var(--s-5) var(--s-5) var(--s-6);
+  background: var(--c-surface-card);
+  border: 1px solid var(--c-border);
+  border-radius: 16px;
+  max-width: 720px;
+}
+.ec-widget-title {
+  font-family: var(--f-serif);
+  font-weight: 700;
+  font-size: 1.125rem;
+  letter-spacing: -0.01em;
+  color: var(--c-ink);
+  margin-bottom: var(--s-1);
+}
+.ec-widget-title-sep {
+  color: var(--c-accent-deep);
+  font-weight: 300;
+}
+.ec-widget-sub {
+  font-family: var(--f-sans);
+  font-size: 0.75rem;
+  color: var(--c-muted);
+  margin-bottom: var(--s-5);
+}
+.ec-chart-wrap {
+  position: relative;
+  width: 100%;
+}
+.ec-chart-wrap svg {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+.ec-grid-line {
+  stroke: oklch(0.80 0.02 85 / 0.45);
+  stroke-width: 0.5;
+}
+.ec-grid-zero {
+  stroke: oklch(0.55 0.04 80 / 0.7);
+  stroke-width: 1;
+}
+.ec-tick {
+  stroke: oklch(0.70 0.02 85 / 0.5);
+  stroke-width: 0.5;
+}
+.ec-axis-line {
+  stroke: oklch(0.70 0.02 85 / 0.5);
+  stroke-width: 0.5;
+}
+.ec-axis-label {
+  font-family: var(--f-sans);
+  font-size: 10px;
+  fill: var(--c-muted);
+}
+.ec-axis-label-y { text-anchor: end; }
+.ec-axis-label-x { text-anchor: middle; }
+.ec-axis-unit {
+  font-family: var(--f-sans);
+  font-size: 9px;
+  fill: var(--c-muted);
+  text-anchor: middle;
+}
+.ec-curve {
+  fill: none;
+  stroke: oklch(0.55 0.14 145);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.ec-area-above {
+  fill: oklch(0.55 0.14 145 / 0.12);
+}
+.ec-area-below {
+  fill: oklch(0.50 0.15 25 / 0.10);
+}
+.ec-clip-mask { overflow: hidden; }
+.ec-clip-top { fill: oklch(0.50 0.15 25 / 0.10); }
+.ec-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: var(--s-3) var(--s-4);
+  margin-top: var(--s-5);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--c-border);
+}
+.ec-stat-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ec-stat-lbl {
+  font-family: var(--f-sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--c-muted);
+}
+.ec-stat-val {
+  font-family: var(--f-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--c-ink);
+  letter-spacing: -0.01em;
+}
+.ec-stat-pos { color: oklch(0.45 0.14 145); }
+.ec-stat-neg { color: oklch(0.50 0.15 25); }
+
 .wdb-empty {
   font-family: var(--f-sans);
   font-size: 0.875rem;

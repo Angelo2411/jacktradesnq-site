@@ -9,6 +9,7 @@ import StraddleTrades from '../_components/StraddleTrades';
 import KillzoneSwitcher from '../_components/KillzoneSwitcher';
 import NwogSwitcher from '../_components/NwogSwitcher';
 import News830Explorer from '../_components/News830Explorer';
+import EquityCurveWidget from '../_components/EquityCurveWidget';
 import MobileTabs, { type MobileTab } from '../_components/MobileTabs';
 import BilingualProse from '../_components/BilingualProse';
 import BilingualPdfLink from '../_components/BilingualPdfLink';
@@ -84,6 +85,11 @@ const IFVG_SLUGS = new Set([
   'ism-mfg-ifvg-smt-es', 'ism-services-ifvg-smt-es', 'cb-confidence-ifvg-smt-es',
   'philly-fed-ifvg-smt-es', 'durable-goods-ifvg-smt-es', 'es-ifvg-smt',
 ]);
+const EQUITY_RE  = /<div data-equity="(nfp)">\s*<\/div>/i;
+
+const EQUITY_DATA: Record<string, string> = {
+  nfp: '/data/nfp-trades.json',
+};
 
 const catLabel = (c: string) => (c === 'tradingview' ? 'TRADINGVIEW' : 'DATA');
 
@@ -143,6 +149,15 @@ export default async function BacktestedDetail({ params }: PageProps) {
       : [html, ''];
   const [htmlBeforeNq, htmlAfterNq] = splitter(entry.explanationHtmlNq);
   const [htmlBeforeGc, htmlAfterGc] = splitter(entry.explanationHtmlGc);
+
+  // Second pass: detect equity curve placeholder inside htmlBefore (it appears before the explorer)
+  const equityMatchBefore = entry.explanationHtmlNq.match(EQUITY_RE);
+  const equityKey = equityMatchBefore ? equityMatchBefore[1].toLowerCase() : null;
+  const equityDataUrl = equityKey ? EQUITY_DATA[equityKey] ?? null : null;
+  // Split htmlBefore around the equity placeholder when found
+  const [htmlBeforeEquity, htmlAfterEquity] = equityDataUrl
+    ? entry.explanationHtmlNq.split(EQUITY_RE).filter((_, i) => i !== 1)
+    : [entry.explanationHtmlNq, ''];
 
   const mobileHasExplorer = !!(entry.mobileHtml && EXPLORER_RE.test(entry.mobileHtml));
   const [mobileBefore, mobileAfter] = mobileHasExplorer
@@ -410,6 +425,12 @@ export default async function BacktestedDetail({ params }: PageProps) {
             <BilingualProse htmlNq={htmlBeforeNq} htmlGc={htmlBeforeGc} />
             {desktopExplorerNode}
             <BilingualProse htmlNq={htmlAfterNq} htmlGc={htmlAfterGc} />
+          </>
+        ) : equityDataUrl ? (
+          <>
+            <div className="bd-prose" dangerouslySetInnerHTML={{ __html: htmlBeforeEquity }} />
+            <EquityCurveWidget dataPath={equityDataUrl} />
+            <div className="bd-prose" dangerouslySetInnerHTML={{ __html: htmlAfterEquity }} />
           </>
         ) : (
           <BilingualProse htmlNq={entry.explanationHtmlNq} htmlGc={entry.explanationHtmlGc} />
