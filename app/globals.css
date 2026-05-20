@@ -2601,3 +2601,84 @@ a { color: inherit; text-decoration: none; }
   color: var(--c-muted);
   font-style: italic;
 }
+
+/* EquityCurve ══════════════════════════════════════════════════════ */
+.eq-card {
+  background: var(--cream-soft);
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+  padding: 24px;
+}
+.eq-header {
+  margin-bottom: 16px;
+}
+.eq-title {
+  font-family: var(--f-serif);
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--c-ink);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+.eq-subtitle {
+  font-family: var(--f-sans);
+  font-weight: 400;
+  font-size: 0.875rem;
+  color: var(--c-muted);
+  margin-top: 4px;
+}
+.eq-empty {
+  font-family: var(--f-sans);
+  font-size: 0.875rem;
+  color: var(--c-muted);
+  font-style: italic;
+  padding: 48px 0;
+  text-align: center;
+}
+.eq-chart-wrap {
+  position: relative;
+  width: 100%;
+}
+/* Desktop visible by default, mobile hidden */
+.eq-svg-desktop { display: block; width: 100%; height: auto; }
+.eq-svg-mobile  { display: none;  width: 100%; height: auto; }
+
+@media (max-width: 600px) {
+  .eq-svg-desktop { display: none; }
+  .eq-svg-mobile  { display: block; }
+}
+
+/* SVG primitives */
+.eq-grid-line {
+  stroke: var(--c-border);
+  stroke-width: 1;
+}
+.eq-grid-zero {
+  stroke: oklch(0.60 0.02 80 / 0.45);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+.eq-axis-label {
+  font-family: var(--f-sans);
+  font-size: 11px;
+  fill: var(--c-muted);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+.eq-area {
+  /* fill set inline via gradient id */
+}
+.eq-line {
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.eq-line-pos { stroke: var(--c-sage); }
+.eq-line-neg { stroke: var(--c-terra); }
+.eq-dot { }
+.eq-dot-pos { fill: var(--c-sage); }
+.eq-dot-neg { fill: var(--c-terra); }
+
+@media (prefers-reduced-motion: reduce) {
+  .eq-card * { transition: none !important; }
+}
