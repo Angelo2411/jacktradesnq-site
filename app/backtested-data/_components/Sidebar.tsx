@@ -146,6 +146,10 @@ export default function Sidebar({
   onClose: () => void;
 }) {
   const pathname = usePathname();
+
+  // Hub index has its own HubFilters sidebar — hide the nav sidebar there
+  const isHub = pathname === '/backtested-data' || pathname === '/backtested-data/';
+  if (isHub) return null;
   const [q, setQ] = useState('');
   const norm = q.trim().toLowerCase();
 
