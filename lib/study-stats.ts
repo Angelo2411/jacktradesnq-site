@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const contentDir = path.join(process.cwd(), 'content', 'backtested-data');
+const contentDir = path.join(process.cwd(), 'content', 'studies');
 const dataDir = path.join(process.cwd(), 'public', 'data');
 
 type Trade = {

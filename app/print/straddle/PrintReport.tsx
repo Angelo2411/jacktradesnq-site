@@ -225,7 +225,7 @@ export default function PrintReport() {
       {/* Cover */}
       <section className="print-page print-cover">
         <header>
-          <p className="kicker">jacktradesnq.com — backtested-data</p>
+          <p className="kicker">jacktradesnq.com — studies</p>
           <h1>
             {eventLabel} <em>straddle</em> report{asset === 'gc' ? ' (Gold)' : ''}
           </h1>
