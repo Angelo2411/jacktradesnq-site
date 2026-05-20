@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useId, useState, useCallback, useRef } from 'react';
+import { useMemo, useId } from 'react';
 
 type Trade = { ts: string; pnl_pts: number };
 
@@ -12,11 +12,11 @@ interface Props {
 
 /* ── helpers ── */
 
-function buildCumulative(trades: Trade[]): { ts: number; cum: number; pnl: number }[] {
+function buildCumulative(trades: Trade[]): { ts: number; cum: number }[] {
   let running = 0;
   return trades.map((t) => {
     running += t.pnl_pts;
-    return { ts: new Date(t.ts).getTime(), cum: running, pnl: t.pnl_pts };
+    return { ts: new Date(t.ts).getTime(), cum: running };
   });
 }
 
@@ -51,33 +51,6 @@ function buildAreaPath(
   return `${line} L ${last.x.toFixed(2)} ${zeroY.toFixed(2)} L ${first.x.toFixed(2)} ${zeroY.toFixed(2)} Z`;
 }
 
-function formatDate(ms: number): string {
-  return new Date(ms).toLocaleDateString('en-US', {
-    month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC',
-  });
-}
-
-function calcStats(cum: { ts: number; cum: number; pnl: number }[], trades: Trade[]) {
-  if (cum.length === 0) return null;
-  const vals = cum.map((p) => p.cum);
-  let maxEquity = -Infinity;
-  let maxDD = 0;
-  let peak = vals[0];
-  for (const v of vals) {
-    if (v > peak) peak = v;
-    const dd = peak - v;
-    if (dd > maxDD) maxDD = dd;
-    if (v > maxEquity) maxEquity = v;
-  }
-  const finalEquity = vals[vals.length - 1];
-  const wins = trades.filter((t) => t.pnl_pts > 0);
-  const losses = trades.filter((t) => t.pnl_pts < 0);
-  const pnlList = trades.map((t) => t.pnl_pts);
-  const best = Math.max(...pnlList);
-  const worst = Math.min(...pnlList);
-  return { maxEquity, maxDD, finalEquity, winCount: wins.length, lossCount: losses.length, best, worst };
-}
-
 /* ── component ── */
 
 export default function EquityCurve({
@@ -86,11 +59,6 @@ export default function EquityCurve({
   subtitle,
 }: Props) {
   const gradId = useId().replace(/:/g, '');
-  const wrapRef = useRef<HTMLDivElement>(null);
-
-  const [tooltip, setTooltip] = useState<{
-    x: number; y: number; date: string; pnl: number; cum: number;
-  } | null>(null);
 
   /* chart geometry */
   const PAD = { top: 20, right: 20, bottom: 36, left: 56 };
@@ -98,17 +66,17 @@ export default function EquityCurve({
   const CHART_H_DESKTOP = 280;
   const CHART_H_MOBILE = 220;
 
-  const { points, zeroY, yTicks, xTicks, finalPositive, cum, stats } = useMemo(() => {
+  const { points, zeroY, yTicks, xTicks, finalPositive } = useMemo(() => {
     if (trades.length === 0) {
-      return { points: [], zeroY: 0, yTicks: [], xTicks: [], finalPositive: true, cum: [], stats: null };
+      return { points: [], zeroY: 0, yTicks: [], xTicks: [], finalPositive: true };
     }
 
-    const cumData = buildCumulative(trades);
-    const minMs = cumData[0].ts;
-    const maxMs = cumData[cumData.length - 1].ts;
+    const cum = buildCumulative(trades);
+    const minMs = cum[0].ts;
+    const maxMs = cum[cum.length - 1].ts;
 
     /* Y domain — always include 0 */
-    const vals = cumData.map((p) => p.cum);
+    const vals = cum.map((p) => p.cum);
     const dataMin = Math.min(0, ...vals);
     const dataMax = Math.max(0, ...vals);
     const span = dataMax - dataMin || 1;
@@ -117,9 +85,12 @@ export default function EquityCurve({
     const yMax = dataMax + yPad;
     const yRange = yMax - yMin;
 
+    /* Helpers: map data coords → SVG coords */
     const innerW = CHART_W - PAD.left - PAD.right;
 
-    function mapX(ms: number): number {
+    function mapX(ms: number, h: number): number {
+      const innerH = h - PAD.top - PAD.bottom;
+      void innerH; // used via mapY closure
       return PAD.left + ((ms - minMs) / (maxMs - minMs || 1)) * innerW;
     }
 
@@ -128,11 +99,12 @@ export default function EquityCurve({
       return PAD.top + (1 - (v - yMin) / yRange) * innerH;
     }
 
+    /* Build points for desktop height — mobile will scale via viewBox */
     const H = CHART_H_DESKTOP;
-    const pts = cumData.map((p) => ({ x: mapX(p.ts), y: mapY(p.cum, H), ts: p.ts, pnl: p.pnl, cum: p.cum }));
+    const pts = cum.map((p) => ({ x: mapX(p.ts, H), y: mapY(p.cum, H) }));
     const zero = mapY(0, H);
 
-    /* Y axis ticks */
+    /* Y axis ticks — up to 5 */
     const rawStep = span / 4;
     const mag = Math.pow(10, Math.floor(Math.log10(Math.abs(rawStep) || 1)));
     const niceStep = Math.ceil(rawStep / mag) * mag || 50;
@@ -144,7 +116,12 @@ export default function EquityCurve({
     }
 
     const yTickArr = tickVals.map((v) => ({ v, y: mapY(v, H) }));
-    const xTickArr = yearTicks(minMs, maxMs).map((t) => ({ ...t, x: mapX(t.ms) }));
+
+    /* X ticks */
+    const xTickArr = yearTicks(minMs, maxMs).map((t) => ({
+      ...t,
+      x: mapX(t.ms, H),
+    }));
 
     return {
       points: pts,
@@ -152,33 +129,17 @@ export default function EquityCurve({
       yTicks: yTickArr,
       xTicks: xTickArr,
       finalPositive: vals[vals.length - 1] >= 0,
-      cum: cumData,
-      stats: calcStats(cumData, trades),
     };
   }, [trades]);
 
-  const handleMouseEnter = useCallback(
-    (pt: typeof points[0], e: React.MouseEvent<SVGCircleElement>) => {
-      const wrap = wrapRef.current;
-      if (!wrap) return;
-      const rect = wrap.getBoundingClientRect();
-      // Scale from SVG coords to rendered coords
-      const svgEl = (e.currentTarget as SVGCircleElement).ownerSVGElement;
-      if (!svgEl) return;
-      const svgRect = svgEl.getBoundingClientRect();
-      const scaleX = svgRect.width / CHART_W;
-      const scaleY = svgRect.height / CHART_H_DESKTOP;
-      const renderedX = svgRect.left - rect.left + pt.x * scaleX;
-      const renderedY = svgRect.top - rect.top + pt.y * scaleY;
-      setTooltip({ x: renderedX, y: renderedY, date: formatDate(pt.ts), pnl: pt.pnl, cum: pt.cum });
-    },
-    [],
-  );
-
-  const handleMouseLeave = useCallback(() => setTooltip(null), []);
-
-  const areaGradColor = finalPositive ? 'var(--c-sage)' : 'var(--c-terra)';
-  const areaSoftColor = finalPositive ? 'var(--c-sage-soft)' : 'var(--c-terra-soft)';
+  /* Colors — OKLCH only via CSS variables, SVG fill via currentColor trick */
+  /* Warm sage for positive, warm terra for negative */
+  const areaGradColor = finalPositive
+    ? 'var(--c-sage)'        /* oklch(0.42 0.10 145) */
+    : 'var(--c-terra)';      /* oklch(0.44 0.15 25) */
+  const areaSoftColor = finalPositive
+    ? 'var(--c-sage-soft)'   /* oklch(0.88 0.07 145) */
+    : 'var(--c-terra-soft)'; /* oklch(0.92 0.06 25) */
 
   if (trades.length === 0) {
     return (
@@ -190,9 +151,8 @@ export default function EquityCurve({
     );
   }
 
-  const simplePoints = points.map((p) => ({ x: p.x, y: p.y }));
-  const linePath = buildPath(simplePoints);
-  const areaPath = buildAreaPath(simplePoints, zeroY);
+  const linePath = buildPath(points);
+  const areaPath = buildAreaPath(points, zeroY);
 
   return (
     <div className="eq-card">
@@ -201,7 +161,7 @@ export default function EquityCurve({
         {subtitle && <p className="eq-subtitle">{subtitle}</p>}
       </div>
 
-      <div className="eq-chart-wrap" ref={wrapRef} style={{ position: 'relative' }}>
+      <div className="eq-chart-wrap">
         {/* Desktop SVG */}
         <svg
           viewBox={`0 0 ${CHART_W} ${CHART_H_DESKTOP}`}
@@ -217,45 +177,68 @@ export default function EquityCurve({
             </linearGradient>
           </defs>
 
+          {/* Y-axis grid lines + labels */}
           {yTicks.map(({ v, y }) => (
             <g key={v}>
-              <line x1={PAD.left} y1={y} x2={CHART_W - PAD.right} y2={y}
-                className={v === 0 ? 'eq-grid-zero' : 'eq-grid-line'} />
-              <text x={PAD.left - 6} y={y} className="eq-axis-label"
-                dominantBaseline="middle" textAnchor="end">
+              <line
+                x1={PAD.left}
+                y1={y}
+                x2={CHART_W - PAD.right}
+                y2={y}
+                className={v === 0 ? 'eq-grid-zero' : 'eq-grid-line'}
+              />
+              <text
+                x={PAD.left - 6}
+                y={y}
+                className="eq-axis-label"
+                dominantBaseline="middle"
+                textAnchor="end"
+              >
                 {v === 0 ? '0' : v > 0 ? `+${v}` : v}
               </text>
             </g>
           ))}
 
+          {/* X-axis tick labels */}
           {xTicks.map(({ ms, label, x }) => (
-            <text key={ms} x={x} y={CHART_H_DESKTOP - PAD.bottom + 16}
-              className="eq-axis-label" dominantBaseline="auto" textAnchor="middle">
+            <text
+              key={ms}
+              x={x}
+              y={CHART_H_DESKTOP - PAD.bottom + 16}
+              className="eq-axis-label"
+              dominantBaseline="auto"
+              textAnchor="middle"
+            >
               {label}
             </text>
           ))}
 
-          <path d={areaPath} fill={`url(#${gradId}-area)`} className="eq-area" />
-          <path d={linePath} fill="none"
-            className={finalPositive ? 'eq-line eq-line-pos' : 'eq-line eq-line-neg'} />
+          {/* Area fill */}
+          <path
+            d={areaPath}
+            fill={`url(#${gradId}-area)`}
+            className="eq-area"
+          />
 
-          {/* Trade dots */}
-          {points.map((pt, i) => (
+          {/* Equity line */}
+          <path
+            d={linePath}
+            fill="none"
+            className={finalPositive ? 'eq-line eq-line-pos' : 'eq-line eq-line-neg'}
+          />
+
+          {/* Terminal dot */}
+          {points.length > 0 && (
             <circle
-              key={i}
-              cx={pt.x}
-              cy={pt.y}
-              r={2.5}
-              className={`eq-trade-dot ${pt.pnl > 0 ? 'eq-dot-pos' : 'eq-dot-neg'}`}
-              stroke="var(--cream-soft)"
-              strokeWidth={0.5}
-              onMouseEnter={(e) => handleMouseEnter(pt, e)}
-              onMouseLeave={handleMouseLeave}
+              cx={points[points.length - 1].x}
+              cy={points[points.length - 1].y}
+              r={3.5}
+              className={finalPositive ? 'eq-dot eq-dot-pos' : 'eq-dot eq-dot-neg'}
             />
-          ))}
+          )}
         </svg>
 
-        {/* Mobile SVG */}
+        {/* Mobile SVG — same viewBox but different CSS height */}
         <svg
           viewBox={`0 0 ${CHART_W} ${CHART_H_MOBILE}`}
           preserveAspectRatio="xMidYMid meet"
@@ -269,97 +252,66 @@ export default function EquityCurve({
             </linearGradient>
           </defs>
           {yTicks.map(({ v, y: yD }) => {
+            /* Remap y from desktop H to mobile H */
             const innerH_d = CHART_H_DESKTOP - PAD.top - PAD.bottom;
             const innerH_m = CHART_H_MOBILE - PAD.top - PAD.bottom;
             const frac = (yD - PAD.top) / innerH_d;
             const yM = PAD.top + frac * innerH_m;
             return (
               <g key={v}>
-                <line x1={PAD.left} y1={yM} x2={CHART_W - PAD.right} y2={yM}
-                  className={v === 0 ? 'eq-grid-zero' : 'eq-grid-line'} />
-                <text x={PAD.left - 6} y={yM} className="eq-axis-label"
-                  dominantBaseline="middle" textAnchor="end">
+                <line
+                  x1={PAD.left}
+                  y1={yM}
+                  x2={CHART_W - PAD.right}
+                  y2={yM}
+                  className={v === 0 ? 'eq-grid-zero' : 'eq-grid-line'}
+                />
+                <text
+                  x={PAD.left - 6}
+                  y={yM}
+                  className="eq-axis-label"
+                  dominantBaseline="middle"
+                  textAnchor="end"
+                >
                   {v === 0 ? '0' : v > 0 ? `+${v}` : v}
                 </text>
               </g>
             );
           })}
           {xTicks.map(({ ms, label, x }) => (
-            <text key={ms} x={x} y={CHART_H_MOBILE - PAD.bottom + 16}
-              className="eq-axis-label" dominantBaseline="auto" textAnchor="middle">
+            <text
+              key={ms}
+              x={x}
+              y={CHART_H_MOBILE - PAD.bottom + 16}
+              className="eq-axis-label"
+              dominantBaseline="auto"
+              textAnchor="middle"
+            >
               {label}
             </text>
           ))}
+          {/* Remap area + line points to mobile H */}
           {(() => {
             const innerH_d = CHART_H_DESKTOP - PAD.top - PAD.bottom;
             const innerH_m = CHART_H_MOBILE - PAD.top - PAD.bottom;
             const remapY = (y: number) => PAD.top + ((y - PAD.top) / innerH_d) * innerH_m;
-            const mPoints = simplePoints.map((p) => ({ x: p.x, y: remapY(p.y) }));
+            const mPoints = points.map((p) => ({ x: p.x, y: remapY(p.y) }));
             const mZeroY = remapY(zeroY);
             const mLine = buildPath(mPoints);
             const mArea = buildAreaPath(mPoints, mZeroY);
+            const last = mPoints[mPoints.length - 1];
             return (
               <>
                 <path d={mArea} fill={`url(#${gradId}-area-m)`} className="eq-area" />
-                <path d={mLine} fill="none"
-                  className={finalPositive ? 'eq-line eq-line-pos' : 'eq-line eq-line-neg'} />
-                {mPoints.map((mp, i) => (
-                  <circle key={i} cx={mp.x} cy={mp.y} r={2}
-                    className={points[i].pnl > 0 ? 'eq-dot-pos' : 'eq-dot-neg'}
-                    stroke="var(--cream-soft)" strokeWidth={0.5} />
-                ))}
+                <path d={mLine} fill="none" className={finalPositive ? 'eq-line eq-line-pos' : 'eq-line eq-line-neg'} />
+                {last && (
+                  <circle cx={last.x} cy={last.y} r={3} className={finalPositive ? 'eq-dot eq-dot-pos' : 'eq-dot eq-dot-neg'} />
+                )}
               </>
             );
           })()}
         </svg>
-
-        {/* Hover tooltip */}
-        {tooltip && (
-          <div
-            className="eq-tooltip"
-            style={{
-              left: tooltip.x + 12,
-              top: tooltip.y - 16,
-            }}
-          >
-            <div className="eq-tooltip-date">{tooltip.date}</div>
-            <div className={`eq-tooltip-pnl ${tooltip.pnl > 0 ? 'eq-tooltip-pnl--pos' : 'eq-tooltip-pnl--neg'}`}>
-              {tooltip.pnl > 0 ? '+' : ''}{tooltip.pnl.toFixed(1)} pts
-            </div>
-            <div className="eq-tooltip-eq">
-              Equity: {tooltip.cum > 0 ? '+' : ''}{tooltip.cum.toFixed(1)}
-            </div>
-          </div>
-        )}
       </div>
-
-      {/* Stats footer */}
-      {stats && (
-        <div className="eq-stats-footer">
-          <div className="eq-stat-cell">
-            <span className="eq-stat-label">Max equity</span>
-            <span className="eq-stat-value eq-stat-value--pos">+{stats.maxEquity.toFixed(0)}</span>
-          </div>
-          <div className="eq-stat-cell">
-            <span className="eq-stat-label">Max DD</span>
-            <span className="eq-stat-value eq-stat-value--neg">-{stats.maxDD.toFixed(0)}</span>
-          </div>
-          <div className="eq-stat-cell">
-            <span className="eq-stat-label">Final equity</span>
-            <span className={`eq-stat-value ${stats.finalEquity >= 0 ? 'eq-stat-value--pos' : 'eq-stat-value--neg'}`}>
-              {stats.finalEquity >= 0 ? '+' : ''}{stats.finalEquity.toFixed(0)}
-            </span>
-          </div>
-          <div className="eq-stat-cell">
-            <span className="eq-stat-label">W / L</span>
-            <span className="eq-stat-value">{stats.winCount} W / {stats.lossCount} L</span>
-          </div>
-          <div className="eq-stat-cell">
-            <span className="eq-stat-label">Best / Worst</span>
-            <span className="eq-stat-value">+{stats.best.toFixed(0)} / {stats.worst.toFixed(0)}</span>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
