@@ -57,8 +57,6 @@
 /backtested-data/fomc-ifvg-smt-es/ /studies/fomc-ifvg-smt-es/ 301
 /backtested-data/fomc-ifvg-smt-gc /studies/fomc-ifvg-smt-gc 301
 /backtested-data/fomc-ifvg-smt-gc/ /studies/fomc-ifvg-smt-gc/ 301
-/backtested-data/gc-ifvg-smt /studies/gc-ifvg-smt 301
-/backtested-data/gc-ifvg-smt/ /studies/gc-ifvg-smt/ 301
 /backtested-data/gdp-ifvg-smt /studies/gdp-ifvg-smt 301
 /backtested-data/gdp-ifvg-smt/ /studies/gdp-ifvg-smt/ 301
 /backtested-data/gdp-ifvg-smt-es /studies/gdp-ifvg-smt-es 301

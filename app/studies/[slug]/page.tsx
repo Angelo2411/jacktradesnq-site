@@ -69,7 +69,7 @@ const NWOG_SLUG = 'asia-open';
 const IFVG_SLUGS = new Set([
   'cpi-ifvg-smt', 'nfp-ifvg-smt', 'ppi-ifvg-smt', 'pce-ifvg-smt',
   'joblessclaims-ifvg-smt', 'retailsales-ifvg-smt', 'empirestate-ifvg-smt',
-  'employmentcostindex-ifvg-smt', 'gdp-ifvg-smt', 'gc-ifvg-smt',
+  'employmentcostindex-ifvg-smt', 'gdp-ifvg-smt',
   'fomc-ifvg-smt', 'adp-ifvg-smt', 'jolts-ifvg-smt',
   'ism-mfg-ifvg-smt', 'ism-services-ifvg-smt', 'cb-confidence-ifvg-smt',
   'philly-fed-ifvg-smt', 'durable-goods-ifvg-smt',
