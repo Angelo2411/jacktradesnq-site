@@ -249,6 +249,10 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       // Extend segment from entry to end of visible chart (not just exit_ts which can be 1min away = invisible).
       const lastCandle = candles[candles.length - 1];
       const chartEndSec = (lastCandle?.time as number) ?? Math.floor(new Date(exitTs).getTime() / 1000);
+      // Guard: if bars end at/before entry (incomplete data window for this trade), skip overlay segments to avoid lightweight-charts asc-order assert. Candles still render.
+      if (chartEndSec <= entrySec) {
+        return;
+      }
       const exitSec = chartEndSec as UTCTimestamp;
 
       const entrySegment = chart.addSeries(LineSeries, {

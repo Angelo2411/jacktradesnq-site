@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useState, useMemo } from 'react';
+import { Fragment, useState, useMemo } from 'react';
 import type { WeekdayBreakdown, WeekdayStats, YearBreakdown, TradeRow, StrategyStats } from '@/lib/study-stats';
 import { aggregateYearTotals } from '@/lib/year-stats-utils';
 import { filterTradesByLookback, computeKPI, computeYearBreakdown, computeWeekdayBreakdown } from '@/lib/client-stats';
@@ -328,9 +328,8 @@ function TradesBlock({
           </thead>
           <tbody>
             {shown.map((t, i) => (
-              <>
+              <Fragment key={i}>
                 <tr
-                  key={i}
                   className={'v3-tr-row' + (expandedIdx === i ? ' expanded' : '')}
                   onClick={() => setExpandedIdx(expandedIdx === i ? null : i)}
                   style={{ cursor: 'pointer' }}
@@ -376,7 +375,7 @@ function TradesBlock({
                     </td>
                   </tr>
                 )}
-              </>
+              </Fragment>
             ))}
           </tbody>
         </table>
