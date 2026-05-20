@@ -16,7 +16,7 @@ import BilingualLede from '../_components/BilingualLede';
 import BilingualTitle from '../_components/BilingualTitle';
 import V3Tabs from '../_components/V3Tabs';
 import EquityCurve from '../_components/EquityCurve';
-import EventHeatmap from '../_components/EventHeatmap';
+import DailyPnlBars from '../_components/DailyPnlBars';
 import { getStrategyStats, getStrategyStatsByVariant, getStrategyStatsByVariantAndSmt, getWeekdayBreakdown, getYearBreakdown, getTradeList } from '@/lib/study-stats';
 
 const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
@@ -351,16 +351,16 @@ export default async function BacktestedDetail({ params }: PageProps) {
           <V3Tabs slug={slug} breakdown={breakdown} breakdownOff={breakdownOff} yearBreakdown={yearBreakdown} yearBreakdownOff={yearBreakdownOff} trades={trades} tradesByVariant={tradesByVariant} tradesByVariantOff={tradesByVariantOff} statsByVariant={statsByVariant} statsByVariantAndSmt={statsByVariantAndSmt} dateFrom={dateFrom} dateTo={dateTo} overviewContent={overviewNode} eventShort={stratStats?.event ?? ''} asset={(stratStats?.asset?.toLowerCase() ?? 'nq') as 'nq' | 'gc' | 'es'} />
         </Suspense>
 
-        <div style={{ display: 'grid', gap: 32, marginTop: 48 }}>
+        <div className="eq-pair-wrap">
           <EquityCurve
             trades={trades}
             title="Equity curve"
             subtitle={`Cumulative PnL · ${eventLabel} IFVG+SMT · ${dateFrom}–${dateTo}`}
           />
-          <EventHeatmap
+          <DailyPnlBars
             trades={trades}
-            title="Past releases"
-            subtitle={`Monthly heatmap · ${eventLabel} IFVG+SMT · ${assetLabel}`}
+            title="Trade-by-trade PnL"
+            subtitle={`Per-trade PnL bars · ${eventLabel} IFVG+SMT · ${assetLabel}`}
           />
         </div>
 
