@@ -83,10 +83,6 @@ export default function EquityJourneyChart({ data }: Props) {
   const endYear = parseInt(periodEnd);
   const yearLabels: { x: number; label: string }[] = [];
   for (let y = startYear; y <= endYear; y += 2) {
-    const tradeDates = curve.map((c) => parseInt(c.date.slice(0, 4)));
-    const yearTrades = tradeDates.filter((d) => d <= y);
-    const idx = yearTrades.length > 0 ? yearTrades.length - 1 : 0;
-    // Position by date fraction
     const firstDate = new Date(curve[0].date).getTime();
     const lastDate = new Date(curve[n - 1].date).getTime();
     const yearDate = new Date(`${y}-01-01`).getTime();
@@ -94,19 +90,17 @@ export default function EquityJourneyChart({ data }: Props) {
     yearLabels.push({ x: PAD_L + frac * CHART_W, label: String(y) });
   }
 
-  // Bar height scale: max 80px for largest trade
+  // Bar dimensions: thinner (max 4px wide), more discreet
   const maxAbsPnl = Math.max(...curve.map((c) => Math.abs(c.tradePnl)));
   const barMaxH = 80;
-  const barW = Math.max(4, Math.min(8, CHART_W / n - 2));
-
-  // Drawdown shading: from peak to trough
-  const ddX1 = pts[peakIdx].x;
-  const ddX2 = pts[troughIdx].x;
-  const ddLeft = Math.min(ddX1, ddX2);
-  const ddWidth = Math.abs(ddX2 - ddX1) + barW;
+  const barW = Math.max(2, Math.min(4, CHART_W / n - 2));
 
   const peakPt = pts[peakIdx];
   const troughPt = pts[troughIdx];
+
+  // Peak label: anchor right if peak is in right third of chart
+  const peakFrac = (peakPt.x - PAD_L) / CHART_W;
+  const peakAnchor = peakFrac > 0.67 ? 'end' : peakFrac < 0.33 ? 'start' : 'middle';
 
   return (
     <div className="ts-chart-card">
@@ -150,10 +144,10 @@ export default function EquityJourneyChart({ data }: Props) {
           ))}
         </g>
 
-        {/* Per-trade bars (background, opacity 0.35) */}
-        <g opacity="0.35">
+        {/* Per-trade bars — gains above zero, losses below, opacity 0.20 */}
+        <g opacity="0.20">
           {pts.map((p, i) => {
-            const barH = Math.max(3, (Math.abs(p.pnl) / maxAbsPnl) * barMaxH);
+            const barH = Math.max(2, (Math.abs(p.pnl) / maxAbsPnl) * barMaxH);
             const barX = p.x - barW / 2;
             const barY = p.isWin ? zeroY - barH : zeroY;
             return (
@@ -168,19 +162,6 @@ export default function EquityJourneyChart({ data }: Props) {
             );
           })}
         </g>
-
-        {/* Drawdown shading band */}
-        {troughIdx > 0 && (
-          <rect
-            x={ddLeft.toFixed(1)}
-            y={PAD_T}
-            width={ddWidth.toFixed(1)}
-            height={CHART_H}
-            fill="var(--c-terra)"
-            opacity="0.06"
-            rx="2"
-          />
-        )}
 
         {/* Area fill */}
         <path d={areaPath} fill="var(--c-sage)" opacity="0.10" />
@@ -200,31 +181,21 @@ export default function EquityJourneyChart({ data }: Props) {
           <g transform={`translate(${peakPt.x.toFixed(1)},${peakPt.y.toFixed(1)})`}>
             <circle r="5" fill="var(--c-sage)" stroke="oklch(0.96 0.02 145)" strokeWidth="2" />
             <line x1="0" y1="-8" x2="0" y2="-22" stroke="oklch(0.42 0.10 145)" strokeWidth="1" strokeDasharray="2 2" />
+            {/* Single compact label block: line1 "PEAK +753", line2 date */}
             <text
-              x="0" y="-30"
-              textAnchor="middle"
+              x="0" y="-26"
+              textAnchor={peakAnchor}
               fontFamily="Fraunces"
-              fontSize="13"
+              fontSize="12"
               fontStyle="italic"
               fontWeight="700"
               fill="var(--c-sage)"
             >
-              {fmtPts(Math.round(peakPts))}
+              PEAK {fmtPts(Math.round(peakPts))}
             </text>
             <text
-              x="0" y="-46"
-              textAnchor="middle"
-              fontFamily="Satoshi"
-              fontSize="9"
-              fontWeight="700"
-              fill="oklch(0.52 0.012 270)"
-              letterSpacing="0.09em"
-            >
-              PEAK
-            </text>
-            <text
-              x="0" y="-58"
-              textAnchor="middle"
+              x="0" y="-38"
+              textAnchor={peakAnchor}
               fontFamily="Satoshi"
               fontSize="9"
               fill="oklch(0.52 0.012 270)"
@@ -240,15 +211,15 @@ export default function EquityJourneyChart({ data }: Props) {
             <circle r="5" fill="var(--c-terra)" stroke="oklch(0.96 0.02 25)" strokeWidth="2" />
             <line x1="0" y1="8" x2="0" y2="22" stroke="var(--c-terra)" strokeWidth="1" strokeDasharray="2 2" />
             <text
-              x="30" y="34"
+              x="0" y="34"
               textAnchor="middle"
               fontFamily="Fraunces"
-              fontSize="12"
+              fontSize="11"
               fontStyle="italic"
               fontWeight="700"
               fill="var(--c-terra)"
             >
-              {troughPts} DD
+              {troughPts} DD · {troughDate}
             </text>
           </g>
         )}
@@ -266,10 +237,6 @@ export default function EquityJourneyChart({ data }: Props) {
         <div className="ts-legend-item">
           <span className="ts-legend-swatch" style={{ background: 'var(--c-terra)' }} />
           Trade loss
-        </div>
-        <div className="ts-legend-item">
-          <span className="ts-legend-swatch" style={{ background: 'var(--c-terra)', opacity: 0.25 }} />
-          Drawdown zone
         </div>
       </div>
     </div>
