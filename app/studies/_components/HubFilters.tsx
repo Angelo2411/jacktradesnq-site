@@ -116,12 +116,8 @@ export default function HubFilters({
       <HubTopBar
         asset={filters.asset}
         showNoEdge={filters.showNoEdge}
-        selectedDow={selectedDow}
-        mounted={mounted}
-        weekly={weekly}
         onAsset={(a) => updateFilter('asset', a)}
         onShowNoEdge={(v) => updateFilter('showNoEdge', v)}
-        onDow={(i) => setSelectedDow(i)}
       />
 
       <main className="bd-hub-main" id="hub-grid">

@@ -1730,19 +1730,59 @@ a { color: inherit; text-decoration: none; }
   white-space: nowrap;
 }
 .bd-flt-asset-toggle--inline {
-  /* override sidebar width constraints */
   width: auto;
+  gap: 2px;
+}
+.bd-flt-asset-toggle--inline .bd-flt-asset-btn {
+  padding: 6px 16px;
+  flex: 0 0 auto;
+  min-width: 44px;
 }
 .bd-dow-strip--inline {
   flex-wrap: nowrap;
+  gap: 6px;
 }
 .bd-dow-cell--compact {
-  padding: 6px 8px;
-  min-width: 36px;
+  padding: 6px 10px;
+  min-width: 54px;
+  flex: 0 0 auto;
+}
+.bd-dow-cell--compact .bd-dow-cell-sub {
+  text-overflow: clip;
+  overflow: visible;
 }
 .bd-flt-toggle-row--inline {
-  gap: 8px;
+  gap: 10px;
   white-space: nowrap;
+}
+/* ── Edge/No-edge segmented toggle (replaces tiny switch) ── */
+.bd-edge-segmented {
+  display: inline-flex;
+  gap: 0;
+  border: 1px solid var(--c-ink);
+  border-radius: 999px;
+  padding: 2px;
+  background: oklch(1 0 0 / 0.3);
+}
+.bd-edge-seg-btn {
+  font-family: var(--f-serif);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  color: var(--c-ink);
+  cursor: pointer;
+  transition: background 140ms ease, color 140ms ease;
+  white-space: nowrap;
+}
+.bd-edge-seg-btn.on {
+  background: var(--c-ink);
+  color: var(--c-surface);
+}
+.bd-edge-seg-btn:not(.on):hover {
+  background: oklch(0 0 0 / 0.05);
 }
 
 /* ── Hub body layout: full-width (topbar replaces sidebar) ── */
