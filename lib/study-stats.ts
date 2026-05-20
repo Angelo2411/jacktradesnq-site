@@ -1068,9 +1068,13 @@ function processOneSlug(slug: string): StudyStats | null {
   const asset = inferAsset(slug);
   const window = inferWindow(slug, family, group);
 
-  // Resolve data file (slug override or exact match)
+  // Resolve data file (slug override or exact match).
+  // GC convention: slug ends with -gc → filename uses _gc.json (underscore).
   const dataSlug = SLUG_DATA_MAP[slug] ?? slug;
-  const jsonPath = path.join(dataDir, `${dataSlug}.json`);
+  const dataFilename = dataSlug.endsWith('-gc')
+    ? `${dataSlug.slice(0, -3)}_gc.json`
+    : `${dataSlug}.json`;
+  const jsonPath = path.join(dataDir, dataFilename);
   const jsonData = loadJson<Record<string, unknown>>(jsonPath);
 
   let kind: 'strategy' | 'study' = 'strategy';
