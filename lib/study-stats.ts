@@ -762,6 +762,8 @@ export interface StudyStats {
 
 function inferAsset(slug: string): AssetType {
   if (slug.startsWith('gc-')) return 'GC';
+  if (slug.startsWith('es-')) return 'ES';
+  if (slug.startsWith('si-')) return 'SI';
   if (slug.includes('-gc')) return 'GC';
   if (slug.includes('-es')) return 'ES';
   if (slug.includes('-si')) return 'SI';
