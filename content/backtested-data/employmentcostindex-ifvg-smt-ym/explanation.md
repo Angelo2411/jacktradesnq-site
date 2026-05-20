@@ -1,17 +1,22 @@
 # Employment Cost Index · IFVG + SMT — YM (E-mini Dow)
 
-10-year backtest of the IFVG reversal pattern on Employment Cost Index releases at 8:30 ET, using NQ (E-mini Nasdaq) as the SMT confirmation leg.
+10-year backtest of the IFVG reversal pattern on Employment Cost Index releases at 8:30 ET, using NQ (E-mini Nasdaq) SMT confirmation. Data: 2016-01-04 → 2024-12-31 (~9 years — 2025 data pull blocked by Databento budget).
 
-## Model
-
-Same engine as the NQ variant (IFVG inversion + opposite-leg sweep filter + tp1_be variant), executed on YM (E-mini Dow futures, tick size 1.0 pt).
+## Setup
+Same engine as the NQ variant (IFVG inversion + opposite-leg sweep filter), executed on YM (E-mini Dow futures, tick size 1.0 pt).
 
 ## SMT pair
+YM-anchor variants use NQ as primary SMT confirmation. For the reverse pair (anchor=YM, smt=ES) see `employmentcostindex-ifvg-smt-es-vs-ym`. For NQ anchor with YM SMT see `employmentcostindex-ifvg-smt-nq-vs-ym`.
 
-YM variants use NQ as the SMT confirmation pair — the most correlated US equity index futures contract. A sweep on NQ confirms the reversal signal on YM before entry is taken.
+## Results (be_50 variant, both sides, SMT on)
 
-## Results
+- **N**: 19
+- **Win rate**: 50.0%
+- **Profit factor**: 2.47
+- **Net P&L**: 197 pts
 
-See the KPI band above and the By weekday / By year / Trade list tabs for full breakdown.
+For no_be (no break-even stop) variant: PF 1.61, N 19, Net 142 pts.
 
-Past performance does not guarantee future results. Backtest uses historical data only.
+See the KPI band and breakdown tabs above for full year-by-year and side-by-side stats.
+
+Past performance ≠ future results.
