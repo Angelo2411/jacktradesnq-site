@@ -2,12 +2,14 @@ import Link from 'next/link';
 import V3SideNav from './_components/V3SideNav';
 import { AssetProvider } from './_components/AssetContext';
 import AssetPills from './_components/AssetPills';
+import { getAllEntries } from '@/lib/studies';
 
 export default function BacktestedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const availableSlugs = getAllEntries().map((e) => e.slug);
   return (
     <AssetProvider>
     <div className="bd-root">
@@ -21,7 +23,7 @@ export default function BacktestedLayout({
           J<span className="v3-logo-dot">.</span>
         </Link>
         <div className="v3-topbar-spacer" />
-        <AssetPills />
+        <AssetPills availableSlugs={availableSlugs} />
         <a
           href="https://jacktradesnq.com"
           className="v3-home-link"
