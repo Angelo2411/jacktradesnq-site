@@ -1696,27 +1696,61 @@ a { color: inherit; text-decoration: none; }
   font-size: 0.78rem;
 }
 
-/* ── Hub body layout: sidebar + main ── */
-.bd-hub-body {
-  display: grid;
-  grid-template-columns: 260px 1fr;
-  gap: 0;
-  align-items: start;
-  margin-top: 36px;
+/* ── Hub topbar (horizontal filter band) ── */
+.bd-hub-topbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin-top: 24px;
+  margin-bottom: 28px;
+  padding: 12px 16px;
+  background: var(--c-surface-raised, oklch(1 0 0 / 0.55));
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+}
+.bd-hub-topbar-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.bd-hub-topbar-group--playbook {
+  gap: 10px;
+}
+.bd-hub-topbar-group--end {
+  margin-left: auto;
+}
+.bd-topbar-playbook-lbl {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+  white-space: nowrap;
+}
+.bd-flt-asset-toggle--inline {
+  /* override sidebar width constraints */
+  width: auto;
+}
+.bd-dow-strip--inline {
+  flex-wrap: nowrap;
+}
+.bd-dow-cell--compact {
+  padding: 6px 8px;
+  min-width: 36px;
+}
+.bd-flt-toggle-row--inline {
+  gap: 8px;
+  white-space: nowrap;
 }
 
-/* ── Sidebar filters panel ── */
-.bd-hub-filters {
-  position: sticky;
-  top: var(--nav-h);
-  max-height: calc(100vh - var(--nav-h) - 48px);
-  overflow-y: auto;
-  padding: 0 24px 32px 0;
-  border-right: 1px solid var(--c-border);
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+/* ── Hub body layout: full-width (topbar replaces sidebar) ── */
+.bd-hub-body {
+  display: contents;
 }
+
+/* ── Main grid area ── */
 .bd-flt-section {
   padding: 16px 0;
   border-bottom: 1px solid var(--c-border);
@@ -2017,7 +2051,7 @@ a { color: inherit; text-decoration: none; }
 
 /* ── Main grid area ── */
 .bd-hub-main {
-  padding: 0 0 96px 40px;
+  padding: 0 0 96px 0;
   min-width: 0;
 }
 .bd-hub-empty {
@@ -2084,8 +2118,14 @@ a { color: inherit; text-decoration: none; }
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
 }
+@media (min-width: 1400px) {
+  .bd-hub-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
 @media (max-width: 1200px) {
   .bd-hub-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .bd-hub-grid { grid-template-columns: repeat(1, minmax(0, 1fr)); }
 }
 
 /* ── Study card ── */
