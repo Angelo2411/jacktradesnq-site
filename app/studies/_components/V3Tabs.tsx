@@ -422,6 +422,7 @@ export default function V3Tabs({
   overviewContent,
   eventShort,
   asset,
+  hideKpiBand = false,
 }: {
   slug: string;
   breakdown: WeekdayBreakdown;
@@ -441,6 +442,7 @@ export default function V3Tabs({
   overviewContent: React.ReactNode;
   eventShort: string;
   asset: 'nq' | 'gc' | 'es';
+  hideKpiBand?: boolean;
 }) {
   // ── URL-driven filter state ──────────────────────────────────────────
   const { variant, smtOn, lookback } = useFilterState();
@@ -513,7 +515,7 @@ export default function V3Tabs({
       )}
 
       {/* ── KPI band ── */}
-      {hasTradeData && (
+      {hasTradeData && !hideKpiBand && (
         <div className="v3-kpi-band fb-animated">
           <div className="v3-kpi-cell">
             <div className="v3-kpi-band-lbl">Profit factor</div>
