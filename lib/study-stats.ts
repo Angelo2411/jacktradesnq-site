@@ -1048,6 +1048,41 @@ const SLUG_DATA_MAP: Record<string, string> = {
   'nfp': 'nfp-straddle',
 };
 
+// Map day-stats slug → exact event_bars JSON filename (without .json)
+// Handles all 7 events × 3 assets (NQ = base, ES, GC)
+const DAY_STATS_EVENT_BARS_MAP: Record<string, string> = {
+  'cb-confidence-day-stats':    'cb_confidence_event_bars',
+  'cb-confidence-day-stats-es': 'cb_confidence_event_bars_es',
+  'cb-confidence-day-stats-gc': 'cb_confidence_event_bars_gc',
+  'cpi-day-stats-es':           'cpi_event_bars_es',
+  'cpi-day-stats-gc':           'cpi_event_bars_gc',
+  'durable-goods-day-stats':    'durable_goods_event_bars',
+  'durable-goods-day-stats-es': 'durable_goods_event_bars_es',
+  'durable-goods-day-stats-gc': 'durable_goods_event_bars_gc',
+  'fomc-day-stats-es':          'fomc_event_bars_es',
+  'fomc-day-stats-gc':          'fomc_event_bars_gc',
+  'ism-mfg-day-stats':          'ism_mfg_event_bars',
+  'ism-mfg-day-stats-es':       'ism_mfg_event_bars_es',
+  'ism-mfg-day-stats-gc':       'ism_mfg_event_bars_gc',
+  'ism-services-day-stats':     'ism_services_event_bars',
+  'ism-services-day-stats-es':  'ism_services_event_bars_es',
+  'ism-services-day-stats-gc':  'ism_services_event_bars_gc',
+  'philly-fed-day-stats':       'philly_fed_event_bars',
+  'philly-fed-day-stats-es':    'philly_fed_event_bars_es',
+  'philly-fed-day-stats-gc':    'philly_fed_event_bars_gc',
+  // NQ base for cpi/nfp/fomc handled via SLUG_DATA_MAP (straddle) + separate event_bars
+  'nfp-day-stats':              'nfp_event_bars',
+  'nfp-day-stats-es':           'nfp_event_bars_es',
+  'nfp-day-stats-gc':           'nfp_event_bars_gc',
+};
+
+// Resolve event_bars JSON path for a day-stats slug, or null if not a day-stats slug
+function getDayStatsJsonPath(slug: string): string | null {
+  const filename = DAY_STATS_EVENT_BARS_MAP[slug];
+  if (!filename) return null;
+  return path.join(dataDir, `${filename}.json`);
+}
+
 function processOneSlug(slug: string): StudyStats | null {
   const metaPath = path.join(contentDir, slug, 'meta.json');
   if (!fs.existsSync(metaPath)) return null;
@@ -1068,6 +1103,31 @@ function processOneSlug(slug: string): StudyStats | null {
   const family = inferFamily(slug, group);
   const asset = inferAsset(slug);
   const window = inferWindow(slug, family, group);
+
+  // Day-stats slugs: resolve directly to event_bars JSON (bypasses SLUG_DATA_MAP logic)
+  const dayStatsPath = getDayStatsJsonPath(slug);
+  if (dayStatsPath !== null) {
+    const ebData = loadJson<Array<{ date: string; t0_iso: string; entry_price: number; bars: unknown[] }>>(dayStatsPath);
+    const n = Array.isArray(ebData) ? ebData.length : 0;
+    const kind: 'strategy' | 'study' = 'study';
+    const stats = {
+      pf: 0, n, edgePts: 0, wr: 0,
+      wrByWeekday: [0, 0, 0, 0, 0],
+      nByWeekday: [0, 0, 0, 0, 0],
+    };
+    const descriptive: DescriptivePayload | undefined = n > 0
+      ? {
+          primaryValue: `${n}`,
+          primaryLabel: 'releases charted',
+          secondaryValue: `${asset} · 10y`,
+          secondaryLabel: 'per-release bar chart',
+          tertiary: excerpt || undefined,
+        }
+      : excerpt
+        ? { primaryValue: '—', primaryLabel: 'no data', secondaryValue: date, secondaryLabel: asset, tertiary: excerpt }
+        : undefined;
+    return { slug, title, asset, family, window, kind, date, excerpt, descriptive, ...stats };
+  }
 
   // Resolve data file (slug override or exact match).
   // GC convention: slug ends with -gc → filename uses _gc.json (underscore).
