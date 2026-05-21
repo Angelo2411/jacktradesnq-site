@@ -2,7 +2,6 @@
 
 import { useAsset } from './AssetContext';
 
-// NQ data from explanation.md (58 events ≥50 pts, 2018–2026)
 const NQ_SUMMARY = {
   totalEvents: 58,
   gapMinPoints: 50,
@@ -13,7 +12,6 @@ const NQ_SUMMARY = {
   bear: { count: 39, direct: 64.1, later: 12.8, held: 23.1 },
 };
 
-// GC data from public/data/nwog-gc.json (155 events ≥2 pts, 2016–2026)
 const GC_SUMMARY = {
   totalEvents: 155,
   gapMinPoints: 2,
@@ -24,66 +22,137 @@ const GC_SUMMARY = {
   bear: { count: 53, direct: 79.2, later: 9.4, held: 11.3 },
 };
 
-function SummaryTable({ data, unit }: { data: typeof NQ_SUMMARY; unit: string }) {
+const ES_SUMMARY = {
+  totalEvents: 183,
+  gapMinPoints: 5,
+  direct: { count: 138, pct: 75.4 },
+  later: { count: 14, pct: 7.7 },
+  held: { count: 31, pct: 16.9 },
+  bull: { count: 92, direct: 70.7, later: 7.6, held: 21.7 },
+  bear: { count: 91, direct: 80.2, later: 7.7, held: 12.1 },
+};
+
+const SI_SUMMARY = {
+  totalEvents: 49,
+  gapMinPoints: 0.1,
+  direct: { count: 36, pct: 73.5 },
+  later: { count: 10, pct: 20.4 },
+  held: { count: 3, pct: 6.1 },
+  bull: { count: 35, direct: 80.0, later: 20.0, held: 0.0 },
+  bear: { count: 14, direct: 57.1, later: 21.4, held: 21.4 },
+};
+
+type Summary = typeof NQ_SUMMARY;
+
+function Cylinder({
+  label,
+  count,
+  direct,
+  later,
+  held,
+}: {
+  label: 'Bull' | 'Bear';
+  count: number;
+  direct: number;
+  later: number;
+  held: number;
+}) {
+  const segments = [
+    { key: 'direct', pct: direct, color: 'var(--c-sage)', text: 'var(--c-paper)', name: 'Direct' },
+    { key: 'later', pct: later, color: 'var(--c-accent)', text: 'var(--c-ink)', name: 'Later' },
+    { key: 'held', pct: held, color: 'var(--c-terra)', text: 'var(--c-paper)', name: 'Held' },
+  ];
+  return (
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+      <div style={{ fontFamily: 'var(--f-sans)', fontSize: '0.875rem', fontWeight: 600, color: 'var(--c-ink)' }}>
+        {label}
+        <span style={{ marginLeft: 8, color: 'var(--c-ink-quiet)', fontWeight: 400 }}>{count} events</span>
+      </div>
+      <div
+        role="img"
+        aria-label={`${label}: Direct ${direct}%, Later ${later}%, Held ${held}%`}
+        style={{
+          width: '100%',
+          maxWidth: 180,
+          height: 320,
+          display: 'flex',
+          flexDirection: 'column',
+          borderRadius: 12,
+          overflow: 'hidden',
+          border: '1px solid var(--c-paper-edge)',
+          boxShadow: '0 1px 2px oklch(0.20 0.02 270 / 0.06)',
+        }}
+      >
+        {segments.map((s) => (
+          <div
+            key={s.key}
+            style={{
+              flexBasis: `${s.pct}%`,
+              background: s.color,
+              color: s.text,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontFamily: 'var(--f-sans)',
+              fontSize: s.pct < 8 ? '0.7rem' : '0.95rem',
+              fontWeight: 700,
+              padding: s.pct < 8 ? '2px 4px' : '6px 8px',
+              minHeight: 0,
+            }}
+          >
+            <span>{s.pct.toFixed(1)}%</span>
+            {s.pct >= 12 && (
+              <span style={{ fontSize: '0.7rem', fontWeight: 500, opacity: 0.85, marginTop: 2 }}>{s.name}</span>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CylinderView({ data, unit }: { data: Summary; unit: string }) {
   return (
     <div aria-live="polite" style={{ marginTop: 16 }}>
-      <p style={{ fontFamily: 'var(--f-sans)', fontSize: '0.875rem', color: 'var(--c-muted)', marginBottom: 12 }}>
+      <p style={{ fontFamily: 'var(--f-sans)', fontSize: '0.875rem', color: 'var(--c-muted, var(--c-ink-quiet))', marginBottom: 20 }}>
         {data.totalEvents} events · gap ≥{data.gapMinPoints} {unit}.
       </p>
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'var(--f-sans)', fontSize: '0.875rem' }}>
-        <thead>
-          <tr style={{ borderBottom: '1px solid var(--c-border)' }}>
-            <th style={{ textAlign: 'left', padding: '6px 12px 6px 0', color: 'var(--c-muted)', fontWeight: 500 }}>Outcome</th>
-            <th style={{ textAlign: 'right', padding: '6px 0 6px 12px', color: 'var(--c-muted)', fontWeight: 500 }}>Events</th>
-            <th style={{ textAlign: 'right', padding: '6px 0 6px 12px', color: 'var(--c-muted)', fontWeight: 500 }}>%</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr style={{ borderBottom: '1px solid var(--c-border)' }}>
-            <td style={{ padding: '8px 12px 8px 0', fontWeight: 600 }}>Direct fill (≤30 min)</td>
-            <td style={{ padding: '8px 0 8px 12px', textAlign: 'right' }}>{data.direct.count}</td>
-            <td style={{ padding: '8px 0 8px 12px', textAlign: 'right' }}>{data.direct.pct}%</td>
-          </tr>
-          <tr style={{ borderBottom: '1px solid var(--c-border)' }}>
-            <td style={{ padding: '8px 12px 8px 0', fontWeight: 600 }}>Later fill</td>
-            <td style={{ padding: '8px 0 8px 12px', textAlign: 'right' }}>{data.later.count}</td>
-            <td style={{ padding: '8px 0 8px 12px', textAlign: 'right' }}>{data.later.pct}%</td>
-          </tr>
-          <tr style={{ borderBottom: '1px solid var(--c-border)' }}>
-            <td style={{ padding: '8px 12px 8px 0', fontWeight: 600 }}>Held</td>
-            <td style={{ padding: '8px 0 8px 12px', textAlign: 'right' }}>{data.held.count}</td>
-            <td style={{ padding: '8px 0 8px 12px', textAlign: 'right' }}>{data.held.pct}%</td>
-          </tr>
-        </tbody>
-      </table>
 
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'var(--f-sans)', fontSize: '0.875rem', marginTop: 16 }}>
-        <thead>
-          <tr style={{ borderBottom: '1px solid var(--c-border)' }}>
-            <th style={{ textAlign: 'left', padding: '6px 12px 6px 0', color: 'var(--c-muted)', fontWeight: 500 }}>Direction</th>
-            <th style={{ textAlign: 'right', padding: '6px 0 6px 12px', color: 'var(--c-muted)', fontWeight: 500 }}>Events</th>
-            <th style={{ textAlign: 'right', padding: '6px 0 6px 12px', color: 'var(--c-muted)', fontWeight: 500 }}>Direct %</th>
-            <th style={{ textAlign: 'right', padding: '6px 0 6px 12px', color: 'var(--c-muted)', fontWeight: 500 }}>Later %</th>
-            <th style={{ textAlign: 'right', padding: '6px 0 6px 12px', color: 'var(--c-muted)', fontWeight: 500 }}>Held %</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr style={{ borderBottom: '1px solid var(--c-border)' }}>
-            <td style={{ padding: '8px 12px 8px 0', fontWeight: 600 }}>Bull</td>
-            <td style={{ padding: '8px 0 8px 12px', textAlign: 'right' }}>{data.bull.count}</td>
-            <td style={{ padding: '8px 0 8px 12px', textAlign: 'right' }}>{data.bull.direct}%</td>
-            <td style={{ padding: '8px 0 8px 12px', textAlign: 'right' }}>{data.bull.later}%</td>
-            <td style={{ padding: '8px 0 8px 12px', textAlign: 'right' }}>{data.bull.held}%</td>
-          </tr>
-          <tr style={{ borderBottom: '1px solid var(--c-border)' }}>
-            <td style={{ padding: '8px 12px 8px 0', fontWeight: 600 }}>Bear</td>
-            <td style={{ padding: '8px 0 8px 12px', textAlign: 'right' }}>{data.bear.count}</td>
-            <td style={{ padding: '8px 0 8px 12px', textAlign: 'right' }}>{data.bear.direct}%</td>
-            <td style={{ padding: '8px 0 8px 12px', textAlign: 'right' }}>{data.bear.later}%</td>
-            <td style={{ padding: '8px 0 8px 12px', textAlign: 'right' }}>{data.bear.held}%</td>
-          </tr>
-        </tbody>
-      </table>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: 16,
+          padding: '20px 16px',
+          background: 'var(--c-paper-edge, oklch(0.94 0.02 85))',
+          borderRadius: 12,
+          marginBottom: 24,
+        }}
+      >
+        {[
+          { lbl: 'Direct (≤30 min)', val: data.direct.pct, cnt: data.direct.count, c: 'var(--c-sage)' },
+          { lbl: 'Later fill', val: data.later.pct, cnt: data.later.count, c: 'var(--c-accent)' },
+          { lbl: 'Held', val: data.held.pct, cnt: data.held.count, c: 'var(--c-terra)' },
+        ].map((kpi) => (
+          <div key={kpi.lbl} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+            <span style={{ fontFamily: 'var(--f-serif, var(--f-sans))', fontSize: '2.25rem', fontWeight: 700, color: kpi.c, lineHeight: 1 }}>
+              {kpi.val}%
+            </span>
+            <span style={{ fontFamily: 'var(--f-sans)', fontSize: '0.75rem', color: 'var(--c-ink-quiet)', marginTop: 6, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              {kpi.lbl}
+            </span>
+            <span style={{ fontFamily: 'var(--f-sans)', fontSize: '0.75rem', color: 'var(--c-ink-dim)', marginTop: 2 }}>
+              {kpi.cnt} events
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ display: 'flex', gap: 24, alignItems: 'flex-end', justifyContent: 'center', paddingTop: 8 }}>
+        <Cylinder label="Bull" count={data.bull.count} direct={data.bull.direct} later={data.bull.later} held={data.bull.held} />
+        <Cylinder label="Bear" count={data.bear.count} direct={data.bear.direct} later={data.bear.later} held={data.bear.held} />
+      </div>
     </div>
   );
 }
@@ -91,13 +160,16 @@ function SummaryTable({ data, unit }: { data: typeof NQ_SUMMARY; unit: string })
 export default function NwogSwitcher() {
   const { asset } = useAsset();
 
+  const config = (() => {
+    if (asset === 'gc') return { data: GC_SUMMARY, unit: 'pts' };
+    if (asset === 'es') return { data: ES_SUMMARY, unit: 'pts' };
+    if (asset === 'si') return { data: SI_SUMMARY, unit: '$/oz' };
+    return { data: NQ_SUMMARY, unit: 'pts' };
+  })();
+
   return (
     <div className="bd-asset-scope" data-asset={asset} style={{ marginBottom: 32 }}>
-      {asset === 'nq' ? (
-        <SummaryTable data={NQ_SUMMARY} unit="pts" />
-      ) : (
-        <SummaryTable data={GC_SUMMARY} unit="pts" />
-      )}
+      <CylinderView data={config.data} unit={config.unit} />
     </div>
   );
 }

@@ -32,6 +32,8 @@ export interface EntryDetail extends EntryMeta {
   explanationHtml: string;
   explanationHtmlNq: string;
   explanationHtmlGc: string;
+  explanationHtmlEs?: string;
+  explanationHtmlSi?: string;
   pdfFileNq: string;
   pdfFileGc: string;
   mobileHtml?: string;
@@ -86,6 +88,15 @@ export function getEntry(slug: string): EntryDetail | null {
     ? (marked.parse(fs.readFileSync(mdGcPath, 'utf-8')) as string)
     : explanationHtmlNq;
 
+  const mdEsPath = path.join(entryDir, 'explanation_es.md');
+  const mdSiPath = path.join(entryDir, 'explanation_si.md');
+  const explanationHtmlEs = fs.existsSync(mdEsPath)
+    ? (marked.parse(fs.readFileSync(mdEsPath, 'utf-8')) as string)
+    : undefined;
+  const explanationHtmlSi = fs.existsSync(mdSiPath)
+    ? (marked.parse(fs.readFileSync(mdSiPath, 'utf-8')) as string)
+    : undefined;
+
   // Bilingual PDF file: use pdfFileNq + pdfFileGc from meta if both present
   const pdfFileNq = meta.pdfFileNq ?? meta.pdfFile ?? '';
   const pdfFileGc = meta.pdfFileGc ?? meta.pdfFile ?? '';
@@ -114,6 +125,8 @@ export function getEntry(slug: string): EntryDetail | null {
     explanationHtml: explanationHtmlNq,
     explanationHtmlNq,
     explanationHtmlGc,
+    explanationHtmlEs,
+    explanationHtmlSi,
     pdfFileNq,
     pdfFileGc,
     mobileHtml,

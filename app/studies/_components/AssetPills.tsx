@@ -6,16 +6,29 @@ const PILLS: { label: string; value: AssetKey }[] = [
   { label: 'NQ', value: 'nq' },
   { label: 'GC', value: 'gc' },
   { label: 'ES', value: 'es' },
+  { label: 'SI', value: 'si' },
   { label: 'All', value: 'all' },
 ];
 
-function computeTargetSlug(currentPath: string, asset: AssetKey): string | null {
+// Pages where assets are rendered inline (no sister-slug routing).
+// On these, pills set context only and stay on the same URL.
+const VIRTUAL_ASSET_SLUGS: Record<string, AssetKey[]> = {
+  'asia-open': ['nq', 'gc', 'es', 'si'],
+};
+
+function currentBase(currentPath: string): string | null {
   const match = currentPath.match(/^\/studies\/([^\/]+)\/?/);
   if (!match) return null;
-  const base = match[1].replace(/-(gc|es)$/, '');
+  return match[1].replace(/-(gc|es|si)$/, '');
+}
+
+function computeTargetSlug(currentPath: string, asset: AssetKey): string | null {
+  const base = currentBase(currentPath);
+  if (!base) return null;
   if (asset === 'nq') return `/studies/${base}/`;
   if (asset === 'gc') return `/studies/${base}-gc/`;
   if (asset === 'es') return `/studies/${base}-es/`;
+  if (asset === 'si') return `/studies/${base}-si/`;
   return null;
 }
 
@@ -33,8 +46,12 @@ export default function AssetPills({ availableSlugs }: { availableSlugs: string[
 
   if (!onSlugRoute) return null;
 
+  const base = currentBase(pathname) ?? '';
+  const virtualSet = new Set(VIRTUAL_ASSET_SLUGS[base] ?? []);
+
   function handleClick(value: AssetKey) {
     setAsset(value);
+    if (virtualSet.has(value)) return; // inline render, no nav
     const target = computeTargetSlug(pathname, value);
     const normPath = pathname.replace(/\/$/, '');
     if (!target || target.replace(/\/$/, '') === normPath) return;
@@ -52,7 +69,7 @@ export default function AssetPills({ availableSlugs }: { availableSlugs: string[
       {PILLS.map((p) => {
         const target = computeTargetSlug(pathname, p.value);
         const targetSlug = target ? slugFromTarget(target) : '';
-        const exists = p.value === 'all' || slugSet.has(targetSlug);
+        const exists = p.value === 'all' || virtualSet.has(p.value) || slugSet.has(targetSlug);
         if (!exists) return null;
         return (
           <button

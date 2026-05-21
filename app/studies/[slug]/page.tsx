@@ -308,7 +308,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
             <BilingualProse htmlNq={htmlAfterNq} htmlGc={htmlAfterGc} />
           </>
         ) : (
-          <BilingualProse htmlNq={entry.explanationHtmlNq} htmlGc={entry.explanationHtmlGc} />
+          <BilingualProse htmlNq={entry.explanationHtmlNq} htmlGc={entry.explanationHtmlGc} htmlEs={entry.explanationHtmlEs} htmlSi={entry.explanationHtmlSi} />
         )}
       </div>
       {entry.pdfFileNq ? (
@@ -440,7 +440,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
             <div className="bd-prose" dangerouslySetInnerHTML={{ __html: htmlAfterEquity }} />
           </>
         ) : (
-          <BilingualProse htmlNq={entry.explanationHtmlNq} htmlGc={entry.explanationHtmlGc} />
+          <BilingualProse htmlNq={entry.explanationHtmlNq} htmlGc={entry.explanationHtmlGc} htmlEs={entry.explanationHtmlEs} htmlSi={entry.explanationHtmlSi} />
         )}
       </div>
 
