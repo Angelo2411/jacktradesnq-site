@@ -722,7 +722,7 @@ export function getCalendarWeekday(): Record<string, CalendarDayEntry[]> {
 
 // ─── Hub v3 StudyStats API ─────────────────────────────────────────────────
 
-export type AssetType = 'NQ' | 'GC' | 'ES' | 'SI' | 'mixed';
+export type AssetType = 'NQ' | 'GC' | 'ES' | 'SI' | 'YM' | 'mixed';
 export type FamilyType = 'News' | 'IB' | 'EMA' | 'Time' | 'Misc';
 export type WindowType = 'Asia' | 'London' | 'NY 8:30' | 'NY 9:30';
 
@@ -761,9 +761,11 @@ function inferAsset(slug: string): AssetType {
   if (slug.startsWith('gc-')) return 'GC';
   if (slug.startsWith('es-')) return 'ES';
   if (slug.startsWith('si-')) return 'SI';
+  if (slug.startsWith('ym-')) return 'YM';
   if (slug.includes('-gc')) return 'GC';
   if (slug.includes('-es')) return 'ES';
   if (slug.includes('-si')) return 'SI';
+  if (slug.includes('-ym')) return 'YM';
   return 'NQ';
 }
 

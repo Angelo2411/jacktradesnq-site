@@ -6,6 +6,7 @@ const PILLS: { label: string; value: AssetKey }[] = [
   { label: 'NQ', value: 'nq' },
   { label: 'GC', value: 'gc' },
   { label: 'ES', value: 'es' },
+  { label: 'YM', value: 'ym' },
   { label: 'SI', value: 'si' },
   { label: 'All', value: 'all' },
 ];
@@ -13,13 +14,13 @@ const PILLS: { label: string; value: AssetKey }[] = [
 // Pages where assets are rendered inline (no sister-slug routing).
 // On these, pills set context only and stay on the same URL.
 const VIRTUAL_ASSET_SLUGS: Record<string, AssetKey[]> = {
-  'asia-open': ['nq', 'gc', 'es', 'si'],
+  'asia-open': ['nq', 'gc', 'es', 'si', 'ym'],
 };
 
 function currentBase(currentPath: string): string | null {
   const match = currentPath.match(/^\/studies\/([^\/]+)\/?/);
   if (!match) return null;
-  return match[1].replace(/-(gc|es|si)$/, '');
+  return match[1].replace(/-(gc|es|si|ym)$/, '');
 }
 
 function computeTargetSlug(currentPath: string, asset: AssetKey): string | null {
@@ -29,6 +30,7 @@ function computeTargetSlug(currentPath: string, asset: AssetKey): string | null 
   if (asset === 'gc') return `/studies/${base}-gc/`;
   if (asset === 'es') return `/studies/${base}-es/`;
   if (asset === 'si') return `/studies/${base}-si/`;
+  if (asset === 'ym') return `/studies/${base}-ym/`;
   return null;
 }
 
