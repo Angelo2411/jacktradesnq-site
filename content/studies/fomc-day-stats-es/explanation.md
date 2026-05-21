@@ -1,13 +1,42 @@
-## Article 1 — FOMC Statement Points (ES)
+## Article 1 — FOMC Points (ES)
 
-This study tracks ES futures release-bar move stats on FOMC Statement at 14:00 ET. The methodology is identical to the [NQ version](/studies/fomc-day-stats/) — see that page for the complete year-by-year table and PDF.
+The FOMC is released at 14:00 ET. This study measures how much ES futures travel high-to-low on the 1-minute release bar — the full top-to-bottom move during the 60 seconds of the release.
 
-85 events charted (2016–2026). Release candle range measured high-to-low on the 1m bar at 14:00 ET.
+**Range 1m** = the high minus the low (in ES points) of the release-time candle.
+
+### Year-by-Year — Release Candle Range (1m, 14:00 ET)
+
+| Year | Count | Avg Range 1m | Max Range 1m |
+|------|-------|-------------|--------------|
+| 2016 | 6 | 4.5 pts | 7.2 pts |
+| 2017 | 8 | 2.8 pts | 6.2 pts |
+| 2018 | 8 | 9.9 pts | 37.8 pts |
+| 2019 | 9 | 8.0 pts | 18.8 pts |
+| 2020 | 11 | 7.6 pts | 19.0 pts |
+| 2021 | 8 | 14.8 pts | 25.8 pts |
+| 2022 | 8 | 28.2 pts | 41.5 pts |
+| 2023 | 8 | 15.6 pts | 22.2 pts |
+| 2024 | 8 | 21.4 pts | 65.0 pts |
+| 2025 | 9 | 16.0 pts | 27.0 pts |
+| 2026 | 2 | 10.0 pts | 11.2 pts |
+
+Across **85 events** 2016–2026, average release-bar range was **12.8 pts** with a max of **65.0 pts**.
+
+<a class="bd-btn bd-btn-secondary" href="/downloads/studies/fomc-points-es.pdf" download>Download — FOMC Points ES PDF</a>
+
+---
+
+## Article 2 — Methodology & Related
+
+### Setup
+
+Release-bar measured at 14:00 ET. ES (S&P 500 futures) — 1 ES pt ≈ $50 / 1 MES pt ≈ $5. Range = high minus low of the 1-minute bar at release time.
 
 ### Related
 
-- [FOMC Statement NQ — release bar stats](/studies/fomc-day-stats/) — NQ version with full year-by-year breakdown.
-- [FOMC Statement ES IFVG + SMT backtest](/studies/fomc-ifvg-smt-es/) — entry model on this event.
+- [FOMC NQ — release bar stats](/studies/fomc-day-stats/) — NQ version with full year-by-year breakdown.
+- [Full IFVG + SMT NQ backtest](/studies/fomc-ifvg-smt/) — sweep + IFVG entry on this event.
+- [Full IFVG + SMT ES backtest](/studies/fomc-ifvg-smt-es/) — ES variant.
 
 ### Disclaimer
 
