@@ -22,6 +22,26 @@ const GC_SUMMARY = {
   bear: { count: 53, direct: 79.2, later: 9.4, held: 11.3 },
 };
 
+const ES_SUMMARY = {
+  totalEvents: 183,
+  gapMinPoints: 5,
+  direct: { count: 138, pct: 75.4 },
+  later: { count: 14, pct: 7.7 },
+  held: { count: 31, pct: 16.9 },
+  bull: { count: 92, direct: 70.7, later: 7.6, held: 21.7 },
+  bear: { count: 91, direct: 80.2, later: 7.7, held: 12.1 },
+};
+
+const SI_SUMMARY = {
+  totalEvents: 49,
+  gapMinPoints: 0.1,
+  direct: { count: 36, pct: 73.5 },
+  later: { count: 10, pct: 20.4 },
+  held: { count: 3, pct: 6.1 },
+  bull: { count: 35, direct: 80.0, later: 20.0, held: 0.0 },
+  bear: { count: 14, direct: 57.1, later: 21.4, held: 21.4 },
+};
+
 type Summary = typeof NQ_SUMMARY;
 
 function Cylinder({
@@ -140,9 +160,16 @@ function CylinderView({ data, unit }: { data: Summary; unit: string }) {
 export default function NwogSwitcher() {
   const { asset } = useAsset();
 
+  const config = (() => {
+    if (asset === 'gc') return { data: GC_SUMMARY, unit: 'pts' };
+    if (asset === 'es') return { data: ES_SUMMARY, unit: 'pts' };
+    if (asset === 'si') return { data: SI_SUMMARY, unit: '$/oz' };
+    return { data: NQ_SUMMARY, unit: 'pts' };
+  })();
+
   return (
     <div className="bd-asset-scope" data-asset={asset} style={{ marginBottom: 32 }}>
-      {asset === 'nq' ? <CylinderView data={NQ_SUMMARY} unit="pts" /> : <CylinderView data={GC_SUMMARY} unit="pts" />}
+      <CylinderView data={config.data} unit={config.unit} />
     </div>
   );
 }
