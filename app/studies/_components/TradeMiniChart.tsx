@@ -135,6 +135,7 @@ function LegendPill({ color, label, value }: { color: string; label: string; val
 export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl_pts, outcome, entryPrice: entryPriceProp, slPrice, tpPrice, entryTs, exitTs, exitPrice, ts, dataHigh, dataLow, sweepTs, sweepSide, ifvgTop, ifvgBottom, ifvgFormationTs, variant = 'tp1_be' }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [status, setStatus] = useState<'loading' | 'found' | 'missing'>('loading');
+  const [snappedSL, setSnappedSL] = useState<number | null>(null);
   const entryRef = useRef<number | null>(null);
   const candlesRef = useRef<CandlestickData<UTCTimestamp>[]>([]);
   const barsRef = useRef<EventBar[]>([]);
@@ -257,19 +258,64 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       }
       const exitSec = chartEndSec as UTCTimestamp;
 
+      // ── Fibo overlay (0 = entry, 0.5 = TP1, 1 = TP final) ────────────────
+      // Entry = 0.0
       const entrySegment = chart.addSeries(LineSeries, {
         color: cGold,
         lineWidth: 2,
         lineStyle: 0,
         priceLineVisible: false,
         lastValueVisible: true,
-        title: 'Entry',
+        title: '0.0 · Entry',
       });
       entrySegment.setData([
         { time: entrySec, value: entryPriceProp },
         { time: exitSec, value: entryPriceProp },
       ]);
 
+      // TP1 = 0.5 (midpoint entry → TP)
+      const tp1Price = entryPriceProp + 0.5 * (tpPrice - entryPriceProp);
+      const tp1Segment = chart.addSeries(LineSeries, {
+        color: cUp,
+        lineWidth: 1,
+        lineStyle: LineStyle.Dotted,
+        priceLineVisible: false,
+        lastValueVisible: true,
+        title: '0.5 · TP1',
+      });
+      tp1Segment.setData([
+        { time: entrySec, value: tp1Price },
+        { time: exitSec, value: tp1Price },
+      ]);
+
+      // TP final = 1.0
+      const tpSegment = chart.addSeries(LineSeries, {
+        color: cUp,
+        lineWidth: 1,
+        lineStyle: LineStyle.Dashed,
+        priceLineVisible: false,
+        lastValueVisible: true,
+        title: '1.0 · TP',
+      });
+      tpSegment.setData([
+        { time: entrySec, value: tpPrice },
+        { time: exitSec, value: tpPrice },
+      ]);
+
+      // ── SL line: snap to actual sweep wick extreme (not buffered price) ──
+      // Walk bars between sweep_ts and entry_ts; use the max wick high (short)
+      // or min wick low (long) so the SL line physically touches the wick.
+      const sweepMs = sweepTs !== undefined ? new Date(sweepTs).getTime() : new Date(entryTs).getTime() - 60_000;
+      const sweepMin = Math.round((sweepMs - t0Ms) / 60_000);
+      const entryMin = Math.round((new Date(entryTs).getTime() - t0Ms) / 60_000);
+      const sweepBars = bars.filter((b) => b.m >= sweepMin && b.m <= entryMin);
+      let displaySL = slPrice;
+      if (sweepBars.length > 0) {
+        displaySL = side === 'short'
+          ? Math.max(...sweepBars.map((b) => b.h))
+          : Math.min(...sweepBars.map((b) => b.l));
+      }
+      setSnappedSL(displaySL);
       const slSegment = chart.addSeries(LineSeries, {
         color: cDown,
         lineWidth: 1,
@@ -282,47 +328,9 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         ? Math.floor(new Date(sweepTs).getTime() / 1000)
         : entrySec) as UTCTimestamp;
       slSegment.setData([
-        { time: slStartSec, value: slPrice },
-        { time: exitSec, value: slPrice },
+        { time: slStartSec, value: displaySL },
+        { time: exitSec, value: displaySL },
       ]);
-
-      // tp1_be: full TP = data_high/low so the line is redundant by default. But if the trade
-      // actually hit full TP (WIN_FULL ≈ 75% × TP_dist; WIN_HALF or BE_HALF ≈ 25% × TP_dist),
-      // show it. Threshold on PnL > 50% TP_dist cleanly separates the two cases.
-      const tpDist = Math.abs(tpPrice - entryPriceProp);
-      const fullTpHit = pnl_pts > 0.5 * tpDist;
-      const showFullTp = variant !== 'tp1_be' || fullTpHit;
-      if (showFullTp) {
-        const tpSegment = chart.addSeries(LineSeries, {
-          color: cUp,
-          lineWidth: 1,
-          lineStyle: LineStyle.Dashed,
-          priceLineVisible: false,
-          lastValueVisible: true,
-          title: 'Take profit',
-        });
-        tpSegment.setData([
-          { time: entrySec, value: tpPrice },
-          { time: exitSec, value: tpPrice },
-        ]);
-      }
-
-      // TP1 line: half-close threshold at +50% TP distance — only drawn for tp1_be variant.
-      if (variant === 'tp1_be') {
-        const tp1Price = entryPriceProp + 0.5 * (tpPrice - entryPriceProp);
-        const tp1Segment = chart.addSeries(LineSeries, {
-          color: cUp,
-          lineWidth: 1,
-          lineStyle: LineStyle.Dotted,
-          priceLineVisible: false,
-          lastValueVisible: true,
-          title: 'TP1',
-        });
-        tp1Segment.setData([
-          { time: entrySec, value: tp1Price },
-          { time: exitSec, value: tp1Price },
-        ]);
-      }
     } else if (effectiveEntryPrice !== null && effectiveEntryPrice !== undefined) {
       // GC fallback: no segments, just a price line for entry only
       candleSeries.createPriceLine({
@@ -563,7 +571,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
             )}
             {dataLow !== undefined && (<LegendPill color="rgba(122,110,90,0.85)" label="Data L" value={dataLow} />)}
             {entryPriceProp !== undefined && (<LegendPill color="#b08932" label="Entry" value={entryPriceProp} />)}
-            {slPrice !== undefined && (<LegendPill color="#b8452a" label="SL" value={slPrice} />)}
+            {slPrice !== undefined && (<LegendPill color="#b8452a" label="SL" value={snappedSL ?? slPrice} />)}
           </span>
         </div>
       </div>
