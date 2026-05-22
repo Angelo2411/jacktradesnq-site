@@ -31,3 +31,9 @@ Fill rate ~97.7% — you're in on virtually every release. Gold NFP is a high-pr
 
 Gold and NQ handle NFP completely differently. NQ produces a violent manip wick that sweeps both sides before committing — you need wide offsets to survive it. Gold's NFP reaction is cleaner: the metal trends directionally off the dollar reaction, with far less two-sided whipsaw. Tighter offsets capture the move earlier; wider offsets just leave you unfilled on the smaller-but-consistent moves that make up the bulk of the sample. The data confirms it — offset=2.0 pts dominates every wider alternative on fill rate, TP hit rate, and average PnL.
 
+### Interactive explorer
+
+Filter the 49-combo Gold grid live — pick offset / TP / year window — and download a tailored PDF report.
+
+<div data-explorer="nfp"></div>
+

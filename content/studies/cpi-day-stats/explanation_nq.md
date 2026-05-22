@@ -38,4 +38,8 @@ OCO buy-stop / sell-stop ±Offset from release close, TP at fill ±TP, no SL, 30
 
 > **Pre-2020 note:** CPI was a non-event before the inflation regime. Offsets ≥25 pts rarely filled in 2016–2019. Use **2022 onwards** as your baseline.
 
+### Interactive explorer
 
+Filter the full grid live — pick stop / TP / year window — and download a tailored PDF report.
+
+<div data-explorer="cpi"></div>

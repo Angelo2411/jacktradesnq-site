@@ -51,3 +51,9 @@ Fill rate ~24% — you skip the NFPs that don't reach ±100 pts in 60 seconds. W
 
 NFP triggers fast manipulation wicks both sides before committing to a direction. The median manip-wick reaches into the 50-80 pt range — anything closer and you get filled by the head-fake, then bleed on the retrace (no SL). Push the offset to 80-100+ and you skip the manipulation entirely; the only fills you get are real moves big enough to break through 100 pts in the release minute.
 
+### Interactive explorer
+
+Filter the 24-combo grid live — pick offset / TP / year window — and download a tailored PDF report.
+
+<div data-explorer="nfp"></div>
+
