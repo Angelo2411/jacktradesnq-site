@@ -140,13 +140,15 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
   const barsRef = useRef<EventBar[]>([]);
   const t0MsRef = useRef<number>(0);
 
+  const isMultiEvent = eventShort === 'Multi-event' || eventShort === 'multi-event' || eventShort === '';
   const resolvedShort = EVENT_SHORT[eventShort] ?? eventShort;
   const suffix = asset === 'gc' ? '_gc' : asset === 'es' ? '_es' : asset === 'si' ? '_si' : asset === 'ym' ? '_ym' : '';
-  const jsonPath = `/data/${resolvedShort}_event_bars${suffix}.json`;
+  const jsonPath = isMultiEvent ? null : `/data/${resolvedShort}_event_bars${suffix}.json`;
 
   useEffect(() => {
+    if (isMultiEvent) { setStatus('missing'); return; }
     let cancelled = false;
-    fetch(jsonPath)
+    fetch(jsonPath!)
       .then((r) => r.json())
       .then((data: EventBarsEntry[]) => {
         if (cancelled) return;
@@ -162,7 +164,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       })
       .catch(() => { if (!cancelled) setStatus('missing'); });
     return () => { cancelled = true; };
-  }, [jsonPath, tradeDate]);
+  }, [jsonPath, tradeDate, isMultiEvent]);
 
   useEffect(() => {
     if (status !== 'found') return;
@@ -523,7 +525,9 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
             fontFamily: 'var(--f-sans)', fontSize: '0.75rem', color: 'var(--c-muted)',
             textAlign: 'center', padding: '0 24px',
           }}>
-            Chart data not available for this date.
+            {isMultiEvent
+              ? 'Multi-event aggregate — see per-event sub-pages for trade charts.'
+              : 'Chart data not available for this date.'}
           </div>
         )}
         <div style={{ display: status === 'found' ? 'block' : 'none' }}>
