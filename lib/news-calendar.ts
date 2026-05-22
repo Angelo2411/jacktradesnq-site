@@ -139,25 +139,27 @@ export function buildMonthBuckets(
   return { weeks, monthLabel };
 }
 
-// Window-aware event list for the bottom "Red folder" section.
+// Window-aware event list for the bottom "News calendar" section.
+// Includes both High and Medium impact events from the whitelist.
 export function getRedFolderForView(
   events: NewsCalendarItem[],
   view: CalendarView,
   whitelist: Set<string>
 ): NewsCalendarItem[] {
+  const isTracked = (e: NewsCalendarItem) =>
+    (e.imp === 'High' || e.imp === 'Medium') && whitelist.has(e.event);
   const today = todayET();
   if (view === 'month') {
     const y = today.getUTCFullYear();
     const m = today.getUTCMonth();
     return events.filter((e) => {
       const d = new Date(e.date + 'T00:00:00Z');
-      return d.getUTCFullYear() === y && d.getUTCMonth() === m
-        && e.imp === 'High' && whitelist.has(e.event);
+      return d.getUTCFullYear() === y && d.getUTCMonth() === m && isTracked(e);
     });
   }
   const offset = view === 'next' ? 1 : 0;
   const anchor = new Date(today.getTime() + offset * 7 * 86400000);
   const week = getWeekDatesFor(anchor).map(isoDate);
   const set = new Set(week);
-  return events.filter((e) => set.has(e.date) && e.imp === 'High' && whitelist.has(e.event));
+  return events.filter((e) => set.has(e.date) && isTracked(e));
 }

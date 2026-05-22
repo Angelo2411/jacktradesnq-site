@@ -168,10 +168,10 @@ export default function CalendarViewComponent({ events, studyMapByAsset }: Props
     view === 'this' ? 'This week' : view === 'next' ? 'Next week' : 'Month view';
   const redLabel =
     view === 'this'
-      ? 'Red folder this week'
+      ? 'News calendar — this week'
       : view === 'next'
-      ? 'Red folder next week'
-      : 'Red folder this month';
+      ? 'News calendar — next week'
+      : 'News calendar — this month';
 
   return (
     <>
@@ -236,7 +236,7 @@ export default function CalendarViewComponent({ events, studyMapByAsset }: Props
       <section className="v3-news-week">
         <div className="v3-news-week-h2">{redLabel}</div>
         <div className="v3-news-week-sub">
-          High-impact scheduled releases only (NY time).
+          Scheduled tracked releases (NY time). High = backtested edge · Med = lower expected move.
         </div>
         {redFolder.length === 0 ? (
           <p className="v3-news-empty">
@@ -252,7 +252,7 @@ export default function CalendarViewComponent({ events, studyMapByAsset }: Props
                   <span className="v3-news-td-t">{row.time}</span>
                   <span className="v3-news-td-e">{row.event}</span>
                   <span className={'v3-news-td-imp ' + impClass(row.imp)}>
-                    {row.imp}
+                    {row.imp === 'Medium' ? 'Med' : row.imp}
                   </span>
                 </>
               );
