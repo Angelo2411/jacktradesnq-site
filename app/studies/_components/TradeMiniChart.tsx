@@ -49,7 +49,7 @@ const EVENT_SHORT: Record<string, string> = {
 
 interface Props {
   eventShort: string;
-  asset: 'nq' | 'gc' | 'es';
+  asset: 'nq' | 'gc' | 'es' | 'si';
   tradeDate: string;
   side: 'long' | 'short';
   pnl_pts: number;
@@ -141,7 +141,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
   const t0MsRef = useRef<number>(0);
 
   const resolvedShort = EVENT_SHORT[eventShort] ?? eventShort;
-  const suffix = asset === 'gc' ? '_gc' : asset === 'es' ? '_es' : '';
+  const suffix = asset === 'gc' ? '_gc' : asset === 'es' ? '_es' : asset === 'si' ? '_si' : '';
   const jsonPath = `/data/${resolvedShort}_event_bars${suffix}.json`;
 
   useEffect(() => {
