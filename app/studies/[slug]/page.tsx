@@ -87,6 +87,8 @@ const IFVG_SLUGS = new Set([
   'fomc-ifvg-smt-es', 'adp-ifvg-smt-es', 'jolts-ifvg-smt-es',
   'ism-mfg-ifvg-smt-es', 'ism-services-ifvg-smt-es', 'cb-confidence-ifvg-smt-es',
   'philly-fed-ifvg-smt-es', 'durable-goods-ifvg-smt-es', 'es-ifvg-smt',
+  // SI aggregate
+  'si-ifvg-smt',
   // 40 YM slugs
   'cpi-ifvg-smt-ym', 'cpi-ifvg-smt-ym-vs-es', 'cpi-ifvg-smt-es-vs-ym', 'cpi-ifvg-smt-nq-vs-ym', 'cpi-ifvg-smt-gc-vs-ym',
   'nfp-ifvg-smt-nq-vs-ym', 'nfp-ifvg-smt-es-vs-ym', 'nfp-ifvg-smt-ym-vs-es', 'nfp-ifvg-smt-si-vs-ym',
@@ -382,7 +384,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
 
         {/* V3Tabs is a client component that reads ?tab from URL and renders the KPI band + tabs */}
         <Suspense fallback={<div className="v3-tabs" style={{ height: 48 }} />}>
-          <V3Tabs slug={slug} breakdown={breakdown} breakdownOff={breakdownOff} yearBreakdown={yearBreakdown} yearBreakdownOff={yearBreakdownOff} trades={trades} tradesByVariant={tradesByVariant} tradesByVariantOff={tradesByVariantOff} statsByVariant={statsByVariant} statsByVariantAndSmt={statsByVariantAndSmt} dateFrom={dateFrom} dateTo={dateTo} overviewContent={overviewNode} eventShort={stratStats?.event ?? ''} asset={(stratStats?.asset?.toLowerCase() ?? 'nq') as 'nq' | 'gc' | 'es'} hideKpiBand={hasTearsheet} />
+          <V3Tabs slug={slug} breakdown={breakdown} breakdownOff={breakdownOff} yearBreakdown={yearBreakdown} yearBreakdownOff={yearBreakdownOff} trades={trades} tradesByVariant={tradesByVariant} tradesByVariantOff={tradesByVariantOff} statsByVariant={statsByVariant} statsByVariantAndSmt={statsByVariantAndSmt} dateFrom={dateFrom} dateTo={dateTo} overviewContent={overviewNode} eventShort={stratStats?.event ?? ''} asset={(stratStats?.asset?.toLowerCase() ?? 'nq') as 'nq' | 'gc' | 'es' | 'si'} hideKpiBand={hasTearsheet} />
         </Suspense>
 
         {pager}

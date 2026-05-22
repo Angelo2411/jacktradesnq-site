@@ -276,7 +276,7 @@ function TradesBlock({
   yearFilter?: string;
   slug: string;
   eventShort: string;
-  asset: 'nq' | 'gc' | 'es';
+  asset: 'nq' | 'gc' | 'es' | 'si';
   smtLabel?: string;
 }) {
   const activeTrades = tradesByVariant ? tradesByVariant[variant] : trades;
@@ -441,7 +441,7 @@ export default function V3Tabs({
   dateTo?: string;
   overviewContent: React.ReactNode;
   eventShort: string;
-  asset: 'nq' | 'gc' | 'es';
+  asset: 'nq' | 'gc' | 'es' | 'si';
   hideKpiBand?: boolean;
 }) {
   // ── URL-driven filter state ──────────────────────────────────────────

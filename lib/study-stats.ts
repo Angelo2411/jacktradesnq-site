@@ -113,6 +113,7 @@ const IFVG_SLUGS: Array<{ slug: string; event: string; asset: string; releaseTim
   { slug: 'philly-fed-ifvg-smt-gc',          event: 'Philadelphia Fed Manufacturing', asset: 'GC', releaseTime: '8:30 ET' },
   { slug: 'durable-goods-ifvg-smt-gc',       event: 'Durable Goods Orders', asset: 'GC', releaseTime: '8:30 ET' },
   { slug: 'es-ifvg-smt',                event: 'Multi-event',          asset: 'ES' },
+  { slug: 'si-ifvg-smt',                event: 'Multi-event',          asset: 'SI' },
   { slug: 'cpi-ifvg-smt-es',                 event: 'CPI',             asset: 'ES' },
   { slug: 'nfp-ifvg-smt-es',                 event: 'NFP',             asset: 'ES' },
   { slug: 'ppi-ifvg-smt-es',                 event: 'PPI',             asset: 'ES' },
