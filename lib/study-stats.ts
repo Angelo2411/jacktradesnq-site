@@ -133,6 +133,69 @@ const IFVG_SLUGS: Array<{ slug: string; event: string; asset: string; releaseTim
   { slug: 'durable-goods-ifvg-smt-es',       event: 'Durable Goods Orders', asset: 'ES', releaseTime: '8:30 ET' },
 ];
 
+// Map event slug prefix → human-readable event name (used by inferIfvgStats)
+const EVENT_NAME_FROM_PREFIX: Record<string, string> = {
+  'cpi':                   'CPI',
+  'nfp':                   'NFP',
+  'ppi':                   'PPI',
+  'pce':                   'PCE',
+  'gdp':                   'GDP',
+  'joblessclaims':         'Jobless Claims',
+  'retailsales':           'Retail Sales',
+  'empirestate':           'Empire State',
+  'employmentcostindex':   'Employment Cost',
+  'fomc':                  'FOMC',
+  'adp':                   'ADP',
+  'jolts':                 'JOLTS',
+  'ism-mfg':               'ISM Manufacturing PMI',
+  'ism-services':          'ISM Services PMI',
+  'cb-confidence':         'CB Consumer Confidence',
+  'philly-fed':            'Philadelphia Fed Manufacturing',
+  'durable-goods':         'Durable Goods Orders',
+};
+
+const ASSET_KEYS = ['nq', 'es', 'gc', 'si', 'ym'] as const;
+type AssetKey = typeof ASSET_KEYS[number];
+
+/**
+ * Infer {event, asset} from slug patterns not in the hardcoded IFVG_SLUGS array.
+ * Handles:
+ *   - "<asset>-ifvg-smt"               → Multi-event aggregate (si-ifvg-smt, nq-ifvg-smt, es-ifvg-smt)
+ *   - "<asset>-ifvg-smt-vs-<y>"         → Multi-event aggregate (es-ifvg-smt-vs-ym, nq-ifvg-smt-vs-ym)
+ *   - "<event>-ifvg-smt-<anchor>"        → per-event, anchor asset
+ *   - "<event>-ifvg-smt-<anchor>-vs-<y>" → per-event, anchor asset
+ *   - "<event>-ifvg-smt-<x>-vs-<anchor>" → per-event, x is anchor (x != ym special)
+ */
+function inferIfvgStats(slug: string): { slug: string; event: string; asset: string; releaseTime?: string } | null {
+  // Pattern: <asset>-ifvg-smt or <asset>-ifvg-smt-vs-<y>  (aggregate slugs)
+  const aggMatch = slug.match(/^(nq|es|gc|si|ym)-ifvg-smt(?:-vs-(?:nq|es|gc|si|ym))?$/);
+  if (aggMatch) {
+    return { slug, event: 'Multi-event', asset: aggMatch[1].toUpperCase() };
+  }
+
+  // Pattern: <event>-ifvg-smt-<anchor>(-vs-<smt>)?
+  // The anchor is group 2; the optional smt pair is group 3.
+  // e.g. cpi-ifvg-smt-ym → event=CPI anchor=YM
+  //      cpi-ifvg-smt-ym-vs-es → event=CPI anchor=YM smt=ES
+  //      cpi-ifvg-smt-nq-vs-ym → event=CPI anchor=NQ smt=YM
+  const evMatch = slug.match(
+    /^(.+?)-ifvg-smt-(nq|es|gc|si|ym)(?:-vs-(nq|es|gc|si|ym))?$/
+  );
+  if (evMatch) {
+    const eventKey = evMatch[1];
+    const anchor = evMatch[2] as AssetKey;
+    const eventName = EVENT_NAME_FROM_PREFIX[eventKey];
+    if (!eventName) return null;
+    return { slug, event: eventName, asset: anchor.toUpperCase() };
+  }
+
+  return null;
+}
+
+function resolveIfvgEntry(slug: string): { slug: string; event: string; asset: string; releaseTime?: string } | null {
+  return IFVG_SLUGS.find((e) => e.slug === slug) ?? inferIfvgStats(slug);
+}
+
 function computeIfvgStats(
   json: IfvgJson,
   slugEntry: { slug: string; event: string; asset: string; releaseTime?: string },
@@ -191,11 +254,20 @@ export function getAllStrategyStats(): StrategyStats[] {
 }
 
 export function getStrategyStats(slug: string): StrategyStats | null {
-  return getAllStrategyStats().find((s) => s.slug === slug) ?? null;
+  // Check hardcoded cache first
+  const cached = getAllStrategyStats().find((s) => s.slug === slug);
+  if (cached) return cached;
+  // Fallback: infer from slug pattern (YM variants, SI aggregate, etc.)
+  const entry = inferIfvgStats(slug);
+  if (!entry) return null;
+  const json = loadIfvgJson(slug);
+  if (!json) return null;
+  const stats = computeIfvgStats(json, entry);
+  return stats.n > 0 ? stats : null;
 }
 
 export function getStrategyStatsByVariant(slug: string): { tp1_be: StrategyStats; be_50: StrategyStats; no_be: StrategyStats } | null {
-  const entry = IFVG_SLUGS.find((e) => e.slug === slug);
+  const entry = resolveIfvgEntry(slug);
   if (!entry) return null;
   const json = loadIfvgJson(slug);
   if (!json) return null;
@@ -209,7 +281,7 @@ export function getStrategyStatsByVariant(slug: string): { tp1_be: StrategyStats
 export type VariantStatsTriplet = { tp1_be: StrategyStats; be_50: StrategyStats; no_be: StrategyStats };
 
 export function getStrategyStatsByVariantAndSmt(slug: string): { smtOn: VariantStatsTriplet; smtOff: VariantStatsTriplet } | null {
-  const entry = IFVG_SLUGS.find((e) => e.slug === slug);
+  const entry = resolveIfvgEntry(slug);
   if (!entry) return null;
   const json = loadIfvgJson(slug);
   if (!json) return null;
