@@ -22,7 +22,6 @@ const LOOKBACK_OPTS: Array<{ key: LookbackKey; label: string }> = [
   { key: '3mo', label: '3 mo' },
   { key: '6mo', label: '6 mo' },
   { key: '1y',  label: '1 yr' },
-  { key: '5y',  label: '5 yr' },
   { key: 'all', label: 'All' },
 ];
 

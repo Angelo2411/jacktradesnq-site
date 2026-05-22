@@ -3318,13 +3318,13 @@ a { color: inherit; text-decoration: none; }
   background: var(--p-cream-94, oklch(0.94 0.02 85));
   color: var(--c-ink);
 }
-/* Active state: warm gold underline + cream wash — no hard black border */
+/* Active: filled pill cream-darker + ink + soft gold ring */
 .fb-pill.active {
-  background: var(--p-cream-94, oklch(0.94 0.02 85));
+  background: oklch(0.88 0.025 80);
   color: var(--c-ink);
-  font-weight: 500;
-  border-color: transparent;
-  box-shadow: inset 0 -2px 0 0 var(--c-accent);
+  font-weight: 600;
+  border-color: var(--c-accent);
+  box-shadow: 0 0 0 1px var(--c-accent);
 }
 .fb-sep {
   width: 1px;
