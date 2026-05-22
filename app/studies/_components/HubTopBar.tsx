@@ -3,19 +3,20 @@
 import type { AssetType } from '@/lib/study-stats';
 
 type AssetFilter = AssetType | 'All';
+export type SortBy = 'pf' | 'n' | 'alpha' | 'date';
 
 interface HubTopBarProps {
   asset: AssetFilter;
-  showNoEdge: boolean;
+  sortBy: SortBy;
   onAsset: (a: AssetFilter) => void;
-  onShowNoEdge: (v: boolean) => void;
+  onSort: (s: SortBy) => void;
 }
 
 export default function HubTopBar({
   asset,
-  showNoEdge,
+  sortBy,
   onAsset,
-  onShowNoEdge,
+  onSort,
 }: HubTopBarProps) {
   return (
     <div className="bd-hub-topbar" aria-label="Hub filters">
@@ -34,16 +35,26 @@ export default function HubTopBar({
         </div>
       </div>
 
-      {/* Edge-only toggle — single button, pushed to the right */}
+      {/* Sort toggles — pushed to the right */}
       <div className="bd-hub-topbar-group bd-hub-topbar-group--end">
-        <button
-          type="button"
-          className={`bd-edge-toggle${!showNoEdge ? ' on' : ''}`}
-          aria-pressed={!showNoEdge}
-          onClick={() => onShowNoEdge(!showNoEdge)}
-        >
-          Edge only
-        </button>
+        <div className="bd-flt-asset-toggle bd-flt-asset-toggle--inline bd-flt-sort-toggle">
+          {(
+            [
+              ['pf', 'Best PF'],
+              ['n', 'Most trades'],
+              ['alpha', 'A–Z'],
+              ['date', 'Recent'],
+            ] as [SortBy, string][]
+          ).map(([v, label]) => (
+            <button
+              key={v}
+              className={`bd-flt-asset-btn${sortBy === v ? ' on' : ''}`}
+              onClick={() => onSort(v)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
