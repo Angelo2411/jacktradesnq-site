@@ -19,7 +19,6 @@ const SMT_OPTS: Array<{ key: SmtKey; label: string }> = [
 ];
 
 const LOOKBACK_OPTS: Array<{ key: LookbackKey; label: string }> = [
-  { key: '3mo', label: '3 mo' },
   { key: '6mo', label: '6 mo' },
   { key: '1y',  label: '1 yr' },
   { key: 'all', label: 'All' },
