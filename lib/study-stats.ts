@@ -759,14 +759,21 @@ export interface StudyStats {
 // ── helpers ──────────────────────────────────────────────────────────────────
 
 function inferAsset(slug: string): AssetType {
+  // 1. Prefix wins (e.g. 'es-ifvg-smt', 'si-ifvg-smt', 'gc-ifvg-*')
   if (slug.startsWith('gc-')) return 'GC';
   if (slug.startsWith('es-')) return 'ES';
   if (slug.startsWith('si-')) return 'SI';
   if (slug.startsWith('ym-')) return 'YM';
-  if (slug.includes('-gc')) return 'GC';
-  if (slug.includes('-es')) return 'ES';
-  if (slug.includes('-si')) return 'SI';
-  if (slug.includes('-ym')) return 'YM';
+  // 2. Suffix strict — anchor is the asset just before -vs-<smt-pair> or at end
+  const vsMatch = slug.match(/-(nq|gc|es|si|ym)-vs-(nq|gc|es|si|ym)$/);
+  if (vsMatch) {
+    const anchor = vsMatch[1].toUpperCase();
+    return (anchor === 'NQ' ? 'NQ' : anchor) as AssetType;
+  }
+  const suffixMatch = slug.match(/-(gc|es|si|ym)$/);
+  if (suffixMatch) {
+    return suffixMatch[1].toUpperCase() as AssetType;
+  }
   return 'NQ';
 }
 
