@@ -493,7 +493,7 @@ a { color: inherit; text-decoration: none; }
 }
 .bd-root *, .bd-root *::before, .bd-root *::after { box-sizing: border-box; }
 .bd-root a { color: inherit; text-decoration: none; }
-.bd-root button:not(.bd-btn):not(.v3-asset-pill):not(.v3-flt-pill):not(.v3-tab):not(.bd-flt-asset-btn):not(.bd-edge-toggle) { font: inherit; color: inherit; background: none; border: 0; cursor: default; padding: 0; }
+.bd-root button:not(.bd-btn):not(.v3-asset-pill):not(.v3-flt-pill):not(.v3-tab):not(.bd-flt-asset-btn):not(.bd-edge-toggle):not(.fb-pill):not(.fb-reset) { font: inherit; color: inherit; background: none; border: 0; cursor: default; padding: 0; }
 .bd-root .panda-btn { cursor: grab; }
 .bd-root .panda-btn:active { cursor: grabbing; }
 .bd-root h1, .bd-root h2, .bd-root h3, .bd-root h4, .bd-root p, .bd-root ul, .bd-root ol { margin: 0; padding: 0; }
@@ -3318,13 +3318,12 @@ a { color: inherit; text-decoration: none; }
   background: var(--p-cream-94, oklch(0.94 0.02 85));
   color: var(--c-ink);
 }
-/* Active: filled pill cream-darker + ink + soft gold ring */
+/* Active: filled gold pill + ink */
 .fb-pill.active {
-  background: oklch(0.88 0.025 80);
+  background: var(--c-accent);
   color: var(--c-ink);
   font-weight: 600;
-  border-color: var(--c-accent);
-  box-shadow: 0 0 0 1px var(--c-accent);
+  border-color: var(--c-accent-deep);
 }
 .fb-sep {
   width: 1px;
