@@ -81,70 +81,71 @@ export default function FilterBar({ hasSmtToggle = true }: { hasSmtToggle?: bool
 
   return (
     <div className="fb-bar" role="toolbar" aria-label="Dashboard filters">
-      {/* Variant group */}
-      <div className="fb-group" role="group" aria-label="Variant">
-        {VARIANT_OPTS.map((opt) => (
-          <button
-            key={opt.key}
-            type="button"
-            className={'fb-pill' + (variant === opt.key ? ' active' : '')}
-            onClick={() => update('variant', opt.key)}
-            aria-pressed={variant === opt.key}
-          >
-            {opt.label}
-          </button>
-        ))}
+      {/* All filter groups in a flex cluster that fills available width */}
+      <div className="fb-groups">
+        {/* Variant group */}
+        <div className="fb-group" role="group" aria-label="Variant">
+          {VARIANT_OPTS.map((opt) => (
+            <button
+              key={opt.key}
+              type="button"
+              className={'fb-pill' + (variant === opt.key ? ' active' : '')}
+              onClick={() => update('variant', opt.key)}
+              aria-pressed={variant === opt.key}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+
+        {hasSmtToggle && (
+          <>
+            <div className="fb-sep" aria-hidden="true" />
+            {/* SMT group */}
+            <div className="fb-group" role="group" aria-label="SMT filter">
+              {SMT_OPTS.map((opt) => (
+                <button
+                  key={opt.key}
+                  type="button"
+                  className={'fb-pill' + (smt === opt.key ? ' active' : '')}
+                  onClick={() => update('smt', opt.key)}
+                  aria-pressed={smt === opt.key}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
+        <div className="fb-sep" aria-hidden="true" />
+
+        {/* Lookback group */}
+        <div className="fb-group" role="group" aria-label="Lookback period">
+          {LOOKBACK_OPTS.map((opt) => (
+            <button
+              key={opt.key}
+              type="button"
+              className={'fb-pill' + (lookback === opt.key ? ' active' : '')}
+              onClick={() => update('lookback', opt.key)}
+              aria-pressed={lookback === opt.key}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {hasSmtToggle && (
-        <>
-          <div className="fb-sep" aria-hidden="true" />
-          {/* SMT group */}
-          <div className="fb-group" role="group" aria-label="SMT filter">
-            {SMT_OPTS.map((opt) => (
-              <button
-                key={opt.key}
-                type="button"
-                className={'fb-pill' + (smt === opt.key ? ' active' : '')}
-                onClick={() => update('smt', opt.key)}
-                aria-pressed={smt === opt.key}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
-        </>
-      )}
-
-      <div className="fb-sep" aria-hidden="true" />
-
-      {/* Lookback group */}
-      <div className="fb-group" role="group" aria-label="Lookback period">
-        {LOOKBACK_OPTS.map((opt) => (
-          <button
-            key={opt.key}
-            type="button"
-            className={'fb-pill' + (lookback === opt.key ? ' active' : '')}
-            onClick={() => update('lookback', opt.key)}
-            aria-pressed={lookback === opt.key}
-          >
-            {opt.label}
-          </button>
-        ))}
-      </div>
-
+      {/* Reset floated to far right via margin-left: auto in CSS */}
       {!isDefault && (
-        <>
-          <div className="fb-sep" aria-hidden="true" />
-          <button
-            type="button"
-            className="fb-reset"
-            onClick={reset}
-            aria-label="Reset all filters to defaults"
-          >
-            Reset
-          </button>
-        </>
+        <button
+          type="button"
+          className="fb-reset"
+          onClick={reset}
+          aria-label="Reset all filters to defaults"
+        >
+          Reset
+        </button>
       )}
     </div>
   );
