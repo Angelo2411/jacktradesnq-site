@@ -493,7 +493,7 @@ a { color: inherit; text-decoration: none; }
 }
 .bd-root *, .bd-root *::before, .bd-root *::after { box-sizing: border-box; }
 .bd-root a { color: inherit; text-decoration: none; }
-.bd-root button:not(.bd-btn):not(.v3-asset-pill):not(.v3-flt-pill):not(.v3-tab):not(.bd-flt-asset-btn):not(.bd-edge-toggle):not(.fb-pill):not(.fb-reset) { font: inherit; color: inherit; background: none; border: 0; cursor: default; padding: 0; }
+.bd-root button:not(.bd-btn):not(.v3-asset-pill):not(.v3-flt-pill):not(.v3-tab):not(.bd-flt-asset-btn):not(.bd-edge-toggle):not(.fb-pill):not(.fb-reset):not(.fb-best) { font: inherit; color: inherit; background: none; border: 0; cursor: default; padding: 0; }
 .bd-root .panda-btn { cursor: grab; }
 .bd-root .panda-btn:active { cursor: grabbing; }
 .bd-root h1, .bd-root h2, .bd-root h3, .bd-root h4, .bd-root p, .bd-root ul, .bd-root ol { margin: 0; padding: 0; }
@@ -3351,26 +3351,26 @@ a { color: inherit; text-decoration: none; }
 /* Best combo button — teal accent, sits between groups and Reset */
 .fb-best {
   padding: 5px 14px;
-  border: 1.5px solid var(--p-teal, oklch(0.45 0.06 200));
+  border: 1px solid var(--c-accent-deep);
   border-radius: 999px;
   font-family: var(--f-serif);
   font-size: 0.82rem;
-  font-weight: 400;
-  color: var(--p-teal, oklch(0.45 0.06 200));
-  background: oklch(0.45 0.06 200 / 0.07);
+  font-weight: 600;
+  color: var(--c-ink);
+  background: var(--c-accent);
   cursor: pointer;
   white-space: nowrap;
   margin-left: 16px;
   transition: background 0.15s ease-out, color 0.15s ease-out;
 }
 .fb-best:hover {
-  background: oklch(0.45 0.06 200 / 0.15);
+  background: var(--c-accent-deep);
 }
 .fb-best.active {
-  background: oklch(0.45 0.06 200 / 0.18);
-  font-weight: 600;
-  border-color: oklch(0.38 0.08 200);
-  color: oklch(0.32 0.08 200);
+  background: var(--c-accent-deep);
+  font-weight: 700;
+  border-color: var(--c-ink);
+  color: var(--c-ink);
 }
 @media (max-width: 600px) {
   .fb-best {
