@@ -132,7 +132,7 @@ function WeekdayBlock({
   );
 }
 
-function YearBlock({ breakdown, slug, smtLabel = 'SMT-on', trades = [] }: { breakdown: YearBreakdown; slug: string; smtLabel?: string; trades?: TradeRow[] }) {
+function YearBlock({ breakdown, slug, smtLabel = 'SMT-on', trades = [], onJumpToTrades }: { breakdown: YearBreakdown; slug: string; smtLabel?: string; trades?: TradeRow[]; onJumpToTrades?: (year: number) => void }) {
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
 
   const filteredTrades = useMemo(
@@ -157,7 +157,13 @@ function YearBlock({ breakdown, slug, smtLabel = 'SMT-on', trades = [] }: { brea
   function renderRow(y: typeof breakdown[0] | typeof total, isTotal = false) {
     const cls = 'v3-yr-row' +
       (isTotal ? ' total' : selectedYear === y.year ? ' selected' : '');
-    const onClick = isTotal ? undefined : () => setSelectedYear(selectedYear === y.year ? null : y.year);
+    const onClick = isTotal ? undefined : () => {
+      if (onJumpToTrades && y.year !== undefined) {
+        onJumpToTrades(y.year as number);
+      } else {
+        setSelectedYear(selectedYear === y.year ? null : y.year);
+      }
+    };
 
     return (
       <tr
@@ -182,7 +188,7 @@ function YearBlock({ breakdown, slug, smtLabel = 'SMT-on', trades = [] }: { brea
   return (
     <div>
       <div className="v3-wd-h">Performance by year</div>
-      <div className="v3-wd-sub">Real data — {smtLabel} variant · tp1_be. Click a row to filter charts.</div>
+      <div className="v3-wd-sub">Real data — {smtLabel} variant · tp1_be. Click a row to jump to trades from that year.</div>
       <div className="v3-yr-table-wrap">
         <table className="v3-yr-table">
           <thead>
@@ -263,6 +269,7 @@ function TradesBlock({
   setVariant,
   dayFilter = '',
   yearFilter = '',
+  onClearYearFilter,
   slug,
   eventShort,
   asset,
@@ -274,9 +281,10 @@ function TradesBlock({
   setVariant: (v: VariantKey) => void;
   dayFilter?: string;
   yearFilter?: string;
+  onClearYearFilter?: () => void;
   slug: string;
   eventShort: string;
-  asset: 'nq' | 'gc' | 'es' | 'si';
+  asset: 'nq' | 'gc' | 'es' | 'si' | 'ym';
   smtLabel?: string;
 }) {
   const activeTrades = tradesByVariant ? tradesByVariant[variant] : trades;
@@ -389,8 +397,12 @@ function TradesBlock({
       )}
       {yearFilter && (
         <div className="v3-tr-filter-badge">
-          Filtered by year {yearFilter} ·{' '}
-          <Link href={`/studies/${slug}/?tab=trades`} className="v3-tr-clear">× clear</Link>
+          Year: {yearFilter}{' '}
+          {onClearYearFilter ? (
+            <button type="button" onClick={onClearYearFilter} className="v3-tr-clear">✕</button>
+          ) : (
+            <Link href={`/studies/${slug}/?tab=trades`} className="v3-tr-clear">✕</Link>
+          )}
         </div>
       )}
       {visible < filtered.length && (
@@ -441,7 +453,7 @@ export default function V3Tabs({
   dateTo?: string;
   overviewContent: React.ReactNode;
   eventShort: string;
-  asset: 'nq' | 'gc' | 'es' | 'si';
+  asset: 'nq' | 'gc' | 'es' | 'si' | 'ym';
   hideKpiBand?: boolean;
 }) {
   // ── URL-driven filter state ──────────────────────────────────────────
@@ -453,6 +465,15 @@ export default function V3Tabs({
   const activeTab: Tab = TAB_LIST.some((t) => t.key === tab) ? tab : 'overview';
   const dayFilter = searchParams.get('day') ?? '';
   const yearFilter = searchParams.get('year') ?? '';
+
+  // ── Jump-to-trades state (year click in By year tab) ─────────────────
+  const [jumpYear, setJumpYear] = useState<number | null>(null);
+  const [jumpTab, setJumpTab] = useState<Tab | null>(null);
+
+  const resolvedTab: Tab = jumpTab ?? activeTab;
+  const resolvedYearFilter: string = jumpTab === 'trades' && jumpYear !== null
+    ? String(jumpYear)
+    : yearFilter;
 
   const smtLabel = smtOn ? 'SMT-on' : 'SMT-off';
 
@@ -550,7 +571,8 @@ export default function V3Tabs({
           <Link
             key={t.key}
             href={tabHref(t.key)}
-            className={'v3-tab' + (activeTab === t.key ? ' active' : '')}
+            className={'v3-tab' + (resolvedTab === t.key ? ' active' : '')}
+            onClick={() => { setJumpTab(null); setJumpYear(null); }}
           >
             {t.label}
           </Link>
@@ -559,29 +581,37 @@ export default function V3Tabs({
 
       {/* ── Tab content ── */}
       <div className="fb-animated">
-        {activeTab === 'weekday' ? (
+        {resolvedTab === 'weekday' ? (
           <WeekdayBlock breakdown={activeBreakdown} slug={slug} smtLabel={smtLabel} />
-        ) : activeTab === 'year' ? (
-          <YearBlock breakdown={activeYearBreakdown} slug={slug} smtLabel={smtLabel} trades={activeTrades} />
-        ) : activeTab === 'trades' ? (
+        ) : resolvedTab === 'year' ? (
+          <YearBlock
+            breakdown={activeYearBreakdown}
+            slug={slug}
+            smtLabel={smtLabel}
+            trades={activeTrades}
+            onJumpToTrades={(year) => { setJumpYear(year); setJumpTab('trades'); }}
+          />
+        ) : resolvedTab === 'trades' ? (
           <TradesBlock
             trades={activeTrades}
             tradesByVariant={filteredByVariant}
             variant={variant}
             setVariant={() => {/* variant now URL-driven */}}
             dayFilter={dayFilter}
-            yearFilter={yearFilter}
+            yearFilter={resolvedYearFilter}
+            onClearYearFilter={jumpYear !== null ? () => { setJumpYear(null); setJumpTab(null); } : undefined}
             slug={slug}
             eventShort={eventShort}
             asset={asset}
             smtLabel={smtLabel}
           />
-        ) : activeTab === 'methodology' ? (
+        ) : resolvedTab === 'methodology' ? (
           <div className="v3-meth-link">
             <Link href="/studies/methodology/">Read full methodology →</Link>
             <p>Data sources, backtest engine, assumptions, what this is not.</p>
           </div>
         ) : (
+          /* overview */
           <div className="v3-prose">{overviewContent}</div>
         )}
       </div>
