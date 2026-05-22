@@ -7,6 +7,7 @@ import type { WeekdayBreakdown, WeekdayStats, YearBreakdown, TradeRow, StrategyS
 import { aggregateYearTotals } from '@/lib/year-stats-utils';
 import { filterTradesByLookback, computeKPI, computeYearBreakdown, computeWeekdayBreakdown } from '@/lib/client-stats';
 import FilterBar, { useFilterState } from './FilterBar';
+import type { BestCombo, VariantKey as FilterVariantKey, SmtKey as FilterSmtKey } from './FilterBar';
 import TradeMiniChart from './TradeMiniChart';
 import WeekdayBars from './WeekdayBars';
 import EquityCurve from './EquityCurve';
@@ -418,6 +419,38 @@ function TradesBlock({
   );
 }
 
+const COMBO_VARIANTS: FilterVariantKey[] = ['tp1_be', 'be_50', 'no_be'];
+const COMBO_SMTS: FilterSmtKey[] = ['on', 'off'];
+const COMBO_LOOKBACKS = ['6mo', '1y', 'all'] as const;
+type ComboLookback = typeof COMBO_LOOKBACKS[number];
+
+function computeBestCombo(
+  tradesByVariant: { tp1_be: TradeRow[]; be_50: TradeRow[]; no_be: TradeRow[] } | undefined,
+  tradesByVariantOff: { tp1_be: TradeRow[]; be_50: TradeRow[]; no_be: TradeRow[] } | undefined,
+  minN = 10
+): BestCombo | null {
+  if (!tradesByVariant) return null;
+
+  let best: BestCombo | null = null;
+
+  for (const smt of COMBO_SMTS) {
+    const pool = smt === 'on' ? tradesByVariant : (tradesByVariantOff ?? tradesByVariant);
+    for (const variant of COMBO_VARIANTS) {
+      const allTrades = pool[variant];
+      for (const lookback of COMBO_LOOKBACKS) {
+        const trades = filterTradesByLookback(allTrades, lookback as ComboLookback);
+        const kpi = computeKPI(trades);
+        if (kpi.n < minN) continue;
+        if (best === null || kpi.pf > best.pf) {
+          best = { variant, smt, lookback: lookback as ComboLookback, pf: kpi.pf };
+        }
+      }
+    }
+  }
+
+  return best;
+}
+
 export default function V3Tabs({
   slug,
   breakdown,
@@ -526,12 +559,18 @@ export default function V3Tabs({
 
   const hasTradeData = (tradesByVariant?.tp1_be?.length ?? 0) > 0;
 
+  // ── Best combo (max PF with N >= 10 across all combos) ───────────────
+  const bestCombo = useMemo(
+    () => hasTradeData ? computeBestCombo(tradesByVariant, tradesByVariantOff) : null,
+    [hasTradeData, tradesByVariant, tradesByVariantOff]
+  );
+
   return (
     <>
       {/* ── Sticky FilterBar ── */}
       {hasTradeData && (
         <div className="fb-sticky-wrap">
-          <FilterBar hasSmtToggle={hasSmtToggle} />
+          <FilterBar hasSmtToggle={hasSmtToggle} bestCombo={bestCombo} />
         </div>
       )}
 

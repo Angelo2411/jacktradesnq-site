@@ -3348,6 +3348,37 @@ a { color: inherit; text-decoration: none; }
 .fb-reset:hover {
   background: oklch(0.92 0.06 25 / 0.3);
 }
+/* Best combo button — teal accent, sits between groups and Reset */
+.fb-best {
+  padding: 5px 14px;
+  border: 1.5px solid var(--p-teal, oklch(0.45 0.06 200));
+  border-radius: 999px;
+  font-family: var(--f-serif);
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: var(--p-teal, oklch(0.45 0.06 200));
+  background: oklch(0.45 0.06 200 / 0.07);
+  cursor: pointer;
+  white-space: nowrap;
+  margin-left: 16px;
+  transition: background 0.15s ease-out, color 0.15s ease-out;
+}
+.fb-best:hover {
+  background: oklch(0.45 0.06 200 / 0.15);
+}
+.fb-best.active {
+  background: oklch(0.45 0.06 200 / 0.18);
+  font-weight: 600;
+  border-color: oklch(0.38 0.08 200);
+  color: oklch(0.32 0.08 200);
+}
+@media (max-width: 600px) {
+  .fb-best {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    margin-left: 8px;
+  }
+}
 /* Content animation on filter change */
 .fb-animated {
   transition: opacity 0.2s ease-out;

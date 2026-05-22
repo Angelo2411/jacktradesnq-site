@@ -3,9 +3,16 @@
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
 
-type VariantKey = 'tp1_be' | 'be_50' | 'no_be';
-type SmtKey = 'on' | 'off';
+export type VariantKey = 'tp1_be' | 'be_50' | 'no_be';
+export type SmtKey = 'on' | 'off';
 type LookbackKey = '3mo' | '6mo' | '1y' | '5y' | 'all';
+
+export type BestCombo = {
+  variant: VariantKey;
+  smt: SmtKey;
+  lookback: LookbackKey;
+  pf: number;
+};
 
 const VARIANT_OPTS: Array<{ key: VariantKey; label: string }> = [
   { key: 'tp1_be', label: 'TP1 + BE' },
@@ -37,7 +44,13 @@ export function useFilterState() {
   return { variant, smt, lookback, smtOn: smt === 'on' };
 }
 
-export default function FilterBar({ hasSmtToggle = true }: { hasSmtToggle?: boolean }) {
+export default function FilterBar({
+  hasSmtToggle = true,
+  bestCombo = null,
+}: {
+  hasSmtToggle?: boolean;
+  bestCombo?: BestCombo | null;
+}) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -72,10 +85,25 @@ export default function FilterBar({ hasSmtToggle = true }: { hasSmtToggle?: bool
     router.replace(pathname + (qs ? '?' + qs : ''), { scroll: false });
   }, [router, pathname, searchParams]);
 
+  const applyBest = useCallback(() => {
+    if (!bestCombo) return;
+    const params = new URLSearchParams(searchParams.toString());
+    if (bestCombo.variant === DEFAULT_VARIANT) params.delete('variant'); else params.set('variant', bestCombo.variant);
+    if (bestCombo.smt === DEFAULT_SMT) params.delete('smt'); else params.set('smt', bestCombo.smt);
+    if (bestCombo.lookback === DEFAULT_LOOKBACK) params.delete('lookback'); else params.set('lookback', bestCombo.lookback);
+    const qs = params.toString();
+    router.replace(pathname + (qs ? '?' + qs : ''), { scroll: false });
+  }, [bestCombo, router, pathname, searchParams]);
+
   const isDefault =
     variant === DEFAULT_VARIANT &&
     smt === DEFAULT_SMT &&
     lookback === DEFAULT_LOOKBACK;
+
+  const isBestActive = bestCombo !== null &&
+    variant === bestCombo.variant &&
+    smt === bestCombo.smt &&
+    lookback === bestCombo.lookback;
 
   return (
     <div className="fb-bar" role="toolbar" aria-label="Dashboard filters">
@@ -133,6 +161,19 @@ export default function FilterBar({ hasSmtToggle = true }: { hasSmtToggle?: bool
           ))}
         </div>
       </div>
+
+      {/* Best combo button — right of groups, left of Reset */}
+      {bestCombo !== null && (
+        <button
+          type="button"
+          className={'fb-best' + (isBestActive ? ' active' : '')}
+          onClick={applyBest}
+          aria-pressed={isBestActive}
+          title={`Auto-select best combo (PF ${bestCombo.pf.toFixed(2)})`}
+        >
+          Best · PF {bestCombo.pf.toFixed(2)}
+        </button>
+      )}
 
       {/* Reset floated to far right via margin-left: auto in CSS */}
       {!isDefault && (
