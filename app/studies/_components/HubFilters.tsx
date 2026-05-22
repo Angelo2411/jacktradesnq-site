@@ -11,11 +11,13 @@ const STORAGE_KEY = 'hub-filters-v3';
 interface FilterState {
   asset: AssetType | 'All';
   sortBy: SortBy;
+  query: string;
 }
 
 const DEFAULT_STATE: FilterState = {
   asset: 'All',
   sortBy: 'pf',
+  query: '',
 };
 
 function loadState(): FilterState {
@@ -75,6 +77,13 @@ export default function HubFilters({
     if (filters.asset !== 'All') {
       list = list.filter((s) => s.asset === filters.asset);
     }
+    const q = filters.query.trim().toLowerCase();
+    if (q) {
+      list = list.filter((s) => {
+        const hay = `${s.title} ${s.slug} ${s.asset} ${s.family} ${s.excerpt ?? ''}`.toLowerCase();
+        return hay.includes(q);
+      });
+    }
     switch (filters.sortBy) {
       case 'n':
         list.sort((a, b) => b.n - a.n);
@@ -131,8 +140,10 @@ export default function HubFilters({
       <HubTopBar
         asset={filters.asset}
         sortBy={filters.sortBy}
+        query={filters.query}
         onAsset={(a) => updateFilter('asset', a)}
         onSort={(s) => updateFilter('sortBy', s)}
+        onQuery={(q) => updateFilter('query', q)}
       />
 
       <main className="bd-hub-main" id="hub-grid">
