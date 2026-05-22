@@ -4,18 +4,18 @@ import { useState, useEffect, useMemo } from 'react';
 import type { StudyStats, AssetType } from '@/lib/study-stats';
 import type { DayPlaybook } from '@/lib/today-events';
 import StudyCard from './StudyCard';
-import HubTopBar from './HubTopBar';
+import HubTopBar, { type SortBy } from './HubTopBar';
 
-const STORAGE_KEY = 'hub-filters-v2';
+const STORAGE_KEY = 'hub-filters-v3';
 
 interface FilterState {
   asset: AssetType | 'All';
-  showNoEdge: boolean;
+  sortBy: SortBy;
 }
 
 const DEFAULT_STATE: FilterState = {
   asset: 'All',
-  showNoEdge: true,
+  sortBy: 'pf',
 };
 
 function loadState(): FilterState {
@@ -75,10 +75,21 @@ export default function HubFilters({
     if (filters.asset !== 'All') {
       list = list.filter((s) => s.asset === filters.asset);
     }
-    if (!filters.showNoEdge) {
-      list = list.filter((s) => s.pf >= 1.5);
+    switch (filters.sortBy) {
+      case 'n':
+        list.sort((a, b) => b.n - a.n);
+        break;
+      case 'alpha':
+        list.sort((a, b) => a.slug.localeCompare(b.slug));
+        break;
+      case 'date':
+        list.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+        break;
+      case 'pf':
+      default:
+        list.sort((a, b) => b.pf - a.pf);
+        break;
     }
-    list.sort((a, b) => b.pf - a.pf);
     return list;
   }, [studies, filters]);
 
@@ -111,13 +122,17 @@ export default function HubFilters({
     return result;
   }, [strategies, marketStudies, bestStrategyPf]);
 
+  // suppress unused warning — weekly/selectedDow kept for future day-playbook integration
+  void weekly;
+  void selectedDow;
+
   return (
     <>
       <HubTopBar
         asset={filters.asset}
-        showNoEdge={filters.showNoEdge}
+        sortBy={filters.sortBy}
         onAsset={(a) => updateFilter('asset', a)}
-        onShowNoEdge={(v) => updateFilter('showNoEdge', v)}
+        onSort={(s) => updateFilter('sortBy', s)}
       />
 
       <main className="bd-hub-main" id="hub-grid">
