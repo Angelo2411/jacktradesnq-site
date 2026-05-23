@@ -59,7 +59,7 @@ export default function V3SideNav({ counts }: { counts: FamilyCounts }) {
 
       {/* Sub-items */}
       <ul className="v3-nav-sublist">
-        {SUB_ITEMS.map((sub) => {
+        {SUB_ITEMS.filter((sub) => sub.key === 'all' || getCount(sub.key) > 0).map((sub) => {
           const href = sub.cat ? `/studies/?cat=${sub.cat}` : '/studies/';
           const active = sub.cat ? activeCat === sub.cat : isData && !activeCat;
           return (
