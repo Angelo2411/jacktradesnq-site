@@ -347,18 +347,16 @@ export default async function BacktestedDetail({ params }: PageProps) {
           ← back to Data
         </Link>
 
-        <AssetProvider assets={availableAssets} slug={slug}>
-          <StraddleWrappedTabs
-            slug={slug}
-            allTrades={allTrades}
-            barsSlug={barsSlug}
-            eventName={eventName}
-            releaseTime={releaseTime}
-            dateFrom={dateFrom}
-            dateTo={dateTo}
-            overviewContent={straddleOverviewNode}
-          />
-        </AssetProvider>
+        <StraddleWrappedTabs
+          slug={slug}
+          allTrades={allTrades}
+          barsSlug={barsSlug}
+          eventName={eventName}
+          releaseTime={releaseTime}
+          dateFrom={dateFrom}
+          dateTo={dateTo}
+          overviewContent={straddleOverviewNode}
+        />
 
         {pager}
       </div>

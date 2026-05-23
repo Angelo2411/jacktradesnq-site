@@ -2,7 +2,6 @@
 
 import { useMemo, Suspense } from 'react';
 import { useAsset, type AssetKey } from './AssetContext';
-import AssetPills from './AssetPills';
 import V3Tabs from './V3Tabs';
 import type { TradeRow } from '@/lib/study-stats';
 import { computeKPI, computeYearBreakdown, computeWeekdayBreakdown } from '@/lib/client-stats';
@@ -87,7 +86,6 @@ export default function StraddleWrappedTabs({
 
   return (
     <>
-      <AssetPills />
       <h1 className="v3-sub-h1">
         <span className="v3-sub-ev">{eventName}</span>
         {' · Straddle'}
