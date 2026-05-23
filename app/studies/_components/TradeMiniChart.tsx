@@ -579,11 +579,11 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
             {variant === 'tp1_be' && tpPrice !== undefined && entryPriceProp !== undefined && (
               <LegendPill color="#4a8c3f" label="TP1" value={(entryPriceProp + 0.5 * (tpPrice - entryPriceProp)).toFixed(2)} />
             )}
-            {dataHigh !== undefined && (<LegendPill color="rgba(122,110,90,0.85)" label="Data H" value={dataHigh} />)}
+            {dataHigh !== undefined && (<LegendPill color="rgba(122,110,90,0.85)" label="Release H" value={dataHigh} />)}
             {ifvgTop !== undefined && ifvgBottom !== undefined && (
               <LegendPill color="#141414" label="IFVG" value={`${ifvgBottom}–${ifvgTop}`} />
             )}
-            {dataLow !== undefined && (<LegendPill color="rgba(122,110,90,0.85)" label="Data L" value={dataLow} />)}
+            {dataLow !== undefined && (<LegendPill color="rgba(122,110,90,0.85)" label="Release L" value={dataLow} />)}
             {entryPriceProp !== undefined && (<LegendPill color="#b08932" label="Entry" value={entryPriceProp} />)}
             {slPrice !== undefined && (<LegendPill color="#b8452a" label={slLabel ?? 'SL'} value={snappedSL ?? slPrice} />)}
           </span>
