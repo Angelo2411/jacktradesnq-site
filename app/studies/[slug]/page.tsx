@@ -5,11 +5,8 @@ import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 import { getAllEntries, getEntry } from '@/lib/studies';
 import { IconArrowUpRight } from '../_components/icons';
-import StraddleExplorer, { type ExplorerConfig } from '../_components/StraddleExplorer';
-import StraddleSwitcher from '../_components/StraddleSwitcher';
 import { AssetProvider, type AssetKey } from '../_components/AssetContext';
 import AssetPills from '../_components/AssetPills';
-import StraddleTrades from '../_components/StraddleTrades';
 import KillzoneSwitcher from '../_components/KillzoneSwitcher';
 import NwogSwitcher from '../_components/NwogSwitcher';
 import News830Explorer from '../_components/News830Explorer';
@@ -20,37 +17,14 @@ import BilingualPdfLink from '../_components/BilingualPdfLink';
 import BilingualLede from '../_components/BilingualLede';
 import BilingualTitle from '../_components/BilingualTitle';
 import V3Tabs from '../_components/V3Tabs';
+import StraddleWrappedTabs from '../_components/StraddleWrappedTabs';
 import PerformanceTearsheet from '../_components/PerformanceTearsheet';
-import { getStrategyStats, getStrategyStatsByVariant, getStrategyStatsByVariantAndSmt, getWeekdayBreakdown, getYearBreakdown, getTradeList } from '@/lib/study-stats';
-
-function detectStraddleData(dataSlug: string) {
-  const base = path.join(process.cwd(), 'public', 'data');
-  const result: Record<string, ExplorerConfig> = {};
-  for (const [asset, suffix] of Object.entries(ASSET_SUFFIX)) {
-    const jsonPath = path.join(base, `${dataSlug}-straddle${suffix}.json`);
-    if (!fs.existsSync(jsonPath)) continue;
-    const info = EVENT_INFO[dataSlug];
-    if (!info) continue;
-    result[asset] = {
-      eventType: info.eventType,
-      title: `${info.titlePrefix} straddle${ASSET_LABEL[asset]} — interactive explorer`,
-      subtitle: 'Pick filters → live stats refresh → download a tailored PDF report.',
-      dataUrl: `/data/${dataSlug}-straddle${suffix}.json`,
-      offsetKey: info.offsetKey,
-      offsetLabel: info.offsetLabel,
-    };
-  }
-  return result;
-}
-
-function detectStraddleDataKey(slug: string): string | null {
-  return DATA_KEY_MAP[slug] ?? null;
-}
+import { getStrategyStats, getStrategyStatsByVariant, getStrategyStatsByVariantAndSmt, getWeekdayBreakdown, getYearBreakdown, getTradeList, getStraddleAllTrades } from '@/lib/study-stats';
 
 const EXPLORER_RE =
   /<div data-explorer="(cpi|nfp|jobless-claims|ppi|retail-sales|durable-goods|pce|nfp-ifvg-smt|cpi-ifvg-smt|ppi-ifvg-smt|retailsales-ifvg-smt|pce-ifvg-smt|gdp-ifvg-smt|joblessclaims-ifvg-smt|empirestate-ifvg-smt|employmentcostindex-ifvg-smt)">\s*<\/div>/i;
 
-const DATA_KEY_MAP: Record<string, string> = {
+const STRADDLE_BARS_KEY: Record<string, string> = {
   'cpi-day-stats': 'cpi',
   'nfp': 'nfp',
   'jobless-claims': 'jobless-claims',
@@ -60,42 +34,30 @@ const DATA_KEY_MAP: Record<string, string> = {
   'pce': 'pce',
 };
 
-interface EventInfo {
-  eventType: ExplorerConfig['eventType'];
-  titlePrefix: string;
-  offsetKey: ExplorerConfig['offsetKey'];
-  offsetLabel: string;
-}
-
-const EVENT_INFO: Record<string, EventInfo> = {
-  cpi: { eventType: 'CPI', titlePrefix: 'CPI', offsetKey: 'stop_pts', offsetLabel: 'Stop offset' },
-  nfp: { eventType: 'NFP', titlePrefix: 'NFP', offsetKey: 'entry_offset', offsetLabel: 'Entry offset' },
-  'jobless-claims': { eventType: 'Jobless Claims', titlePrefix: 'Jobless Claims', offsetKey: 'stop_pts', offsetLabel: 'Stop offset' },
-  ppi: { eventType: 'PPI', titlePrefix: 'PPI', offsetKey: 'stop_pts', offsetLabel: 'Stop offset' },
-  'retail-sales': { eventType: 'Retail Sales', titlePrefix: 'Retail Sales', offsetKey: 'stop_pts', offsetLabel: 'Stop offset' },
-  'durable-goods': { eventType: 'Durable Goods', titlePrefix: 'Durable Goods', offsetKey: 'stop_pts', offsetLabel: 'Stop offset' },
-  pce: { eventType: 'PCE', titlePrefix: 'PCE', offsetKey: 'stop_pts', offsetLabel: 'Stop offset' },
+const EVENT_INFO: Record<string, { eventType: string; titlePrefix: string }> = {
+  cpi: { eventType: 'CPI', titlePrefix: 'CPI' },
+  nfp: { eventType: 'NFP', titlePrefix: 'NFP' },
+  'jobless-claims': { eventType: 'Jobless Claims', titlePrefix: 'Jobless Claims' },
+  ppi: { eventType: 'PPI', titlePrefix: 'PPI' },
+  'retail-sales': { eventType: 'Retail Sales', titlePrefix: 'Retail Sales' },
+  'durable-goods': { eventType: 'Durable Goods', titlePrefix: 'Durable Goods' },
+  pce: { eventType: 'PCE', titlePrefix: 'PCE' },
 };
 
-const ASSET_SUFFIX: Record<string, string> = {
-  nq: '',
-  gc: '-gc',
-  si: '-si',
-  ym: '-ym',
-  es: '-es',
-};
-
-const ASSET_LABEL: Record<string, string> = {
-  nq: '',
-  gc: ' (Gold)',
-  si: ' (Silver)',
-  ym: ' (Dow)',
-  es: ' (S&P 500)',
-};
-
-const SWITCHER_SLUGS = new Set(['cpi-day-stats', 'nfp', 'jobless-claims', 'ppi', 'retail-sales', 'durable-goods', 'pce']);
 const KILLZONE_SLUG = 'killzone-past-vs-now';
 const NWOG_SLUG = 'asia-open';
+
+const STRADDLE_V3_SLUGS = new Set(['cpi-day-stats', 'nfp', 'jobless-claims', 'ppi', 'retail-sales', 'durable-goods', 'pce']);
+
+const STRADDLE_BARS_SLUG: Record<string, string> = {
+  'cpi-day-stats': 'cpi',
+  'nfp': 'nfp',
+  'jobless-claims': 'jobless-claims',
+  'ppi': 'ppi',
+  'retail-sales': 'retail-sales',
+  'durable-goods': 'durable-goods',
+  'pce': 'pce',
+};
 
 const IFVG_SLUGS = new Set([
   'cpi-ifvg-smt', 'nfp-ifvg-smt', 'ppi-ifvg-smt', 'pce-ifvg-smt',
@@ -182,24 +144,18 @@ export default async function BacktestedDetail({ params }: PageProps) {
   const wordCount = entry.explanationHtml.replace(/<[^>]*>/g, ' ').split(/\s+/).filter(Boolean).length;
   const readMin = Math.max(1, Math.ceil(wordCount / 200));
 
-  const isStraddleSwitcher = SWITCHER_SLUGS.has(slug);
+  const isStraddleSwitcher = false;
   const isKillzone = slug === KILLZONE_SLUG;
   const isNwog = slug === NWOG_SLUG;
   const isIfvg = IFVG_SLUGS.has(slug);
+  const isStraddleV3 = STRADDLE_V3_SLUGS.has(slug);
 
   const match = entry.explanationHtmlNq.match(EXPLORER_RE);
   const explorerKey = match ? match[1].toLowerCase() : null;
-  const dataKey = detectStraddleDataKey(slug);
-  const straddleConfigs = dataKey ? detectStraddleData(dataKey) : {};
-  const explorerConfig = explorerKey ? straddleConfigs[explorerKey] ?? null : null;
   const news830Config = explorerKey && NEWS830_CONFIGS[explorerKey] ? NEWS830_CONFIGS[explorerKey] : null;
   const isNews830 = news830Config !== null;
-  const hasAnyStraddleData = Object.keys(straddleConfigs).length > 0;
-  const availableStraddleAssets = (Object.keys(straddleConfigs) as AssetKey[]).filter((k) => k === 'nq' || k === 'gc' || k === 'si' || k === 'ym' || k === 'es');
-
-  const hasSplit = isStraddleSwitcher && !!explorerKey;
   const splitter = (html: string) =>
-    hasSplit || explorerConfig || isNews830
+    isNews830
       ? html.split(EXPLORER_RE).filter((_, i) => i !== 1)
       : [html, ''];
   const [htmlBeforeNq, htmlAfterNq] = splitter(entry.explanationHtmlNq);
@@ -247,26 +203,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
         const [hb, ha] = body.split(EXPLORER_RE).filter((_, i) => i !== 1);
         const key = expMatch[1].toLowerCase();
         let explorerNode: React.ReactNode = null;
-        if (SWITCHER_SLUGS.has(slug) && hasAnyStraddleData && straddleConfigs.nq && straddleConfigs[key]) {
-          const fp = FULLPORT_PDFS[key];
-          explorerNode = (
-            <AssetProvider assets={availableStraddleAssets} slug={slug}>
-              <AssetPills />
-              <StraddleSwitcher
-                nqConfig={straddleConfigs.nq}
-                gcConfig={straddleConfigs.gc}
-                siConfig={straddleConfigs.si}
-                ymConfig={straddleConfigs.ym}
-                esConfig={straddleConfigs.es}
-                fullportPdfNq={fp?.nq}
-                fullportPdfGc={fp?.gc}
-                fullportLabel={fp?.label}
-              />
-            </AssetProvider>
-          );
-        } else if (straddleConfigs[key]) {
-          explorerNode = <StraddleExplorer config={straddleConfigs[key]} embedded />;
-        } else if (NEWS830_CONFIGS[key]) {
+        if (isNews830 && NEWS830_CONFIGS[key]) {
           explorerNode = (
             <News830Explorer
               dataUrl={NEWS830_CONFIGS[key].dataUrl}
@@ -284,26 +221,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
   }
 
   let desktopExplorerNode: React.ReactNode = null;
-  if (isStraddleSwitcher && explorerKey && hasAnyStraddleData && straddleConfigs.nq) {
-    const fp = FULLPORT_PDFS[explorerKey];
-    desktopExplorerNode = (
-      <AssetProvider assets={availableStraddleAssets} slug={slug}>
-        <AssetPills />
-        <StraddleSwitcher
-          nqConfig={straddleConfigs.nq}
-          gcConfig={straddleConfigs.gc}
-          siConfig={straddleConfigs.si}
-          ymConfig={straddleConfigs.ym}
-          esConfig={straddleConfigs.es}
-          fullportPdfNq={fp?.nq}
-          fullportPdfGc={fp?.gc}
-          fullportLabel={fp?.label}
-        />
-      </AssetProvider>
-    );
-  } else if (explorerConfig) {
-    desktopExplorerNode = <StraddleExplorer config={explorerConfig} embedded />;
-  } else if (isNews830) {
+  if (isNews830) {
     desktopExplorerNode = (
       <News830Explorer
         dataUrl={news830Config!.dataUrl}
@@ -388,6 +306,64 @@ export default async function BacktestedDetail({ params }: PageProps) {
       ) : null}
     </>
   );
+
+  // Straddle V3: unified V3Tabs UX (replaces StraddleSwitcher)
+  if (isStraddleV3) {
+    const barsSlug = STRADDLE_BARS_SLUG[slug] ?? slug;
+    const eventName = EVENT_INFO[STRADDLE_BARS_KEY[slug] ?? slug]?.eventType ?? entry.title;
+    const releaseTime = '8:30 ET';
+    const allTrades: Record<string, import('@/lib/study-stats').TradeRow[]> = {};
+    for (const asset of ['nq', 'gc', 'si', 'ym', 'es']) {
+      allTrades[asset] = getStraddleAllTrades(slug, asset);
+    }
+
+    const allAllTrades = Object.values(allTrades).flat();
+    const dates = allAllTrades.map((t) => t.ts.slice(0, 10)).sort();
+    const dateFrom = dates[0]?.slice(0, 4) ?? '2016';
+    const dateTo = dates[dates.length - 1]?.slice(0, 4) ?? '2026';
+
+    const availableAssets: AssetKey[] = Object.entries(allTrades)
+      .filter(([, trs]) => trs.length > 0)
+      .map(([k]) => k as AssetKey);
+
+    const straddleOverviewNode = (
+      <>
+        <BilingualProse htmlNq={entry.explanationHtmlNq} htmlGc={entry.explanationHtmlGc} htmlEs={entry.explanationHtmlEs} htmlSi={entry.explanationHtmlSi} htmlYm={entry.explanationHtmlYm} />
+        {entry.pdfFileNq ? (
+          <div className="bd-ctas" style={{ marginTop: 32 }}>
+            <BilingualPdfLink
+              pdfFileNq={entry.pdfFileNq}
+              pdfFileGc={entry.pdfFileGc}
+              pdfLabel={entry.pdfLabel ?? `Download — ${entry.title} PDF`}
+            />
+          </div>
+        ) : null}
+      </>
+    );
+
+    return (
+      <div>
+        <Link href="/studies/" className="v3-back">
+          ← back to Data
+        </Link>
+
+        <AssetProvider assets={availableAssets} slug={slug}>
+          <StraddleWrappedTabs
+            slug={slug}
+            allTrades={allTrades}
+            barsSlug={barsSlug}
+            eventName={eventName}
+            releaseTime={releaseTime}
+            dateFrom={dateFrom}
+            dateTo={dateTo}
+            overviewContent={straddleOverviewNode}
+          />
+        </AssetProvider>
+
+        {pager}
+      </div>
+    );
+  }
 
   // IFVG slugs: v3 report-first layout with KPI band + tabs
   if (isIfvg) {
@@ -509,25 +485,6 @@ export default async function BacktestedDetail({ params }: PageProps) {
           <BilingualProse htmlNq={entry.explanationHtmlNq} htmlGc={entry.explanationHtmlGc} htmlEs={entry.explanationHtmlEs} htmlSi={entry.explanationHtmlSi} htmlYm={entry.explanationHtmlYm} />
         )}
       </div>
-
-      {slug === 'cpi-day-stats' ? (
-        <div style={{ marginTop: 48 }}>
-          <StraddleTrades
-            eventShort="cpi"
-            jsonUrl="/data/cpi-straddle-trades.json"
-            offsetLabel="Stop offset"
-          />
-        </div>
-      ) : null}
-      {slug === 'nfp' ? (
-        <div style={{ marginTop: 48 }}>
-          <StraddleTrades
-            eventShort="nfp"
-            jsonUrl="/data/nfp-straddle-trades.json"
-            offsetLabel="Entry offset"
-          />
-        </div>
-      ) : null}
 
       <div className="bd-ctas" style={{ marginTop: 48 }}>
         {entry.category === 'tradingview' && entry.tradingviewUrl ? (

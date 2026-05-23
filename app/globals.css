@@ -3385,6 +3385,16 @@ a { color: inherit; text-decoration: none; }
 .fb-group {
   display: flex;
   gap: 4px;
+  align-items: center;
+}
+.fb-group-label {
+  font-family: var(--f-sans);
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--c-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-right: 6px;
 }
 .fb-pill {
   padding: 5px 14px;
