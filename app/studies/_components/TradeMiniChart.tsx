@@ -211,10 +211,8 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         borderColor: cEdge,
         timeVisible: true,
         secondsVisible: false,
-        rightOffset: 1,
-        barSpacing: 12,
-        fixLeftEdge: true,
-        fixRightEdge: true,
+        rightOffset: 3,
+        barSpacing: 14,
         tickMarkFormatter: (time: number) => {
           const d = new Date(time * 1000);
           return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'America/New_York' });
@@ -500,7 +498,22 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       { time: candles[candles.length - 1].time, value: yMax + pad },
     ]);
 
-    chart.timeScale().fitContent();
+    // Zoom to the trade window (entry ± 25 min) instead of fitContent — keeps candles wide/readable.
+    const trySetRange = () => {
+      const firstTs = candles[0]?.time as number | undefined;
+      const lastTs = candles[candles.length - 1]?.time as number | undefined;
+      if (firstTs === undefined || lastTs === undefined) return;
+      const anchorMs = entryTs ? new Date(entryTs).getTime() : (ts ? new Date(ts).getTime() : t0Ms);
+      const anchorSec = Math.floor(anchorMs / 1000);
+      const from = Math.max(firstTs, anchorSec - 25 * 60) as UTCTimestamp;
+      const to = Math.min(lastTs, anchorSec + 25 * 60) as UTCTimestamp;
+      if ((to as number) > (from as number)) {
+        chart.timeScale().setVisibleRange({ from, to });
+      } else {
+        chart.timeScale().fitContent();
+      }
+    };
+    trySetRange();
 
     return () => { chart.remove(); };
   }, [status]);
