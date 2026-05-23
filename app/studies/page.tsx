@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { getAllStudyStats } from '@/lib/study-stats';
 import { getWeeklyPlaybook } from '@/lib/today-events';
 import HubFilters from './_components/HubFilters';
@@ -47,7 +48,9 @@ export default function BacktestedHub() {
         </div>
       </header>
 
-      <HubFilters studies={studies} weekly={weekly} />
+      <Suspense fallback={null}>
+        <HubFilters studies={studies} weekly={weekly} />
+      </Suspense>
     </div>
   );
 }
