@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import type { StudyStats, AssetType, FamilyType } from '@/lib/study-stats';
 import type { DayPlaybook } from '@/lib/today-events';
 import StudyCard from './StudyCard';
@@ -63,21 +63,22 @@ export default function HubFilters({
   const [mounted, setMounted] = useState(false);
   const [selectedDow, setSelectedDow] = useState<number | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
-  // Read ?cat= from URL on mount
   useEffect(() => {
-    const state = loadState();
-    if (typeof window !== 'undefined') {
-      const p = new URLSearchParams(window.location.search);
-      const cat = p.get('cat');
-      if (cat === 'news' || cat === 'ib' || cat === 'ema' || cat === 'time' || cat === 'misc') {
-        state.family = cat.charAt(0).toUpperCase() + cat.slice(1) as FamilyType;
-      }
-    }
-    setFilters(state);
+    setFilters(loadState());
     setMounted(true);
     setSelectedDow(getNyDowIndex());
   }, []);
+
+  useEffect(() => {
+    const cat = searchParams.get('cat');
+    if (cat === 'news' || cat === 'ib' || cat === 'ema' || cat === 'time' || cat === 'misc') {
+      setFilters((f) => ({ ...f, family: cat.charAt(0).toUpperCase() + cat.slice(1) as FamilyType }));
+    } else if (cat === null) {
+      setFilters((f) => ({ ...f, family: 'All' }));
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (mounted) saveState(filters);
