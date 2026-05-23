@@ -188,7 +188,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
 
     const chart: IChartApi = createChart(el, {
       width: el.clientWidth || 720,
-      height: 360,
+      height: 520,
       layout: {
         background: { color: cPaper },
         textColor: cInkDim,

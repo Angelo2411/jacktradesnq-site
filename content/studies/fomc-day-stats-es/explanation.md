@@ -37,6 +37,8 @@ Release-bar measured at 14:00 ET. ES (S&P 500 futures) — 1 ES pt ≈ $50 / 1 M
 - [FOMC NQ — release bar stats](/studies/fomc-day-stats/) — NQ version with full year-by-year breakdown.
 - [Full IFVG + SMT NQ backtest](/studies/fomc-ifvg-smt/) — sweep + IFVG entry on this event.
 - [Full IFVG + SMT ES backtest](/studies/fomc-ifvg-smt-es/) — ES variant.
+- [CPI straddle (fullport model)](/studies/cpi-day-stats/) — macro day fullport explorer.
+- [NFP straddle (fullport model)](/studies/nfp/) — macro day fullport explorer.
 
 ### Disclaimer
 

@@ -23,3 +23,9 @@ OCO buy-stop / sell-stop ±Offset from release close, TP at fill ±TP, no SL, 30
 Filter the full Gold grid live — pick stop / TP / year window — and download a tailored PDF report.
 
 <div data-explorer="cpi"></div>
+
+### Related
+
+- [NFP straddle (fullport model)](/studies/nfp/) — same fullport explorer on NFP.
+- [Full IFVG + SMT NQ — CPI](/studies/cpi-ifvg-smt/) — sweep + IFVG entry variant on CPI.
+- [Full IFVG + SMT GC — CPI](/studies/cpi-ifvg-smt-gc/) — Gold variant.

@@ -4,7 +4,7 @@
 
 ## Model
 
-Same engine as the NQ variant (IFVG inversion + opposite-leg sweep filter + tp1_be variant), executed on GC.
+Same engine as the NQ variant (IFVG inversion + opposite-leg sweep filter + "TP1 + BE" variant), executed on GC.
 
 ## SMT pair
 
@@ -12,4 +12,4 @@ NQ variants use ES as the SMT confirmation pair. GC variants use SI (Silver) —
 
 ## Results
 
-See the KPI band above and the By weekday / By year / Trade list tabs for full breakdown.
+See the stat band above and the By weekday / By year / Trade list tabs for full breakdown.

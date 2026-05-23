@@ -2,7 +2,7 @@
 
 ## Model
 
-Same engine as the NQ variant (IFVG inversion + opposite-leg sweep filter + tp1_be variant), executed on GC. Release time is 10:00 ET (Conference Board, last Tuesday of month); sweep window extends to 12:00 ET, resolve deadline 16:00 ET.
+Same engine as the NQ variant (IFVG inversion + opposite-leg sweep filter + "TP1 + BE" variant), executed on GC. Release time is 10:00 ET (Conference Board, last Tuesday of month); sweep window extends to 12:00 ET, resolve deadline 16:00 ET.
 
 ## SMT pair
 
@@ -14,4 +14,4 @@ Consumer confidence drives spending expectations, which feed into inflation and 
 
 ## Results
 
-See the KPI band above and the By weekday / By year / Trade list tabs for full breakdown.
+See the stat band above and the By weekday / By year / Trade list tabs for full breakdown.
