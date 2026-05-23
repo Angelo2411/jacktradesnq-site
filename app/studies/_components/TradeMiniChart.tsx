@@ -69,6 +69,7 @@ interface Props {
   ifvgBottom?: number;
   ifvgFormationTs?: string;
   variant?: 'tp1_be' | 'be_50' | 'no_be';
+  slLabel?: string;
 }
 
 function forwardFill(bars: EventBar[]): EventBar[] {
@@ -132,7 +133,7 @@ function LegendPill({ color, label, value }: { color: string; label: string; val
   );
 }
 
-export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl_pts, outcome, entryPrice: entryPriceProp, slPrice, tpPrice, entryTs, exitTs, exitPrice, ts, dataHigh, dataLow, sweepTs, sweepSide, ifvgTop, ifvgBottom, ifvgFormationTs, variant = 'tp1_be' }: Props) {
+export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl_pts, outcome, entryPrice: entryPriceProp, slPrice, tpPrice, entryTs, exitTs, exitPrice, ts, dataHigh, dataLow, sweepTs, sweepSide, ifvgTop, ifvgBottom, ifvgFormationTs, variant = 'tp1_be', slLabel }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [status, setStatus] = useState<'loading' | 'found' | 'missing'>('loading');
   const [snappedSL, setSnappedSL] = useState<number | null>(null);
@@ -188,7 +189,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
 
     const chart: IChartApi = createChart(el, {
       width: el.clientWidth || 720,
-      height: 360,
+      height: 520,
       layout: {
         background: { color: cPaper },
         textColor: cInkDim,
@@ -515,7 +516,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: 8, width: '100%', maxWidth: 720, margin: '0 auto' }}>
         {status === 'loading' && (
           <div style={{
-            width: '100%', maxWidth: 720, height: 360,
+            width: '100%', maxWidth: 720, height: 520,
             background: 'oklch(0.97 0.01 80)',
             borderRadius: 8,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -526,7 +527,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         )}
         {status === 'missing' && (
           <div style={{
-            width: '100%', maxWidth: 720, height: 360,
+            width: '100%', maxWidth: 720, height: 520,
             background: 'oklch(0.97 0.01 80)',
             borderRadius: 8,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -542,7 +543,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
           <div
             ref={containerRef}
             style={{
-              width: '100%', maxWidth: 720, height: 360,
+              width: '100%', maxWidth: 720, height: 520,
               borderRadius: 8,
               overflow: 'hidden',
               border: '1px solid oklch(0.90 0.02 80)',
@@ -571,7 +572,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
             )}
             {dataLow !== undefined && (<LegendPill color="rgba(122,110,90,0.85)" label="Data L" value={dataLow} />)}
             {entryPriceProp !== undefined && (<LegendPill color="#b08932" label="Entry" value={entryPriceProp} />)}
-            {slPrice !== undefined && (<LegendPill color="#b8452a" label="SL" value={snappedSL ?? slPrice} />)}
+            {slPrice !== undefined && (<LegendPill color="#b8452a" label={slLabel ?? 'SL'} value={snappedSL ?? slPrice} />)}
           </span>
         </div>
       </div>

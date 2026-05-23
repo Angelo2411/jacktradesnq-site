@@ -127,7 +127,7 @@ export default function StraddleMiniChart({
 
     const chart: IChartApi = createChart(el, {
       width: el.clientWidth || 720,
-      height: 360,
+      height: 520,
       layout: {
         background: { color: cPaper },
         textColor: cInkDim,
@@ -264,7 +264,7 @@ export default function StraddleMiniChart({
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: 8, width: '100%', maxWidth: 720, margin: '0 auto' }}>
         {status === 'loading' && (
           <div style={{
-            width: '100%', maxWidth: 720, height: 360,
+            width: '100%', maxWidth: 720, height: 520,
             background: 'oklch(0.97 0.01 80)', borderRadius: 8,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontFamily: 'var(--f-sans)', fontSize: '0.75rem', color: 'var(--c-muted)',
@@ -272,7 +272,7 @@ export default function StraddleMiniChart({
         )}
         {status === 'missing' && (
           <div style={{
-            width: '100%', maxWidth: 720, height: 360,
+            width: '100%', maxWidth: 720, height: 520,
             background: 'oklch(0.97 0.01 80)', borderRadius: 8,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontFamily: 'var(--f-sans)', fontSize: '0.75rem', color: 'var(--c-muted)',
@@ -281,7 +281,7 @@ export default function StraddleMiniChart({
         )}
         <div style={{ display: status === 'found' ? 'block' : 'none' }}>
           <div ref={containerRef} style={{
-            width: '100%', maxWidth: 720, height: 360, borderRadius: 8,
+            width: '100%', maxWidth: 720, height: 520, borderRadius: 8,
             overflow: 'hidden', border: '1px solid oklch(0.90 0.02 80)',
           }} />
         </div>

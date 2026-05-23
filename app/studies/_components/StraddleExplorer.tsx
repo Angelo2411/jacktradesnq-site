@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, Fragment } from 'react';
 import { useAsset } from './AssetContext';
+import TradeMiniChart from './TradeMiniChart';
 
 /* ──────────────────────────────────────────────────────────────────────────
    Shared types — works for both CPI (stop_pts) and NFP (entry_offset).
@@ -43,6 +44,36 @@ export interface ExplorerConfig {
   offsetKey: 'stop_pts' | 'entry_offset';
   /** UI label for the offset filter */
   offsetLabel: string;
+  /** Optional URL for per-trade detail JSON (combos → trades) */
+  tradesUrl?: string;
+}
+
+interface TradeDetail {
+  date: string;
+  ts: string;
+  entry_price: number;
+  buy_stop: number;
+  sell_stop: number;
+  tp_buy: number;
+  tp_sell: number;
+  filled_side: 'long' | 'short' | null;
+  fill_ts: string | null;
+  fill_price: number | null;
+  exit_ts: string | null;
+  exit_price: number | null;
+  pnl: number;
+  outcome: string;
+}
+
+interface ComboTradeBlock {
+  X: number;
+  Y: number;
+  trades: TradeDetail[];
+}
+
+interface TradesPayload {
+  event: string;
+  combos: ComboTradeBlock[];
 }
 
 /* ──────────────────────────────────────────────────────────────────────── */
@@ -96,6 +127,11 @@ export default function StraddleExplorer({
   const [generating, setGenerating] = useState(false);
   const [showAllRanking, setShowAllRanking] = useState(false);
 
+  // Expand state
+  const [expandedCombo, setExpandedCombo] = useState<string | null>(null);
+  const [expandedTrade, setExpandedTrade] = useState<string | null>(null);
+  const [tradesData, setTradesData] = useState<TradesPayload | null>(null);
+
   useEffect(() => {
     let cancelled = false;
     fetch(config.dataUrl)
@@ -117,6 +153,24 @@ export default function StraddleExplorer({
       cancelled = true;
     };
   }, [config.dataUrl]);
+
+  useEffect(() => {
+    if (!config.tradesUrl || expandedCombo === null || tradesData !== null) return;
+    let cancelled = false;
+    fetch(config.tradesUrl)
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then((j: TradesPayload) => {
+        if (cancelled) return;
+        setTradesData(j);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [config.tradesUrl, expandedCombo, tradesData]);
 
   /* ── derived options ─────────────────────────────────────────────────── */
 
@@ -163,6 +217,25 @@ export default function StraddleExplorer({
     }
     return base;
   }, [data, year, offset, tp, config.offsetKey]);
+
+  /* ── trade lookup helpers ────────────────────────────────────────────── */
+
+  const tradesForExpandedCombo = useMemo(() => {
+    if (!tradesData || !expandedCombo) return null;
+    const [xStr, yStr] = expandedCombo.split('|');
+    const x = Number(xStr);
+    const y = Number(yStr);
+    const block = tradesData.combos.find((c) => c.X === x && c.Y === y);
+    if (!block) return null;
+    return block.trades
+      .filter((t) => t.filled_side !== null && t.fill_ts !== null)
+      .sort((a, b) => (a.ts < b.ts ? 1 : -1));
+  }, [tradesData, expandedCombo]);
+
+  const expandedTradeDetail = useMemo(() => {
+    if (!tradesForExpandedCombo || !expandedTrade) return null;
+    return tradesForExpandedCombo.find((t) => t.date === expandedTrade) ?? null;
+  }, [tradesForExpandedCombo, expandedTrade]);
 
   /* ── summary stats ───────────────────────────────────────────────────── */
 
@@ -534,8 +607,8 @@ export default function StraddleExplorer({
 
       {/* Live table */}
       {view === 'TABLE' && (
-        <div className="bd-table-wrap">
-          <table className="bd-data-table">
+        <div className="v3-tr-table-wrap">
+          <table className="bd-data-table v3-tr-table">
             <thead>
               <tr>
                 {isYearScoped ? <th>Year</th> : null}
@@ -567,21 +640,131 @@ export default function StraddleExplorer({
                   const filled = Math.round((r.fill_rate / 100) * n);
                   const losses = filled - wins;
                   const noFill = Math.round((r.no_fill_rate / 100) * n);
+                  const comboKey = `${r[config.offsetKey]}|${r.tp_pts}`;
+                  const isComboOpen = expandedCombo === comboKey;
+                  const trades = isComboOpen ? tradesForExpandedCombo : null;
+
                   return (
-                    <tr
-                      key={`${r.year ?? 'all'}-${r[config.offsetKey]}-${r.tp_pts}-${i}`}
-                    >
-                      {isYearScoped ? <td>{r.year}</td> : null}
-                      <td>{r[config.offsetKey]}</td>
-                      <td>{r.tp_pts}</td>
-                      <td>{n}</td>
-                      <td>{fmtPct(r.fill_rate)}</td>
-                      <td>{fmtPct(r.tp_hit_rate)}</td>
-                      <td>{fmtPct(r.no_fill_rate)}</td>
-                      <td>{wins}</td>
-                      <td>{losses}</td>
-                      <td>{noFill}</td>
-                    </tr>
+                    <Fragment key={`${r.year ?? 'all'}-${r[config.offsetKey]}-${r.tp_pts}-${i}`}>
+                      <tr
+                        className={'v3-tr-row' + (isComboOpen ? ' expanded' : '') + (config.tradesUrl ? ' bd-combo-clickable' : '')}
+                        onClick={() => {
+                          if (!config.tradesUrl) return;
+                          setExpandedCombo(isComboOpen ? null : comboKey);
+                          setExpandedTrade(null);
+                        }}
+                        style={config.tradesUrl ? { cursor: 'pointer' } : undefined}
+                      >
+                        {isYearScoped ? <td>{r.year}</td> : null}
+                        <td>
+                          {config.tradesUrl && (
+                            <span className="v3-tr-expand-icon">{isComboOpen ? '▾' : '▸'}</span>
+                          )}
+                          {r[config.offsetKey]}
+                        </td>
+                        <td>{r.tp_pts}</td>
+                        <td>{n}</td>
+                        <td>{fmtPct(r.fill_rate)}</td>
+                        <td>{fmtPct(r.tp_hit_rate)}</td>
+                        <td>{fmtPct(r.no_fill_rate)}</td>
+                        <td>{wins}</td>
+                        <td>{losses}</td>
+                        <td>{noFill}</td>
+                      </tr>
+                      {isComboOpen && (
+                        <tr className="v3-tr-expanded">
+                          <td colSpan={isYearScoped ? 10 : 9} style={{ padding: '12px 16px 20px' }}>
+                            {!trades ? (
+                              <div style={{ fontFamily: 'var(--f-sans)', fontSize: '0.75rem', color: 'var(--c-muted)', textAlign: 'center', padding: 12 }}>
+                                Loading trades…
+                              </div>
+                            ) : trades.length === 0 ? (
+                              <div style={{ fontFamily: 'var(--f-sans)', fontSize: '0.75rem', color: 'var(--c-muted)', textAlign: 'center', padding: 12 }}>
+                                No filled trades for this combo.
+                              </div>
+                            ) : (
+                              <>
+                                <div style={{ fontFamily: 'var(--f-sans)', fontSize: '0.72rem', color: 'var(--c-muted)', marginBottom: 8, fontWeight: 600 }}>
+                                  Trades for {config.offsetLabel.toLowerCase()}={r[config.offsetKey]} TP={r.tp_pts} (filled-only)
+                                </div>
+                                <table className="bd-data-table" style={{ width: '100%' }}>
+                                  <thead>
+                                    <tr>
+                                      <th>Date</th>
+                                      <th>Side</th>
+                                      <th>Fill</th>
+                                      <th>Exit</th>
+                                      <th>PnL</th>
+                                      <th>Outcome</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {trades.map((t) => {
+                                      const tradeKey = t.date;
+                                      const isTradeOpen = expandedTrade === tradeKey;
+                                      const outcomeBadge =
+                                        t.outcome === 'win' ? 'v3-tr-badge win'
+                                        : t.outcome === 'loss' ? 'v3-tr-badge loss'
+                                        : t.outcome === 'no_fill' ? 'v3-tr-badge be'
+                                        : t.outcome === 'expired' ? 'v3-tr-badge timeout'
+                                        : 'v3-tr-badge be';
+                                      const pnlClass =
+                                        t.pnl > 0 ? 'v3-tr-pnl pos'
+                                        : t.pnl < 0 ? 'v3-tr-pnl neg'
+                                        : 'v3-tr-pnl zero';
+                                      return (
+                                        <Fragment key={tradeKey}>
+                                          <tr
+                                            className={'v3-tr-row' + (isTradeOpen ? ' expanded' : '')}
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              setExpandedTrade(isTradeOpen ? null : tradeKey);
+                                            }}
+                                            style={{ cursor: 'pointer' }}
+                                          >
+                                            <td className="v3-tr-date">
+                                              <span className="v3-tr-expand-icon">{isTradeOpen ? '▾' : '▸'}</span>
+                                              {t.date}
+                                            </td>
+                                            <td className="v3-tr-side">{t.filled_side?.toUpperCase() ?? '—'}</td>
+                                            <td style={{ fontVariantNumeric: 'tabular-nums' }}>{t.fill_price?.toFixed(2) ?? '—'}</td>
+                                            <td style={{ fontVariantNumeric: 'tabular-nums' }}>{t.exit_price?.toFixed(2) ?? '—'}</td>
+                                            <td className={pnlClass}>{t.pnl >= 0 ? '+' : ''}{t.pnl.toFixed(2)}</td>
+                                            <td><span className={outcomeBadge}>{t.outcome.replace(/_/g, ' ')}</span></td>
+                                          </tr>
+                                          {isTradeOpen && (
+                                            <tr className="v3-tr-expanded">
+                                              <td colSpan={6} style={{ padding: '16px 16px 24px' }}>
+                                                <TradeMiniChart
+                                                  eventShort={config.eventType}
+                                                  asset={asset === 'all' ? 'nq' : asset}
+                                                  tradeDate={t.date}
+                                                  side={t.filled_side ?? 'long'}
+                                                  pnl_pts={t.pnl}
+                                                  outcome={t.outcome}
+                                                  entryPrice={t.fill_price ?? undefined}
+                                                  slPrice={t.entry_price}
+                                                  slLabel="Release close"
+                                                  tpPrice={t.filled_side === 'long' ? t.tp_buy : t.tp_sell}
+                                                  entryTs={t.fill_ts ?? undefined}
+                                                  exitTs={t.exit_ts ?? undefined}
+                                                  exitPrice={t.exit_price ?? undefined}
+                                                  ts={t.ts}
+                                                />
+                                              </td>
+                                            </tr>
+                                          )}
+                                        </Fragment>
+                                      );
+                                    })}
+                                  </tbody>
+                                </table>
+                              </>
+                            )}
+                          </td>
+                        </tr>
+                      )}
+                    </Fragment>
                   );
                 })
               )}

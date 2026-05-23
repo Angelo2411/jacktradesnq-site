@@ -7,7 +7,6 @@ import { getAllEntries, getEntry } from '@/lib/studies';
 import { IconArrowUpRight } from '../_components/icons';
 import StraddleExplorer, { type ExplorerConfig } from '../_components/StraddleExplorer';
 import StraddleSwitcher from '../_components/StraddleSwitcher';
-import StraddleTrades from '../_components/StraddleTrades';
 import KillzoneSwitcher from '../_components/KillzoneSwitcher';
 import NwogSwitcher from '../_components/NwogSwitcher';
 import News830Explorer from '../_components/News830Explorer';
@@ -29,6 +28,7 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
     dataUrl: '/data/cpi-straddle.json',
     offsetKey: 'stop_pts',
     offsetLabel: 'Stop offset',
+    tradesUrl: '/data/cpi-straddle-trades.json',
   },
   nfp: {
     eventType: 'NFP',
@@ -37,6 +37,7 @@ const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
     dataUrl: '/data/nfp-straddle.json',
     offsetKey: 'entry_offset',
     offsetLabel: 'Entry offset',
+    tradesUrl: '/data/nfp-straddle-trades.json',
   },
 };
 
@@ -460,26 +461,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
         )}
       </div>
 
-      {slug === 'cpi-day-stats' ? (
-        <div style={{ marginTop: 48 }}>
-          <StraddleTrades
-            eventShort="cpi"
-            jsonUrl="/data/cpi-straddle-trades.json"
-            offsetLabel="Stop offset"
-          />
-        </div>
-      ) : null}
-      {slug === 'nfp' ? (
-        <div style={{ marginTop: 48 }}>
-          <StraddleTrades
-            eventShort="nfp"
-            jsonUrl="/data/nfp-straddle-trades.json"
-            offsetLabel="Entry offset"
-          />
-        </div>
-      ) : null}
-
-      <div className="bd-ctas" style={{ marginTop: 48 }}>
+<div className="bd-ctas" style={{ marginTop: 48 }}>
         {entry.category === 'tradingview' && entry.tradingviewUrl ? (
           <a className="bd-btn bd-btn-primary" href={entry.tradingviewUrl} target="_blank" rel="noreferrer noopener">
             Open on TradingView
