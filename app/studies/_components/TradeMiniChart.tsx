@@ -69,6 +69,7 @@ interface Props {
   ifvgBottom?: number;
   ifvgFormationTs?: string;
   variant?: 'tp1_be' | 'be_50' | 'no_be';
+  slLabel?: string;
 }
 
 function forwardFill(bars: EventBar[]): EventBar[] {
@@ -132,7 +133,7 @@ function LegendPill({ color, label, value }: { color: string; label: string; val
   );
 }
 
-export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl_pts, outcome, entryPrice: entryPriceProp, slPrice, tpPrice, entryTs, exitTs, exitPrice, ts, dataHigh, dataLow, sweepTs, sweepSide, ifvgTop, ifvgBottom, ifvgFormationTs, variant = 'tp1_be' }: Props) {
+export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl_pts, outcome, entryPrice: entryPriceProp, slPrice, tpPrice, entryTs, exitTs, exitPrice, ts, dataHigh, dataLow, sweepTs, sweepSide, ifvgTop, ifvgBottom, ifvgFormationTs, variant = 'tp1_be', slLabel }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [status, setStatus] = useState<'loading' | 'found' | 'missing'>('loading');
   const [snappedSL, setSnappedSL] = useState<number | null>(null);
@@ -210,10 +211,8 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         borderColor: cEdge,
         timeVisible: true,
         secondsVisible: false,
-        rightOffset: 1,
-        barSpacing: 12,
-        fixLeftEdge: true,
-        fixRightEdge: true,
+        rightOffset: 3,
+        barSpacing: 14,
         tickMarkFormatter: (time: number) => {
           const d = new Date(time * 1000);
           return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'America/New_York' });
@@ -499,7 +498,22 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       { time: candles[candles.length - 1].time, value: yMax + pad },
     ]);
 
-    chart.timeScale().fitContent();
+    // Zoom to the trade window (entry ± 25 min) instead of fitContent — keeps candles wide/readable.
+    const trySetRange = () => {
+      const firstTs = candles[0]?.time as number | undefined;
+      const lastTs = candles[candles.length - 1]?.time as number | undefined;
+      if (firstTs === undefined || lastTs === undefined) return;
+      const anchorMs = entryTs ? new Date(entryTs).getTime() : (ts ? new Date(ts).getTime() : t0Ms);
+      const anchorSec = Math.floor(anchorMs / 1000);
+      const from = Math.max(firstTs, anchorSec - 25 * 60) as UTCTimestamp;
+      const to = Math.min(lastTs, anchorSec + 25 * 60) as UTCTimestamp;
+      if ((to as number) > (from as number)) {
+        chart.timeScale().setVisibleRange({ from, to });
+      } else {
+        chart.timeScale().fitContent();
+      }
+    };
+    trySetRange();
 
     return () => { chart.remove(); };
   }, [status]);
@@ -515,7 +529,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: 8, width: '100%', maxWidth: 720, margin: '0 auto' }}>
         {status === 'loading' && (
           <div style={{
-            width: '100%', maxWidth: 720, height: 360,
+            width: '100%', maxWidth: 720, height: 520,
             background: 'oklch(0.97 0.01 80)',
             borderRadius: 8,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -526,7 +540,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         )}
         {status === 'missing' && (
           <div style={{
-            width: '100%', maxWidth: 720, height: 360,
+            width: '100%', maxWidth: 720, height: 520,
             background: 'oklch(0.97 0.01 80)',
             borderRadius: 8,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -542,7 +556,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
           <div
             ref={containerRef}
             style={{
-              width: '100%', maxWidth: 720, height: 360,
+              width: '100%', maxWidth: 720, height: 520,
               borderRadius: 8,
               overflow: 'hidden',
               border: '1px solid oklch(0.90 0.02 80)',
@@ -565,13 +579,13 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
             {variant === 'tp1_be' && tpPrice !== undefined && entryPriceProp !== undefined && (
               <LegendPill color="#4a8c3f" label="TP1" value={(entryPriceProp + 0.5 * (tpPrice - entryPriceProp)).toFixed(2)} />
             )}
-            {dataHigh !== undefined && (<LegendPill color="rgba(122,110,90,0.85)" label="Data H" value={dataHigh} />)}
+            {dataHigh !== undefined && (<LegendPill color="rgba(122,110,90,0.85)" label="Release H" value={dataHigh} />)}
             {ifvgTop !== undefined && ifvgBottom !== undefined && (
               <LegendPill color="#141414" label="IFVG" value={`${ifvgBottom}–${ifvgTop}`} />
             )}
-            {dataLow !== undefined && (<LegendPill color="rgba(122,110,90,0.85)" label="Data L" value={dataLow} />)}
+            {dataLow !== undefined && (<LegendPill color="rgba(122,110,90,0.85)" label="Release L" value={dataLow} />)}
             {entryPriceProp !== undefined && (<LegendPill color="#b08932" label="Entry" value={entryPriceProp} />)}
-            {slPrice !== undefined && (<LegendPill color="#b8452a" label="SL" value={snappedSL ?? slPrice} />)}
+            {slPrice !== undefined && (<LegendPill color="#b8452a" label={slLabel ?? 'SL'} value={snappedSL ?? slPrice} />)}
           </span>
         </div>
       </div>
