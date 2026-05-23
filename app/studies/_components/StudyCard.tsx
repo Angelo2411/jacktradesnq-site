@@ -28,7 +28,7 @@ function DescriptiveCard({ s }: { s: StudyStats }) {
 
   return (
     <Link
-      href={`/studies/${s.slug}/`}
+      href={s.href ?? `/studies/${s.slug}/`}
       className="bd-sc bd-sc--study"
       aria-label={`${s.title} — ${d?.primaryValue ?? ''} ${d?.primaryLabel ?? ''}`}
     >
@@ -110,7 +110,7 @@ function StrategyCard({ s }: { s: StudyStats }) {
 
   return (
     <Link
-      href={`/studies/${s.slug}/`}
+      href={s.href ?? `/studies/${s.slug}/`}
       className={`bd-sc${isMarginal ? ' bd-sc--muted' : ''}`}
       aria-label={`${s.title} — PF ${s.pf}, N ${s.n}`}
     >

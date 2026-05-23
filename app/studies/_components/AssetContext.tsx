@@ -1,5 +1,6 @@
 'use client';
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { usePathname } from 'next/navigation';
 
 export type AssetKey = 'nq' | 'gc' | 'si' | 'ym' | 'es';
 
@@ -13,6 +14,7 @@ function studySlug(pathname: string): string | null {
 
 export function AssetProvider({ children, assets = ['nq', 'gc'], slug }: { children: ReactNode; assets?: AssetKey[]; slug?: string }) {
   const [asset, setAssetState] = useState<AssetKey>('nq');
+  const pathname = usePathname();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -30,7 +32,7 @@ export function AssetProvider({ children, assets = ['nq', 'gc'], slug }: { child
     }
     const stored = localStorage.getItem('jtnq-asset');
     if (stored && assets.includes(stored as AssetKey)) setAssetState(stored as AssetKey);
-  }, []);
+  }, [pathname]);
 
   const setAsset = (a: AssetKey) => {
     setAssetState(a);

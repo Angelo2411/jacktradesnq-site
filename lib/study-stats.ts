@@ -812,6 +812,7 @@ export interface DescriptivePayload {
 
 export interface StudyStats {
   slug: string;
+  href?: string;
   title: string;
   asset: AssetType;
   family: FamilyType;
@@ -1513,6 +1514,57 @@ export function getStraddleStats(
   };
 }
 
+const FULLPORT_EVENTS: Array<{ slug: string; dataKey: string; eventName: string }> = [
+  { slug: 'cpi-day-stats',   dataKey: 'cpi',            eventName: 'CPI' },
+  { slug: 'nfp',             dataKey: 'nfp',            eventName: 'NFP' },
+  { slug: 'ppi',             dataKey: 'ppi',            eventName: 'PPI' },
+  { slug: 'pce',             dataKey: 'pce',            eventName: 'PCE' },
+  { slug: 'retail-sales',    dataKey: 'retail-sales',   eventName: 'Retail Sales' },
+  { slug: 'jobless-claims',  dataKey: 'jobless-claims', eventName: 'Jobless Claims' },
+  { slug: 'durable-goods',   dataKey: 'durable-goods',  eventName: 'Durable Goods' },
+];
+
+function getVirtualFullportCards(existing: StudyStats[]): StudyStats[] {
+  const existingSlugs = new Set(existing.map(s => s.slug));
+  const out: StudyStats[] = [];
+  for (const ev of FULLPORT_EVENTS) {
+    for (const asset of ['gc', 'si', 'ym', 'es'] as const) {
+      const staticKey = `${ev.slug}-${asset}`;
+      if (existingSlugs.has(staticKey)) continue;
+
+      const jsonPath = path.join(dataDir, `${ev.dataKey}-straddle-${asset}.json`);
+      if (!fs.existsSync(jsonPath)) continue;
+
+      const json = loadJson<StraddleJson>(jsonPath);
+      if (!json || !Array.isArray(json.ranked) || json.ranked.length === 0) continue;
+      const n = json.ranked[0].events_total ?? 0;
+      const straddleStats = processStraddle(json);
+      const ASSET = asset.toUpperCase() as AssetType;
+
+      out.push({
+        slug: `${ev.slug}__${asset}`,
+        href: `/studies/${ev.slug}/?asset=${asset}`,
+        title: `${ev.eventName} fullport (${ASSET})`,
+        asset: ASSET,
+        family: 'News',
+        window: 'NY 8:30',
+        kind: 'study',
+        pf: straddleStats.pf,
+        n,
+        edgePts: straddleStats.edgePts,
+        wr: straddleStats.wr,
+        wrByWeekday: straddleStats.wrByWeekday,
+        nByWeekday: straddleStats.nByWeekday,
+        bestVariant: straddleStats.bestVariant,
+        smt: false,
+        date: '2026-05-23',
+        excerpt: `${ev.eventName} 8:30 ET straddle — ${ASSET} ${n} events, best combo ${straddleStats.bestVariant ?? ''}`,
+      });
+    }
+  }
+  return out;
+}
+
 export function getAllStudyStats(): StudyStats[] {
   if (!fs.existsSync(contentDir)) return [];
 
@@ -1521,7 +1573,7 @@ export function getAllStudyStats(): StudyStats[] {
     .filter((d) => d.isDirectory())
     .map((d) => d.name);
 
-  return slugs
+  const base = slugs
     .map((slug) => {
       try {
         return processOneSlug(slug);
@@ -1530,6 +1582,8 @@ export function getAllStudyStats(): StudyStats[] {
       }
     })
     .filter((s): s is StudyStats => s !== null);
+
+  return [...base, ...getVirtualFullportCards(base)];
 }
 
 export function getStudyCountsByFamily(): { total: number; news: number; ib: number; ema: number; time: number; misc: number } {
