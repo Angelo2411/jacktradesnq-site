@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Fragment, useState, useMemo } from 'react';
 import type { WeekdayBreakdown, WeekdayStats, YearBreakdown, TradeRow, StrategyStats } from '@/lib/study-stats';
 import { aggregateYearTotals } from '@/lib/year-stats-utils';
@@ -36,15 +36,25 @@ const TAB_LIST: Array<{ key: Tab; label: string }> = [
   { key: 'methodology',  label: 'Methodology' },
 ];
 
+const LOOKBACK_LABELS: Record<string, string> = {
+  '3mo': '3 months', '6mo': '6 months', '1y': '1 year', '5y': '5 years', 'all': 'all-time',
+};
+
 function WeekdayBlock({
   breakdown,
   slug,
   smtLabel = 'SMT-on',
+  totalTradesCount = 0,
 }: {
   breakdown: WeekdayBreakdown;
   slug: string;
   smtLabel?: string;
+  totalTradesCount?: number;
 }) {
+  const sp = useSearchParams();
+  const router = useRouter();
+  const lookback = sp.get('lookback') || '1y';
+
   const days: Array<{ key: keyof WeekdayBreakdown; label: string }> = [
     { key: 'mon', label: 'Mon' },
     { key: 'tue', label: 'Tue' },
@@ -89,6 +99,24 @@ function WeekdayBlock({
     }
     return parts.join(' ');
   })();
+
+  const hasData = validDays.length > 0;
+
+  if (!hasData && lookback !== 'all' && totalTradesCount > 0) {
+    return (
+      <div className="v3-coming-soon">
+        No weekday data in the last {LOOKBACK_LABELS[lookback] ?? lookback}.
+        <br />
+        <button type="button" className="v3-empty-cta" onClick={() => {
+          const params = new URLSearchParams(sp.toString());
+          params.set('lookback', 'all');
+          router.replace(`/studies/${slug}/?${params.toString()}`, { scroll: false });
+        }}>
+          View all-time data ({totalTradesCount} trades)
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -146,13 +174,32 @@ function WeekdayBlock({
   );
 }
 
-function YearBlock({ breakdown, slug, smtLabel = 'SMT-on', trades = [], onJumpToTrades, isStraddle = false }: { breakdown: YearBreakdown; slug: string; smtLabel?: string; trades?: TradeRow[]; onJumpToTrades?: (year: number) => void; isStraddle?: boolean }) {
+function YearBlock({ breakdown, slug, smtLabel = 'SMT-on', trades = [], onJumpToTrades, isStraddle = false, totalTradesCount = 0 }: { breakdown: YearBreakdown; slug: string; smtLabel?: string; trades?: TradeRow[]; onJumpToTrades?: (year: number) => void; isStraddle?: boolean; totalTradesCount?: number }) {
+  const sp = useSearchParams();
+  const router = useRouter();
+  const lookback = sp.get('lookback') || '1y';
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
 
   const filteredTrades = useMemo(
     () => (selectedYear !== null ? trades.filter((t) => t.year === selectedYear) : trades),
     [trades, selectedYear]
   );
+
+  if (breakdown.length === 0 && lookback !== 'all' && totalTradesCount > 0) {
+    return (
+      <div className="v3-coming-soon">
+        No year data in the last {LOOKBACK_LABELS[lookback] ?? lookback}.
+        <br />
+        <button type="button" className="v3-empty-cta" onClick={() => {
+          const params = new URLSearchParams(sp.toString());
+          params.set('lookback', 'all');
+          router.replace(`/studies/${slug}/?${params.toString()}`, { scroll: false });
+        }}>
+          View all-time data ({totalTradesCount} trades)
+        </button>
+      </div>
+    );
+  }
 
   if (breakdown.length === 0) {
     return <div className="v3-coming-soon">No year data available.</div>;
@@ -294,6 +341,7 @@ function TradesBlock({
   smtLabel = 'SMT-on',
   filterLabel,
   barsSlug,
+  totalTradesCount = 0,
 }: {
   trades: TradeRow[];
   tradesByVariant?: { tp1_be: TradeRow[]; be_50: TradeRow[]; no_be: TradeRow[] };
@@ -308,7 +356,12 @@ function TradesBlock({
   smtLabel?: string;
   filterLabel?: string;
   barsSlug?: string;
+  totalTradesCount?: number;
 }) {
+  const sp = useSearchParams();
+  const router = useRouter();
+  const lookback = sp.get('lookback') || '1y';
+
   const activeTrades = tradesByVariant ? (tradesByVariant as Record<string, TradeRow[]>)[variant] ?? trades : trades;
   const dayFiltered = dayFilter && DAY_KEY_TO_NUM[dayFilter] !== undefined
     ? activeTrades.filter((t: TradeRow) => tradeWeekday(t.ts) === DAY_KEY_TO_NUM[dayFilter])
@@ -319,6 +372,22 @@ function TradesBlock({
 
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
+
+  if (activeTrades.length === 0 && lookback !== 'all' && totalTradesCount > 0) {
+    return (
+      <div className="v3-coming-soon">
+        No trade data in the last {LOOKBACK_LABELS[lookback] ?? lookback}.
+        <br />
+        <button type="button" className="v3-empty-cta" onClick={() => {
+          const params = new URLSearchParams(sp.toString());
+          params.set('lookback', 'all');
+          router.replace(`/studies/${slug}/?${params.toString()}`, { scroll: false });
+        }}>
+          View all-time data ({totalTradesCount} trades)
+        </button>
+      </div>
+    );
+  }
 
   if (trades.length === 0) {
     return <div className="v3-coming-soon">No trade data available.</div>;
@@ -700,7 +769,7 @@ export default function V3Tabs({
       {/* ── Tab content ── */}
       <div className="fb-animated">
         {resolvedTab === 'weekday' ? (
-          <WeekdayBlock breakdown={activeBreakdown} slug={slug} smtLabel={smtLabel} />
+          <WeekdayBlock breakdown={activeBreakdown} slug={slug} smtLabel={smtLabel} totalTradesCount={trades.length} />
         ) : resolvedTab === 'year' ? (
           <YearBlock
             breakdown={activeYearBreakdown}
@@ -709,6 +778,7 @@ export default function V3Tabs({
             trades={activeTrades}
             onJumpToTrades={(year) => { setJumpYear(year); setJumpTab('trades'); }}
             isStraddle={!!fbo}
+            totalTradesCount={trades.length}
           />
         ) : resolvedTab === 'trades' ? (
           <TradesBlock
@@ -725,6 +795,7 @@ export default function V3Tabs({
             smtLabel={smtLabel}
             barsSlug={barsSlug}
             filterLabel={fbo ? `${kpiVariantLabel} Stop · ${fbo.tpOptions?.find((o) => o.key === urlTp)?.label ?? urlTp} TP · ${fbo.smtOptions?.find((o) => o.key === searchParams.get('smt'))?.label ?? 'Both'}` : undefined}
+            totalTradesCount={trades.length}
           />
         ) : resolvedTab === 'methodology' ? (
           <div className="v3-meth-link">
