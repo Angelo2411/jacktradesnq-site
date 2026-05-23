@@ -1527,3 +1527,15 @@ export function getAllStudyStats(): StudyStats[] {
     })
     .filter((s): s is StudyStats => s !== null);
 }
+
+export function getStudyCountsByFamily(): { total: number; news: number; ib: number; ema: number; time: number; misc: number } {
+  const all = getAllStudyStats();
+  return {
+    total: all.length,
+    news: all.filter((s) => s.family === 'News').length,
+    ib: all.filter((s) => s.family === 'IB').length,
+    ema: all.filter((s) => s.family === 'EMA').length,
+    time: all.filter((s) => s.family === 'Time').length,
+    misc: all.filter((s) => s.family === 'Misc').length,
+  };
+}
