@@ -74,8 +74,8 @@ export default function StraddleCylinders({ trades }: { trades: TradeRow[] }) {
   const flats = total - wins - losses;
 
   const sideSegments: Segment[] = [
-    { name: 'Long', count: longs, pct: (longs / total) * 100, color: 'var(--c-accent)', text: 'var(--c-ink)' },
-    { name: 'Short', count: shorts, pct: (shorts / total) * 100, color: 'var(--c-ink)', text: 'var(--c-paper)' },
+    { name: 'Long', count: longs, pct: (longs / total) * 100, color: 'var(--c-sage-soft)', text: 'var(--c-ink)' },
+    { name: 'Short', count: shorts, pct: (shorts / total) * 100, color: 'var(--c-terra-soft)', text: 'var(--c-ink)' },
   ];
 
   const outcomeSegments: Segment[] = [
