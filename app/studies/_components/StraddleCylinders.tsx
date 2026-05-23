@@ -51,8 +51,13 @@ function Cylinder({ label, total, segments }: { label: string; total: number; se
             }}
           >
             <span>{s.pct.toFixed(1)}%</span>
-            {s.pct >= 12 && (
+            {s.pct >= 6 && (
               <span style={{ fontSize: '0.7rem', fontWeight: 500, opacity: 0.85, marginTop: 2 }}>
+                {s.name} · {s.count}
+              </span>
+            )}
+            {s.pct < 6 && s.pct > 0 && (
+              <span style={{ fontSize: '0.6rem', fontWeight: 500, opacity: 0.85, marginLeft: 6 }}>
                 {s.name} · {s.count}
               </span>
             )}
@@ -74,8 +79,8 @@ export default function StraddleCylinders({ trades }: { trades: TradeRow[] }) {
   const flats = total - wins - losses;
 
   const sideSegments: Segment[] = [
-    { name: 'Long', count: longs, pct: (longs / total) * 100, color: 'var(--c-sage-soft)', text: 'var(--c-ink)' },
-    { name: 'Short', count: shorts, pct: (shorts / total) * 100, color: 'var(--c-terra-soft)', text: 'var(--c-ink)' },
+    { name: 'Long', count: longs, pct: (longs / total) * 100, color: 'var(--c-accent)', text: 'var(--c-ink)' },
+    { name: 'Short', count: shorts, pct: (shorts / total) * 100, color: 'var(--c-yellow-soft)', text: 'var(--c-ink)' },
   ];
 
   const outcomeSegments: Segment[] = [
