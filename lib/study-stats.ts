@@ -854,11 +854,12 @@ function inferAsset(slug: string): AssetType {
 function inferFamily(slug: string, group?: string): FamilyType {
   if (group === '8:30 News Model') return 'News';
   const newsEvents = [
-    'cpi', 'nfp', 'ppi', 'pce', 'gdp', 'joblessclaims', 'empirestate',
-    'employmentcostindex', 'retailsales', 'gc-ifvg', 'durable-goods',
-    'durable_goods', 'fomc', 'ism-mfg', 'ism-services', 'ism_mfg',
-    'ism_services', 'jolts', 'philly-fed', 'philly_fed', 'cb-confidence',
-    'cb_confidence', 'si-ifvg', 'es-ifvg',
+    'cpi', 'nfp', 'ppi', 'pce', 'gdp', 'joblessclaims', 'jobless-claims',
+    'empirestate', 'employmentcostindex', 'retailsales', 'retail-sales',
+    'gc-ifvg', 'durable-goods', 'durable_goods', 'fomc', 'ism-mfg',
+    'ism-services', 'ism_mfg', 'ism_services', 'jolts', 'philly-fed',
+    'philly_fed', 'cb-confidence', 'cb_confidence', 'si-ifvg', 'es-ifvg',
+    'nq-ifvg',
   ];
   for (const ev of newsEvents) {
     if (slug.startsWith(ev) || slug.includes(ev)) return 'News';
