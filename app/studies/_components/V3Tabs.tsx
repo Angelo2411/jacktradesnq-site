@@ -102,17 +102,24 @@ function WeekdayBlock({
 
   const hasData = validDays.length > 0;
 
-  if (!hasData && lookback !== 'all' && totalTradesCount > 0) {
+  if (!hasData && totalTradesCount > 0) {
+    const isLookbackLimit = lookback !== 'all';
     return (
       <div className="v3-coming-soon">
-        No weekday data in the last {LOOKBACK_LABELS[lookback] ?? lookback}.
+        {isLookbackLimit
+          ? `No weekday data in the last ${LOOKBACK_LABELS[lookback] ?? lookback}.`
+          : 'No weekday data for this filter combo.'}
         <br />
         <button type="button" className="v3-empty-cta" onClick={() => {
           const params = new URLSearchParams(sp.toString());
-          params.set('lookback', 'all');
+          if (isLookbackLimit) {
+            params.set('lookback', 'all');
+          } else {
+            params.delete('variant'); params.delete('tp'); params.delete('smt'); params.delete('outcome');
+          }
           router.replace(`/studies/${slug}/?${params.toString()}`, { scroll: false });
         }}>
-          View all-time data ({totalTradesCount} trades)
+          {isLookbackLimit ? `View all-time data (${totalTradesCount} trades)` : 'Reset filters'}
         </button>
       </div>
     );
@@ -202,6 +209,21 @@ function YearBlock({ breakdown, slug, smtLabel = 'SMT-on', trades = [], onJumpTo
   }
 
   if (breakdown.length === 0) {
+    if (totalTradesCount > 0) {
+      return (
+        <div className="v3-coming-soon">
+          No year data for this filter combo.
+          <br />
+          <button type="button" className="v3-empty-cta" onClick={() => {
+            const params = new URLSearchParams(sp.toString());
+            params.delete('variant'); params.delete('tp'); params.delete('smt'); params.delete('outcome');
+            router.replace(`/studies/${slug}/?${params.toString()}`, { scroll: false });
+          }}>
+            Reset filters
+          </button>
+        </div>
+      );
+    }
     return <div className="v3-coming-soon">No year data available.</div>;
   }
 
@@ -384,6 +406,22 @@ function TradesBlock({
           router.replace(`/studies/${slug}/?${params.toString()}`, { scroll: false });
         }}>
           View all-time data ({totalTradesCount} trades)
+        </button>
+      </div>
+    );
+  }
+
+  if (activeTrades.length === 0 && totalTradesCount > 0) {
+    return (
+      <div className="v3-coming-soon">
+        No trades for this filter combo.
+        <br />
+        <button type="button" className="v3-empty-cta" onClick={() => {
+          const params = new URLSearchParams(sp.toString());
+          params.delete('variant'); params.delete('tp'); params.delete('smt'); params.delete('outcome');
+          router.replace(`/studies/${slug}/?${params.toString()}`, { scroll: false });
+        }}>
+          Reset filters
         </button>
       </div>
     );
