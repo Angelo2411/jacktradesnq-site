@@ -44,15 +44,27 @@ export default function AssetPills({ availableSlugs }: { availableSlugs?: string
 
   function handleClick(value: AssetKey) {
     setAsset(value);
-    if (inlineMode) return;
+    // Clear filter params that may be invalid under the new asset's grid
+    // (Stop/TP grids differ per asset; keeping stale variant/tp causes "No trade data available").
+    const params = new URLSearchParams(window.location.search);
+    const hadFilters = params.has('variant') || params.has('tp') || params.has('smt') || params.has('asset') || params.has('year');
+    params.delete('asset');
+    params.delete('year');
+    params.delete('variant');
+    params.delete('tp');
+    params.delete('smt');
+    if (inlineMode) {
+      if (hadFilters) {
+        const qs = params.toString();
+        router.replace(pathname + (qs ? '?' + qs : ''), { scroll: false });
+      }
+      return;
+    }
     const target = computeTargetSlug(pathname, value);
     const normPath = pathname.replace(/\/$/, '');
     if (!target || target.replace(/\/$/, '') === normPath) return;
     const targetSlug = slugFromTarget(target);
     if (slugSet && !slugSet.has(targetSlug)) return;
-    const params = new URLSearchParams(window.location.search);
-    params.delete('asset');
-    params.delete('year');
     const qs = params.toString();
     router.push(qs ? `${target}?${qs}` : target);
   }
