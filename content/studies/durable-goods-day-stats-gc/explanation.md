@@ -37,6 +37,8 @@ Release-bar measured at 8:30 ET. GC (Gold futures) — 1 GC pt = $10 / 1 MGC pt 
 - [Durable Goods NQ — release bar stats](/studies/durable-goods-day-stats/) — NQ version with full year-by-year breakdown.
 - [Full IFVG + SMT NQ backtest](/studies/durable-goods-ifvg-smt/) — sweep + IFVG entry on this event.
 - [Full IFVG + SMT GC backtest](/studies/durable-goods-ifvg-smt-gc/) — Gold variant.
+- [CPI straddle (fullport model)](/studies/cpi-day-stats/) — macro day fullport explorer.
+- [NFP straddle (fullport model)](/studies/nfp/) — macro day fullport explorer.
 
 ### Disclaimer
 

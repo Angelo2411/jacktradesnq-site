@@ -2,7 +2,7 @@
 
 ## Model
 
-Same engine as the NQ variant (IFVG inversion + opposite-leg sweep filter + tp1_be variant), executed on GC. Release time is 08:30 ET (Philadelphia Fed, third Thursday of month); sweep window extends to 10:30 ET, resolve deadline 16:00 ET.
+Same engine as the NQ variant (IFVG inversion + opposite-leg sweep filter + "TP1 + BE" variant), executed on GC. Release time is 08:30 ET (Philadelphia Fed, third Thursday of month); sweep window extends to 10:30 ET, resolve deadline 16:00 ET.
 
 ## SMT pair
 
@@ -14,4 +14,4 @@ Regional manufacturing data influences USD direction through rate-expectations. 
 
 ## Results
 
-See the KPI band above and the By weekday / By year / Trade list tabs for full breakdown.
+See the stat band above and the By weekday / By year / Trade list tabs for full breakdown.

@@ -15,6 +15,6 @@ ICT post-news IFVG entry on 14:00 ET FOMC statements, with optional **ES SMT con
 
 Take the trade **only if ES also reaches its target side** during the same 14:01→17:00 window. ES not following = fakeout, skip.
 
-ES SMT filter cut 9 setups — no_be PF 1.26 → 1.92, net +104 → +241 NQ pts on 87 FOMC events (35 setups before filter).
+ES SMT filter cut 9 setups — "TP only" PF 1.26 → 1.92, net +104 → +241 NQ pts on 87 FOMC events (35 setups before filter).
 
 Sample size 26 SMT trades — indicative not predictive.

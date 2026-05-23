@@ -15,7 +15,7 @@ A trade is kept **only if GC also reaches the same target** within the sweep win
 
 Silver and gold are both precious metals — Comex correlated metals with near-perfect co-movement. SMT divergence on this pair is a clean filter: when GC confirms the target, the rotation is statistically more likely to extend.
 
-### Performance — SI 10y (all 17 events combined, tp1_be variant)
+### Performance — SI 10y (all 17 events combined, "TP1 + BE" variant)
 
 Without SMT: 1563 trades, PF 1.20, net +9.5 SI pts, WR 57.6%. With GC SMT confirmation (922 trades): **PF 2.00, net +21.4 SI pts, WR 68.3%**. The SMT filter materially improves edge: drops 41% of setups while moving PF from 1.20 → 2.00 and lifting win rate to 68.3%.
 

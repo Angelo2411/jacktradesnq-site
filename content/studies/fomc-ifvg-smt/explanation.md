@@ -4,7 +4,7 @@ Sweep the release-bar high/low (14:00 ET 1m candle), wait for an FVG on the reje
 
 ### Performance — NQ 10y
 
-Without SMT: 35 trades, PF 1.26, net +104 NQ pts. With SMT: 26 trades remain, PF 1.92, net +241 NQ pts (no_be variant).
+Without SMT: 35 trades, PF 1.26, net +104 NQ pts. With SMT: 26 trades remain, PF 1.92, net +241 NQ pts ("TP only" variant).
 
 ### Why It Works
 

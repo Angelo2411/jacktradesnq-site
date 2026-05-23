@@ -15,11 +15,11 @@ A trade is kept **only if NQ also reaches the same target** within the sweep win
 
 NQ and ES are both equity index futures — near-perfect correlation. SMT divergence on this pair is a clean filter: when NQ confirms the target, the rotation is statistically more likely to extend.
 
-### Performance — ES 10y (all 17 events combined, tp1_be variant)
+### Performance — ES 10y (all 17 events combined, "TP1 + BE" variant)
 
 Without SMT: 730 trades, PF 0.85, net -151.2 ES pts, WR 41.5%. With NQ SMT confirmation (545 trades): **PF 1.56, net +265.7 ES pts, WR 50.5%**. The SMT filter materially improves edge: drops 25% of setups while moving PF from 0.85 → 1.56 and flipping the net from negative to positive.
 
-### Per-Event Performance (tp1_be + SMT)
+### Per-Event Performance (TP1 + BE, SMT-filtered)
 
 Strongest: CPI (PF 3.74, n=36), ISM Manufacturing (PF 3.69, n=13), PPI (PF 2.79, n=30), NFP (PF 2.46, n=31), Retail Sales (PF 2.07, n=40). Weakest: Philly Fed (PF 0.50), JOLTS (PF 0.62), CB Confidence (PF 0.66). See the per-event sub-pages for full breakdowns.
 

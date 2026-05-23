@@ -37,6 +37,8 @@ Release-bar measured at 10:00 ET. ES (S&P 500 futures) — 1 ES pt ≈ $50 / 1 M
 - [ISM Manufacturing NQ — release bar stats](/studies/ism-mfg-day-stats/) — NQ version with full year-by-year breakdown.
 - [Full IFVG + SMT NQ backtest](/studies/ism-mfg-ifvg-smt/) — sweep + IFVG entry on this event.
 - [Full IFVG + SMT ES backtest](/studies/ism-mfg-ifvg-smt-es/) — ES variant.
+- [CPI straddle (fullport model)](/studies/cpi-day-stats/) — macro day fullport explorer.
+- [NFP straddle (fullport model)](/studies/nfp/) — macro day fullport explorer.
 
 ### Disclaimer
 

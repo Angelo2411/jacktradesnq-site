@@ -37,6 +37,8 @@ Release-bar measured at 8:30 ET. ES (S&P 500 futures) — 1 ES pt ≈ $50 / 1 ME
 - [CPI NQ — release bar stats](/studies/cpi-day-stats/) — NQ version with full year-by-year breakdown.
 - [Full IFVG + SMT NQ backtest](/studies/cpi-ifvg-smt/) — sweep + IFVG entry on this event.
 - [Full IFVG + SMT ES backtest](/studies/cpi-ifvg-smt-es/) — ES variant.
+- [CPI straddle (fullport model)](/studies/cpi-day-stats/) — macro day fullport explorer.
+- [NFP straddle (fullport model)](/studies/nfp/) — macro day fullport explorer.
 
 ### Disclaimer
 

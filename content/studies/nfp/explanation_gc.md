@@ -37,3 +37,9 @@ Filter the 49-combo Gold grid live — pick offset / TP / year window — and do
 
 <div data-explorer="nfp"></div>
 
+
+### Related
+
+- [CPI straddle (fullport model)](/studies/cpi-day-stats/) — same fullport explorer on CPI.
+- [Full IFVG + SMT NQ — NFP](/studies/nfp-ifvg-smt/) — sweep + IFVG entry variant on NFP.
+- [Full IFVG + SMT GC — NFP](/studies/nfp-ifvg-smt-gc/) — Gold variant.
