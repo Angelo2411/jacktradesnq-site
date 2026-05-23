@@ -35,7 +35,7 @@ export interface StraddleData {
 }
 
 export interface ExplorerConfig {
-  eventType: 'CPI' | 'NFP';
+  eventType: 'CPI' | 'NFP' | 'Jobless Claims' | 'PPI' | 'Retail Sales' | 'Durable Goods' | 'PCE';
   title: string;
   subtitle: string;
   dataUrl: string;
