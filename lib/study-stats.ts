@@ -633,6 +633,8 @@ export type TradeRow = {
   ifvg_top?: number;
   ifvg_bottom?: number;
   ifvg_formation_ts?: string;
+  x_stop?: number;
+  y_tp?: number;
 };
 
 type PriceOverlayRow = {
@@ -1315,6 +1317,195 @@ function processOneSlug(slug: string): StudyStats | null {
     excerpt,
     descriptive,
     ...stats,
+  };
+}
+
+// ── Straddle trade list / stats (for the 5-asset straddle explorer) ──────────
+
+const STRADDLE_SLUGS = ['cpi-day-stats', 'nfp', 'jobless-claims', 'ppi', 'retail-sales', 'durable-goods', 'pce'];
+
+interface StraddleTrade {
+  date: string;
+  ts: string;
+  entry_price: number;
+  X: number;
+  Y: number;
+  buy_stop: number;
+  sell_stop: number;
+  tp_buy: number;
+  tp_sell: number;
+  filled_side: string | null;
+  fill_ts: string | null;
+  fill_price: number | null;
+  exit_ts: string | null;
+  exit_price: number | null;
+  pnl: number;
+  outcome: string;
+}
+
+interface StraddleTradesJson {
+  event: string;
+  generated_at: string;
+  combos: Array<{
+    X: number;
+    Y: number;
+    trades: StraddleTrade[];
+  }>;
+}
+
+function loadStraddleTrades(slug: string, asset: string): StraddleTradesJson | null {
+  const base = path.join(dataDir);
+  const dataKey = slug === 'cpi-day-stats' ? 'cpi' : slug;
+  const suffix = asset === 'nq' ? '' : `-${asset}`;
+  const fp = path.join(base, `${dataKey}-straddle-trades${suffix}.json`);
+  if (!fs.existsSync(fp)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(fp, 'utf-8')) as StraddleTradesJson;
+  } catch {
+    return null;
+  }
+}
+
+const STRADDLE_STOPS: Record<string, number[]> = {
+  nq: [25, 30, 35, 40],
+  es: [5, 6, 7, 8],
+  ym: [50, 60, 70, 80],
+  gc: [3, 4, 5, 6],
+  si: [0.05, 0.07, 0.10, 0.12],
+};
+
+const STRADDLE_TPS: Record<string, number[]> = {
+  nq: [15, 20, 25],
+  es: [3, 4, 5],
+  ym: [30, 40, 50],
+  gc: [2, 2.5, 3],
+  si: [0.03, 0.05, 0.07],
+};
+
+export function getStraddleStopGrid(asset: string): number[] {
+  return STRADDLE_STOPS[asset] ?? STRADDLE_STOPS.nq;
+}
+
+export function getStraddleTpGrid(asset: string): number[] {
+  return STRADDLE_TPS[asset] ?? STRADDLE_TPS.nq;
+}
+
+export function getStraddleAllTrades(slug: string, asset: string): TradeRow[] {
+  const dataKey = slug === 'cpi-day-stats' ? 'cpi' : slug;
+  const suffix = asset === 'nq' ? '' : `-${asset}`;
+  const fp = path.join(dataDir, `${dataKey}-straddle-trades${suffix}.json`);
+  if (!fs.existsSync(fp)) return [];
+
+  let json: StraddleTradesJson;
+  try {
+    json = JSON.parse(fs.readFileSync(fp, 'utf-8')) as StraddleTradesJson;
+  } catch {
+    return [];
+  }
+
+  const allTrades: TradeRow[] = [];
+  for (const combo of json.combos) {
+    for (const t of combo.trades) {
+      if (!t.filled_side) continue;
+      const ts = t.fill_ts || t.ts;
+      const tpPrice = t.filled_side === 'long' ? t.tp_buy : t.filled_side === 'short' ? t.tp_sell : undefined;
+      allTrades.push({
+        ts,
+        year: new Date(t.ts).getUTCFullYear(),
+        side: t.filled_side,
+        pnl_pts: Math.round(t.pnl * 100) / 100,
+        outcome: (() => {
+          const o = t.outcome ?? '';
+          if (o === 'tp_hit') return 'win';
+          if (o === 'sl_hit') return 'loss';
+          if (o.startsWith('expired')) return t.pnl > 0 ? 'win' : t.pnl < 0 ? 'expired' : 'flat';
+          return o;
+        })(),
+        x_stop: combo.X,
+        y_tp: combo.Y,
+        entry_price: t.fill_price ?? t.entry_price,
+        sl_price: undefined,
+        tp_price: tpPrice,
+        entry_ts: t.fill_ts || undefined,
+        exit_ts: t.exit_ts || undefined,
+        exit_price: t.exit_price ?? undefined,
+      });
+    }
+  }
+
+  return allTrades.sort((a, b) => (a.ts < b.ts ? -1 : a.ts > b.ts ? 1 : 0));
+}
+
+export function getStraddleTradeList(slug: string, asset: string, stopKey: number, tpKey: number, sideFilter: 'long' | 'short' | 'all'): TradeRow[] {
+  const json = loadStraddleTrades(slug, asset);
+  if (!json) return [];
+
+  const combo = json.combos.find((c) => c.X === stopKey && c.Y === tpKey);
+  if (!combo) return [];
+
+  return combo.trades
+    .filter((t) => {
+      if (sideFilter === 'all') return true;
+      return t.filled_side === sideFilter;
+    })
+    .map((t) => {
+      const ts = t.fill_ts || t.ts;
+      const entryTs = t.fill_ts || undefined;
+      const exitTs = t.exit_ts || undefined;
+      const entryPrice = t.fill_price ?? t.entry_price;
+      const exitPrice = t.exit_price ?? undefined;
+      const tpPrice = t.filled_side === 'long' ? t.tp_buy : t.filled_side === 'short' ? t.tp_sell : undefined;
+      return {
+        ts,
+        year: new Date(t.ts).getUTCFullYear(),
+        side: t.filled_side || 'unknown',
+        pnl_pts: Math.round(t.pnl * 100) / 100,
+        outcome: t.outcome === 'tp_hit' ? 'win' : t.outcome === 'sl_hit' ? 'loss' : t.outcome === 'expired' ? 'timeout' : t.outcome,
+        x_stop: stopKey,
+        y_tp: tpKey,
+        entry_price: entryPrice,
+        sl_price: undefined,
+        tp_price: tpPrice,
+        entry_ts: entryTs,
+        exit_ts: exitTs,
+        exit_price: exitPrice,
+      };
+    })
+    .sort((a, b) => (a.ts < b.ts ? -1 : a.ts > b.ts ? 1 : 0));
+}
+
+export function getStraddleStats(
+  slug: string, asset: string, stopKey: number, tpKey: number, sideFilter: 'long' | 'short' | 'all',
+): { pf: number; n: number; net: number; wr: number; dateFrom: string; dateTo: string } {
+  const json = loadStraddleTrades(slug, asset);
+  if (!json) return { pf: 0, n: 0, net: 0, wr: 0, dateFrom: '', dateTo: '' };
+
+  const combo = json.combos.find((c) => c.X === stopKey && c.Y === tpKey);
+  if (!combo) return { pf: 0, n: 0, net: 0, wr: 0, dateFrom: '', dateTo: '' };
+
+  const trades = sideFilter === 'all'
+    ? combo.trades
+    : combo.trades.filter((t) => t.filled_side === sideFilter);
+
+  const n = trades.length;
+  if (n === 0) return { pf: 0, n: 0, net: 0, wr: 0, dateFrom: '', dateTo: '' };
+
+  const wins = trades.filter((t) => t.pnl > 0);
+  const losses = trades.filter((t) => t.pnl < 0);
+  const winPnl = wins.reduce((s, t) => s + t.pnl, 0);
+  const lossPnl = Math.abs(losses.reduce((s, t) => s + t.pnl, 0));
+  const net = trades.reduce((s, t) => s + t.pnl, 0);
+  const pf = lossPnl > 0 ? winPnl / lossPnl : winPnl > 0 ? 99 : 0;
+  const wr = Math.round((wins.length / n) * 100);
+
+  const dates = trades.map((t) => t.date).sort();
+  return {
+    pf: Math.round(pf * 100) / 100,
+    n,
+    net: Math.round(net * 100) / 100,
+    wr,
+    dateFrom: dates[0] ?? '',
+    dateTo: dates[dates.length - 1] ?? '',
   };
 }
 

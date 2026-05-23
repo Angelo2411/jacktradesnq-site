@@ -28,7 +28,7 @@ export default function DataTables({ strats, marketStudies, totalTrades, period,
 
   const filteredStrats = useMemo(() => {
     let list = strats;
-    if (asset !== 'all') list = list.filter((s) => s.asset.toLowerCase() === asset);
+    list = list.filter((s) => s.asset.toLowerCase() === asset);
     if (event) list = list.filter((s) => s.event === event);
     if (session === '8:30 ET') { /* all strats are 8:30, no-op */ }
     else if (session) list = [];
@@ -42,7 +42,7 @@ export default function DataTables({ strats, marketStudies, totalTrades, period,
 
   const filteredStudies = useMemo(() => {
     let list = marketStudies;
-    if (asset !== 'all') list = list.filter((ms) => ms.asset.toLowerCase() === asset);
+    list = list.filter((ms) => ms.asset.toLowerCase() === asset);
     if (family === '8:30 News') list = [];
     if (event) list = [];
     if (session && session !== '8:30 ET') list = [];
@@ -50,7 +50,7 @@ export default function DataTables({ strats, marketStudies, totalTrades, period,
   }, [marketStudies, asset, family, event, session]);
 
   const visibleTrades = filteredStrats.reduce((s, st) => s + st.n, 0);
-  const visibleAssets = asset === 'all' ? allAssets : asset.toUpperCase();
+  const visibleAssets = asset.toUpperCase();
 
   return (
     <>

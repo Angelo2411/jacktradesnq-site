@@ -68,7 +68,8 @@ interface Props {
   ifvgTop?: number;
   ifvgBottom?: number;
   ifvgFormationTs?: string;
-  variant?: 'tp1_be' | 'be_50' | 'no_be';
+  variant?: string;
+  barsSlug?: string;
   slLabel?: string;
 }
 
@@ -133,7 +134,7 @@ function LegendPill({ color, label, value }: { color: string; label: string; val
   );
 }
 
-export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl_pts, outcome, entryPrice: entryPriceProp, slPrice, tpPrice, entryTs, exitTs, exitPrice, ts, dataHigh, dataLow, sweepTs, sweepSide, ifvgTop, ifvgBottom, ifvgFormationTs, variant = 'tp1_be', slLabel }: Props) {
+export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl_pts, outcome, entryPrice: entryPriceProp, slPrice, tpPrice, entryTs, exitTs, exitPrice, ts, dataHigh, dataLow, sweepTs, sweepSide, ifvgTop, ifvgBottom, ifvgFormationTs, variant = 'tp1_be', barsSlug, slLabel }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [status, setStatus] = useState<'loading' | 'found' | 'missing'>('loading');
   const [snappedSL, setSnappedSL] = useState<number | null>(null);
@@ -143,9 +144,14 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
   const t0MsRef = useRef<number>(0);
 
   const isMultiEvent = eventShort === 'Multi-event' || eventShort === 'multi-event' || eventShort === '';
-  const resolvedShort = EVENT_SHORT[eventShort] ?? eventShort;
-  const suffix = asset === 'gc' ? '_gc' : asset === 'es' ? '_es' : asset === 'si' ? '_si' : asset === 'ym' ? '_ym' : '';
-  const jsonPath = isMultiEvent ? null : `/data/${resolvedShort}_event_bars${suffix}.json`;
+  const suffix = asset === 'nq' ? '' : asset === 'gc' ? '-gc' : asset === 'es' ? '-es' : asset === 'si' ? '-si' : asset === 'ym' ? '-ym' : '';
+  const jsonPath = (() => {
+    if (isMultiEvent) return null;
+    if (barsSlug) return `/data/event_bars/${barsSlug}-bars${suffix}.json`;
+    const resolvedShort = EVENT_SHORT[eventShort] ?? eventShort;
+    const oldSuffix = asset === 'gc' ? '_gc' : asset === 'es' ? '_es' : asset === 'si' ? '_si' : asset === 'ym' ? '_ym' : '';
+    return `/data/${resolvedShort}_event_bars${oldSuffix}.json`;
+  })();
 
   useEffect(() => {
     if (isMultiEvent) { setStatus('missing'); return; }
@@ -330,6 +336,40 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         { time: slStartSec, value: displaySL },
         { time: exitSec, value: displaySL },
       ]);
+    } else if (entryPriceProp !== undefined && tpPrice !== undefined && slPrice === undefined && entryTs !== undefined) {
+      // Straddle overlay: entry + TP lines, no SL
+      const entrySec = (Math.floor(new Date(entryTs).getTime() / 1000)) as UTCTimestamp;
+      const lastCandle = candles[candles.length - 1];
+      const chartEndSec = (lastCandle?.time as number) ?? entrySec;
+      if (chartEndSec > entrySec) {
+        const exitSec = chartEndSec as UTCTimestamp;
+
+        const entrySegment = chart.addSeries(LineSeries, {
+          color: cGold,
+          lineWidth: 2,
+          lineStyle: 0,
+          priceLineVisible: false,
+          lastValueVisible: true,
+          title: 'Entry',
+        });
+        entrySegment.setData([
+          { time: entrySec, value: entryPriceProp },
+          { time: exitSec, value: entryPriceProp },
+        ]);
+
+        const tpSegment = chart.addSeries(LineSeries, {
+          color: cUp,
+          lineWidth: 1,
+          lineStyle: LineStyle.Dashed,
+          priceLineVisible: false,
+          lastValueVisible: true,
+          title: 'TP',
+        });
+        tpSegment.setData([
+          { time: entrySec, value: tpPrice },
+          { time: exitSec, value: tpPrice },
+        ]);
+      }
     } else if (effectiveEntryPrice !== null && effectiveEntryPrice !== undefined) {
       // GC fallback: no segments, just a price line for entry only
       candleSeries.createPriceLine({
@@ -498,7 +538,6 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       { time: candles[candles.length - 1].time, value: yMax + pad },
     ]);
 
-    // Zoom to the trade window (entry ± 25 min) instead of fitContent — keeps candles wide/readable.
     const trySetRange = () => {
       const firstTs = candles[0]?.time as number | undefined;
       const lastTs = candles[candles.length - 1]?.time as number | undefined;
@@ -585,7 +624,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
             )}
             {dataLow !== undefined && (<LegendPill color="rgba(122,110,90,0.85)" label="Release L" value={dataLow} />)}
             {entryPriceProp !== undefined && (<LegendPill color="#b08932" label="Entry" value={entryPriceProp} />)}
-            {slPrice !== undefined && (<LegendPill color="#b8452a" label={slLabel ?? 'SL'} value={snappedSL ?? slPrice} />)}
+            {slPrice !== undefined && (<LegendPill color="#b8452a" label={slLabel ?? "SL"} value={snappedSL ?? slPrice} />)}
           </span>
         </div>
       </div>

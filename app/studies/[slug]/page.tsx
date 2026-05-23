@@ -5,8 +5,8 @@ import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 import { getAllEntries, getEntry } from '@/lib/studies';
 import { IconArrowUpRight } from '../_components/icons';
-import StraddleExplorer, { type ExplorerConfig } from '../_components/StraddleExplorer';
-import StraddleSwitcher from '../_components/StraddleSwitcher';
+import { AssetProvider, type AssetKey } from '../_components/AssetContext';
+import AssetPills from '../_components/AssetPills';
 import KillzoneSwitcher from '../_components/KillzoneSwitcher';
 import NwogSwitcher from '../_components/NwogSwitcher';
 import News830Explorer from '../_components/News830Explorer';
@@ -17,55 +17,47 @@ import BilingualPdfLink from '../_components/BilingualPdfLink';
 import BilingualLede from '../_components/BilingualLede';
 import BilingualTitle from '../_components/BilingualTitle';
 import V3Tabs from '../_components/V3Tabs';
+import StraddleWrappedTabs from '../_components/StraddleWrappedTabs';
 import PerformanceTearsheet from '../_components/PerformanceTearsheet';
-import { getStrategyStats, getStrategyStatsByVariant, getStrategyStatsByVariantAndSmt, getWeekdayBreakdown, getYearBreakdown, getTradeList } from '@/lib/study-stats';
-
-const EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
-  cpi: {
-    eventType: 'CPI',
-    title: 'CPI straddle — interactive explorer',
-    subtitle: 'Pick filters → live stats refresh → download a tailored PDF report.',
-    dataUrl: '/data/cpi-straddle.json',
-    offsetKey: 'stop_pts',
-    offsetLabel: 'Stop offset',
-    tradesUrl: '/data/cpi-straddle-trades.json',
-  },
-  nfp: {
-    eventType: 'NFP',
-    title: 'NFP straddle — interactive explorer',
-    subtitle: 'Pick filters → live stats refresh → download a tailored PDF report.',
-    dataUrl: '/data/nfp-straddle.json',
-    offsetKey: 'entry_offset',
-    offsetLabel: 'Entry offset',
-    tradesUrl: '/data/nfp-straddle-trades.json',
-  },
-};
-
-const GC_EXPLORER_CONFIGS: Record<string, ExplorerConfig> = {
-  cpi: {
-    eventType: 'CPI',
-    title: 'CPI straddle (Gold) — interactive explorer',
-    subtitle: 'Pick filters → live stats refresh → download a tailored PDF report.',
-    dataUrl: '/data/cpi-straddle-gc.json',
-    offsetKey: 'stop_pts',
-    offsetLabel: 'Stop offset',
-  },
-  nfp: {
-    eventType: 'NFP',
-    title: 'NFP straddle (Gold) — interactive explorer',
-    subtitle: 'Pick filters → live stats refresh → download a tailored PDF report.',
-    dataUrl: '/data/nfp-straddle-gc.json',
-    offsetKey: 'entry_offset',
-    offsetLabel: 'Entry offset',
-  },
-};
+import { getStrategyStats, getStrategyStatsByVariant, getStrategyStatsByVariantAndSmt, getWeekdayBreakdown, getYearBreakdown, getTradeList, getStraddleAllTrades } from '@/lib/study-stats';
 
 const EXPLORER_RE =
-  /<div data-explorer="(cpi|nfp|nfp-ifvg-smt|cpi-ifvg-smt|ppi-ifvg-smt|retailsales-ifvg-smt|pce-ifvg-smt|gdp-ifvg-smt|joblessclaims-ifvg-smt|empirestate-ifvg-smt|employmentcostindex-ifvg-smt)">\s*<\/div>/i;
+  /<div data-explorer="(cpi|nfp|jobless-claims|ppi|retail-sales|durable-goods|pce|nfp-ifvg-smt|cpi-ifvg-smt|ppi-ifvg-smt|retailsales-ifvg-smt|pce-ifvg-smt|gdp-ifvg-smt|joblessclaims-ifvg-smt|empirestate-ifvg-smt|employmentcostindex-ifvg-smt)">\s*<\/div>/i;
 
-const SWITCHER_SLUGS = new Set(['cpi-day-stats', 'nfp']);
+const STRADDLE_BARS_KEY: Record<string, string> = {
+  'cpi-day-stats': 'cpi',
+  'nfp': 'nfp',
+  'jobless-claims': 'jobless-claims',
+  'ppi': 'ppi',
+  'retail-sales': 'retail-sales',
+  'durable-goods': 'durable-goods',
+  'pce': 'pce',
+};
+
+const EVENT_INFO: Record<string, { eventType: string; titlePrefix: string }> = {
+  cpi: { eventType: 'CPI', titlePrefix: 'CPI' },
+  nfp: { eventType: 'NFP', titlePrefix: 'NFP' },
+  'jobless-claims': { eventType: 'Jobless Claims', titlePrefix: 'Jobless Claims' },
+  ppi: { eventType: 'PPI', titlePrefix: 'PPI' },
+  'retail-sales': { eventType: 'Retail Sales', titlePrefix: 'Retail Sales' },
+  'durable-goods': { eventType: 'Durable Goods', titlePrefix: 'Durable Goods' },
+  pce: { eventType: 'PCE', titlePrefix: 'PCE' },
+};
+
 const KILLZONE_SLUG = 'killzone-past-vs-now';
 const NWOG_SLUG = 'asia-open';
+
+const STRADDLE_V3_SLUGS = new Set(['cpi-day-stats', 'nfp', 'jobless-claims', 'ppi', 'retail-sales', 'durable-goods', 'pce']);
+
+const STRADDLE_BARS_SLUG: Record<string, string> = {
+  'cpi-day-stats': 'cpi',
+  'nfp': 'nfp',
+  'jobless-claims': 'jobless-claims',
+  'ppi': 'ppi',
+  'retail-sales': 'retail-sales',
+  'durable-goods': 'durable-goods',
+  'pce': 'pce',
+};
 
 const IFVG_SLUGS = new Set([
   'cpi-ifvg-smt', 'nfp-ifvg-smt', 'ppi-ifvg-smt', 'pce-ifvg-smt',
@@ -152,24 +144,25 @@ export default async function BacktestedDetail({ params }: PageProps) {
   const wordCount = entry.explanationHtml.replace(/<[^>]*>/g, ' ').split(/\s+/).filter(Boolean).length;
   const readMin = Math.max(1, Math.ceil(wordCount / 200));
 
-  const isStraddleSwitcher = SWITCHER_SLUGS.has(slug);
+  const isStraddleSwitcher = false;
   const isKillzone = slug === KILLZONE_SLUG;
   const isNwog = slug === NWOG_SLUG;
   const isIfvg = IFVG_SLUGS.has(slug);
+  const isStraddleV3 = STRADDLE_V3_SLUGS.has(slug);
 
   const match = entry.explanationHtmlNq.match(EXPLORER_RE);
   const explorerKey = match ? match[1].toLowerCase() : null;
-  const explorerConfig = explorerKey && EXPLORER_CONFIGS[explorerKey] ? EXPLORER_CONFIGS[explorerKey] : null;
   const news830Config = explorerKey && NEWS830_CONFIGS[explorerKey] ? NEWS830_CONFIGS[explorerKey] : null;
   const isNews830 = news830Config !== null;
-
-  const hasSplit = isStraddleSwitcher && !!explorerKey;
   const splitter = (html: string) =>
-    hasSplit || explorerConfig || isNews830
+    isNews830
       ? html.split(EXPLORER_RE).filter((_, i) => i !== 1)
       : [html, ''];
   const [htmlBeforeNq, htmlAfterNq] = splitter(entry.explanationHtmlNq);
   const [htmlBeforeGc, htmlAfterGc] = splitter(entry.explanationHtmlGc);
+  const [htmlBeforeEs, htmlAfterEs] = entry.explanationHtmlEs ? splitter(entry.explanationHtmlEs) : ['', ''];
+  const [htmlBeforeSi, htmlAfterSi] = entry.explanationHtmlSi ? splitter(entry.explanationHtmlSi) : ['', ''];
+  const [htmlBeforeYm, htmlAfterYm] = entry.explanationHtmlYm ? splitter(entry.explanationHtmlYm) : ['', ''];
 
   // Second pass: detect equity curve placeholder inside htmlBefore (it appears before the explorer)
   const equityMatchBefore = entry.explanationHtmlNq.match(EQUITY_RE);
@@ -210,20 +203,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
         const [hb, ha] = body.split(EXPLORER_RE).filter((_, i) => i !== 1);
         const key = expMatch[1].toLowerCase();
         let explorerNode: React.ReactNode = null;
-        if (SWITCHER_SLUGS.has(slug) && EXPLORER_CONFIGS[key] && GC_EXPLORER_CONFIGS[key]) {
-          const fpM = FULLPORT_PDFS[key];
-          explorerNode = (
-            <StraddleSwitcher
-              nqConfig={EXPLORER_CONFIGS[key]}
-              gcConfig={GC_EXPLORER_CONFIGS[key]}
-              fullportPdfNq={fpM?.nq}
-              fullportPdfGc={fpM?.gc}
-              fullportLabel={fpM?.label}
-            />
-          );
-        } else if (EXPLORER_CONFIGS[key]) {
-          explorerNode = <StraddleExplorer config={EXPLORER_CONFIGS[key]} embedded />;
-        } else if (NEWS830_CONFIGS[key]) {
+        if (isNews830 && NEWS830_CONFIGS[key]) {
           explorerNode = (
             <News830Explorer
               dataUrl={NEWS830_CONFIGS[key].dataUrl}
@@ -241,20 +221,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
   }
 
   let desktopExplorerNode: React.ReactNode = null;
-  if (isStraddleSwitcher && explorerKey && EXPLORER_CONFIGS[explorerKey] && GC_EXPLORER_CONFIGS[explorerKey]) {
-    const fp = FULLPORT_PDFS[explorerKey];
-    desktopExplorerNode = (
-      <StraddleSwitcher
-        nqConfig={EXPLORER_CONFIGS[explorerKey]}
-        gcConfig={GC_EXPLORER_CONFIGS[explorerKey]}
-        fullportPdfNq={fp?.nq}
-        fullportPdfGc={fp?.gc}
-        fullportLabel={fp?.label}
-      />
-    );
-  } else if (explorerConfig) {
-    desktopExplorerNode = <StraddleExplorer config={explorerConfig} embedded />;
-  } else if (isNews830) {
+  if (isNews830) {
     desktopExplorerNode = (
       <News830Explorer
         dataUrl={news830Config!.dataUrl}
@@ -320,12 +287,12 @@ export default async function BacktestedDetail({ params }: PageProps) {
       <div className={entry.mobileHtml ? 'bd-show-desktop' : undefined}>
         {hasDesktopSplit ? (
           <>
-            <BilingualProse htmlNq={htmlBeforeNq} htmlGc={htmlBeforeGc} />
+            <BilingualProse htmlNq={htmlBeforeNq} htmlGc={htmlBeforeGc} htmlEs={htmlBeforeEs || undefined} htmlSi={htmlBeforeSi || undefined} htmlYm={htmlBeforeYm || undefined} />
             {desktopExplorerNode}
-            <BilingualProse htmlNq={htmlAfterNq} htmlGc={htmlAfterGc} />
+            <BilingualProse htmlNq={htmlAfterNq} htmlGc={htmlAfterGc} htmlEs={htmlAfterEs || undefined} htmlSi={htmlAfterSi || undefined} htmlYm={htmlAfterYm || undefined} />
           </>
         ) : (
-          <BilingualProse htmlNq={entry.explanationHtmlNq} htmlGc={entry.explanationHtmlGc} htmlEs={entry.explanationHtmlEs} htmlSi={entry.explanationHtmlSi} />
+          <BilingualProse htmlNq={entry.explanationHtmlNq} htmlGc={entry.explanationHtmlGc} htmlEs={entry.explanationHtmlEs} htmlSi={entry.explanationHtmlSi} htmlYm={entry.explanationHtmlYm} />
         )}
       </div>
       {entry.pdfFileNq ? (
@@ -339,6 +306,62 @@ export default async function BacktestedDetail({ params }: PageProps) {
       ) : null}
     </>
   );
+
+  // Straddle V3: unified V3Tabs UX (replaces StraddleSwitcher)
+  if (isStraddleV3) {
+    const barsSlug = STRADDLE_BARS_SLUG[slug] ?? slug;
+    const eventName = EVENT_INFO[STRADDLE_BARS_KEY[slug] ?? slug]?.eventType ?? entry.title;
+    const releaseTime = '8:30 ET';
+    const allTrades: Record<string, import('@/lib/study-stats').TradeRow[]> = {};
+    for (const asset of ['nq', 'gc', 'si', 'ym', 'es']) {
+      allTrades[asset] = getStraddleAllTrades(slug, asset);
+    }
+
+    const allAllTrades = Object.values(allTrades).flat();
+    const dates = allAllTrades.map((t) => t.ts.slice(0, 10)).sort();
+    const dateFrom = dates[0]?.slice(0, 4) ?? '2016';
+    const dateTo = dates[dates.length - 1]?.slice(0, 4) ?? '2026';
+
+    const availableAssets: AssetKey[] = Object.entries(allTrades)
+      .filter(([, trs]) => trs.length > 0)
+      .map(([k]) => k as AssetKey);
+
+    const straddleOverviewNode = (
+      <>
+        <BilingualProse htmlNq={entry.explanationHtmlNq} htmlGc={entry.explanationHtmlGc} htmlEs={entry.explanationHtmlEs} htmlSi={entry.explanationHtmlSi} htmlYm={entry.explanationHtmlYm} />
+        {entry.pdfFileNq ? (
+          <div className="bd-ctas" style={{ marginTop: 32 }}>
+            <BilingualPdfLink
+              pdfFileNq={entry.pdfFileNq}
+              pdfFileGc={entry.pdfFileGc}
+              pdfLabel={entry.pdfLabel ?? `Download — ${entry.title} PDF`}
+            />
+          </div>
+        ) : null}
+      </>
+    );
+
+    return (
+      <div>
+        <Link href="/studies/" className="v3-back">
+          ← back to Data
+        </Link>
+
+        <StraddleWrappedTabs
+          slug={slug}
+          allTrades={allTrades}
+          barsSlug={barsSlug}
+          eventName={eventName}
+          releaseTime={releaseTime}
+          dateFrom={dateFrom}
+          dateTo={dateTo}
+          overviewContent={straddleOverviewNode}
+        />
+
+        {pager}
+      </div>
+    );
+  }
 
   // IFVG slugs: v3 report-first layout with KPI band + tabs
   if (isIfvg) {
@@ -446,9 +469,9 @@ export default async function BacktestedDetail({ params }: PageProps) {
       <div className={entry.mobileHtml ? 'bd-show-desktop' : undefined}>
         {hasDesktopSplit ? (
           <>
-            <BilingualProse htmlNq={htmlBeforeNq} htmlGc={htmlBeforeGc} />
+            <BilingualProse htmlNq={htmlBeforeNq} htmlGc={htmlBeforeGc} htmlEs={htmlBeforeEs || undefined} htmlSi={htmlBeforeSi || undefined} htmlYm={htmlBeforeYm || undefined} />
             {desktopExplorerNode}
-            <BilingualProse htmlNq={htmlAfterNq} htmlGc={htmlAfterGc} />
+            <BilingualProse htmlNq={htmlAfterNq} htmlGc={htmlAfterGc} htmlEs={htmlAfterEs || undefined} htmlSi={htmlAfterSi || undefined} htmlYm={htmlAfterYm || undefined} />
           </>
         ) : equityDataUrl ? (
           <>
@@ -457,11 +480,11 @@ export default async function BacktestedDetail({ params }: PageProps) {
             <div className="bd-prose" dangerouslySetInnerHTML={{ __html: htmlAfterEquity }} />
           </>
         ) : (
-          <BilingualProse htmlNq={entry.explanationHtmlNq} htmlGc={entry.explanationHtmlGc} htmlEs={entry.explanationHtmlEs} htmlSi={entry.explanationHtmlSi} />
+          <BilingualProse htmlNq={entry.explanationHtmlNq} htmlGc={entry.explanationHtmlGc} htmlEs={entry.explanationHtmlEs} htmlSi={entry.explanationHtmlSi} htmlYm={entry.explanationHtmlYm} />
         )}
       </div>
 
-<div className="bd-ctas" style={{ marginTop: 48 }}>
+      <div className="bd-ctas" style={{ marginTop: 48 }}>
         {entry.category === 'tradingview' && entry.tradingviewUrl ? (
           <a className="bd-btn bd-btn-primary" href={entry.tradingviewUrl} target="_blank" rel="noreferrer noopener">
             Open on TradingView

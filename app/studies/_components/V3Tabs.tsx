@@ -12,8 +12,21 @@ import TradeMiniChart from './TradeMiniChart';
 import WeekdayBars from './WeekdayBars';
 import EquityCurve from './EquityCurve';
 import DailyPnlBars from './DailyPnlBars';
+import StraddleCylinders from './StraddleCylinders';
 
 type Tab = 'overview' | 'weekday' | 'year' | 'trades' | 'methodology';
+
+type FilterBarOverride = {
+  variantOptions?: Array<{ key: string; label: string }>;
+  smtOptions?: Array<{ key: string; label: string }>;
+  tpOptions?: Array<{ key: string; label: string }>;
+  variantLabel?: string;
+  smtLabel?: string;
+  tpLabel?: string;
+  defaultVariant?: string;
+  defaultSmt?: string;
+  defaultTp?: string;
+};
 
 const TAB_LIST: Array<{ key: Tab; label: string }> = [
   { key: 'overview',     label: 'Overview' },
@@ -133,7 +146,7 @@ function WeekdayBlock({
   );
 }
 
-function YearBlock({ breakdown, slug, smtLabel = 'SMT-on', trades = [], onJumpToTrades }: { breakdown: YearBreakdown; slug: string; smtLabel?: string; trades?: TradeRow[]; onJumpToTrades?: (year: number) => void }) {
+function YearBlock({ breakdown, slug, smtLabel = 'SMT-on', trades = [], onJumpToTrades, isStraddle = false }: { breakdown: YearBreakdown; slug: string; smtLabel?: string; trades?: TradeRow[]; onJumpToTrades?: (year: number) => void; isStraddle?: boolean }) {
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
 
   const filteredTrades = useMemo(
@@ -231,10 +244,14 @@ function YearBlock({ breakdown, slug, smtLabel = 'SMT-on', trades = [], onJumpTo
               </button>
             </div>
           )}
-          <div className="eq-pair-wrap">
-            <EquityCurve trades={filteredTrades} title="Equity curve" subtitle={selectedYear ? `${selectedYear} · ${smtLabel}` : `Cumulative PnL · ${smtLabel}`} />
-            <DailyPnlBars trades={filteredTrades} title="Trade-by-trade PnL" subtitle={selectedYear ? `${selectedYear} · per trade` : `Per trade · ${smtLabel}`} />
-          </div>
+          {isStraddle ? (
+            <StraddleCylinders trades={filteredTrades} />
+          ) : (
+            <div className="eq-pair-wrap">
+              <EquityCurve trades={filteredTrades} title="Equity curve" subtitle={selectedYear ? `${selectedYear} · ${smtLabel}` : `Cumulative PnL · ${smtLabel}`} />
+              <DailyPnlBars trades={filteredTrades} title="Trade-by-trade PnL" subtitle={selectedYear ? `${selectedYear} · per trade` : `Per trade · ${smtLabel}`} />
+            </div>
+          )}
         </>
       )}
     </div>
@@ -255,9 +272,9 @@ function tradeWeekday(ts: string): number {
 
 const DAY_KEY_TO_NUM: Record<string, number> = { mon: 1, tue: 2, wed: 3, thu: 4, fri: 5 };
 
-type VariantKey = 'tp1_be' | 'be_50' | 'no_be';
+type VariantKey = string;
 
-const VARIANT_LABELS: Record<VariantKey, string> = {
+const VARIANT_LABELS: Record<string, string> = {
   tp1_be: 'TP1 + BE',
   be_50:  'TP only + BE',
   no_be:  'TP only',
@@ -275,6 +292,8 @@ function TradesBlock({
   eventShort,
   asset,
   smtLabel = 'SMT-on',
+  filterLabel,
+  barsSlug,
 }: {
   trades: TradeRow[];
   tradesByVariant?: { tp1_be: TradeRow[]; be_50: TradeRow[]; no_be: TradeRow[] };
@@ -287,13 +306,15 @@ function TradesBlock({
   eventShort: string;
   asset: 'nq' | 'gc' | 'es' | 'si' | 'ym';
   smtLabel?: string;
+  filterLabel?: string;
+  barsSlug?: string;
 }) {
-  const activeTrades = tradesByVariant ? tradesByVariant[variant] : trades;
+  const activeTrades = tradesByVariant ? (tradesByVariant as Record<string, TradeRow[]>)[variant] ?? trades : trades;
   const dayFiltered = dayFilter && DAY_KEY_TO_NUM[dayFilter] !== undefined
-    ? activeTrades.filter((t) => tradeWeekday(t.ts) === DAY_KEY_TO_NUM[dayFilter])
+    ? activeTrades.filter((t: TradeRow) => tradeWeekday(t.ts) === DAY_KEY_TO_NUM[dayFilter])
     : activeTrades;
   const filtered = yearFilter
-    ? dayFiltered.filter((t) => t.ts.slice(0, 4) === yearFilter)
+    ? dayFiltered.filter((t: TradeRow) => t.ts.slice(0, 4) === yearFilter)
     : dayFiltered;
 
   const [visible, setVisible] = useState(PAGE_SIZE);
@@ -324,7 +345,7 @@ function TradesBlock({
     <div>
       <div className="v3-wd-h">Trade list</div>
       <div className="v3-wd-sub">
-        {VARIANT_LABELS[variant]} · {smtLabel} variant{hasStructuralPrices ? ' · SL = sweep ± 1 tick · TP = pre-news pivot (structural, varies per trade)' : ''} · most recent first.
+        {filterLabel ?? `${VARIANT_LABELS[variant]} · ${smtLabel} variant`}{hasStructuralPrices ? ' · SL = sweep ± 1 tick · TP = pre-news pivot (structural, varies per trade)' : ''} · most recent first.
       </div>
       <div className="v3-tr-table-wrap">
         <table className="v3-tr-table">
@@ -381,6 +402,7 @@ function TradesBlock({
                         ifvgBottom={t.ifvg_bottom}
                         ifvgFormationTs={t.ifvg_formation_ts}
                         variant={variant}
+                        barsSlug={barsSlug as string | undefined}
                       />
                     </td>
                   </tr>
@@ -425,8 +447,8 @@ const COMBO_LOOKBACKS = ['6mo', '1y', 'all'] as const;
 type ComboLookback = typeof COMBO_LOOKBACKS[number];
 
 function computeBestCombo(
-  tradesByVariant: { tp1_be: TradeRow[]; be_50: TradeRow[]; no_be: TradeRow[] } | undefined,
-  tradesByVariantOff: { tp1_be: TradeRow[]; be_50: TradeRow[]; no_be: TradeRow[] } | undefined,
+  tradesByVariant: { tp1_be: TradeRow[]; be_50: TradeRow[]; no_be: TradeRow[] } | null | undefined,
+  tradesByVariantOff: { tp1_be: TradeRow[]; be_50: TradeRow[]; no_be: TradeRow[] } | null | undefined,
   minN = 10
 ): BestCombo | null {
   if (!tradesByVariant) return null;
@@ -434,15 +456,16 @@ function computeBestCombo(
   let best: BestCombo | null = null;
 
   for (const smt of COMBO_SMTS) {
-    const pool = smt === 'on' ? tradesByVariant : (tradesByVariantOff ?? tradesByVariant);
-    for (const variant of COMBO_VARIANTS) {
-      const allTrades = pool[variant];
+    const poolTrades = smt === 'on' ? tradesByVariant : (tradesByVariantOff ?? tradesByVariant);
+    if (!poolTrades) continue;
+    for (const v of COMBO_VARIANTS) {
+      const allTrades = (poolTrades as Record<string, TradeRow[]>)[v];
       for (const lookback of COMBO_LOOKBACKS) {
-        const trades = filterTradesByLookback(allTrades, lookback as ComboLookback);
-        const kpi = computeKPI(trades);
+        const filtered = filterTradesByLookback(allTrades, lookback as ComboLookback);
+        const kpi = computeKPI(filtered);
         if (kpi.n < minN) continue;
         if (best === null || kpi.pf > best.pf) {
-          best = { variant, smt, lookback: lookback as ComboLookback, pf: kpi.pf };
+          best = { variant: v, smt, lookback: lookback as ComboLookback, pf: kpi.pf };
         }
       }
     }
@@ -468,6 +491,8 @@ export default function V3Tabs({
   eventShort,
   asset,
   hideKpiBand = false,
+  filterBarOverride,
+  barsSlug,
 }: {
   slug: string;
   breakdown: WeekdayBreakdown;
@@ -475,8 +500,8 @@ export default function V3Tabs({
   yearBreakdown: YearBreakdown;
   yearBreakdownOff?: YearBreakdown;
   trades: TradeRow[];
-  tradesByVariant?: { tp1_be: TradeRow[]; be_50: TradeRow[]; no_be: TradeRow[] };
-  tradesByVariantOff?: { tp1_be: TradeRow[]; be_50: TradeRow[]; no_be: TradeRow[] };
+  tradesByVariant?: { tp1_be: TradeRow[]; be_50: TradeRow[]; no_be: TradeRow[] } | null;
+  tradesByVariantOff?: { tp1_be: TradeRow[]; be_50: TradeRow[]; no_be: TradeRow[] } | null;
   statsByVariant?: { tp1_be: StrategyStats; be_50: StrategyStats; no_be: StrategyStats } | null;
   statsByVariantAndSmt?: {
     smtOn: { tp1_be: StrategyStats; be_50: StrategyStats; no_be: StrategyStats };
@@ -488,10 +513,13 @@ export default function V3Tabs({
   eventShort: string;
   asset: 'nq' | 'gc' | 'es' | 'si' | 'ym';
   hideKpiBand?: boolean;
+  filterBarOverride?: FilterBarOverride;
+  barsSlug?: string;
 }) {
   // ── URL-driven filter state ──────────────────────────────────────────
-  const { variant, smtOn, lookback } = useFilterState();
-  const hasSmtToggle = !!statsByVariantAndSmt;
+  const fbo = filterBarOverride;
+  const { variant, smtOn, lookback, tp: urlTp } = useFilterState(fbo ? { defaultVariant: fbo.defaultVariant, defaultSmt: fbo.defaultSmt, defaultTp: fbo.defaultTp } : undefined);
+  const hasSmtToggle = fbo ? !!fbo.smtOptions : !!statsByVariantAndSmt;
 
   const searchParams = useSearchParams();
   const tab = (searchParams.get('tab') ?? 'overview') as Tab;
@@ -508,28 +536,60 @@ export default function V3Tabs({
     ? String(jumpYear)
     : yearFilter;
 
-  const smtLabel = smtOn ? 'SMT-on' : 'SMT-off';
+  // ── SMT label ────────────────────────────────────────────────────────
+  const smtLabel = useMemo(() => {
+    if (fbo?.smtOptions) {
+      const smtParam = searchParams.get('smt') || fbo.defaultSmt || fbo.smtOptions[0]?.key || '';
+      const opt = fbo.smtOptions.find((o) => o.key === smtParam);
+      return opt ? opt.label : smtParam;
+    }
+    return smtOn ? 'SMT-on' : 'SMT-off';
+  }, [fbo, smtOn, variant]);
 
-  // ── Raw trade pool by smt toggle ─────────────────────────────────────
-  const rawByVariant = useMemo(
-    () => (!smtOn && tradesByVariantOff ? tradesByVariantOff : tradesByVariant),
-    [smtOn, tradesByVariant, tradesByVariantOff]
-  );
+  // ── Raw trade pool: IFVG uses variant sub-pools; straddle uses flat list ──
+  const rawByVariant = useMemo(() => {
+    if (fbo && !tradesByVariant) {
+      // Straddle: filter by side (smt param = 'long'/'short'/'both')
+      const sideFilter = smtOn ? variant : 'both'; // smtOn uses variant as side filter
+      if (sideFilter === 'both') return undefined; // no variant sub-pools
+      // Actually side filter is tracked via `smt` URL param in straddle mode
+      return undefined;
+    }
+    return (!smtOn && tradesByVariantOff ? tradesByVariantOff : tradesByVariant) ?? undefined;
+  }, [smtOn, tradesByVariant, tradesByVariantOff, fbo, variant]);
 
   // ── Apply lookback filter ─────────────────────────────────────────────
   const filteredByVariant = useMemo(() => {
+    if (fbo && !tradesByVariant) return undefined;
     if (!rawByVariant) return undefined;
     return {
       tp1_be: filterTradesByLookback(rawByVariant.tp1_be, lookback),
       be_50:  filterTradesByLookback(rawByVariant.be_50,  lookback),
       no_be:  filterTradesByLookback(rawByVariant.no_be,  lookback),
     };
-  }, [rawByVariant, lookback]);
+  }, [rawByVariant, lookback, fbo, tradesByVariant]);
 
-  const activeTrades = useMemo(
-    () => filteredByVariant ? filteredByVariant[variant] : filterTradesByLookback(trades, lookback),
-    [filteredByVariant, variant, trades, lookback]
-  );
+  const activeTrades = useMemo(() => {
+    const looked = filterTradesByLookback(trades, lookback);
+    if (!fbo || !fbo.tpOptions) {
+      // IFVG mode: use variant sub-pools
+      return filteredByVariant ? filteredByVariant[variant as 'tp1_be' | 'be_50' | 'no_be'] : looked;
+    }
+    // Straddle mode: filter by stop (variant), tp (urlTp), side (smt param), outcome (outcome param)
+    const stopVal = Number(variant);
+    const tpVal = Number(urlTp);
+    const sideParam = searchParams.get('smt') || fbo.defaultSmt || 'both';
+    const outcomeParam = searchParams.get('outcome'); // 'win' | 'loss' | 'flat' | null
+    return looked.filter((t) => {
+      if (t.x_stop !== undefined && t.x_stop !== stopVal) return false;
+      if (t.y_tp !== undefined && t.y_tp !== tpVal) return false;
+      if (sideParam !== 'both' && t.side !== sideParam) return false;
+      if (outcomeParam === 'win' && t.pnl_pts <= 0) return false;
+      if (outcomeParam === 'loss' && t.pnl_pts >= 0) return false;
+      if (outcomeParam === 'flat' && t.pnl_pts !== 0) return false;
+      return true;
+    });
+  }, [filteredByVariant, variant, trades, lookback, fbo, tradesByVariant, urlTp, searchParams]);
 
   // ── KPI: recomputed client-side from filtered trades ──────────────────
   const kpi = useMemo(() => computeKPI(activeTrades), [activeTrades]);
@@ -544,33 +604,52 @@ export default function V3Tabs({
     [activeTrades]
   );
 
-  // Preserve server-side breakdowns for reference when lookback=all (identity check)
-  // but we always use client-computed for consistency with lookback filter.
-
   function tabHref(t: string) {
-    // Preserve existing filter params when switching tabs
     const params = new URLSearchParams(searchParams.toString());
     params.set('tab', t);
-    // Clear day/year filters on tab switch (they belong to specific tabs)
     params.delete('day');
     params.delete('year');
     return `/studies/${slug}/?${params.toString()}`;
   }
 
-  const hasTradeData = (tradesByVariant?.tp1_be?.length ?? 0) > 0;
+  const hasTradeData = fbo ? activeTrades.length > 0 : (tradesByVariant?.tp1_be?.length ?? 0) > 0;
 
-  // ── Best combo (max PF with N >= 10 across all combos) ───────────────
+  // ── Best combo ───────────────
   const bestCombo = useMemo(
-    () => hasTradeData ? computeBestCombo(tradesByVariant, tradesByVariantOff) : null,
-    [hasTradeData, tradesByVariant, tradesByVariantOff]
+    () => {
+      if (fbo || !tradesByVariant) return null;
+      return hasTradeData ? computeBestCombo(tradesByVariant, tradesByVariantOff ?? undefined) : null;
+    },
+    [hasTradeData, tradesByVariant, tradesByVariantOff, fbo]
   );
+
+  // ── Variant label for KPI foot ────────────────────────────────────────
+  const kpiVariantLabel = useMemo(() => {
+    if (fbo?.variantOptions) {
+      const opt = fbo.variantOptions.find((o) => o.key === variant);
+      return opt?.label ?? variant;
+    }
+    return (VARIANT_LABELS as Record<string, string>)[variant] ?? variant;
+  }, [fbo, variant]);
 
   return (
     <>
       {/* ── Sticky FilterBar ── */}
       {hasTradeData && (
         <div className="fb-sticky-wrap">
-          <FilterBar hasSmtToggle={hasSmtToggle} bestCombo={bestCombo} />
+          <FilterBar
+            hasSmtToggle={hasSmtToggle}
+            bestCombo={bestCombo}
+            variantOptions={fbo?.variantOptions}
+            smtOptions={fbo?.smtOptions}
+            tpOptions={fbo?.tpOptions}
+            variantLabel={fbo?.variantLabel}
+            smtLabel={fbo?.smtLabel}
+            tpLabel={fbo?.tpLabel}
+            defaultVariant={fbo?.defaultVariant}
+            defaultSmt={fbo?.defaultSmt}
+            defaultTp={fbo?.defaultTp}
+          />
         </div>
       )}
 
@@ -599,7 +678,7 @@ export default function V3Tabs({
           <div className="v3-kpi-cell">
             <div className="v3-kpi-band-lbl">Win rate</div>
             <div className="v3-kpi-band-val gold">{kpi.wr}%</div>
-            <div className="v3-kpi-band-foot">{VARIANT_LABELS[variant]} · {smtLabel}</div>
+            <div className="v3-kpi-band-foot">{kpiVariantLabel}{smtLabel ? ` · ${smtLabel}` : ''}</div>
           </div>
         </div>
       )}
@@ -629,13 +708,14 @@ export default function V3Tabs({
             smtLabel={smtLabel}
             trades={activeTrades}
             onJumpToTrades={(year) => { setJumpYear(year); setJumpTab('trades'); }}
+            isStraddle={!!fbo}
           />
         ) : resolvedTab === 'trades' ? (
           <TradesBlock
             trades={activeTrades}
-            tradesByVariant={filteredByVariant}
+            tradesByVariant={fbo ? undefined : filteredByVariant}
             variant={variant}
-            setVariant={() => {/* variant now URL-driven */}}
+            setVariant={() => {}}
             dayFilter={dayFilter}
             yearFilter={resolvedYearFilter}
             onClearYearFilter={jumpYear !== null ? () => { setJumpYear(null); setJumpTab(null); } : undefined}
@@ -643,6 +723,8 @@ export default function V3Tabs({
             eventShort={eventShort}
             asset={asset}
             smtLabel={smtLabel}
+            barsSlug={barsSlug}
+            filterLabel={fbo ? `${kpiVariantLabel} Stop · ${fbo.tpOptions?.find((o) => o.key === urlTp)?.label ?? urlTp} TP · ${fbo.smtOptions?.find((o) => o.key === searchParams.get('smt'))?.label ?? 'Both'}` : undefined}
           />
         ) : resolvedTab === 'methodology' ? (
           <div className="v3-meth-link">
