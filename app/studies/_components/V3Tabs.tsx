@@ -575,14 +575,18 @@ export default function V3Tabs({
       // IFVG mode: use variant sub-pools
       return filteredByVariant ? filteredByVariant[variant as 'tp1_be' | 'be_50' | 'no_be'] : looked;
     }
-    // Straddle mode: filter by stop (variant), tp (urlTp), side (smt param)
+    // Straddle mode: filter by stop (variant), tp (urlTp), side (smt param), outcome (outcome param)
     const stopVal = Number(variant);
     const tpVal = Number(urlTp);
     const sideParam = searchParams.get('smt') || fbo.defaultSmt || 'both';
+    const outcomeParam = searchParams.get('outcome'); // 'win' | 'loss' | 'flat' | null
     return looked.filter((t) => {
       if (t.x_stop !== undefined && t.x_stop !== stopVal) return false;
       if (t.y_tp !== undefined && t.y_tp !== tpVal) return false;
       if (sideParam !== 'both' && t.side !== sideParam) return false;
+      if (outcomeParam === 'win' && t.pnl_pts <= 0) return false;
+      if (outcomeParam === 'loss' && t.pnl_pts >= 0) return false;
+      if (outcomeParam === 'flat' && t.pnl_pts !== 0) return false;
       return true;
     });
   }, [filteredByVariant, variant, trades, lookback, fbo, tradesByVariant, urlTp, searchParams]);
