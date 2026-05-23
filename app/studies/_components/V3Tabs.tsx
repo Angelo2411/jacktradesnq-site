@@ -12,6 +12,7 @@ import TradeMiniChart from './TradeMiniChart';
 import WeekdayBars from './WeekdayBars';
 import EquityCurve from './EquityCurve';
 import DailyPnlBars from './DailyPnlBars';
+import StraddleCylinders from './StraddleCylinders';
 
 type Tab = 'overview' | 'weekday' | 'year' | 'trades' | 'methodology';
 
@@ -145,7 +146,7 @@ function WeekdayBlock({
   );
 }
 
-function YearBlock({ breakdown, slug, smtLabel = 'SMT-on', trades = [], onJumpToTrades }: { breakdown: YearBreakdown; slug: string; smtLabel?: string; trades?: TradeRow[]; onJumpToTrades?: (year: number) => void }) {
+function YearBlock({ breakdown, slug, smtLabel = 'SMT-on', trades = [], onJumpToTrades, isStraddle = false }: { breakdown: YearBreakdown; slug: string; smtLabel?: string; trades?: TradeRow[]; onJumpToTrades?: (year: number) => void; isStraddle?: boolean }) {
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
 
   const filteredTrades = useMemo(
@@ -243,10 +244,14 @@ function YearBlock({ breakdown, slug, smtLabel = 'SMT-on', trades = [], onJumpTo
               </button>
             </div>
           )}
-          <div className="eq-pair-wrap">
-            <EquityCurve trades={filteredTrades} title="Equity curve" subtitle={selectedYear ? `${selectedYear} · ${smtLabel}` : `Cumulative PnL · ${smtLabel}`} />
-            <DailyPnlBars trades={filteredTrades} title="Trade-by-trade PnL" subtitle={selectedYear ? `${selectedYear} · per trade` : `Per trade · ${smtLabel}`} />
-          </div>
+          {isStraddle ? (
+            <StraddleCylinders trades={filteredTrades} />
+          ) : (
+            <div className="eq-pair-wrap">
+              <EquityCurve trades={filteredTrades} title="Equity curve" subtitle={selectedYear ? `${selectedYear} · ${smtLabel}` : `Cumulative PnL · ${smtLabel}`} />
+              <DailyPnlBars trades={filteredTrades} title="Trade-by-trade PnL" subtitle={selectedYear ? `${selectedYear} · per trade` : `Per trade · ${smtLabel}`} />
+            </div>
+          )}
         </>
       )}
     </div>
@@ -699,6 +704,7 @@ export default function V3Tabs({
             smtLabel={smtLabel}
             trades={activeTrades}
             onJumpToTrades={(year) => { setJumpYear(year); setJumpTab('trades'); }}
+            isStraddle={!!fbo}
           />
         ) : resolvedTab === 'trades' ? (
           <TradesBlock

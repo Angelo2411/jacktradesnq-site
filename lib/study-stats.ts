@@ -1414,7 +1414,13 @@ export function getStraddleAllTrades(slug: string, asset: string): TradeRow[] {
         year: new Date(t.ts).getUTCFullYear(),
         side: t.filled_side,
         pnl_pts: Math.round(t.pnl * 100) / 100,
-        outcome: t.outcome === 'tp_hit' ? 'win' : t.outcome === 'sl_hit' ? 'loss' : t.outcome === 'expired' ? 'timeout' : t.outcome,
+        outcome: (() => {
+          const o = t.outcome ?? '';
+          if (o === 'tp_hit') return 'win';
+          if (o === 'sl_hit') return 'loss';
+          if (o.startsWith('expired')) return t.pnl > 0 ? 'win' : t.pnl < 0 ? 'expired' : 'flat';
+          return o;
+        })(),
         x_stop: combo.X,
         y_tp: combo.Y,
         entry_price: t.fill_price ?? t.entry_price,
