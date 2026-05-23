@@ -84,17 +84,16 @@ const IFVG_SLUGS = new Set([
   'si-ifvg-smt',
   // 40 YM slugs
   'cpi-ifvg-smt-ym', 'cpi-ifvg-smt-ym-vs-es', 'cpi-ifvg-smt-es-vs-ym', 'cpi-ifvg-smt-nq-vs-ym', 'cpi-ifvg-smt-gc-vs-ym',
-  'nfp-ifvg-smt-nq-vs-ym', 'nfp-ifvg-smt-es-vs-ym', 'nfp-ifvg-smt-ym-vs-es', 'nfp-ifvg-smt-si-vs-ym',
+  'nfp-ifvg-smt-nq-vs-ym', 'nfp-ifvg-smt-es-vs-ym', 'nfp-ifvg-smt-ym-vs-es',
   'fomc-ifvg-smt-ym', 'fomc-ifvg-smt-ym-vs-es', 'fomc-ifvg-smt-es-vs-ym', 'fomc-ifvg-smt-nq-vs-ym',
-  'pce-ifvg-smt-ym', 'pce-ifvg-smt-ym-vs-es', 'pce-ifvg-smt-gc-vs-ym', 'pce-ifvg-smt-si-vs-ym',
+  'pce-ifvg-smt-ym', 'pce-ifvg-smt-ym-vs-es', 'pce-ifvg-smt-gc-vs-ym',
   'ppi-ifvg-smt-ym-vs-es', 'ppi-ifvg-smt-es-vs-ym',
-  'retailsales-ifvg-smt-ym', 'retailsales-ifvg-smt-ym-vs-es', 'retailsales-ifvg-smt-es-vs-ym', 'retailsales-ifvg-smt-nq-vs-ym', 'retailsales-ifvg-smt-si-vs-ym',
+  'retailsales-ifvg-smt-ym', 'retailsales-ifvg-smt-ym-vs-es', 'retailsales-ifvg-smt-es-vs-ym', 'retailsales-ifvg-smt-nq-vs-ym',
   'philly-fed-ifvg-smt-ym', 'philly-fed-ifvg-smt-ym-vs-es', 'philly-fed-ifvg-smt-nq-vs-ym',
   'durable-goods-ifvg-smt-ym', 'durable-goods-ifvg-smt-ym-vs-es', 'durable-goods-ifvg-smt-es-vs-ym',
   'ism-services-ifvg-smt-ym', 'ism-services-ifvg-smt-ym-vs-es', 'ism-services-ifvg-smt-es-vs-ym',
   'cb-confidence-ifvg-smt-ym', 'cb-confidence-ifvg-smt-ym-vs-es',
   'joblessclaims-ifvg-smt-es-vs-ym', 'joblessclaims-ifvg-smt-ym-vs-es',
-  'empirestate-ifvg-smt-si-vs-ym',
   'es-ifvg-smt-vs-ym', 'nq-ifvg-smt-vs-ym',
 ]);
 const EQUITY_RE  = /<div data-equity="(nfp)">\s*<\/div>/i;
