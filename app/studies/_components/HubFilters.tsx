@@ -1,23 +1,28 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import type { StudyStats, AssetType } from '@/lib/study-stats';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import type { StudyStats, AssetType, FamilyType } from '@/lib/study-stats';
 import type { DayPlaybook } from '@/lib/today-events';
 import StudyCard from './StudyCard';
 import HubTopBar, { type SortBy } from './HubTopBar';
 
 const STORAGE_KEY = 'hub-filters-v3';
 
+type FamilyFilter = FamilyType | 'All';
+
 interface FilterState {
   asset: AssetType | 'All';
   sortBy: SortBy;
   query: string;
+  family: FamilyFilter;
 }
 
 const DEFAULT_STATE: FilterState = {
   asset: 'All',
   sortBy: 'pf',
   query: '',
+  family: 'All',
 };
 
 function loadState(): FilterState {
@@ -57,9 +62,19 @@ export default function HubFilters({
   const [filters, setFilters] = useState<FilterState>(DEFAULT_STATE);
   const [mounted, setMounted] = useState(false);
   const [selectedDow, setSelectedDow] = useState<number | null>(null);
+  const router = useRouter();
 
+  // Read ?cat= from URL on mount
   useEffect(() => {
-    setFilters(loadState());
+    const state = loadState();
+    if (typeof window !== 'undefined') {
+      const p = new URLSearchParams(window.location.search);
+      const cat = p.get('cat');
+      if (cat === 'news' || cat === 'ib' || cat === 'ema' || cat === 'time' || cat === 'misc') {
+        state.family = cat.charAt(0).toUpperCase() + cat.slice(1) as FamilyType;
+      }
+    }
+    setFilters(state);
     setMounted(true);
     setSelectedDow(getNyDowIndex());
   }, []);
@@ -72,10 +87,18 @@ export default function HubFilters({
     setFilters((f) => ({ ...f, [key]: val }));
   };
 
+  const clearFamily = useCallback(() => {
+    setFilters((f) => ({ ...f, family: 'All' }));
+    router.push('/studies/', { scroll: false });
+  }, [router]);
+
   const filtered = useMemo(() => {
     let list = [...studies];
     if (filters.asset !== 'All') {
       list = list.filter((s) => s.asset === filters.asset);
+    }
+    if (filters.family !== 'All') {
+      list = list.filter((s) => s.family === filters.family);
     }
     const q = filters.query.trim().toLowerCase();
     if (q) {
@@ -141,9 +164,11 @@ export default function HubFilters({
         asset={filters.asset}
         sortBy={filters.sortBy}
         query={filters.query}
+        family={filters.family}
         onAsset={(a) => updateFilter('asset', a)}
         onSort={(s) => updateFilter('sortBy', s)}
         onQuery={(q) => updateFilter('query', q)}
+        onClearFamily={clearFamily}
       />
 
       <main className="bd-hub-main" id="hub-grid">

@@ -1,29 +1,51 @@
 'use client';
 
-import type { AssetType } from '@/lib/study-stats';
+import type { AssetType, FamilyType } from '@/lib/study-stats';
 
 type AssetFilter = AssetType | 'All';
+type FamilyFilter = FamilyType | 'All';
 export type SortBy = 'pf' | 'n' | 'alpha' | 'date';
 
 interface HubTopBarProps {
   asset: AssetFilter;
   sortBy: SortBy;
   query: string;
+  family?: FamilyFilter;
   onAsset: (a: AssetFilter) => void;
   onSort: (s: SortBy) => void;
   onQuery: (q: string) => void;
+  onClearFamily?: () => void;
 }
 
 export default function HubTopBar({
   asset,
   sortBy,
   query,
+  family,
   onAsset,
   onSort,
   onQuery,
+  onClearFamily,
 }: HubTopBarProps) {
   return (
     <div className="bd-hub-topbar" aria-label="Hub filters">
+      {/* Family badge */}
+      {family && family !== 'All' && (
+        <div className="bd-hub-topbar-group">
+          <span className="bd-family-badge">
+            Filtering: {family}
+            <button
+              type="button"
+              className="bd-family-badge-clear"
+              aria-label={`Clear ${family} filter`}
+              onClick={onClearFamily}
+            >
+              ✕
+            </button>
+          </span>
+        </div>
+      )}
+
       {/* Asset toggle */}
       <div className="bd-hub-topbar-group">
         <div className="bd-flt-asset-toggle bd-flt-asset-toggle--inline">

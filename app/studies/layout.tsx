@@ -1,13 +1,17 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
 import V3SideNav from './_components/V3SideNav';
 import { AssetProvider } from './_components/AssetContext';
 import AssetPills from './_components/AssetPills';
+import { getStudyCountsByFamily } from '@/lib/study-stats';
 
 export default function BacktestedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const cf = getStudyCountsByFamily();
+
   return (
     <AssetProvider assets={['nq', 'gc', 'si', 'ym', 'es']}>
     <div className="bd-root">
@@ -34,7 +38,9 @@ export default function BacktestedLayout({
 
       {/* Body: sidenav (client, pathname-aware) + main */}
       <div className="v3-body">
-        <V3SideNav />
+        <Suspense fallback={null}>
+          <V3SideNav counts={cf} />
+        </Suspense>
         <main className="v3-main">{children}</main>
       </div>
     </div>
