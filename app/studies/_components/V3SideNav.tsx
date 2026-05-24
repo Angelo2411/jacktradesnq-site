@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 
@@ -29,6 +30,7 @@ export default function V3SideNav({ counts }: { counts: FamilyCounts }) {
   const isCalendar = pathname.includes('/calendar');
   const isMethodology = pathname.includes('/methodology');
   const isData = !isCalendar && !isMethodology;
+  const [dataOpen, setDataOpen] = useState(true);
 
   const getCount = (key: string) => {
     const map: Record<string, number> = {
@@ -45,9 +47,11 @@ export default function V3SideNav({ counts }: { counts: FamilyCounts }) {
   return (
     <aside className="v3-sidenav">
       {/* Data (parent) */}
-      <Link
-        href="/studies/"
-        className={'v3-nav-btn' + (isData && !activeCat ? ' active' : '')}
+      <button
+        type="button"
+        onClick={() => setDataOpen((v) => !v)}
+        className={'v3-nav-btn v3-nav-btn-toggle' + (isData && !activeCat ? ' active' : '')}
+        aria-expanded={dataOpen}
       >
         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style={{ flexShrink: 0, opacity: 0.8 }}>
           <rect x="1" y="2" width="14" height="3" rx="1" />
@@ -55,9 +59,13 @@ export default function V3SideNav({ counts }: { counts: FamilyCounts }) {
           <rect x="1" y="12" width="14" height="2" rx="1" />
         </svg>
         Data
-      </Link>
+        <svg className={'v3-nav-chevron' + (dataOpen ? ' open' : '')} width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginLeft: 'auto', flexShrink: 0 }} aria-hidden="true">
+          <path d="M4 6l4 4 4-4" />
+        </svg>
+      </button>
 
       {/* Sub-items */}
+      {dataOpen && (
       <ul className="v3-nav-sublist">
         {SUB_ITEMS.filter((sub) => sub.key === 'all' || getCount(sub.key) > 0).map((sub) => {
           const href = sub.cat ? `/studies/?cat=${sub.cat}` : '/studies/';
@@ -76,6 +84,7 @@ export default function V3SideNav({ counts }: { counts: FamilyCounts }) {
           );
         })}
       </ul>
+      )}
 
       {/* Calendar */}
       <Link
