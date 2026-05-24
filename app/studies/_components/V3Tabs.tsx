@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Fragment, useState, useMemo } from 'react';
+import { Fragment, useState, useMemo, useEffect } from 'react';
 import type { WeekdayBreakdown, WeekdayStats, YearBreakdown, TradeRow, StrategyStats } from '@/lib/study-stats';
 import { aggregateYearTotals } from '@/lib/year-stats-utils';
 import { filterTradesByLookback, computeKPI, computeYearBreakdown, computeWeekdayBreakdown } from '@/lib/client-stats';
@@ -587,7 +587,7 @@ export default function V3Tabs({
   breakdownOff,
   yearBreakdown,
   yearBreakdownOff,
-  trades,
+  trades: tradesProp,
   tradesByVariant,
   tradesByVariantOff,
   statsByVariant,
@@ -600,6 +600,7 @@ export default function V3Tabs({
   hideKpiBand = false,
   filterBarOverride,
   barsSlug,
+  tradesUrl,
 }: {
   slug: string;
   breakdown: WeekdayBreakdown;
@@ -622,7 +623,22 @@ export default function V3Tabs({
   hideKpiBand?: boolean;
   filterBarOverride?: FilterBarOverride;
   barsSlug?: string;
+  tradesUrl?: string;
 }) {
+  // ── Lazy-fetch trades client-side when a URL is provided (avoids serializing
+  //    large trade arrays into the static HTML payload) ──────────────────
+  const [fetchedTrades, setFetchedTrades] = useState<TradeRow[] | null>(null);
+  useEffect(() => {
+    if (!tradesUrl) return;
+    let active = true;
+    fetch(tradesUrl)
+      .then((r) => r.json())
+      .then((d) => { if (active) setFetchedTrades((d.trades ?? d) as TradeRow[]); })
+      .catch(() => { if (active) setFetchedTrades([]); });
+    return () => { active = false; };
+  }, [tradesUrl]);
+  const trades: TradeRow[] = tradesUrl ? (fetchedTrades ?? []) : tradesProp;
+
   // ── URL-driven filter state ──────────────────────────────────────────
   const fbo = filterBarOverride;
   const { variant, smtOn, lookback, tp: urlTp } = useFilterState(fbo ? { defaultVariant: fbo.defaultVariant, defaultSmt: fbo.defaultSmt, defaultTp: fbo.defaultTp } : undefined);
@@ -780,7 +796,7 @@ export default function V3Tabs({
             <div className={'v3-kpi-band-val' + (kpi.net > 0 ? ' pos' : '')}>
               {kpi.net >= 0 ? '+' : ''}{kpi.net.toFixed(1)}
             </div>
-            <div className="v3-kpi-band-foot">total over {dateFrom}–{dateTo}</div>
+            <div className="v3-kpi-band-foot">{lookback === 'all' ? `total over ${dateFrom}–${dateTo}` : `over the last ${LOOKBACK_LABELS[lookback] ?? lookback}`}</div>
           </div>
           <div className="v3-kpi-cell">
             <div className="v3-kpi-band-lbl">Win rate</div>

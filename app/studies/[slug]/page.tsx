@@ -194,8 +194,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
   const genericCfg = GENERIC_STUDY_CONFIG[slug];
   if (genericCfg) {
     const dataPath = path.join(process.cwd(), 'public', 'data', genericCfg.dataFile);
-    const raw = JSON.parse(fs.readFileSync(dataPath, 'utf-8')) as { meta: { date_from?: string; date_to?: string }; trades: TradeRow[] };
-    const gTrades = raw.trades;
+    const raw = JSON.parse(fs.readFileSync(dataPath, 'utf-8')) as { meta: { date_from?: string; date_to?: string } };
     const overviewNodeGeneric = (
       <BilingualProse htmlNq={entry.explanationHtmlNq} htmlGc={entry.explanationHtmlGc} htmlEs={entry.explanationHtmlEs} htmlSi={entry.explanationHtmlSi} htmlYm={entry.explanationHtmlYm} />
     );
@@ -207,9 +206,10 @@ export default async function BacktestedDetail({ params }: PageProps) {
         <Suspense fallback={<div className="v3-tabs" style={{ height: 48 }} />}>
           <V3Tabs
             slug={slug}
-            breakdown={computeWeekdayBreakdown(gTrades)}
-            yearBreakdown={computeYearBreakdown(gTrades)}
-            trades={gTrades}
+            breakdown={computeWeekdayBreakdown([])}
+            yearBreakdown={computeYearBreakdown([])}
+            trades={[]}
+            tradesUrl={`/data/${genericCfg.dataFile}`}
             dateFrom={raw.meta.date_from ? raw.meta.date_from.slice(0, 4) : '2016'}
             dateTo={raw.meta.date_to ? raw.meta.date_to.slice(0, 4) : '2026'}
             overviewContent={overviewNodeGeneric}
