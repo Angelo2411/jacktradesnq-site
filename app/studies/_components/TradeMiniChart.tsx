@@ -314,8 +314,10 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       const sweepMin = Math.round((sweepMs - t0Ms) / 60_000);
       const entryMin = Math.round((new Date(entryTs).getTime() - t0Ms) / 60_000);
       const sweepBars = bars.filter((b) => b.m >= sweepMin && b.m <= entryMin);
+      // Wick-snap only for studies that define a sweep (IFVG). Without a sweepTs
+      // (e.g. Globex IB50, where SL = a fixed IB extreme) keep the real slPrice.
       let displaySL = slPrice;
-      if (sweepBars.length > 0) {
+      if (sweepTs !== undefined && sweepBars.length > 0) {
         displaySL = side === 'short'
           ? Math.max(...sweepBars.map((b) => b.h))
           : Math.min(...sweepBars.map((b) => b.l));
