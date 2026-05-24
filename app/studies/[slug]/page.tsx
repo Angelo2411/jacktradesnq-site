@@ -95,6 +95,8 @@ const IFVG_SLUGS = new Set([
   'cb-confidence-ifvg-smt-ym', 'cb-confidence-ifvg-smt-ym-vs-es',
   'joblessclaims-ifvg-smt-es-vs-ym', 'joblessclaims-ifvg-smt-ym-vs-es',
   'es-ifvg-smt-vs-ym', 'nq-ifvg-smt-vs-ym',
+  // SI anchor + GC SMT (canonical precious-metals pair)
+  'nfp-ifvg-smt-si-vs-gc', 'pce-ifvg-smt-si-vs-gc', 'retailsales-ifvg-smt-si-vs-gc', 'empirestate-ifvg-smt-si-vs-gc',
 ]);
 const EQUITY_RE  = /<div data-equity="(nfp)">\s*<\/div>/i;
 
