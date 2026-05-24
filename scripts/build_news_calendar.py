@@ -34,7 +34,7 @@ from zoneinfo import ZoneInfo
 # ── Paths ────────────────────────────────────────────────────────────────────
 SRC_FULL     = Path("/Users/angelo/jtnq-hub/data/news_red_folder_full.csv")
 SRC_UPCOMING = Path("/Users/angelo/jtnq-hub/data/upcoming_events.csv")
-OUTPUT       = Path("/Users/angelo/jtnq-hub-v3/public/data/news-calendar.json")
+OUTPUT       = Path(__file__).resolve().parents[1] / "public" / "data" / "news-calendar.json"
 
 # ── Normalisation des noms d'événements ──────────────────────────────────────
 EVENT_NORMALIZE = {
@@ -46,6 +46,23 @@ EVENT_NORMALIZE = {
     "Fed Rate Decision":         "FOMC Statement",
     "ISM Non-Manufacturing PMI": "ISM Services PMI",
     "UoM Consumer Sentiment":    "University of Michigan Consumer Sentiment",
+    # PCE variants (investing.com / Forex Factory naming)
+    "Core PCE Price Index":        "PCE",
+    "Core PCE Price Index m/m":    "PCE",
+    "Core PCE Price Index (MoM)":  "PCE",
+    "PCE Price Index":             "PCE",
+    "PCE Core":                    "PCE",
+    "Core PCE":                    "PCE",
+    # GDP variants
+    "Prelim GDP":                  "GDP",
+    "Prelim GDP q/q":              "GDP",
+    "GDP (QoQ)":                   "GDP",
+    "GDP (QoQ) 2nd Est":           "GDP",
+    "GDP (QoQ) 3rd Est":           "GDP",
+    "GDP Advance":                 "GDP",
+    "Advance GDP":                 "GDP",
+    # Durable Goods
+    "Core Durable Goods Orders":   "Durable Goods Orders",
 }
 
 # ── FF red folder whitelist (drop everything else: Crude/PMI/Bond/etc.) ──────
@@ -65,6 +82,15 @@ BACKTESTED_EVENTS = {
     "CB Consumer Confidence",
     "Philadelphia Fed Manufacturing Index",
     "Durable Goods Orders", "Core Durable Goods Orders",
+}
+
+# Events kept as red-folder but displayed Medium (lower expected move / weaker
+# backtested edge). Everything else in BACKTESTED_EVENTS shows High.
+# Edit this set to re-tier an event.
+MEDIUM_EVENTS = {
+    "Jobless Claims",
+    "Philadelphia Fed Manufacturing Index",
+    "Durable Goods Orders",
 }
 
 # ── Canonical timing whitelist (ET, leading-zero stripped) ───────────────────
@@ -180,7 +206,7 @@ def main() -> None:
             "day":     day_label,
             "time":    time_str,
             "event":   norm_event,
-            "imp":     r["impact"] or "High",
+            "imp":     "Medium" if norm_event in MEDIUM_EVENTS else "High",
             "weekday": r["date"].weekday(),  # Mon=0 .. Sun=6
         })
 
