@@ -19,7 +19,8 @@ import BilingualTitle from '../_components/BilingualTitle';
 import V3Tabs from '../_components/V3Tabs';
 import StraddleWrappedTabs from '../_components/StraddleWrappedTabs';
 import PerformanceTearsheet from '../_components/PerformanceTearsheet';
-import { getStrategyStats, getStrategyStatsByVariant, getStrategyStatsByVariantAndSmt, getWeekdayBreakdown, getYearBreakdown, getTradeList, getStraddleAllTrades } from '@/lib/study-stats';
+import { computeWeekdayBreakdown, computeYearBreakdown } from '@/lib/client-stats';
+import { getStrategyStats, getStrategyStatsByVariant, getStrategyStatsByVariantAndSmt, getWeekdayBreakdown, getYearBreakdown, getTradeList, getStraddleAllTrades, type TradeRow } from '@/lib/study-stats';
 
 const EXPLORER_RE =
   /<div data-explorer="(cpi|nfp|jobless-claims|ppi|retail-sales|durable-goods|pce|nfp-ifvg-smt|cpi-ifvg-smt|ppi-ifvg-smt|retailsales-ifvg-smt|pce-ifvg-smt|gdp-ifvg-smt|joblessclaims-ifvg-smt|empirestate-ifvg-smt|employmentcostindex-ifvg-smt)">\s*<\/div>/i;
@@ -123,6 +124,45 @@ const FULLPORT_PDFS: Record<string, { nq: string; gc: string; label: string }> =
   cpi: { nq: '/downloads/studies/cpi-fullport.pdf', gc: '/downloads/studies/cpi-fullport.pdf', label: 'Download — CPI Fullport PDF' },
 };
 
+const GENERIC_STUDY_CONFIG: Record<string, {
+  dataFile: string;
+  title: string;
+  subtitle: string;
+  tpOptions: Array<{ key: string; label: string }>;
+  defaultTp: string;
+  tpLabel: string;
+  smtOptions: Array<{ key: string; label: string }>;
+  defaultSmt: string;
+  smtLabel: string;
+  variantOptions: Array<{ key: string; label: string }>;
+  defaultVariant: string;
+  variantLabel: string;
+}> = {
+  'globex-ib50': {
+    dataFile: 'globex-ib50.json',
+    title: 'Globex IB50',
+    subtitle: 'NQ futures · 10-min Globex initial balance · 2016–2026 backtest',
+    tpOptions: [
+      { key: '1', label: 'TP 1.0' },
+      { key: '1.5', label: 'TP 1.5' },
+      { key: '1.75', label: 'TP 1.75' },
+      { key: '2', label: 'TP 2.0' },
+    ],
+    defaultTp: '1.75',
+    tpLabel: 'TP extension',
+    smtOptions: [
+      { key: 'both', label: 'Both' },
+      { key: 'long', label: 'Long' },
+      { key: 'short', label: 'Short' },
+    ],
+    defaultSmt: 'both',
+    smtLabel: 'Side',
+    variantOptions: [{ key: '0', label: 'SL = IB extreme' }],
+    defaultVariant: '0',
+    variantLabel: 'Stop',
+  },
+};
+
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
@@ -150,6 +190,47 @@ export default async function BacktestedDetail({ params }: PageProps) {
   const isNwog = slug === NWOG_SLUG;
   const isIfvg = IFVG_SLUGS.has(slug);
   const isStraddleV3 = STRADDLE_V3_SLUGS.has(slug);
+
+  const genericCfg = GENERIC_STUDY_CONFIG[slug];
+  if (genericCfg) {
+    const dataPath = path.join(process.cwd(), 'public', 'data', genericCfg.dataFile);
+    const raw = JSON.parse(fs.readFileSync(dataPath, 'utf-8')) as { meta: { date_from?: string; date_to?: string }; trades: TradeRow[] };
+    const gTrades = raw.trades;
+    const overviewNodeGeneric = (
+      <BilingualProse htmlNq={entry.explanationHtmlNq} htmlGc={entry.explanationHtmlGc} htmlEs={entry.explanationHtmlEs} htmlSi={entry.explanationHtmlSi} htmlYm={entry.explanationHtmlYm} />
+    );
+    return (
+      <div>
+        <Link href="/studies/" className="v3-back">← back to Data</Link>
+        <h1 className="v3-sub-h1">{genericCfg.title}</h1>
+        <p className="v3-sub-sub">{genericCfg.subtitle}</p>
+        <Suspense fallback={<div className="v3-tabs" style={{ height: 48 }} />}>
+          <V3Tabs
+            slug={slug}
+            breakdown={computeWeekdayBreakdown(gTrades)}
+            yearBreakdown={computeYearBreakdown(gTrades)}
+            trades={gTrades}
+            dateFrom={raw.meta.date_from ? raw.meta.date_from.slice(0, 4) : '2016'}
+            dateTo={raw.meta.date_to ? raw.meta.date_to.slice(0, 4) : '2026'}
+            overviewContent={overviewNodeGeneric}
+            eventShort=""
+            asset="nq"
+            filterBarOverride={{
+              tpOptions: genericCfg.tpOptions,
+              defaultTp: genericCfg.defaultTp,
+              tpLabel: genericCfg.tpLabel,
+              smtOptions: genericCfg.smtOptions,
+              defaultSmt: genericCfg.defaultSmt,
+              smtLabel: genericCfg.smtLabel,
+              variantOptions: genericCfg.variantOptions,
+              defaultVariant: genericCfg.defaultVariant,
+              variantLabel: genericCfg.variantLabel,
+            }}
+          />
+        </Suspense>
+      </div>
+    );
+  }
 
   const match = entry.explanationHtmlNq.match(EXPLORER_RE);
   const explorerKey = match ? match[1].toLowerCase() : null;
