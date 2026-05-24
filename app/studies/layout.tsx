@@ -3,7 +3,7 @@ import { Suspense } from 'react';
 import V3SideNav from './_components/V3SideNav';
 import { AssetProvider } from './_components/AssetContext';
 import AssetPills from './_components/AssetPills';
-import { getStudyCountsByFamily } from '@/lib/study-stats';
+import { getStudyCountsByFamily, getAllStudyStats } from '@/lib/study-stats';
 
 export default function BacktestedLayout({
   children,
@@ -11,6 +11,7 @@ export default function BacktestedLayout({
   children: React.ReactNode;
 }) {
   const cf = getStudyCountsByFamily();
+  const allSlugs = getAllStudyStats().map((s) => s.slug);
 
   return (
     <AssetProvider assets={['nq', 'gc', 'si', 'ym', 'es']}>
@@ -25,7 +26,7 @@ export default function BacktestedLayout({
           J<span className="v3-logo-dot">.</span>
         </Link>
         <div className="v3-topbar-spacer" />
-        <AssetPills />
+        <AssetPills availableSlugs={allSlugs} />
         <a
           href="https://jacktradesnq.com"
           className="v3-home-link"
