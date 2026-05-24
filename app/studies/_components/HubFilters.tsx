@@ -73,8 +73,9 @@ export default function HubFilters({
 
   useEffect(() => {
     const cat = searchParams.get('cat');
-    if (cat === 'news' || cat === 'ib' || cat === 'ema' || cat === 'time' || cat === 'misc') {
-      setFilters((f) => ({ ...f, family: (cat.charAt(0).toUpperCase() + cat.slice(1)) as FamilyType, asset: 'All' }));
+    const CAT_TO_FAMILY: Record<string, FamilyType> = { news: 'News', ib: 'IB', ema: 'EMA', time: 'Time', misc: 'Misc' };
+    if (cat && CAT_TO_FAMILY[cat]) {
+      setFilters((f) => ({ ...f, family: CAT_TO_FAMILY[cat], asset: 'All' }));
     } else if (cat === null) {
       setFilters((f) => ({ ...f, family: 'All' }));
     }
