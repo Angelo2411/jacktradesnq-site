@@ -263,35 +263,57 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       }
       const exitSec = chartEndSec as UTCTimestamp;
 
-      // ── Fibo overlay (0 = entry, 0.5 = TP1, 1 = TP final) ────────────────
-      // Entry = 0.0
+      // Globex IB50: the setup is the 50% retrace of the initial balance.
+      // Derive the IB extremes from entry (=50%) + SL (=entry-side IB extreme).
+      const isIB50 = eventShort === 'IB50';
+      const ibLow = side === 'long' ? slPrice : 2 * entryPriceProp - slPrice;
+      const ibHigh = side === 'long' ? 2 * entryPriceProp - slPrice : slPrice;
+
+      // ── Fibo overlay ─────────────────────────────────────────────────────
+      // IFVG: 0 = entry, 0.5 = TP1, 1 = TP. IB50: 0/1 = IB low/high, 0.5 = entry.
       const entrySegment = chart.addSeries(LineSeries, {
         color: cGold,
         lineWidth: 2,
         lineStyle: 0,
         priceLineVisible: false,
         lastValueVisible: true,
-        title: '0.0 · Entry',
+        title: isIB50 ? '0.5 · Entry' : '0.0 · Entry',
       });
       entrySegment.setData([
         { time: entrySec, value: entryPriceProp },
         { time: exitSec, value: entryPriceProp },
       ]);
 
-      // TP1 = 0.5 (midpoint entry → TP)
-      const tp1Price = entryPriceProp + 0.5 * (tpPrice - entryPriceProp);
-      const tp1Segment = chart.addSeries(LineSeries, {
-        color: cUp,
-        lineWidth: 1,
-        lineStyle: LineStyle.Dotted,
-        priceLineVisible: false,
-        lastValueVisible: true,
-        title: '0.5 · TP1',
-      });
-      tp1Segment.setData([
-        { time: entrySec, value: tp1Price },
-        { time: exitSec, value: tp1Price },
-      ]);
+      if (isIB50) {
+        // IB range fibo: 1.0 = IB high, 0.0 = IB low (entry sits at 0.5).
+        const ibHighSeg = chart.addSeries(LineSeries, {
+          color: cGold, lineWidth: 1, lineStyle: LineStyle.Dotted,
+          priceLineVisible: false, lastValueVisible: true,
+          title: side === 'long' ? '1.0 · IB high' : '0.0 · IB high',
+        });
+        ibHighSeg.setData([{ time: entrySec, value: ibHigh }, { time: exitSec, value: ibHigh }]);
+        const ibLowSeg = chart.addSeries(LineSeries, {
+          color: cGold, lineWidth: 1, lineStyle: LineStyle.Dotted,
+          priceLineVisible: false, lastValueVisible: true,
+          title: side === 'long' ? '0.0 · IB low' : '1.0 · IB low',
+        });
+        ibLowSeg.setData([{ time: entrySec, value: ibLow }, { time: exitSec, value: ibLow }]);
+      } else {
+        // IFVG: TP1 = 0.5 (midpoint entry → TP)
+        const tp1Price = entryPriceProp + 0.5 * (tpPrice - entryPriceProp);
+        const tp1Segment = chart.addSeries(LineSeries, {
+          color: cUp,
+          lineWidth: 1,
+          lineStyle: LineStyle.Dotted,
+          priceLineVisible: false,
+          lastValueVisible: true,
+          title: '0.5 · TP1',
+        });
+        tp1Segment.setData([
+          { time: entrySec, value: tp1Price },
+          { time: exitSec, value: tp1Price },
+        ]);
+      }
 
       // TP final = 1.0
       const tpSegment = chart.addSeries(LineSeries, {
@@ -300,7 +322,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         lineStyle: LineStyle.Dashed,
         priceLineVisible: false,
         lastValueVisible: true,
-        title: '1.0 · TP',
+        title: isIB50 ? 'TP' : '1.0 · TP',
       });
       tpSegment.setData([
         { time: entrySec, value: tpPrice },

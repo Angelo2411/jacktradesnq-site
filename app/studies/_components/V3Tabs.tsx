@@ -452,7 +452,7 @@ function TradesBlock({
     <div>
       <div className="v3-wd-h">Trade list</div>
       <div className="v3-wd-sub">
-        {filterLabel ?? `${VARIANT_LABELS[variant]} · ${smtLabel} variant`}{hasStructuralPrices ? ' · SL = sweep ± 1 tick · TP = pre-news pivot (structural, varies per trade)' : ''} · most recent first.
+        {filterLabel ?? `${VARIANT_LABELS[variant]} · ${smtLabel} variant`}{hasStructuralPrices && !filterLabel ? ' · SL = sweep ± 1 tick · TP = pre-news pivot (structural, varies per trade)' : ''} · most recent first.
       </div>
       <div className="v3-tr-table-wrap">
         <table className="v3-tr-table">
