@@ -201,8 +201,9 @@ export default async function BacktestedDetail({ params }: PageProps) {
             dateFrom={raw.meta.date_from ? raw.meta.date_from.slice(0, 4) : '2016'}
             dateTo={raw.meta.date_to ? raw.meta.date_to.slice(0, 4) : '2026'}
             overviewContent={overviewNodeGeneric}
-            eventShort=""
+            eventShort="IB50"
             asset={genericCfg.asset}
+            barsSlug="globex-ib50"
             filterBarOverride={{
               tpOptions: GENERIC_TP_OPTIONS,
               defaultTp: '1.75',
