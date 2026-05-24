@@ -124,43 +124,31 @@ const FULLPORT_PDFS: Record<string, { nq: string; gc: string; label: string }> =
   cpi: { nq: '/downloads/studies/cpi-fullport.pdf', gc: '/downloads/studies/cpi-fullport.pdf', label: 'Download — CPI Fullport PDF' },
 };
 
+// Shared FilterBar config for the Globex IB50 family (TP-extension grid, asset-agnostic).
+const GENERIC_TP_OPTIONS = [
+  { key: '1', label: 'TP 1.0' },
+  { key: '1.5', label: 'TP 1.5' },
+  { key: '1.75', label: 'TP 1.75' },
+  { key: '2', label: 'TP 2.0' },
+];
+const GENERIC_SMT_OPTIONS = [
+  { key: 'both', label: 'Both' },
+  { key: 'long', label: 'Long' },
+  { key: 'short', label: 'Short' },
+];
+const GENERIC_VARIANT_OPTIONS = [{ key: '0', label: 'SL = IB extreme' }];
+
+// Generic param-grid studies: drop a {meta, trades} JSON + one entry here → page renders.
 const GENERIC_STUDY_CONFIG: Record<string, {
   dataFile: string;
   title: string;
   subtitle: string;
-  tpOptions: Array<{ key: string; label: string }>;
-  defaultTp: string;
-  tpLabel: string;
-  smtOptions: Array<{ key: string; label: string }>;
-  defaultSmt: string;
-  smtLabel: string;
-  variantOptions: Array<{ key: string; label: string }>;
-  defaultVariant: string;
-  variantLabel: string;
+  asset: 'nq' | 'gc' | 'es' | 'si' | 'ym';
 }> = {
-  'globex-ib50': {
-    dataFile: 'globex-ib50.json',
-    title: 'Globex IB50',
-    subtitle: 'NQ futures · 10-min Globex initial balance · 2016–2026 backtest',
-    tpOptions: [
-      { key: '1', label: 'TP 1.0' },
-      { key: '1.5', label: 'TP 1.5' },
-      { key: '1.75', label: 'TP 1.75' },
-      { key: '2', label: 'TP 2.0' },
-    ],
-    defaultTp: '1.75',
-    tpLabel: 'TP extension',
-    smtOptions: [
-      { key: 'both', label: 'Both' },
-      { key: 'long', label: 'Long' },
-      { key: 'short', label: 'Short' },
-    ],
-    defaultSmt: 'both',
-    smtLabel: 'Side',
-    variantOptions: [{ key: '0', label: 'SL = IB extreme' }],
-    defaultVariant: '0',
-    variantLabel: 'Stop',
-  },
+  'globex-ib50':    { dataFile: 'globex-ib50.json',    title: 'Globex IB50', subtitle: 'NQ futures · 10-min Globex initial balance · 2016–2026 backtest', asset: 'nq' },
+  'globex-ib50-gc': { dataFile: 'globex-ib50_gc.json', title: 'Globex IB50', subtitle: 'GC futures · 10-min Globex initial balance · 2016–2026 backtest', asset: 'gc' },
+  'globex-ib50-es': { dataFile: 'globex-ib50_es.json', title: 'Globex IB50', subtitle: 'ES futures · 10-min Globex initial balance · 2016–2026 backtest', asset: 'es' },
+  'globex-ib50-si': { dataFile: 'globex-ib50_si.json', title: 'Globex IB50', subtitle: 'SI futures · 10-min Globex initial balance · 2016–2026 backtest', asset: 'si' },
 };
 
 interface PageProps {
@@ -214,17 +202,17 @@ export default async function BacktestedDetail({ params }: PageProps) {
             dateTo={raw.meta.date_to ? raw.meta.date_to.slice(0, 4) : '2026'}
             overviewContent={overviewNodeGeneric}
             eventShort=""
-            asset="nq"
+            asset={genericCfg.asset}
             filterBarOverride={{
-              tpOptions: genericCfg.tpOptions,
-              defaultTp: genericCfg.defaultTp,
-              tpLabel: genericCfg.tpLabel,
-              smtOptions: genericCfg.smtOptions,
-              defaultSmt: genericCfg.defaultSmt,
-              smtLabel: genericCfg.smtLabel,
-              variantOptions: genericCfg.variantOptions,
-              defaultVariant: genericCfg.defaultVariant,
-              variantLabel: genericCfg.variantLabel,
+              tpOptions: GENERIC_TP_OPTIONS,
+              defaultTp: '1.75',
+              tpLabel: 'TP extension',
+              smtOptions: GENERIC_SMT_OPTIONS,
+              defaultSmt: 'both',
+              smtLabel: 'Side',
+              variantOptions: GENERIC_VARIANT_OPTIONS,
+              defaultVariant: '0',
+              variantLabel: 'Stop',
             }}
           />
         </Suspense>
