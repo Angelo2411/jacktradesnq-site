@@ -11,6 +11,7 @@ import {
   type NewsCalendarItem,
 } from '@/lib/news-calendar';
 import { RED_FOLDER_WHITELIST } from '@/lib/news-week';
+import { MARKET_HOLIDAYS, MARKET_EARLY_CLOSE } from '@/lib/market-holidays';
 import type { EventStudyStats } from '@/lib/study-stats';
 
 type StudyMap = Record<string, EventStudyStats | null>;
@@ -35,12 +36,9 @@ function DayCard({
   asset: string;
   href: string | null;
 }) {
-  // GC pill: only show events that have a GC-backed study.
-  // NQ / All: show all events (study may be null for unknown events).
-  const filtered =
-    asset === 'gc'
-      ? day.events.filter((e) => e.study != null)
-      : day.events;
+  const filtered = day.events.filter((e) => e.study != null);
+  const holiday = MARKET_HOLIDAYS[day.iso];
+  const earlyClose = MARKET_EARLY_CLOSE[day.iso];
 
   const cardClass = 'v3-day-card' + (day.isToday ? ' today' : '');
   const inner = (
@@ -52,12 +50,14 @@ function DayCard({
         </div>
         <span className="v3-day-date">{day.date}</span>
       </div>
-      {filtered.length === 0 ? (
-        <div className="v3-day-empty">
-          {asset === 'gc'
-            ? 'No GC red folder events scheduled'
-            : 'Quiet day — no red folder release'}
-        </div>
+      {holiday && (
+        <div className="v3-day-holiday">Market closed · {holiday}</div>
+      )}
+      {earlyClose && !holiday && (
+        <div className="v3-day-holiday v3-day-earlyclose">Early close 1pm ET · {earlyClose}</div>
+      )}
+      {filtered.length === 0 && !holiday ? (
+        <div className="v3-day-empty">Quiet day — no red folder release</div>
       ) : (
         filtered.map((ev, i) => (
           <div key={i} className="v3-day-strat">
@@ -97,10 +97,7 @@ function DayCard({
 }
 
 function MonthCell({ day, asset }: { day: DayBucket; asset: string }) {
-  const filtered =
-    asset === 'gc'
-      ? day.events.filter((e) => e.study != null)
-      : day.events;
+  const filtered = day.events.filter((e) => e.study != null);
   const inMonth = day.iso.slice(0, 7) === new Date().toISOString().slice(0, 7);
 
   const cls =
@@ -159,10 +156,8 @@ export default function CalendarViewComponent({ events, studyMapByAsset }: Props
 
   const redFolder = useMemo(() => {
     const base = getRedFolderForView(events, view, RED_FOLDER_WHITELIST);
-    // GC pill: drop events that don't have a GC-backed study.
-    if (asset === 'gc') return base.filter((e) => studyMap[e.event] != null);
-    return base;
-  }, [events, view, asset, studyMap]);
+    return base.filter((e) => studyMap[e.event] != null);
+  }, [events, view, studyMap]);
 
   const subhead =
     view === 'this' ? 'This week' : view === 'next' ? 'Next week' : 'Month view';
