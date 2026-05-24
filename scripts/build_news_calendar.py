@@ -65,32 +65,33 @@ EVENT_NORMALIZE = {
     "Core Durable Goods Orders":   "Durable Goods Orders",
 }
 
-# ── FF red folder whitelist (drop everything else: Crude/PMI/Bond/etc.) ──────
-# Names below are POST-normalisation canonical strings.
-BACKTESTED_EVENTS = {
-    # backtested
-    "CPI", "NFP", "PPI", "PCE", "GDP",
-    "Jobless Claims", "Retail Sales",
-    "Empire State Manufacturing Index",
-    "Employment Cost Index",
-    "FOMC Statement", "Federal Funds Rate", "FOMC Minutes",
-    # FF red folder (co-released NFP events dropped; orange events dropped):
-    "ISM Manufacturing PMI",
-    "ISM Services PMI",
-    "ADP Non-Farm Employment Change",
-    "JOLTS Job Openings",
-    "CB Consumer Confidence",
-    "Philadelphia Fed Manufacturing Index",
-    "Durable Goods Orders", "Core Durable Goods Orders",
-}
-
-# Events kept as red-folder but displayed Medium (lower expected move / weaker
-# backtested edge). Everything else in BACKTESTED_EVENTS shows High.
-# Edit this set to re-tier an event.
-MEDIUM_EVENTS = {
-    "Jobless Claims",
-    "Philadelphia Fed Manufacturing Index",
-    "Durable Goods Orders",
+# ── Curated tier map (source of truth maison) ────────────────────────────────
+# Keys = the events we track (anything not here is dropped, whatever investing
+# rates it). Value = display tier, aligned to the ForexFactory red/orange
+# standard. investing.com's own impact flag is IGNORED — used only for dates.
+# Names below are POST-normalisation canonical strings. Edit a value to re-tier.
+EVENT_TIER = {
+    # High (FF red folder — major expected move)
+    "CPI":                                    "High",
+    "NFP":                                    "High",
+    "PPI":                                     "High",
+    "PCE":                                    "High",
+    "GDP":                                    "High",
+    "Retail Sales":                           "High",
+    "FOMC Statement":                         "High",
+    "Federal Funds Rate":                     "High",
+    "FOMC Minutes":                           "High",
+    "ISM Manufacturing PMI":                  "High",
+    "ISM Services PMI":                       "High",
+    "Employment Cost Index":                  "High",
+    # Medium (FF orange — lower expected move)
+    "Jobless Claims":                         "Medium",
+    "Durable Goods Orders":                   "Medium",
+    "Philadelphia Fed Manufacturing Index":   "Medium",
+    "Empire State Manufacturing Index":       "Medium",
+    "ADP Non-Farm Employment Change":         "Medium",
+    "JOLTS Job Openings":                     "Medium",
+    "CB Consumer Confidence":                 "Medium",
 }
 
 # ── Canonical timing whitelist (ET, leading-zero stripped) ───────────────────
@@ -186,7 +187,7 @@ def main() -> None:
         norm_event = EVENT_NORMALIZE.get(raw_event, raw_event)
 
         # FF red folder whitelist: drop Crude Oil/Bond/PMI medium/etc.
-        if norm_event not in BACKTESTED_EVENTS:
+        if norm_event not in EVENT_TIER:
             continue
 
         # Canonical ET time override (handles UTC entries in master CSV)
@@ -206,7 +207,7 @@ def main() -> None:
             "day":     day_label,
             "time":    time_str,
             "event":   norm_event,
-            "imp":     "Medium" if norm_event in MEDIUM_EVENTS else "High",
+            "imp":     EVENT_TIER[norm_event],
             "weekday": r["date"].weekday(),  # Mon=0 .. Sun=6
         })
 
