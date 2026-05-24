@@ -71,15 +71,23 @@ export default function AssetPills({ availableSlugs }: { availableSlugs?: string
 
   return (
     <div className="v3-asset-pills" data-inline={inlineMode ? '' : undefined}>
-      {availableAssets.map((key) => (
-        <button
-          key={key}
-          onClick={() => handleClick(key)}
-          className={'v3-asset-pill' + (asset === key ? ' active' : '')}
-        >
-          {LABELS[key]}
-        </button>
-      ))}
+      {availableAssets
+        .filter((key) => {
+          if (!slugSet) return true;
+          if (key === asset) return true;
+          const target = computeTargetSlug(pathname, key);
+          const tslug = target ? slugFromTarget(target) : null;
+          return tslug != null && slugSet.has(tslug);
+        })
+        .map((key) => (
+          <button
+            key={key}
+            onClick={() => handleClick(key)}
+            className={'v3-asset-pill' + (asset === key ? ' active' : '')}
+          >
+            {LABELS[key]}
+          </button>
+        ))}
     </div>
   );
 }
