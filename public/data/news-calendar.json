@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-24T17:00:14Z",
+  "generated_at": "2026-05-24T17:12:25Z",
   "window_start": "2026-05-11",
   "window_end": "2026-06-21",
   "source": "news_red_folder_full.csv + upcoming_events.csv",
@@ -65,7 +65,7 @@
       "day": "Tue 26",
       "time": "10:00",
       "event": "CB Consumer Confidence",
-      "imp": "High",
+      "imp": "Medium",
       "weekday": 1
     },
     {
