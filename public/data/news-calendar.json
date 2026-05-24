@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-21T14:04:01Z",
+  "generated_at": "2026-05-24T17:00:14Z",
   "window_start": "2026-05-11",
   "window_end": "2026-06-21",
   "source": "news_red_folder_full.csv + upcoming_events.csv",
@@ -74,6 +74,30 @@
       "time": "8:30",
       "event": "Jobless Claims",
       "imp": "Medium",
+      "weekday": 3
+    },
+    {
+      "date": "2026-05-28",
+      "day": "Thu 28",
+      "time": "8:30",
+      "event": "PCE",
+      "imp": "High",
+      "weekday": 3
+    },
+    {
+      "date": "2026-05-28",
+      "day": "Thu 28",
+      "time": "8:30",
+      "event": "Durable Goods Orders",
+      "imp": "Medium",
+      "weekday": 3
+    },
+    {
+      "date": "2026-05-28",
+      "day": "Thu 28",
+      "time": "8:30",
+      "event": "GDP",
+      "imp": "High",
       "weekday": 3
     },
     {
