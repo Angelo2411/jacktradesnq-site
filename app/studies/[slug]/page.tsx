@@ -19,6 +19,7 @@ import BilingualTitle from '../_components/BilingualTitle';
 import V3Tabs from '../_components/V3Tabs';
 import StraddleWrappedTabs from '../_components/StraddleWrappedTabs';
 import PerformanceTearsheet from '../_components/PerformanceTearsheet';
+import ManipStrategyTabs, { type ManipData } from '../_components/ManipStrategyTabs';
 import { getStrategyStats, getStrategyStatsByVariant, getStrategyStatsByVariantAndSmt, getWeekdayBreakdown, getYearBreakdown, getTradeList, getStraddleAllTrades } from '@/lib/study-stats';
 
 const EXPLORER_RE =
@@ -46,6 +47,7 @@ const EVENT_INFO: Record<string, { eventType: string; titlePrefix: string }> = {
 
 const KILLZONE_SLUG = 'killzone-past-vs-now';
 const NWOG_SLUG = 'asia-open';
+const MANIP_SLUG = 'manip930-distribution';
 
 const STRADDLE_V3_SLUGS = new Set(['cpi-day-stats', 'nfp', 'jobless-claims', 'ppi', 'retail-sales', 'durable-goods', 'pce']);
 
@@ -149,6 +151,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
   const isKillzone = slug === KILLZONE_SLUG;
   const isNwog = slug === NWOG_SLUG;
   const isIfvg = IFVG_SLUGS.has(slug);
+  const isManip = slug === MANIP_SLUG;
   const isStraddleV3 = STRADDLE_V3_SLUGS.has(slug);
 
   const match = entry.explanationHtmlNq.match(EXPLORER_RE);
@@ -358,6 +361,37 @@ export default async function BacktestedDetail({ params }: PageProps) {
           dateTo={dateTo}
           overviewContent={straddleOverviewNode}
         />
+
+        {pager}
+      </div>
+    );
+  }
+
+  // Manip930-Distribution: 5-asset strategy with variant tabs
+  if (isManip) {
+    const manipAssets: AssetKey[] = ['nq', 'gc', 'si', 'ym', 'es'];
+    const allAssetData: Record<string, ManipData> = {};
+    for (const a of manipAssets) {
+      const suffix = a === 'nq' ? '' : `-${a}`;
+      const raw = fs.readFileSync(path.join(process.cwd(), 'public', 'data', `manip930-distribution${suffix}.json`), 'utf-8');
+      allAssetData[a] = JSON.parse(raw) as ManipData;
+    }
+
+    const manipOverviewNode = (
+      <BilingualProse htmlNq={entry.explanationHtmlNq} htmlGc={entry.explanationHtmlGc} htmlEs={entry.explanationHtmlEs} htmlSi={entry.explanationHtmlSi} htmlYm={entry.explanationHtmlYm} />
+    );
+
+    return (
+      <div>
+        <Link href="/studies/" className="v3-back">
+          ← back to Data
+        </Link>
+
+        <Suspense fallback={<div className="v3-tabs" style={{ height: 48 }} />}>
+          <AssetProvider assets={manipAssets} slug={slug}>
+            <ManipStrategyTabs allAssetData={allAssetData} overviewContent={manipOverviewNode} />
+          </AssetProvider>
+        </Suspense>
 
         {pager}
       </div>
