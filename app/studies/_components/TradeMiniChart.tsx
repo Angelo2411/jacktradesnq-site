@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   createChart,
   CandlestickSeries,
+  createSeriesMarkers,
   CrosshairMode,
   LineSeries,
   LineStyle,
@@ -249,6 +250,19 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       lastValueVisible: false,
     });
     candleSeries.setData(candles);
+
+    // IB50: mark the entry bar in time so it's clear what's pre-entry (IB break)
+    // vs the trade itself (entry → exit).
+    if (eventShort === 'IB50' && entryTs !== undefined) {
+      const entryMarkerSec = (Math.floor(new Date(entryTs).getTime() / 1000) + 60) as UTCTimestamp;
+      createSeriesMarkers(candleSeries, [{
+        time: entryMarkerSec,
+        position: side === 'short' ? 'aboveBar' : 'belowBar',
+        color: cGold,
+        shape: side === 'short' ? 'arrowDown' : 'arrowUp',
+        text: 'Entry',
+      }]);
+    }
 
     const hasLevels = entryPriceProp !== undefined && slPrice !== undefined && tpPrice !== undefined;
     // Prefer real IFVG entry (overlay) over event_bars release-bar open.
