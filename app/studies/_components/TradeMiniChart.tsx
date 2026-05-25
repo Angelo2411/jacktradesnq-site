@@ -566,6 +566,12 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       const firstTs = candles[0]?.time as number | undefined;
       const lastTs = candles[candles.length - 1]?.time as number | undefined;
       if (firstTs === undefined || lastTs === undefined) return;
+      // IB50: show the whole window (IB formation → entry → exit) so the IB
+      // high/low candles are visible, not just entry ±25min.
+      if (eventShort === 'IB50') {
+        chart.timeScale().fitContent();
+        return;
+      }
       const anchorMs = entryTs ? new Date(entryTs).getTime() : (ts ? new Date(ts).getTime() : t0Ms);
       const anchorSec = Math.floor(anchorMs / 1000);
       const from = Math.max(firstTs, anchorSec - 25 * 60) as UTCTimestamp;
