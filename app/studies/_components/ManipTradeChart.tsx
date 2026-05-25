@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import {
   createChart,
   CandlestickSeries,
+  createSeriesMarkers,
   CrosshairMode,
   LineStyle,
   type IChartApi,
@@ -165,7 +166,7 @@ export default function ManipTradeChart({ example }: Props) {
         size: 3,
       },
     ];
-    (candleSeries as unknown as { setMarkers(m: SeriesMarker<UTCTimestamp>[]): void }).setMarkers(markers);
+    createSeriesMarkers(candleSeries, markers);
 
     const firstTs = candles[0]?.time as number | undefined;
     const lastTs = candles[candles.length - 1]?.time as number | undefined;
