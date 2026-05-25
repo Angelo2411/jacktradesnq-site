@@ -1,0 +1,221 @@
+{
+  "meta": {
+    "asset": "ES",
+    "window_manip": "09:30-10:00 ET",
+    "window_distrib": "10:00-11:00 ET",
+    "dateFrom": "2016-04-19",
+    "dateTo": "2026-04-24",
+    "n_days": 2543,
+    "point_value_usd": 50
+  },
+  "manipulation": {
+    "total_manip_days": 1477,
+    "manip_rate_pct": 58.081,
+    "by_level": [
+      {
+        "level": "PDH",
+        "n": 131,
+        "pct": 8.8693
+      },
+      {
+        "level": "PDL",
+        "n": 115,
+        "pct": 7.7861
+      },
+      {
+        "level": "PMH",
+        "n": 293,
+        "pct": 19.8375
+      },
+      {
+        "level": "PML",
+        "n": 262,
+        "pct": 17.7387
+      },
+      {
+        "level": "AsiaHi",
+        "n": 209,
+        "pct": 14.1503
+      },
+      {
+        "level": "AsiaLo",
+        "n": 216,
+        "pct": 14.6242
+      }
+    ],
+    "by_direction": {
+      "up_manip": {
+        "n": 633,
+        "pct": 42.8571
+      },
+      "down_manip": {
+        "n": 844,
+        "pct": 57.1429
+      }
+    },
+    "by_year": [
+      {
+        "year": 2016,
+        "n_days": 179,
+        "manip_days": 97,
+        "manip_rate_pct": 54.1899
+      },
+      {
+        "year": 2017,
+        "n_days": 253,
+        "manip_days": 160,
+        "manip_rate_pct": 63.2411
+      },
+      {
+        "year": 2018,
+        "n_days": 254,
+        "manip_days": 143,
+        "manip_rate_pct": 56.2992
+      },
+      {
+        "year": 2019,
+        "n_days": 254,
+        "manip_days": 145,
+        "manip_rate_pct": 57.0866
+      },
+      {
+        "year": 2020,
+        "n_days": 255,
+        "manip_days": 151,
+        "manip_rate_pct": 59.2157
+      },
+      {
+        "year": 2021,
+        "n_days": 254,
+        "manip_days": 151,
+        "manip_rate_pct": 59.4488
+      },
+      {
+        "year": 2022,
+        "n_days": 253,
+        "manip_days": 144,
+        "manip_rate_pct": 56.917
+      },
+      {
+        "year": 2023,
+        "n_days": 254,
+        "manip_days": 144,
+        "manip_rate_pct": 56.6929
+      },
+      {
+        "year": 2024,
+        "n_days": 255,
+        "manip_days": 139,
+        "manip_rate_pct": 54.5098
+      },
+      {
+        "year": 2025,
+        "n_days": 253,
+        "manip_days": 159,
+        "manip_rate_pct": 62.8458
+      },
+      {
+        "year": 2026,
+        "n_days": 79,
+        "manip_days": 44,
+        "manip_rate_pct": 55.6962
+      }
+    ]
+  },
+  "distribution": {
+    "follow_through_rate_pct": 50.3047,
+    "avg_move_pts": 0.2899,
+    "median_move_pts": 0.25,
+    "avg_mfe_pts": 9.9216,
+    "by_year": [
+      {
+        "year": 2016,
+        "n": 97,
+        "follow_through_rate_pct": 44.3299,
+        "avg_move_pts": -0.5052
+      },
+      {
+        "year": 2017,
+        "n": 160,
+        "follow_through_rate_pct": 52.5,
+        "avg_move_pts": 0.5297
+      },
+      {
+        "year": 2018,
+        "n": 143,
+        "follow_through_rate_pct": 47.5524,
+        "avg_move_pts": -0.549
+      },
+      {
+        "year": 2019,
+        "n": 145,
+        "follow_through_rate_pct": 56.5517,
+        "avg_move_pts": 1.2483
+      },
+      {
+        "year": 2020,
+        "n": 151,
+        "follow_through_rate_pct": 43.7086,
+        "avg_move_pts": -0.2351
+      },
+      {
+        "year": 2021,
+        "n": 151,
+        "follow_through_rate_pct": 45.0331,
+        "avg_move_pts": -0.899
+      },
+      {
+        "year": 2022,
+        "n": 144,
+        "follow_through_rate_pct": 50.6944,
+        "avg_move_pts": -1.184
+      },
+      {
+        "year": 2023,
+        "n": 144,
+        "follow_through_rate_pct": 50.0,
+        "avg_move_pts": 0.2378
+      },
+      {
+        "year": 2024,
+        "n": 139,
+        "follow_through_rate_pct": 57.554,
+        "avg_move_pts": 2.1942
+      },
+      {
+        "year": 2025,
+        "n": 159,
+        "follow_through_rate_pct": 52.2013,
+        "avg_move_pts": 1.4371
+      },
+      {
+        "year": 2026,
+        "n": 44,
+        "follow_through_rate_pct": 54.5455,
+        "avg_move_pts": 1.4545
+      }
+    ],
+    "by_regime": {
+      "full": {
+        "n": 1477,
+        "follow_through_rate_pct": 50.3047,
+        "avg_move_pts": 0.2899
+      },
+      "2024+": {
+        "n": 342,
+        "follow_through_rate_pct": 54.6784,
+        "avg_move_pts": 1.7471
+      },
+      "2025+": {
+        "n": 203,
+        "follow_through_rate_pct": 52.7094,
+        "avg_move_pts": 1.4409
+      },
+      "2026": {
+        "n": 44,
+        "follow_through_rate_pct": 54.5455,
+        "avg_move_pts": 1.4545
+      }
+    }
+  }
+}

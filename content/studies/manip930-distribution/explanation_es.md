@@ -1,5 +1,7 @@
-ES futures offer the cleanest edge among the five assets tested for the 9:30 manipulation → 10:00 distribution pattern. Across 1,226 days (2016–2026), holding the position until 11:00 ET produces a profit factor of 1.11 and a net gain of +826 points — a modest but persistent edge that survives scrutiny.
+ES futures show strong manipulation activity: **58.1%** of trading days (1,477 of 2,543 days, 2016–2026) contain a 09:30–10:00 ET sweep-reject pattern. That's a majority of days — the behavior is structural.
 
-The edge improves in recent regimes: 2024+ yields PF 1.14, and 2026 alone reaches PF 1.23 across 97 trades. This suggests the pattern is not decaying — if anything, it's sharpening as the market becomes more algorithmic.
+The distribution follow-through is **50.3%** — exact coin-flip territory. The average move in the post-sweep direction is **+0.29 points**, and the median is **0.25 points**. Both are near zero. The average favorable excursion is **9.9 points**, meaning the distribution does move in the "right" direction intra-hour — but it gives it back, on average.
 
-With ES at $50 per point, the 10-year net P&L before commissions is approximately $41,000. The strategy captures the mean-reversion tendency after the opening-drive liquidity grab, and ES's deep liquidity makes it the most reliable instrument for this setup.
+Recent regimes (2024+, 2025+, 2026) show *slightly* higher follow-through rates (52–55%) and positive average moves (+1.4–1.7 pts). This is marginal improvement at best, not a regime shift. The core finding holds: ES manipulation is common, but distribution follow-through has no systematic directional bias.
+
+For traders: the sweep-reject pattern is real and frequent. But betting on a 10:00 continuation is a coin flip. The edge — if any existed — is too small to survive friction.

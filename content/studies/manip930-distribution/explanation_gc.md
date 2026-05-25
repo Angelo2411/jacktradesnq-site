@@ -1,5 +1,7 @@
-GC futures present a split verdict. The TP 1R variant (take-profit at 1× risk) works: PF 1.08, 1,452 trades, net +189 points. $100/point means approximately +$18,900 over the full period. But the Hold to 11:00 variant loses money — PF 0.97, net −136 points.
+Gold futures (GC) have the lowest manipulation rate of the five assets: **34.3%** of days (1,295 of 3,781 days, 2016–2026). The sweep-reject pattern is less frequent in GC than in equity indices, consistent with gold's slower, less volatile opening hour and its 24-hour trading cycle that diffuses the overnight range.
 
-This divergence tells a story: the manipulation-to-reversal edge exists in gold, but the mean-reversion effect fades quickly. Taking profit at 1R captures the bulk of the edge; holding through the full 10:00–11:00 hour invites mean reversion of its own — and the edge evaporates.
+Distribution follow-through is **49.7%** — slightly below a coin flip. The average post-sweep move is **−0.04 points**, and the median is **0.0**. The average favorable excursion is **4.8 points**.
 
-The 2025+ regime shows neutral results for TP 1R (PF ~1.0), suggesting GC's edge may be weakening in the current environment. Treat this as a scalping setup, not a hold — and size accordingly.
+Every regime window (full, 2024+, 2025+, 2026) shows follow-through between 47–49% with negative or near-zero average moves. There is no window where GC's distribution shows a consistent directional tendency.
+
+The conclusion is clear: the manipulation pattern exists in gold — about one-third of days — but the distribution that follows has no predictable direction. Gold's 10:00–11:00 ET window is essentially random relative to the 09:30 sweep.

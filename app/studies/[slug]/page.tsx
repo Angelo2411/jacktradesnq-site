@@ -19,8 +19,8 @@ import BilingualTitle from '../_components/BilingualTitle';
 import V3Tabs from '../_components/V3Tabs';
 import StraddleWrappedTabs from '../_components/StraddleWrappedTabs';
 import PerformanceTearsheet from '../_components/PerformanceTearsheet';
-import ManipStrategyTabs, { type ManipData } from '../_components/ManipStrategyTabs';
-import { type ManipExample } from '../_components/ManipTradeChart';
+import ManipDataTabs, { type ManipDataFile } from '../_components/ManipDataTabs';
+import { type ManipExample } from '../_components/ManipExampleChart';
 import { getStrategyStats, getStrategyStatsByVariant, getStrategyStatsByVariantAndSmt, getWeekdayBreakdown, getYearBreakdown, getTradeList, getStraddleAllTrades } from '@/lib/study-stats';
 
 const EXPLORER_RE =
@@ -368,14 +368,14 @@ export default async function BacktestedDetail({ params }: PageProps) {
     );
   }
 
-  // Manip930-Distribution: 5-asset strategy with variant tabs
+  // Manip930-Distribution: pure data study (manip frequency + distribution behavior)
   if (isManip) {
     const manipAssets: AssetKey[] = ['nq', 'gc', 'si', 'ym', 'es'];
-    const allAssetData: Record<string, ManipData> = {};
+    const allData: Record<string, ManipDataFile> = {};
     for (const a of manipAssets) {
       const suffix = a === 'nq' ? '' : `-${a}`;
-      const raw = fs.readFileSync(path.join(process.cwd(), 'public', 'data', `manip930-distribution${suffix}.json`), 'utf-8');
-      allAssetData[a] = JSON.parse(raw) as ManipData;
+      const raw = fs.readFileSync(path.join(process.cwd(), 'public', 'data', `manip930-distribution-data${suffix}.json`), 'utf-8');
+      allData[a] = JSON.parse(raw) as ManipDataFile;
     }
 
     const examplesByAsset: Partial<Record<AssetKey, ManipExample[]>> = {};
@@ -402,7 +402,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
 
         <Suspense fallback={<div className="v3-tabs" style={{ height: 48 }} />}>
           <AssetProvider assets={manipAssets} slug={slug}>
-            <ManipStrategyTabs allAssetData={allAssetData} overviewContent={manipOverviewNode} examplesByAsset={examplesByAsset} />
+            <ManipDataTabs allData={allData} overviewContent={manipOverviewNode} examplesByAsset={examplesByAsset} />
           </AssetProvider>
         </Suspense>
 
