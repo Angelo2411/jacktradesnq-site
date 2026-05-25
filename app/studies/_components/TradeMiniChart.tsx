@@ -25,6 +25,8 @@ interface EventBarsEntry {
   date: string;
   t0_iso: string;
   entry_price: number;
+  ib_high?: number;
+  ib_low?: number;
   bars: EventBar[];
 }
 
@@ -145,6 +147,8 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
   const candlesRef = useRef<CandlestickData<UTCTimestamp>[]>([]);
   const barsRef = useRef<EventBar[]>([]);
   const t0MsRef = useRef<number>(0);
+  const ibHighRef = useRef<number | null>(null);
+  const ibLowRef = useRef<number | null>(null);
 
   const isMultiEvent = eventShort === 'Multi-event' || eventShort === 'multi-event' || eventShort === '';
   const suffix = asset === 'nq' ? '' : asset === 'gc' ? '-gc' : asset === 'es' ? '-es' : asset === 'si' ? '-si' : asset === 'ym' ? '-ym' : '';
@@ -171,6 +175,8 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         if (!entry) { setStatus('missing'); return; }
         const t0Ms = new Date(entry.t0_iso).getTime();
         t0MsRef.current = t0Ms;
+        ibHighRef.current = entry.ib_high ?? null;
+        ibLowRef.current = entry.ib_low ?? null;
         const filled = forwardFill(entry.bars);
         barsRef.current = filled;
         candlesRef.current = toCandles(filled, t0Ms);
@@ -292,8 +298,9 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       const isIB50 = eventShort === 'IB50';
       // Prefer the real IB extremes from the data (SL + tp@1.0); fall back to
       // deriving from entry+SL only if absent (entry snapping makes that ±1 tick off).
-      const ibLow = ibLowProp ?? (side === 'long' ? slPrice : 2 * entryPriceProp - slPrice);
-      const ibHigh = ibHighProp ?? (side === 'long' ? 2 * entryPriceProp - slPrice : slPrice);
+      // Real IB wicks from the bars first, then data, then derived.
+      const ibLow = ibLowRef.current ?? ibLowProp ?? (side === 'long' ? slPrice : 2 * entryPriceProp - slPrice);
+      const ibHigh = ibHighRef.current ?? ibHighProp ?? (side === 'long' ? 2 * entryPriceProp - slPrice : slPrice);
 
       // ── Fibo overlay ─────────────────────────────────────────────────────
       if (isIB50) {
@@ -368,7 +375,10 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       // Wick-snap only for studies that define a sweep (IFVG). Without a sweepTs
       // (e.g. Globex IB50, where SL = a fixed IB extreme) keep the real slPrice.
       let displaySL = slPrice;
-      if (sweepTs !== undefined && sweepBars.length > 0) {
+      if (isIB50) {
+        // SL = the entry-side IB extreme, drawn on the real wick.
+        displaySL = side === 'short' ? ibHigh : ibLow;
+      } else if (sweepTs !== undefined && sweepBars.length > 0) {
         displaySL = side === 'short'
           ? Math.max(...sweepBars.map((b) => b.h))
           : Math.min(...sweepBars.map((b) => b.l));
