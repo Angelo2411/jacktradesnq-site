@@ -20,6 +20,13 @@ date_from = src['from']
 date_to = src['to']
 generated_at = datetime.now(timezone.utc).isoformat()
 
+# Build lookup: entry_time -> {sl, tp_at_1, side} from tp_extension==1.0 variant
+tp1_variant = next(v for v in src['variants'] if v['tp_extension'] == 1.0)
+session_ib = {}
+for t in tp1_variant['trades']:
+    et = t['entry_time']
+    session_ib[et] = {'sl': t['sl'], 'tp_at_1': t['tp'], 'side': t['side']}
+
 all_trades = []
 counts = {}
 
@@ -34,10 +41,30 @@ for variant in src['variants']:
         entry_dt = datetime.fromtimestamp(et, tz=timezone.utc)
         exit_dt = datetime.fromtimestamp(xt, tz=timezone.utc)
         pnl_pts = trade['pnl_points']
+        ib = session_ib.get(et, {})
+        side = trade['side']
+        sl = trade['sl']
+        tp_at_1 = ib.get('tp_at_1', None)
+        if tp_at_1 is not None:
+            if side == 'short':
+                ib_high = sl
+                ib_low = tp_at_1
+            else:
+                ib_low = sl
+                ib_high = tp_at_1
+        else:
+            # fallback: derive from entry + sl (entry is mid, sl is one extreme)
+            mid_to_sl = abs(trade['entry_price'] - sl)
+            if side == 'short':
+                ib_high = trade['entry_price'] + mid_to_sl
+                ib_low = trade['entry_price'] - mid_to_sl
+            else:
+                ib_low = trade['entry_price'] - mid_to_sl
+                ib_high = trade['entry_price'] + mid_to_sl
         row = {
             'ts': entry_dt.isoformat(),
             'year': entry_dt.year,
-            'side': trade['side'],
+            'side': side,
             'pnl_pts': pnl_pts,
             'outcome': 'win' if pnl_pts > 0 else 'loss',
             'entry_price': trade['entry_price'],
@@ -48,6 +75,8 @@ for variant in src['variants']:
             'exit_price': trade['exit_price'],
             'x_stop': 0,
             'y_tp': tp,
+            'ib_high': ib_high,
+            'ib_low': ib_low,
         }
         all_trades.append(row)
         counts[tp] += 1

@@ -69,6 +69,8 @@ interface Props {
   ifvgTop?: number;
   ifvgBottom?: number;
   ifvgFormationTs?: string;
+  ibHigh?: number;
+  ibLow?: number;
   variant?: string;
   barsSlug?: string;
   slLabel?: string;
@@ -135,7 +137,7 @@ function LegendPill({ color, label, value }: { color: string; label: string; val
   );
 }
 
-export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl_pts, outcome, entryPrice: entryPriceProp, slPrice, tpPrice, entryTs, exitTs, exitPrice, ts, dataHigh, dataLow, sweepTs, sweepSide, ifvgTop, ifvgBottom, ifvgFormationTs, variant = 'tp1_be', barsSlug, slLabel }: Props) {
+export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl_pts, outcome, entryPrice: entryPriceProp, slPrice, tpPrice, entryTs, exitTs, exitPrice, ts, dataHigh, dataLow, sweepTs, sweepSide, ifvgTop, ifvgBottom, ifvgFormationTs, ibHigh: ibHighProp, ibLow: ibLowProp, variant = 'tp1_be', barsSlug, slLabel }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [status, setStatus] = useState<'loading' | 'found' | 'missing'>('loading');
   const [snappedSL, setSnappedSL] = useState<number | null>(null);
@@ -288,8 +290,10 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       // Globex IB50: the setup is the 50% retrace of the initial balance.
       // Derive the IB extremes from entry (=50%) + SL (=entry-side IB extreme).
       const isIB50 = eventShort === 'IB50';
-      const ibLow = side === 'long' ? slPrice : 2 * entryPriceProp - slPrice;
-      const ibHigh = side === 'long' ? 2 * entryPriceProp - slPrice : slPrice;
+      // Prefer the real IB extremes from the data (SL + tp@1.0); fall back to
+      // deriving from entry+SL only if absent (entry snapping makes that ±1 tick off).
+      const ibLow = ibLowProp ?? (side === 'long' ? slPrice : 2 * entryPriceProp - slPrice);
+      const ibHigh = ibHighProp ?? (side === 'long' ? 2 * entryPriceProp - slPrice : slPrice);
 
       // ── Fibo overlay ─────────────────────────────────────────────────────
       if (isIB50) {
@@ -299,8 +303,9 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         const ib1 = side === 'long' ? ibHigh : ibLow; // 1.0 anchor
         const FIB = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
         for (const f of FIB) {
-          const price = ib0 + f * (ib1 - ib0);
           const isEntry = f === 0.5;
+          // 0.5 line = the real fill price (entry was tick-snapped, ~mid).
+          const price = isEntry ? entryPriceProp : ib0 + f * (ib1 - ib0);
           const title =
             f === 0.5 ? '0.5 · Entry'
             : f === 0 ? `0.0 · IB ${side === 'long' ? 'low' : 'high'}`

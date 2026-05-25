@@ -509,6 +509,8 @@ function TradesBlock({
                         ifvgTop={t.ifvg_top}
                         ifvgBottom={t.ifvg_bottom}
                         ifvgFormationTs={t.ifvg_formation_ts}
+                        ibHigh={t.ib_high}
+                        ibLow={t.ib_low}
                         variant={variant}
                         barsSlug={barsSlug as string | undefined}
                       />

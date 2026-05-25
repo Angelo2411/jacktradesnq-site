@@ -635,6 +635,8 @@ export type TradeRow = {
   ifvg_formation_ts?: string;
   x_stop?: number;
   y_tp?: number;
+  ib_high?: number;
+  ib_low?: number;
 };
 
 type PriceOverlayRow = {
