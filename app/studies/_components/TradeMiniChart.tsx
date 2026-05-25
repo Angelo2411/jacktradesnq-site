@@ -263,6 +263,10 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       }
       const exitSec = chartEndSec as UTCTimestamp;
 
+      // IB50 anchors every level (fib + TP + SL) at the IB itself (first bar)
+      // so the lines span the whole chart, like a fib drawn on the swing in TV.
+      const lineStartSec = (eventShort === 'IB50' ? (candles[0]?.time as number) : entrySec) as UTCTimestamp;
+
       // Globex IB50: the setup is the 50% retrace of the initial balance.
       // Derive the IB extremes from entry (=50%) + SL (=entry-side IB extreme).
       const isIB50 = eventShort === 'IB50';
@@ -273,9 +277,6 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       if (isIB50) {
         // Full TradingView-style fib retracement anchored on the IB range:
         // 0.0 / 1.0 = IB extremes, 0.5 = entry, plus the standard inner levels.
-        // Anchor the levels at the IB itself (first bar = 18:00 ET) so the lines
-        // run across the whole chart like a fib drawn on the swing in TradingView.
-        const ibAnchorSec = (candles[0]?.time as number) as UTCTimestamp;
         const ib0 = side === 'long' ? ibLow : ibHigh; // 0.0 anchor
         const ib1 = side === 'long' ? ibHigh : ibLow; // 1.0 anchor
         const FIB = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
@@ -295,7 +296,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
             lastValueVisible: true,
             title,
           });
-          seg.setData([{ time: ibAnchorSec, value: price }, { time: exitSec, value: price }]);
+          seg.setData([{ time: lineStartSec, value: price }, { time: exitSec, value: price }]);
         }
       } else {
         // IFVG: 0.0 = entry, 0.5 = TP1, 1.0 = TP.
@@ -328,7 +329,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         title: isIB50 ? 'TP' : '1.0 · TP',
       });
       tpSegment.setData([
-        { time: entrySec, value: tpPrice },
+        { time: lineStartSec, value: tpPrice },
         { time: exitSec, value: tpPrice },
       ]);
 
@@ -358,7 +359,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       });
       const slStartSec = (sweepTs !== undefined
         ? Math.floor(new Date(sweepTs).getTime() / 1000)
-        : entrySec) as UTCTimestamp;
+        : lineStartSec) as UTCTimestamp;
       slSegment.setData([
         { time: slStartSec, value: displaySL },
         { time: exitSec, value: displaySL },
