@@ -261,9 +261,16 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
 
     // IB50: mark the entry bar in time so it's clear what's pre-entry (IB break)
     // vs the trade itself (entry → exit).
-    if (eventShort === 'IB50' && entryTs !== undefined) {
+    if (eventShort === 'IB50' && entryTs !== undefined && entryPriceProp !== undefined) {
       const entryMarkerSec = (Math.floor(new Date(entryTs).getTime() / 1000) + 60) as UTCTimestamp;
-      createSeriesMarkers(candleSeries, [{
+      // Anchor the marker to an invisible series AT the entry price so the arrow
+      // sits on the entry level (aligned with the 0.5 line), not below the candle.
+      const markerLine = chart.addSeries(LineSeries, {
+        color: 'rgba(0,0,0,0)', lineWidth: 1,
+        priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+      });
+      markerLine.setData([{ time: entryMarkerSec, value: entryPriceProp }]);
+      createSeriesMarkers(markerLine, [{
         time: entryMarkerSec,
         position: side === 'short' ? 'aboveBar' : 'belowBar',
         color: cGold,
