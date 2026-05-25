@@ -180,9 +180,10 @@ export default function ManipExampleChart({ example }: Props) {
   }, [example]);
 
   const continued = example.pnl_pts > 0;
-  const continuedColor = continued ? '#4a8c3f' : '#b8452a';
-  const continuedLabel = continued ? 'continued' : 'failed';
-  const sideColor = example.side === 'long' ? '#4a8c3f' : '#b8452a';
+  const direction = example.side === 'long' ? 'up' : 'down';
+  const directionColor = direction === 'up' ? '#4a8c3f' : '#b8452a';
+  const outcomeColor = continued ? '#4a8c3f' : '#b8452a';
+  const outcomeLabel = continued ? 'continued' : 'reversed';
 
   return (
     <div style={{ marginBottom: 24 }}>
@@ -209,16 +210,14 @@ export default function ManipExampleChart({ example }: Props) {
       }}>
         <span style={{ fontWeight: 600, color: 'var(--c-ink)' }}>{example.date}</span>
         <span>·</span>
-        <span>swept {example.level}</span>
-        <span>·</span>
-        <span style={{ color: sideColor, fontWeight: 700, textTransform: 'uppercase' }}>
-          {example.side}
+        <span>09:30–10:00</span>
+        <span style={{ color: directionColor, fontWeight: 700 }}>
+          {direction}
         </span>
-        <span>manipulation</span>
         <span>→</span>
-        <span>distribution</span>
-        <span style={{ color: continuedColor, fontWeight: 700 }}>
-          {continuedLabel}
+        <span>10:00–11:00</span>
+        <span style={{ color: outcomeColor, fontWeight: 700 }}>
+          {outcomeLabel}
         </span>
       </div>
     </div>

@@ -19,7 +19,7 @@ import BilingualTitle from '../_components/BilingualTitle';
 import V3Tabs from '../_components/V3Tabs';
 import StraddleWrappedTabs from '../_components/StraddleWrappedTabs';
 import PerformanceTearsheet from '../_components/PerformanceTearsheet';
-import ManipDataTabs, { type ManipDataFile } from '../_components/ManipDataTabs';
+import ManipDataTabs, { type ContDataFile } from '../_components/ManipDataTabs';
 import { type ManipExample } from '../_components/ManipExampleChart';
 import { getStrategyStats, getStrategyStatsByVariant, getStrategyStatsByVariantAndSmt, getWeekdayBreakdown, getYearBreakdown, getTradeList, getStraddleAllTrades } from '@/lib/study-stats';
 
@@ -368,14 +368,14 @@ export default async function BacktestedDetail({ params }: PageProps) {
     );
   }
 
-  // Manip930-Distribution: pure data study (manip frequency + distribution behavior)
+  // Manip930-Distribution: continuation-vs-reversal study
   if (isManip) {
     const manipAssets: AssetKey[] = ['nq', 'gc', 'si', 'ym', 'es'];
-    const allData: Record<string, ManipDataFile> = {};
+    const allData: Record<string, ContDataFile> = {};
     for (const a of manipAssets) {
       const suffix = a === 'nq' ? '' : `-${a}`;
-      const raw = fs.readFileSync(path.join(process.cwd(), 'public', 'data', `manip930-distribution-data${suffix}.json`), 'utf-8');
-      allData[a] = JSON.parse(raw) as ManipDataFile;
+      const raw = fs.readFileSync(path.join(process.cwd(), 'public', 'data', `manip930-distribution-cont${suffix}.json`), 'utf-8');
+      allData[a] = JSON.parse(raw) as ContDataFile;
     }
 
     const examplesByAsset: Partial<Record<AssetKey, ManipExample[]>> = {};

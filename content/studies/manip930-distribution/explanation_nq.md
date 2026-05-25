@@ -1,7 +1,7 @@
-In 2025–26, the 09:30 sweep-reject fires on ~49.6% of NQ days, and the 10:00 distribution follows through 48.8% of the time — indistinguishable from a coin flip. The average move in the post-sweep direction is −8.2 points.
+In 2025–26, after the 09:30–10:00 move on NQ, the 10:00–11:00 hour continues that direction 54.2% of the time — a modest lean toward continuation. Over the full 2016–2026 sample (2,543 days), the continuation rate is 50.9%.
 
-Across the full 2016–2026 sample (2,553 days), manipulation occurs 48.1% of the time with 51.7% follow-through and a near-zero average move. **The conclusion is the same over 10 years**: the sweep-reject is frequent but the distribution has no directional edge.
+The 10-year average is near a coin flip, but the recent regime (2025+, 343 days) shows a 3-point skew favoring continuation. 2026 alone (90 days so far) sits at 58.9%. Whether this is noise or a genuine regime shift is unknowable — the sample is thin and the edge is modest.
 
-NQ's high manipulation rate makes it *feel* tradable — the sweep is visible, the rejection is sharp. But the data says it doesn't follow through systematically. The distribution window is random, not predictive.
+On days where the 09:30 window swept and rejected a key level (sweep days — 1,295 days total), continuation holds at 50.7% — effectively random. The sweep itself does not predict whether the following hour continues or reverses.
 
-This is an observational study of market microstructure, not a trading strategy. No entries, stops, or targets are implied.
+Direction is defined mechanically: sign of close−open for each window. This is an observational study, not a trading strategy. No entries, stops, or targets are implied.

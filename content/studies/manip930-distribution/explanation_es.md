@@ -1,7 +1,7 @@
-In 2025–26, the 09:30 sweep-reject fires on ~50.6% of ES days. The 10:00 distribution follows through 50.6% of the time — an exact coin flip — with an average move of just +0.9 points.
+In 2025–26, after the 09:30–10:00 move on ES, the 10:00–11:00 hour continues that direction 53.3% of the time — a lean toward continuation, but not a strong one. Over the full 2016–2026 sample (2,462 days), the continuation rate is 52.6%.
 
-Over the full 2016–2026 sample (2,543 days), the manipulation rate is 48.2% and follow-through is 49.8%. No regime window shows a systematic directional bias. ES manipulation is common, but the distribution that follows is random.
+Unlike NQ, ES has shown a persistent mild continuation bias, not just a recent one. 2024 recorded 54.6%, 2025 52.7%, and 2026 so far 55.1% (78 days). At no point does this exceed a modest edge — it is a tilt, not a signal.
 
-ES traders often observe the 09:30 sweep and feel the market is "showing its hand." The data disagrees. The post-sweep move is noise — there is no edge in fading or following it directionally.
+On sweep days (1,152 of 2,462), continuation drops to 51.5%. The sweep-reject pattern does not enhance the continuation tendency — if anything, the direction is less predictable after a sweep than on an average day.
 
-This is an observational study of market microstructure, not a trading strategy. No entries, stops, or targets are implied.
+Direction is defined mechanically: sign of close−open for each window. This is an observational study, not a trading strategy. No entries, stops, or targets are implied.
