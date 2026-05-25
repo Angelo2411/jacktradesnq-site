@@ -320,10 +320,10 @@ export default function ManipDataTabs({
                     {REGIME_LABELS[key]}
                     {isRecentHighlight ? ' ⬤' : ''}
                   </td>
-                  <td className="v3-yr-num">{r.n}</td>
-                  <td className="v3-yr-num">{r.follow_through_rate_pct.toFixed(1)}%</td>
-                  <td className={'v3-yr-num' + (r.avg_move_pts > 0 ? ' sage' : r.avg_move_pts < 0 ? ' terra' : '')}>
-                    {r.avg_move_pts >= 0 ? '+' : ''}{r.avg_move_pts.toFixed(1)}
+                  <td className="v3-yr-num">{r.n || '—'}</td>
+                  <td className="v3-yr-num">{r.n > 0 ? `${r.follow_through_rate_pct.toFixed(1)}%` : '— no data'}</td>
+                  <td className={'v3-yr-num' + (r.n > 0 && r.avg_move_pts > 0 ? ' sage' : r.n > 0 && r.avg_move_pts < 0 ? ' terra' : '')}>
+                    {r.n > 0 ? `${r.avg_move_pts >= 0 ? '+' : ''}${r.avg_move_pts.toFixed(1)}` : '—'}
                   </td>
                 </tr>
               );
