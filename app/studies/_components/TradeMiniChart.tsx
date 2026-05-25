@@ -160,7 +160,11 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       .then((r) => r.json())
       .then((data: EventBarsEntry[]) => {
         if (cancelled) return;
-        const entry = data.find((e) => e.date === tradeDate);
+        // IB50 can have two sessions on the same UTC date → match the exact
+        // session by entry timestamp, not just the date.
+        const entry = eventShort === 'IB50' && entryTs
+          ? data.find((e) => e.t0_iso === entryTs)
+          : data.find((e) => e.date === tradeDate);
         if (!entry) { setStatus('missing'); return; }
         const t0Ms = new Date(entry.t0_iso).getTime();
         t0MsRef.current = t0Ms;
@@ -172,7 +176,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       })
       .catch(() => { if (!cancelled) setStatus('missing'); });
     return () => { cancelled = true; };
-  }, [jsonPath, tradeDate, isMultiEvent]);
+  }, [jsonPath, tradeDate, isMultiEvent, eventShort, entryTs]);
 
   useEffect(() => {
     if (status !== 'found') return;
