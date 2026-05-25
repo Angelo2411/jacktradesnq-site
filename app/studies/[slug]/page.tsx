@@ -20,6 +20,7 @@ import V3Tabs from '../_components/V3Tabs';
 import StraddleWrappedTabs from '../_components/StraddleWrappedTabs';
 import PerformanceTearsheet from '../_components/PerformanceTearsheet';
 import ManipStrategyTabs, { type ManipData } from '../_components/ManipStrategyTabs';
+import { type ManipExample } from '../_components/ManipTradeChart';
 import { getStrategyStats, getStrategyStatsByVariant, getStrategyStatsByVariantAndSmt, getWeekdayBreakdown, getYearBreakdown, getTradeList, getStraddleAllTrades } from '@/lib/study-stats';
 
 const EXPLORER_RE =
@@ -377,6 +378,18 @@ export default async function BacktestedDetail({ params }: PageProps) {
       allAssetData[a] = JSON.parse(raw) as ManipData;
     }
 
+    const examplesByAsset: Partial<Record<AssetKey, ManipExample[]>> = {};
+    for (const a of manipAssets) {
+      const suffix = a === 'nq' ? '' : `-${a}`;
+      try {
+        const raw = fs.readFileSync(path.join(process.cwd(), 'public', 'data', `manip930-distribution-examples${suffix}.json`), 'utf-8');
+        const parsed = JSON.parse(raw);
+        examplesByAsset[a] = parsed.examples ?? [];
+      } catch {
+        examplesByAsset[a] = [];
+      }
+    }
+
     const manipOverviewNode = (
       <BilingualProse htmlNq={entry.explanationHtmlNq} htmlGc={entry.explanationHtmlGc} htmlEs={entry.explanationHtmlEs} htmlSi={entry.explanationHtmlSi} htmlYm={entry.explanationHtmlYm} />
     );
@@ -389,7 +402,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
 
         <Suspense fallback={<div className="v3-tabs" style={{ height: 48 }} />}>
           <AssetProvider assets={manipAssets} slug={slug}>
-            <ManipStrategyTabs allAssetData={allAssetData} overviewContent={manipOverviewNode} />
+            <ManipStrategyTabs allAssetData={allAssetData} overviewContent={manipOverviewNode} examplesByAsset={examplesByAsset} />
           </AssetProvider>
         </Suspense>
 

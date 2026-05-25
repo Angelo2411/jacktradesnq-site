@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useAsset } from './AssetContext';
 import AssetPills from './AssetPills';
 import EquityCurve from './EquityCurve';
+import ManipTradeChart, { type ManipExample } from './ManipTradeChart';
 
 type RegimeKey = 'full' | '2024+' | '2025+' | '2026';
 type RegimeStat = { n: number; pf: number; net_pts: number; wr: number };
@@ -82,9 +83,11 @@ const MAX_TRADES = 200;
 export default function ManipStrategyTabs({
   allAssetData,
   overviewContent,
+  examplesByAsset,
 }: {
   allAssetData: Record<AssetKey, ManipData>;
   overviewContent: React.ReactNode;
+  examplesByAsset?: Partial<Record<AssetKey, ManipExample[]>>;
 }) {
   const { asset } = useAsset();
   const searchParams = useSearchParams();
@@ -206,7 +209,22 @@ export default function ManipStrategyTabs({
       </div>
 
       {activeTab === 'overview' && (
-        <div className="v3-prose">{overviewContent}</div>
+        <>
+          <div className="v3-prose">{overviewContent}</div>
+          {examplesByAsset && examplesByAsset[asset] && examplesByAsset[asset]!.length > 0 && (
+            <div style={{ marginTop: 40 }}>
+              <div className="v3-wd-h">Example setups</div>
+              <div className="v3-wd-sub">
+                {data.meta.asset} · selected example trades with intraday price action
+              </div>
+              <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {examplesByAsset[asset]!.map((ex, i) => (
+                  <ManipTradeChart key={`${ex.date}-${i}`} example={ex} />
+                ))}
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       {activeTab === 'regime' && (
