@@ -19,7 +19,8 @@ import BilingualTitle from '../_components/BilingualTitle';
 import V3Tabs from '../_components/V3Tabs';
 import StraddleWrappedTabs from '../_components/StraddleWrappedTabs';
 import PerformanceTearsheet from '../_components/PerformanceTearsheet';
-import { getStrategyStats, getStrategyStatsByVariant, getStrategyStatsByVariantAndSmt, getWeekdayBreakdown, getYearBreakdown, getTradeList, getStraddleAllTrades } from '@/lib/study-stats';
+import { computeWeekdayBreakdown, computeYearBreakdown } from '@/lib/client-stats';
+import { getStrategyStats, getStrategyStatsByVariant, getStrategyStatsByVariantAndSmt, getWeekdayBreakdown, getYearBreakdown, getTradeList, getStraddleAllTrades, type TradeRow } from '@/lib/study-stats';
 
 const EXPLORER_RE =
   /<div data-explorer="(cpi|nfp|jobless-claims|ppi|retail-sales|durable-goods|pce|nfp-ifvg-smt|cpi-ifvg-smt|ppi-ifvg-smt|retailsales-ifvg-smt|pce-ifvg-smt|gdp-ifvg-smt|joblessclaims-ifvg-smt|empirestate-ifvg-smt|employmentcostindex-ifvg-smt)">\s*<\/div>/i;
@@ -123,6 +124,33 @@ const FULLPORT_PDFS: Record<string, { nq: string; gc: string; label: string }> =
   cpi: { nq: '/downloads/studies/cpi-fullport.pdf', gc: '/downloads/studies/cpi-fullport.pdf', label: 'Download — CPI Fullport PDF' },
 };
 
+// Shared FilterBar config for the Globex IB50 family (TP-extension grid, asset-agnostic).
+const GENERIC_TP_OPTIONS = [
+  { key: '1', label: 'TP 1.0' },
+  { key: '1.5', label: 'TP 1.5' },
+  { key: '1.75', label: 'TP 1.75' },
+  { key: '2', label: 'TP 2.0' },
+];
+const GENERIC_SMT_OPTIONS = [
+  { key: 'both', label: 'Both' },
+  { key: 'long', label: 'Long' },
+  { key: 'short', label: 'Short' },
+];
+const GENERIC_VARIANT_OPTIONS = [{ key: '0', label: 'SL = IB extreme' }];
+
+// Generic param-grid studies: drop a {meta, trades} JSON + one entry here → page renders.
+const GENERIC_STUDY_CONFIG: Record<string, {
+  dataFile: string;
+  title: string;
+  subtitle: string;
+  asset: 'nq' | 'gc' | 'es' | 'si' | 'ym';
+}> = {
+  'globex-ib50':    { dataFile: 'globex-ib50.json',    title: 'Globex IB50', subtitle: 'NQ futures · 10-min Globex initial balance · 2016–2026 backtest', asset: 'nq' },
+  'globex-ib50-gc': { dataFile: 'globex-ib50_gc.json', title: 'Globex IB50', subtitle: 'GC futures · 10-min Globex initial balance · 2016–2026 backtest', asset: 'gc' },
+  'globex-ib50-es': { dataFile: 'globex-ib50-es.json', title: 'Globex IB50', subtitle: 'ES futures · 10-min Globex initial balance · 2016–2026 backtest', asset: 'es' },
+  'globex-ib50-si': { dataFile: 'globex-ib50-si.json', title: 'Globex IB50', subtitle: 'SI futures · 10-min Globex initial balance · 2016–2026 backtest', asset: 'si' },
+};
+
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
@@ -150,6 +178,48 @@ export default async function BacktestedDetail({ params }: PageProps) {
   const isNwog = slug === NWOG_SLUG;
   const isIfvg = IFVG_SLUGS.has(slug);
   const isStraddleV3 = STRADDLE_V3_SLUGS.has(slug);
+
+  const genericCfg = GENERIC_STUDY_CONFIG[slug];
+  if (genericCfg) {
+    const dataPath = path.join(process.cwd(), 'public', 'data', genericCfg.dataFile);
+    const raw = JSON.parse(fs.readFileSync(dataPath, 'utf-8')) as { meta: { date_from?: string; date_to?: string } };
+    const overviewNodeGeneric = (
+      <BilingualProse htmlNq={entry.explanationHtmlNq} htmlGc={entry.explanationHtmlGc} htmlEs={entry.explanationHtmlEs} htmlSi={entry.explanationHtmlSi} htmlYm={entry.explanationHtmlYm} />
+    );
+    return (
+      <div>
+        <Link href="/studies/" className="v3-back">← back to Data</Link>
+        <h1 className="v3-sub-h1">{genericCfg.title}</h1>
+        <p className="v3-sub-sub">{genericCfg.subtitle}</p>
+        <Suspense fallback={<div className="v3-tabs" style={{ height: 48 }} />}>
+          <V3Tabs
+            slug={slug}
+            breakdown={computeWeekdayBreakdown([])}
+            yearBreakdown={computeYearBreakdown([])}
+            trades={[]}
+            tradesUrl={`/data/${genericCfg.dataFile}`}
+            dateFrom={raw.meta.date_from ? raw.meta.date_from.slice(0, 4) : '2016'}
+            dateTo={raw.meta.date_to ? raw.meta.date_to.slice(0, 4) : '2026'}
+            overviewContent={overviewNodeGeneric}
+            eventShort="IB50"
+            asset={genericCfg.asset}
+            barsSlug="globex-ib50"
+            filterBarOverride={{
+              tpOptions: GENERIC_TP_OPTIONS,
+              defaultTp: '1.75',
+              tpLabel: 'TP extension',
+              smtOptions: GENERIC_SMT_OPTIONS,
+              defaultSmt: 'both',
+              smtLabel: 'Side',
+              variantOptions: GENERIC_VARIANT_OPTIONS,
+              defaultVariant: '0',
+              variantLabel: 'Stop',
+            }}
+          />
+        </Suspense>
+      </div>
+    );
+  }
 
   const match = entry.explanationHtmlNq.match(EXPLORER_RE);
   const explorerKey = match ? match[1].toLowerCase() : null;

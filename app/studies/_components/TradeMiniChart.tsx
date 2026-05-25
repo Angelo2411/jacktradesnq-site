@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   createChart,
   CandlestickSeries,
+  createSeriesMarkers,
   CrosshairMode,
   LineSeries,
   LineStyle,
@@ -24,6 +25,8 @@ interface EventBarsEntry {
   date: string;
   t0_iso: string;
   entry_price: number;
+  ib_high?: number;
+  ib_low?: number;
   bars: EventBar[];
 }
 
@@ -68,6 +71,8 @@ interface Props {
   ifvgTop?: number;
   ifvgBottom?: number;
   ifvgFormationTs?: string;
+  ibHigh?: number;
+  ibLow?: number;
   variant?: string;
   barsSlug?: string;
   slLabel?: string;
@@ -134,7 +139,7 @@ function LegendPill({ color, label, value }: { color: string; label: string; val
   );
 }
 
-export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl_pts, outcome, entryPrice: entryPriceProp, slPrice, tpPrice, entryTs, exitTs, exitPrice, ts, dataHigh, dataLow, sweepTs, sweepSide, ifvgTop, ifvgBottom, ifvgFormationTs, variant = 'tp1_be', barsSlug, slLabel }: Props) {
+export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl_pts, outcome, entryPrice: entryPriceProp, slPrice, tpPrice, entryTs, exitTs, exitPrice, ts, dataHigh, dataLow, sweepTs, sweepSide, ifvgTop, ifvgBottom, ifvgFormationTs, ibHigh: ibHighProp, ibLow: ibLowProp, variant = 'tp1_be', barsSlug, slLabel }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [status, setStatus] = useState<'loading' | 'found' | 'missing'>('loading');
   const [snappedSL, setSnappedSL] = useState<number | null>(null);
@@ -142,6 +147,8 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
   const candlesRef = useRef<CandlestickData<UTCTimestamp>[]>([]);
   const barsRef = useRef<EventBar[]>([]);
   const t0MsRef = useRef<number>(0);
+  const ibHighRef = useRef<number | null>(null);
+  const ibLowRef = useRef<number | null>(null);
 
   const isMultiEvent = eventShort === 'Multi-event' || eventShort === 'multi-event' || eventShort === '';
   const suffix = asset === 'nq' ? '' : asset === 'gc' ? '-gc' : asset === 'es' ? '-es' : asset === 'si' ? '-si' : asset === 'ym' ? '-ym' : '';
@@ -160,10 +167,16 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       .then((r) => r.json())
       .then((data: EventBarsEntry[]) => {
         if (cancelled) return;
-        const entry = data.find((e) => e.date === tradeDate);
+        // IB50 can have two sessions on the same UTC date → match the exact
+        // session by entry timestamp, not just the date.
+        const entry = eventShort === 'IB50' && entryTs
+          ? data.find((e) => e.t0_iso === entryTs)
+          : data.find((e) => e.date === tradeDate);
         if (!entry) { setStatus('missing'); return; }
         const t0Ms = new Date(entry.t0_iso).getTime();
         t0MsRef.current = t0Ms;
+        ibHighRef.current = entry.ib_high ?? null;
+        ibLowRef.current = entry.ib_low ?? null;
         const filled = forwardFill(entry.bars);
         barsRef.current = filled;
         candlesRef.current = toCandles(filled, t0Ms);
@@ -172,7 +185,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       })
       .catch(() => { if (!cancelled) setStatus('missing'); });
     return () => { cancelled = true; };
-  }, [jsonPath, tradeDate, isMultiEvent]);
+  }, [jsonPath, tradeDate, isMultiEvent, eventShort, entryTs]);
 
   useEffect(() => {
     if (status !== 'found') return;
@@ -246,6 +259,26 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
     });
     candleSeries.setData(candles);
 
+    // IB50: mark the entry bar in time so it's clear what's pre-entry (IB break)
+    // vs the trade itself (entry → exit).
+    if (eventShort === 'IB50' && entryTs !== undefined && entryPriceProp !== undefined) {
+      const entryMarkerSec = (Math.floor(new Date(entryTs).getTime() / 1000) + 60) as UTCTimestamp;
+      // Anchor the marker to an invisible series AT the entry price so the arrow
+      // sits on the entry level (aligned with the 0.5 line), not below the candle.
+      const markerLine = chart.addSeries(LineSeries, {
+        color: 'rgba(0,0,0,0)', lineWidth: 1,
+        priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+      });
+      markerLine.setData([{ time: entryMarkerSec, value: entryPriceProp }]);
+      createSeriesMarkers(markerLine, [{
+        time: entryMarkerSec,
+        position: side === 'short' ? 'aboveBar' : 'belowBar',
+        color: cGold,
+        shape: side === 'short' ? 'arrowDown' : 'arrowUp',
+        text: 'Entry',
+      }]);
+    }
+
     const hasLevels = entryPriceProp !== undefined && slPrice !== undefined && tpPrice !== undefined;
     // Prefer real IFVG entry (overlay) over event_bars release-bar open.
     const effectiveEntryPrice = entryPriceProp !== undefined ? entryPriceProp : entryPrice;
@@ -263,35 +296,67 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       }
       const exitSec = chartEndSec as UTCTimestamp;
 
-      // ── Fibo overlay (0 = entry, 0.5 = TP1, 1 = TP final) ────────────────
-      // Entry = 0.0
-      const entrySegment = chart.addSeries(LineSeries, {
-        color: cGold,
-        lineWidth: 2,
-        lineStyle: 0,
-        priceLineVisible: false,
-        lastValueVisible: true,
-        title: '0.0 · Entry',
-      });
-      entrySegment.setData([
-        { time: entrySec, value: entryPriceProp },
-        { time: exitSec, value: entryPriceProp },
-      ]);
+      // IB50 anchors every level (fib + TP + SL) at the IB itself (first bar)
+      // so the lines span the whole chart, like a fib drawn on the swing in TV.
+      const lineStartSec = (eventShort === 'IB50' ? (candles[0]?.time as number) : entrySec) as UTCTimestamp;
 
-      // TP1 = 0.5 (midpoint entry → TP)
-      const tp1Price = entryPriceProp + 0.5 * (tpPrice - entryPriceProp);
-      const tp1Segment = chart.addSeries(LineSeries, {
-        color: cUp,
-        lineWidth: 1,
-        lineStyle: LineStyle.Dotted,
-        priceLineVisible: false,
-        lastValueVisible: true,
-        title: '0.5 · TP1',
-      });
-      tp1Segment.setData([
-        { time: entrySec, value: tp1Price },
-        { time: exitSec, value: tp1Price },
-      ]);
+      // Globex IB50: the setup is the 50% retrace of the initial balance.
+      // Derive the IB extremes from entry (=50%) + SL (=entry-side IB extreme).
+      const isIB50 = eventShort === 'IB50';
+      // Prefer the real IB extremes from the data (SL + tp@1.0); fall back to
+      // deriving from entry+SL only if absent (entry snapping makes that ±1 tick off).
+      // Real IB wicks from the bars first, then data, then derived.
+      const ibLow = ibLowRef.current ?? ibLowProp ?? (side === 'long' ? slPrice : 2 * entryPriceProp - slPrice);
+      const ibHigh = ibHighRef.current ?? ibHighProp ?? (side === 'long' ? 2 * entryPriceProp - slPrice : slPrice);
+
+      // ── Fibo overlay ─────────────────────────────────────────────────────
+      if (isIB50) {
+        // Full TradingView-style fib retracement anchored on the IB range:
+        // 0.0 / 1.0 = IB extremes, 0.5 = entry, plus the standard inner levels.
+        const ib0 = side === 'long' ? ibLow : ibHigh; // 0.0 anchor
+        const ib1 = side === 'long' ? ibHigh : ibLow; // 1.0 anchor
+        const FIB = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
+        for (const f of FIB) {
+          const isEntry = f === 0.5;
+          // 0.5 line = the real fill price (entry was tick-snapped, ~mid).
+          const price = isEntry ? entryPriceProp : ib0 + f * (ib1 - ib0);
+          const title =
+            f === 0.5 ? '0.5 · Entry'
+            : f === 0 ? `0.0 · IB ${side === 'long' ? 'low' : 'high'}`
+            : f === 1 ? `1.0 · IB ${side === 'long' ? 'high' : 'low'}`
+            : `${f}`;
+          const seg = chart.addSeries(LineSeries, {
+            // Entry = gold (the trade level); fib grid = slate ink so it reads as
+            // a separate layer, not lost in the warm gold/cream background.
+            color: isEntry ? cGold : cInkDim,
+            lineWidth: isEntry ? 2 : 1,
+            lineStyle: isEntry ? 0 : LineStyle.Dotted,
+            priceLineVisible: false,
+            lastValueVisible: true,
+            title,
+          });
+          seg.setData([{ time: lineStartSec, value: price }, { time: exitSec, value: price }]);
+        }
+      } else {
+        // IFVG: 0.0 = entry, 0.5 = TP1, 1.0 = TP.
+        const entrySegment = chart.addSeries(LineSeries, {
+          color: cGold, lineWidth: 2, lineStyle: 0,
+          priceLineVisible: false, lastValueVisible: true, title: '0.0 · Entry',
+        });
+        entrySegment.setData([
+          { time: entrySec, value: entryPriceProp },
+          { time: exitSec, value: entryPriceProp },
+        ]);
+        const tp1Price = entryPriceProp + 0.5 * (tpPrice - entryPriceProp);
+        const tp1Segment = chart.addSeries(LineSeries, {
+          color: cUp, lineWidth: 1, lineStyle: LineStyle.Dotted,
+          priceLineVisible: false, lastValueVisible: true, title: '0.5 · TP1',
+        });
+        tp1Segment.setData([
+          { time: entrySec, value: tp1Price },
+          { time: exitSec, value: tp1Price },
+        ]);
+      }
 
       // TP final = 1.0
       const tpSegment = chart.addSeries(LineSeries, {
@@ -300,10 +365,10 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         lineStyle: LineStyle.Dashed,
         priceLineVisible: false,
         lastValueVisible: true,
-        title: '1.0 · TP',
+        title: isIB50 ? 'TP' : '1.0 · TP',
       });
       tpSegment.setData([
-        { time: entrySec, value: tpPrice },
+        { time: lineStartSec, value: tpPrice },
         { time: exitSec, value: tpPrice },
       ]);
 
@@ -314,8 +379,13 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       const sweepMin = Math.round((sweepMs - t0Ms) / 60_000);
       const entryMin = Math.round((new Date(entryTs).getTime() - t0Ms) / 60_000);
       const sweepBars = bars.filter((b) => b.m >= sweepMin && b.m <= entryMin);
+      // Wick-snap only for studies that define a sweep (IFVG). Without a sweepTs
+      // (e.g. Globex IB50, where SL = a fixed IB extreme) keep the real slPrice.
       let displaySL = slPrice;
-      if (sweepBars.length > 0) {
+      if (isIB50) {
+        // SL = the entry-side IB extreme, drawn on the real wick.
+        displaySL = side === 'short' ? ibHigh : ibLow;
+      } else if (sweepTs !== undefined && sweepBars.length > 0) {
         displaySL = side === 'short'
           ? Math.max(...sweepBars.map((b) => b.h))
           : Math.min(...sweepBars.map((b) => b.l));
@@ -331,7 +401,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       });
       const slStartSec = (sweepTs !== undefined
         ? Math.floor(new Date(sweepTs).getTime() / 1000)
-        : entrySec) as UTCTimestamp;
+        : lineStartSec) as UTCTimestamp;
       slSegment.setData([
         { time: slStartSec, value: displaySL },
         { time: exitSec, value: displaySL },
@@ -542,6 +612,12 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       const firstTs = candles[0]?.time as number | undefined;
       const lastTs = candles[candles.length - 1]?.time as number | undefined;
       if (firstTs === undefined || lastTs === undefined) return;
+      // IB50: show the whole window (IB formation → entry → exit) so the IB
+      // high/low candles are visible, not just entry ±25min.
+      if (eventShort === 'IB50') {
+        chart.timeScale().fitContent();
+        return;
+      }
       const anchorMs = entryTs ? new Date(entryTs).getTime() : (ts ? new Date(ts).getTime() : t0Ms);
       const anchorSec = Math.floor(anchorMs / 1000);
       const from = Math.max(firstTs, anchorSec - 25 * 60) as UTCTimestamp;

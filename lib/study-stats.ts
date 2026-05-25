@@ -635,6 +635,8 @@ export type TradeRow = {
   ifvg_formation_ts?: string;
   x_stop?: number;
   y_tp?: number;
+  ib_high?: number;
+  ib_low?: number;
 };
 
 type PriceOverlayRow = {
@@ -1291,6 +1293,31 @@ function processOneSlug(slug: string): StudyStats | null {
         value: Math.round(r.avgRange * 10) / 10,
         color: r === best ? 'gold' as const : 'mute' as const,
       })),
+    };
+  } else if (
+    jsonData &&
+    Array.isArray((asUnknown as { trades?: unknown[] }).trades) &&
+    typeof (asUnknown as { meta?: { default_tp?: number } }).meta?.default_tp === 'number'
+  ) {
+    // Generic param-grid study ({meta, trades} with y_tp axis) — headline = default TP, trailing 1y
+    kind = 'strategy';
+    const gj = asUnknown as { meta: { default_tp: number }; trades: Array<{ y_tp: number; pnl_pts: number; ts: string }> };
+    const defTp = gj.meta.default_tp;
+    const cutoff = new Date();
+    cutoff.setFullYear(cutoff.getFullYear() - 1);
+    const cutStr = cutoff.toISOString();
+    const tr = gj.trades.filter((t) => t.y_tp === defTp && t.ts >= cutStr);
+    const wins = tr.filter((t) => t.pnl_pts > 0);
+    const grossW = wins.reduce((s, t) => s + t.pnl_pts, 0);
+    const grossL = Math.abs(tr.filter((t) => t.pnl_pts <= 0).reduce((s, t) => s + t.pnl_pts, 0));
+    const n = tr.length;
+    stats = {
+      pf: grossL ? Math.round((grossW / grossL) * 100) / 100 : 0,
+      n,
+      edgePts: n ? Math.round((tr.reduce((s, t) => s + t.pnl_pts, 0) / n) * 10) / 10 : 0,
+      wr: n ? Math.round((wins.length / n) * 100) : 0,
+      wrByWeekday: [0, 0, 0, 0, 0],
+      nByWeekday: [0, 0, 0, 0, 0],
     };
   } else {
     // No JSON data — render as study with excerpt teaser
