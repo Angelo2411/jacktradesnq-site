@@ -270,44 +270,44 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       const ibHigh = side === 'long' ? 2 * entryPriceProp - slPrice : slPrice;
 
       // ── Fibo overlay ─────────────────────────────────────────────────────
-      // IFVG: 0 = entry, 0.5 = TP1, 1 = TP. IB50: 0/1 = IB low/high, 0.5 = entry.
-      const entrySegment = chart.addSeries(LineSeries, {
-        color: cGold,
-        lineWidth: 2,
-        lineStyle: 0,
-        priceLineVisible: false,
-        lastValueVisible: true,
-        title: isIB50 ? '0.5 · Entry' : '0.0 · Entry',
-      });
-      entrySegment.setData([
-        { time: entrySec, value: entryPriceProp },
-        { time: exitSec, value: entryPriceProp },
-      ]);
-
       if (isIB50) {
-        // IB range fibo: 1.0 = IB high, 0.0 = IB low (entry sits at 0.5).
-        const ibHighSeg = chart.addSeries(LineSeries, {
-          color: cGold, lineWidth: 1, lineStyle: LineStyle.Dotted,
-          priceLineVisible: false, lastValueVisible: true,
-          title: side === 'long' ? '1.0 · IB high' : '0.0 · IB high',
-        });
-        ibHighSeg.setData([{ time: entrySec, value: ibHigh }, { time: exitSec, value: ibHigh }]);
-        const ibLowSeg = chart.addSeries(LineSeries, {
-          color: cGold, lineWidth: 1, lineStyle: LineStyle.Dotted,
-          priceLineVisible: false, lastValueVisible: true,
-          title: side === 'long' ? '0.0 · IB low' : '1.0 · IB low',
-        });
-        ibLowSeg.setData([{ time: entrySec, value: ibLow }, { time: exitSec, value: ibLow }]);
+        // Full TradingView-style fib retracement anchored on the IB range:
+        // 0.0 / 1.0 = IB extremes, 0.5 = entry, plus the standard inner levels.
+        const ib0 = side === 'long' ? ibLow : ibHigh; // 0.0 anchor
+        const ib1 = side === 'long' ? ibHigh : ibLow; // 1.0 anchor
+        const FIB = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
+        for (const f of FIB) {
+          const price = ib0 + f * (ib1 - ib0);
+          const isEntry = f === 0.5;
+          const title =
+            f === 0.5 ? '0.5 · Entry'
+            : f === 0 ? `0.0 · IB ${side === 'long' ? 'low' : 'high'}`
+            : f === 1 ? `1.0 · IB ${side === 'long' ? 'high' : 'low'}`
+            : `${f}`;
+          const seg = chart.addSeries(LineSeries, {
+            color: cGold,
+            lineWidth: isEntry ? 2 : 1,
+            lineStyle: isEntry ? 0 : LineStyle.Dotted,
+            priceLineVisible: false,
+            lastValueVisible: true,
+            title,
+          });
+          seg.setData([{ time: entrySec, value: price }, { time: exitSec, value: price }]);
+        }
       } else {
-        // IFVG: TP1 = 0.5 (midpoint entry → TP)
+        // IFVG: 0.0 = entry, 0.5 = TP1, 1.0 = TP.
+        const entrySegment = chart.addSeries(LineSeries, {
+          color: cGold, lineWidth: 2, lineStyle: 0,
+          priceLineVisible: false, lastValueVisible: true, title: '0.0 · Entry',
+        });
+        entrySegment.setData([
+          { time: entrySec, value: entryPriceProp },
+          { time: exitSec, value: entryPriceProp },
+        ]);
         const tp1Price = entryPriceProp + 0.5 * (tpPrice - entryPriceProp);
         const tp1Segment = chart.addSeries(LineSeries, {
-          color: cUp,
-          lineWidth: 1,
-          lineStyle: LineStyle.Dotted,
-          priceLineVisible: false,
-          lastValueVisible: true,
-          title: '0.5 · TP1',
+          color: cUp, lineWidth: 1, lineStyle: LineStyle.Dotted,
+          priceLineVisible: false, lastValueVisible: true, title: '0.5 · TP1',
         });
         tp1Segment.setData([
           { time: entrySec, value: tp1Price },
