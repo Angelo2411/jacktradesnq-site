@@ -56,10 +56,10 @@ export function computeYearBreakdown(trades: TradeRow[]): YearBreakdown {
         net += t.pnl_pts;
         if (t.pnl_pts > 0) {
           w++; winPts += t.pnl_pts; winSum += t.pnl_pts;
-        } else if (t.pnl_pts < -5) {
+        } else if (t.pnl_pts < 0) {
           l++; lossPts += Math.abs(t.pnl_pts); lossSum += Math.abs(t.pnl_pts);
         } else {
-          be++;
+          be++; // only exact breakeven (pnl == 0)
         }
       }
       let cumul = 0, peak = 0, maxDD = 0;
