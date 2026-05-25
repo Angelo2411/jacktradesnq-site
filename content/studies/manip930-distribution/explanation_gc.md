@@ -1,7 +1,7 @@
-Gold futures (GC) have the lowest manipulation rate of the five assets: **34.3%** of days (1,295 of 3,781 days, 2016–2026). The sweep-reject pattern is less frequent in GC than in equity indices, consistent with gold's slower, less volatile opening hour and its 24-hour trading cycle that diffuses the overnight range.
+In 2025–26, the 09:30 sweep-reject fires on ~31.0% of GC days — the lowest rate among the five assets studied. The distribution follows through 46.8% of the time with an average move of −1.0 points.
 
-Distribution follow-through is **49.7%** — slightly below a coin flip. The average post-sweep move is **−0.04 points**, and the median is **0.0**. The average favorable excursion is **4.8 points**.
+Over the full 2016–2026 sample (3,781 days), manipulation occurs on 30.5% of days with 49.1% follow-through and an average move near zero. Gold's 24-hour trading cycle diffuses the overnight range, making the sweep-reject pattern less frequent than in equity indices. No regime window shows a directional edge.
 
-Every regime window (full, 2024+, 2025+, 2026) shows follow-through between 47–49% with negative or near-zero average moves. There is no window where GC's distribution shows a consistent directional tendency.
+The manipulation pattern exists in gold — about one-third of days — but the distribution that follows has no predictable direction. GC's 10:00–11:00 window is random relative to the sweep.
 
-The conclusion is clear: the manipulation pattern exists in gold — about one-third of days — but the distribution that follows has no predictable direction. Gold's 10:00–11:00 ET window is essentially random relative to the 09:30 sweep.
+This is an observational study of market microstructure, not a trading strategy. No entries, stops, or targets are implied.

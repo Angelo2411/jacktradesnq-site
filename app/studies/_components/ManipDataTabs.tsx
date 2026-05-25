@@ -60,7 +60,7 @@ const REGIME_LABELS: Record<string, string> = {
   '2026': '2026',
 };
 
-const REGIME_ORDER = ['full', '2024+', '2025+', '2026'];
+const REGIME_ORDER = ['2025+', '2026', '2024+', 'full'];
 
 const LEVEL_ORDER = ['PDH', 'PDL', 'PMH', 'PML', 'AsiaHi', 'AsiaLo'];
 
@@ -113,31 +113,74 @@ export default function ManipDataTabs({
   const manip = data.manipulation;
   const dist = data.distribution;
 
+  // ── recent regime computation ─────────────────────────────────────────
+
+  function computeRecentRegime() {
+    const has2025 = manip.by_year.some((y) => y.year >= 2025);
+    const baseYear = has2025 ? 2025 : 2024;
+    const recentYears = manip.by_year.filter((y) => y.year >= baseYear);
+    const totalDays = recentYears.reduce((s, y) => s + y.n_days, 0);
+    const totalManip = recentYears.reduce((s, y) => s + y.manip_days, 0);
+    const recentManipRate = totalDays > 0 ? (totalManip / totalDays) * 100 : 0;
+
+    const regimeKey = has2025 ? '2025+' : '2024+';
+    const regime = dist.by_regime[regimeKey];
+    const recentFollowThrough = regime && regime.n > 0 ? regime.follow_through_rate_pct : 0;
+    const recentAvgMove = regime && regime.n > 0 ? regime.avg_move_pts : 0;
+
+    const recentLabel = has2025 ? '2025–26' : '2024';
+    const lastYear = m.dateTo.slice(0, 4);
+
+    return {
+      recentManipRate,
+      recentFollowThrough,
+      recentAvgMove,
+      recentLabel,
+      lastYear,
+    };
+  }
+
+  const recent = computeRecentRegime();
+
   // ── KPI band ──────────────────────────────────────────────────────────
 
   const kpiBand = (
-    <div className="manip-data-kpi-band">
-      <div className="v3-kpi-cell">
-        <div className="v3-kpi-band-lbl">Manipulation rate</div>
-        <div className="v3-kpi-band-val gold">{manip.manip_rate_pct.toFixed(1)}%</div>
-        <div className="v3-kpi-band-foot">{manip.total_manip_days} of {m.n_days} days</div>
+    <>
+      <div className="manip-data-kpi-band">
+        <div className="v3-kpi-cell">
+          <div className="v3-kpi-band-lbl">Manipulation rate ({recent.recentLabel})</div>
+          <div className="v3-kpi-band-val gold">{recent.recentManipRate.toFixed(1)}%</div>
+          <div className="v3-kpi-band-foot">10-yr: {manip.manip_rate_pct.toFixed(1)}%</div>
+        </div>
+        <div className="v3-kpi-cell">
+          <div className="v3-kpi-band-lbl">Distribution follow-through ({recent.recentLabel})</div>
+          <div className="v3-kpi-band-val">{recent.recentFollowThrough.toFixed(1)}%</div>
+          <div className="v3-kpi-band-foot">
+            {coinFlipFootnote(recent.recentFollowThrough)}{coinFlipFootnote(recent.recentFollowThrough) ? ' · ' : ''}10-yr: {dist.follow_through_rate_pct.toFixed(1)}%
+          </div>
+        </div>
+        <div className="v3-kpi-cell">
+          <div className="v3-kpi-band-lbl">Avg distribution move ({recent.recentLabel})</div>
+          <div className="v3-kpi-band-val">{recent.recentAvgMove >= 0 ? '+' : ''}{recent.recentAvgMove.toFixed(1)} pts</div>
+          <div className="v3-kpi-band-foot">post-sweep, ~flat</div>
+        </div>
+        <div className="v3-kpi-cell">
+          <div className="v3-kpi-band-lbl">Avg fav. excursion</div>
+          <div className="v3-kpi-band-val">{dist.avg_mfe_pts.toFixed(1)} pts</div>
+          <div className="v3-kpi-band-foot">MFE within 10:00–11:00 ET</div>
+        </div>
       </div>
-      <div className="v3-kpi-cell">
-        <div className="v3-kpi-band-lbl">Distribution follow-through</div>
-        <div className="v3-kpi-band-val">{dist.follow_through_rate_pct.toFixed(1)}%</div>
-        <div className="v3-kpi-band-foot">{coinFlipFootnote(dist.follow_through_rate_pct)}</div>
-      </div>
-      <div className="v3-kpi-cell">
-        <div className="v3-kpi-band-lbl">Avg distribution move</div>
-        <div className="v3-kpi-band-val">{dist.avg_move_pts >= 0 ? '+' : ''}{dist.avg_move_pts.toFixed(1)} pts</div>
-        <div className="v3-kpi-band-foot">in post-sweep direction</div>
-      </div>
-      <div className="v3-kpi-cell">
-        <div className="v3-kpi-band-lbl">Avg fav. excursion</div>
-        <div className="v3-kpi-band-val">{dist.avg_mfe_pts.toFixed(1)} pts</div>
-        <div className="v3-kpi-band-foot">MFE within 10:00-11:00 ET</div>
-      </div>
-    </div>
+      <p style={{
+        fontFamily: 'var(--f-mono)',
+        fontSize: '0.75rem',
+        color: 'var(--c-muted)',
+        marginTop: 6,
+        marginBottom: 0,
+        textAlign: 'center',
+      }}>
+        Figures shown are the recent regime ({recent.recentLabel}). Full 2016–{recent.lastYear} below.
+      </p>
+    </>
   );
 
   // ── Manipulation tab ──────────────────────────────────────────────────
@@ -258,9 +301,10 @@ export default function ManipDataTabs({
     <div>
       <div className="v3-prose" style={{ marginBottom: 32 }}>
         <p style={{ fontFamily: 'var(--f-serif)', fontStyle: 'italic', color: 'var(--c-muted)' }}>
-          Follow-through ≈ {dist.follow_through_rate_pct.toFixed(0)}% — the distribution window does <strong>not</strong>
+          Recent regime ({recent.recentLabel}): follow-through ≈ {recent.recentFollowThrough.toFixed(0)}% — the distribution window does <strong>not</strong>
           {' '}systematically continue in the post-sweep direction. It is indistinguishable from a coin flip.
-          The average move across all manipulation days is near zero ({dist.avg_move_pts >= 0 ? '+' : ''}{dist.avg_move_pts.toFixed(1)} pts).
+          The average move across all manipulation days is near zero ({recent.recentAvgMove >= 0 ? '+' : ''}{recent.recentAvgMove.toFixed(1)} pts).
+          The full 10-year picture is the same: {dist.follow_through_rate_pct.toFixed(0)}% follow-through.
           This is an observational study of market behavior — <strong>not a tradable edge</strong>.
         </p>
       </div>
@@ -310,19 +354,21 @@ export default function ManipDataTabs({
             {REGIME_ORDER.map((key) => {
               const r = dist.by_regime[key];
               if (!r) return null;
-              const isRecentHighlight = (key === '2025+' || key === '2026') && r.n > 0;
+              const isRecent = key === '2025+' || key === '2026';
+              const isFull = key === 'full';
+              const hasData = r.n > 0;
               const rowClass = 'v3-yr-row' +
-                (key === 'full' ? ' total' : '') +
-                (isRecentHighlight ? ' selected' : '');
+                (isFull ? ' total' : '') +
+                (isRecent && hasData ? ' selected' : '');
               return (
                 <tr key={key} className={rowClass}>
-                  <td className="v3-yr-year" style={isRecentHighlight ? { color: 'var(--c-accent-deep)', fontWeight: 700 } : undefined}>
+                  <td className="v3-yr-year" style={isRecent && hasData ? { color: 'var(--c-accent-deep)', fontWeight: 700 } : isFull ? { color: 'var(--c-muted)' } : undefined}>
                     {REGIME_LABELS[key]}
-                    {isRecentHighlight ? ' ⬤' : ''}
+                    {isRecent && hasData ? ' ⬤' : ''}
                   </td>
-                  <td className="v3-yr-num">{r.n || '—'}</td>
-                  <td className="v3-yr-num">{r.n > 0 ? `${r.follow_through_rate_pct.toFixed(1)}%` : '— no data'}</td>
-                  <td className={'v3-yr-num' + (r.n > 0 && r.avg_move_pts > 0 ? ' sage' : r.n > 0 && r.avg_move_pts < 0 ? ' terra' : '')}>
+                  <td className="v3-yr-num" style={isFull ? { color: 'var(--c-muted)' } : undefined}>{r.n > 0 ? r.n : '—'}</td>
+                  <td className="v3-yr-num" style={isFull ? { color: 'var(--c-muted)' } : undefined}>{r.n > 0 ? `${r.follow_through_rate_pct.toFixed(1)}%` : '— no data'}</td>
+                  <td className={'v3-yr-num' + (r.n > 0 && r.avg_move_pts > 0 ? ' sage' : r.n > 0 && r.avg_move_pts < 0 ? ' terra' : '') + (isFull ? '' : '')}>
                     {r.n > 0 ? `${r.avg_move_pts >= 0 ? '+' : ''}${r.avg_move_pts.toFixed(1)}` : '—'}
                   </td>
                 </tr>
