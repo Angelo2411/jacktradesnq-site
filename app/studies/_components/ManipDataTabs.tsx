@@ -165,9 +165,9 @@ export default function ManipDataTabs({
           <div className="v3-kpi-band-foot">post-sweep, ~flat</div>
         </div>
         <div className="v3-kpi-cell">
-          <div className="v3-kpi-band-lbl">Avg fav. excursion</div>
+          <div className="v3-kpi-band-lbl">Avg peak move in your favor</div>
           <div className="v3-kpi-band-val">{dist.avg_mfe_pts.toFixed(1)} pts</div>
-          <div className="v3-kpi-band-foot">MFE within 10:00–11:00 ET</div>
+          <div className="v3-kpi-band-foot">runs this far, then gives it back — the trap</div>
         </div>
       </div>
       <p style={{
