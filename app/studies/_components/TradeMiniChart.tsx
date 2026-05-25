@@ -289,7 +289,9 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
             : f === 1 ? `1.0 · IB ${side === 'long' ? 'high' : 'low'}`
             : `${f}`;
           const seg = chart.addSeries(LineSeries, {
-            color: cGold,
+            // Entry = gold (the trade level); fib grid = slate ink so it reads as
+            // a separate layer, not lost in the warm gold/cream background.
+            color: isEntry ? cGold : cInkDim,
             lineWidth: isEntry ? 2 : 1,
             lineStyle: isEntry ? 0 : LineStyle.Dotted,
             priceLineVisible: false,
