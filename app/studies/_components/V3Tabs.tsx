@@ -488,6 +488,7 @@ function TradesBlock({
                   <tr key={`${i}-chart`} className="v3-tr-expanded">
                     <td colSpan={4} style={{ padding: '16px 16px 24px' }}>
                       <TradeMiniChart
+                        key={`${t.ts}-${t.tp_price ?? ''}-${t.sl_price ?? ''}-${t.side}`}
                         eventShort={eventShort}
                         asset={asset}
                         tradeDate={t.ts.slice(0, 10)}
