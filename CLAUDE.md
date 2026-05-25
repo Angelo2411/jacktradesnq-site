@@ -12,17 +12,21 @@
 - `marked` pour parser les explanation.md backtested-data
 
 ## Direction esthétique déclarée (ne PAS dévier)
-**warm-editorial** — paysage prairie peint main + typographie magazine.
-- Mood : Kazuo Oga, warm hand-painted backgrounds, aquarelle chaude
-- Ton : chill, nostalgique, zéro agressif corporate
-- Point mémorable : duo image peinte + serif éditorial chaud
+**dark editorial site-objet** (home + page partenaire, refonte 2026-05-25).
+- Fond noir chaud brun (`oklch(0.12-0.16`), accent **gold unique** (`oklch(0.78-0.80 0.14 ~80`)
+- Wordmark Fraunces italique monumental + canvas candlesticks infini en fond (mask radial au centre)
+- Ton : éditorial, magazine, premium ; pas de funnel marketing agressif
+- Point mémorable : wordmark italique géant + point doré (leitmotiv de marque) + bougies live
+- Anti-objectif explicite : ne PAS faire un link-in-bio déguisé ni un funnel de vente type Whop
+- Les pages `studies/` gardent leur traitement existant (globals.css) — la refonte dark couvre home + `/nefarious/` uniquement, CSS scopé sous `.jtnq-home` / `.jtnq-nef` pour ne pas polluer studies.
+- (Ancienne direction warm-editorial prairie Kazuo Oga = abandonnée 2026-05-25, conservée nulle part.)
 
 ## Typographie (OBLIGATOIRE)
-- H1/H2 : **Fraunces** (serif warm italique) via Fontshare
-- Body : **Satoshi** (sans-serif clean) via Fontshare
-- Scale 1.25 (minor third) : 0.75 / 0.875 / 1 / 1.125 / 1.5 / 2.25 / 3.5 rem
-- Weights extremes : 300 vs 800 (pas 400/600)
-- Fonts self-hosted dans public/fonts/ (fix COEP — ne pas re-importer via CDN Fontshare)
+- Titres / wordmark : **Fraunces** (serif italique) — self-hosted public/fonts/
+- Body / UI : **Satoshi** (sans-serif clean) — self-hosted
+- Labels / eyebrows / data : **JetBrains Mono** (uppercase, letter-spacing ~.2em) — self-hosted public/fonts/JetBrainsMono.woff2
+- Fonts self-hosted dans public/fonts/ (fix COEP — JAMAIS de CDN Google Fonts / Fontshare)
+- Inter reste banni (cf anti-slop) ; le mono est JetBrains Mono, pas un fallback système.
 
 ## Couleurs (OKLCH uniquement, pas de hex dans les composants)
 3 couches : primitive (valeurs OKLCH brutes) → semantic (bg, fg, card, primary, muted, border, ring) → component overrides.
@@ -71,7 +75,8 @@ Tout en anglais SAUF footer légal FR (mentions légales + disclaimer AMF D.321-
 ## Features livrées (DO NOT re-implement)
 
 ### Site core
-- Home page (app/page.tsx) avec hero prairie, section backtested-data card full-width (commit `0dd0319`)
+- Home page (app/page.tsx) : refonte dark editorial site-objet 2026-05-25 (hero canvas candlesticks + wordmark Fraunces, hub Studies+Nefarious, socials icônes footer). Ancien hero prairie remplacé.
+- Page partenaire (app/nefarious/page.tsx) : Nefarious, testimonials Whop verbatim + Join CTA Discord (2026-05-25)
 - Layout global (app/layout.tsx) : nav + hamburger mobile wired (commit `3fac707`), theme-color + apple-touch-icon (commit `b591231`)
 - OG image 1200x630 (public/og-image.png, commit `6854b17`)
 - Fonts self-hosted Fraunces + Satoshi (public/fonts/, commit `67af186`)
