@@ -310,6 +310,7 @@ def simulate_variant(setup: dict, variant: str, bars_idx: dict[int, dict]) -> di
         if last is None:
             return {"result": "SKIP_NO_RESOLVE", "pts": 0.0}
         exit_ts, last_price = last
+        exit_price = last_price  # store timeout exit price for chart markers
         # Timeout: pts = unrealized at last close
         if side == "SHORT":
             full_unreal = entry_price - last_price

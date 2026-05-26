@@ -198,6 +198,14 @@ def load_events(event_type: str) -> list[dict]:
                 "event_type": event_type,
                 "event_raw": f"{event_type} (CSV {row['source']})",
             })
+    # Defensive guard: NFP is exactly 1 release per calendar month. A 2nd NFP in
+    # the same month = source-CSV drift (benchmark revision / dup row) → phantom
+    # event. Fail loud rather than silently injecting it (cf taskLesson 2026-05-08).
+    if event_type == "NFP":
+        from collections import Counter
+        dupes = {m: c for m, c in Counter(e["date"][:7] for e in events).items() if c > 1}
+        if dupes:
+            raise ValueError(f"NFP calendar drift: >1 event in month(s) {dupes} — clean {NEWS_CSV}")
     events.sort(key=lambda x: x["t0_utc"])
     return events
 
@@ -263,7 +271,9 @@ def detect_setup_es(ev: dict, bars_idx: dict[int, dict]) -> dict:
         return out
 
     side = "SHORT" if sweep_dir == "UP" else "LONG"
-    sl = sweep_price + ES_TICK if sweep_dir == "UP" else sweep_price - ES_TICK
+    # SL computed AFTER IFVG matched (lowest low / highest high between sweep_ts and entry_ts).
+    # Placeholder here to keep variable defined until matched_fvg / entry_ts known. ES_TICK = 0.25.
+    sl = None
     tp = pre_low if sweep_dir == "UP" else pre_high
 
     scan_bars = []
@@ -324,6 +334,16 @@ def detect_setup_es(ev: dict, bars_idx: dict[int, dict]) -> dict:
     if entry_ts is None:
         out["status"] = "SKIP_NO_IFVG"
         return out
+
+    # SL = full sweep displacement extreme (between sweep_ts and entry_ts inclusive) + 1 tick padding.
+    # Includes the bars after IFVG formation that may have wicked deeper before invalidation.
+    sweep_disp_bars = [b for b in scan_bars if sweep_ts <= b["ts"] <= entry_ts]
+    if not sweep_disp_bars:
+        out["status"] = "SKIP_NO_SWEEP_DISP"; return out
+    if sweep_dir == "UP":
+        sl = max(b["high"] for b in sweep_disp_bars) + ES_TICK
+    else:
+        sl = min(b["low"] for b in sweep_disp_bars) - ES_TICK
 
     if side == "SHORT":
         if entry_price >= sl or entry_price <= tp:
