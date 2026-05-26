@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { StudyStats, AssetType, FamilyType } from '@/lib/study-stats';
 import type { DayPlaybook } from '@/lib/today-events';
-import StudyCard from './StudyCard';
+import StudyRow from './StudyRow';
 import HubTopBar, { type SortBy } from './HubTopBar';
 
 const STORAGE_KEY = 'hub-filters-v3';
@@ -183,9 +183,9 @@ export default function HubFilters({
                 <h2 className="bd-kind-title">{label}</h2>
                 <p className="bd-kind-subtitle">{subtitle}</p>
               </div>
-              <div className="bd-hub-grid">
+              <div className="bd-hub-index">
                 {items.map((s) => (
-                  <StudyCard key={s.slug} s={s} />
+                  <StudyRow key={s.slug} s={s} />
                 ))}
               </div>
             </section>

@@ -42,7 +42,7 @@ function Cylinder({ label, total, segments }: { label: string; total: number; se
           borderRadius: 12,
           overflow: 'hidden',
           border: '1px solid var(--c-paper-edge)',
-          boxShadow: '0 1px 2px oklch(0.20 0.02 270 / 0.06)',
+          boxShadow: '0 1px 2px oklch(0.20 0.02 70 / 0.06)',
         }}
       >
         {segments.map((s) => {

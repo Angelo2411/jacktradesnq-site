@@ -1,0 +1,197 @@
+{
+  "meta": {
+    "asset": "YM",
+    "window_manip": "09:30-10:00 ET",
+    "window_distrib": "10:00-11:00 ET",
+    "dateFrom": "2016-01-03",
+    "dateTo": "2024-12-31",
+    "n_days": 2284,
+    "point_value_usd": 5
+  },
+  "manipulation": {
+    "total_manip_days": 1127,
+    "manip_rate_pct": 49.3433,
+    "by_level": [
+      {
+        "level": "PDH",
+        "n": 110,
+        "pct": 9.7604
+      },
+      {
+        "level": "PDL",
+        "n": 119,
+        "pct": 10.559
+      },
+      {
+        "level": "PMH",
+        "n": 266,
+        "pct": 23.6025
+      },
+      {
+        "level": "PML",
+        "n": 238,
+        "pct": 21.118
+      },
+      {
+        "level": "AsiaHi",
+        "n": 182,
+        "pct": 16.1491
+      },
+      {
+        "level": "AsiaLo",
+        "n": 212,
+        "pct": 18.811
+      }
+    ],
+    "by_direction": {
+      "up_manip": {
+        "n": 558,
+        "pct": 49.512
+      },
+      "down_manip": {
+        "n": 569,
+        "pct": 50.488
+      }
+    },
+    "by_year": [
+      {
+        "year": 2016,
+        "n_days": 254,
+        "manip_days": 114,
+        "manip_rate_pct": 44.8819
+      },
+      {
+        "year": 2017,
+        "n_days": 253,
+        "manip_days": 131,
+        "manip_rate_pct": 51.7787
+      },
+      {
+        "year": 2018,
+        "n_days": 253,
+        "manip_days": 120,
+        "manip_rate_pct": 47.4308
+      },
+      {
+        "year": 2019,
+        "n_days": 254,
+        "manip_days": 125,
+        "manip_rate_pct": 49.2126
+      },
+      {
+        "year": 2020,
+        "n_days": 254,
+        "manip_days": 134,
+        "manip_rate_pct": 52.7559
+      },
+      {
+        "year": 2021,
+        "n_days": 254,
+        "manip_days": 127,
+        "manip_rate_pct": 50.0
+      },
+      {
+        "year": 2022,
+        "n_days": 254,
+        "manip_days": 124,
+        "manip_rate_pct": 48.8189
+      },
+      {
+        "year": 2023,
+        "n_days": 253,
+        "manip_days": 124,
+        "manip_rate_pct": 49.0119
+      },
+      {
+        "year": 2024,
+        "n_days": 255,
+        "manip_days": 128,
+        "manip_rate_pct": 50.1961
+      }
+    ]
+  },
+  "distribution": {
+    "follow_through_rate_pct": 51.4641,
+    "avg_move_pts": 2.9547,
+    "median_move_pts": 2.0,
+    "avg_mfe_pts": 69.984,
+    "by_year": [
+      {
+        "year": 2016,
+        "n": 114,
+        "follow_through_rate_pct": 56.1404,
+        "avg_move_pts": 8.8333
+      },
+      {
+        "year": 2017,
+        "n": 131,
+        "follow_through_rate_pct": 49.6183,
+        "avg_move_pts": 0.8397
+      },
+      {
+        "year": 2018,
+        "n": 120,
+        "follow_through_rate_pct": 57.5,
+        "avg_move_pts": 6.825
+      },
+      {
+        "year": 2019,
+        "n": 125,
+        "follow_through_rate_pct": 47.2,
+        "avg_move_pts": -1.912
+      },
+      {
+        "year": 2020,
+        "n": 134,
+        "follow_through_rate_pct": 47.7612,
+        "avg_move_pts": 15.6642
+      },
+      {
+        "year": 2021,
+        "n": 127,
+        "follow_through_rate_pct": 56.6929,
+        "avg_move_pts": 10.748
+      },
+      {
+        "year": 2022,
+        "n": 124,
+        "follow_through_rate_pct": 48.3871,
+        "avg_move_pts": -11.1452
+      },
+      {
+        "year": 2023,
+        "n": 124,
+        "follow_through_rate_pct": 51.6129,
+        "avg_move_pts": -4.6371
+      },
+      {
+        "year": 2024,
+        "n": 128,
+        "follow_through_rate_pct": 49.2188,
+        "avg_move_pts": 0.9844
+      }
+    ],
+    "by_regime": {
+      "full": {
+        "n": 1127,
+        "follow_through_rate_pct": 51.4641,
+        "avg_move_pts": 2.9547
+      },
+      "2024+": {
+        "n": 128,
+        "follow_through_rate_pct": 49.2188,
+        "avg_move_pts": 0.9844
+      },
+      "2025+": {
+        "n": 0,
+        "follow_through_rate_pct": 0,
+        "avg_move_pts": 0
+      },
+      "2026": {
+        "n": 0,
+        "follow_through_rate_pct": 0,
+        "avg_move_pts": 0
+      }
+    }
+  }
+}

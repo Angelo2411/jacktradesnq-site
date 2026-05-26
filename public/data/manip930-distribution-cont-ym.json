@@ -1,0 +1,88 @@
+{
+ "meta": {
+  "asset": "YM",
+  "window1": "09:30-10:00 ET",
+  "window2": "10:00-11:00 ET",
+  "dateFrom": "2016-01-03",
+  "dateTo": "2024-12-31",
+  "n_days": 2265,
+  "point_value_usd": 5
+ },
+ "continuation": {
+  "continuation_rate": 49.93,
+  "reversal_rate": 50.07,
+  "avg_move1": 2.3762,
+  "avg_move2": -3.1567,
+  "avg_move2_continuation": -3.9355,
+  "avg_move2_reversal": -2.3801,
+  "by_year": [
+   {
+    "year": 2016,
+    "n": 251,
+    "continuation_rate": 44.62
+   },
+   {
+    "year": 2017,
+    "n": 248,
+    "continuation_rate": 48.79
+   },
+   {
+    "year": 2018,
+    "n": 250,
+    "continuation_rate": 54.8
+   },
+   {
+    "year": 2019,
+    "n": 252,
+    "continuation_rate": 47.62
+   },
+   {
+    "year": 2020,
+    "n": 253,
+    "continuation_rate": 52.17
+   },
+   {
+    "year": 2021,
+    "n": 253,
+    "continuation_rate": 51.38
+   },
+   {
+    "year": 2022,
+    "n": 253,
+    "continuation_rate": 47.04
+   },
+   {
+    "year": 2023,
+    "n": 252,
+    "continuation_rate": 50.0
+   },
+   {
+    "year": 2024,
+    "n": 253,
+    "continuation_rate": 52.96
+   }
+  ],
+  "by_regime": {
+   "full": {
+    "n_days": 2265,
+    "continuation_rate": 49.93
+   },
+   "2024+": {
+    "n_days": 253,
+    "continuation_rate": 52.96
+   },
+   "2025+": {
+    "n_days": 0,
+    "continuation_rate": 0
+   },
+   "2026": {
+    "n_days": 0,
+    "continuation_rate": 0
+   }
+  },
+  "manip": {
+   "n_days": 1029,
+   "continuation_rate": 52.48
+  }
+ }
+}

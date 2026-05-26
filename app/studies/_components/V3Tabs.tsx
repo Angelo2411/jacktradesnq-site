@@ -604,6 +604,7 @@ export default function V3Tabs({
   filterBarOverride,
   barsSlug,
   tradesUrl,
+  flat = false,
 }: {
   slug: string;
   breakdown: WeekdayBreakdown;
@@ -627,6 +628,7 @@ export default function V3Tabs({
   filterBarOverride?: FilterBarOverride;
   barsSlug?: string;
   tradesUrl?: string;
+  flat?: boolean;
 }) {
   // ── Lazy-fetch trades client-side when a URL is provided (avoids serializing
   //    large trade arrays into the static HTML payload) ──────────────────
@@ -656,6 +658,8 @@ export default function V3Tabs({
   // ── Jump-to-trades state (year click in By year tab) ─────────────────
   const [jumpYear, setJumpYear] = useState<number | null>(null);
   const [jumpTab, setJumpTab] = useState<Tab | null>(null);
+  const [flatSec, setFlatSec] = useState<'weekday' | 'year' | 'trades'>('weekday');
+  const [flatNotesOpen, setFlatNotesOpen] = useState(false);
 
   const resolvedTab: Tab = jumpTab ?? activeTab;
   const resolvedYearFilter: string = jumpTab === 'trades' && jumpYear !== null
@@ -810,60 +814,116 @@ export default function V3Tabs({
       )}
 
       {/* ── Tabs nav ── */}
-      <div className="v3-tabs">
-        {TAB_LIST.map((t) => (
-          <Link
-            key={t.key}
-            href={tabHref(t.key)}
-            className={'v3-tab' + (resolvedTab === t.key ? ' active' : '')}
-            onClick={() => { setJumpTab(null); setJumpYear(null); }}
-          >
-            {t.label}
-          </Link>
-        ))}
-      </div>
+      {!flat && (
+        <div className="v3-tabs">
+          {TAB_LIST.map((t) => (
+            <Link
+              key={t.key}
+              href={tabHref(t.key)}
+              className={'v3-tab' + (resolvedTab === t.key ? ' active' : '')}
+              onClick={() => { setJumpTab(null); setJumpYear(null); }}
+            >
+              {t.label}
+            </Link>
+          ))}
+        </div>
+      )}
+
+      {/* ── Flat switcher chips ── */}
+      {flat && hasTradeData && (
+        <div className="v3-flat-chips">
+          <button type="button" className={'v3-flat-chip' + (flatSec === 'weekday' ? ' active' : '')} onClick={() => setFlatSec('weekday')}>Weekday</button>
+          <button type="button" className={'v3-flat-chip' + (flatSec === 'year' ? ' active' : '')} onClick={() => setFlatSec('year')}>By year</button>
+          <button type="button" className={'v3-flat-chip' + (flatSec === 'trades' ? ' active' : '')} onClick={() => setFlatSec('trades')}>Trades</button>
+        </div>
+      )}
 
       {/* ── Tab content ── */}
-      <div className="fb-animated">
-        {resolvedTab === 'weekday' ? (
-          <WeekdayBlock breakdown={activeBreakdown} slug={slug} smtLabel={smtLabel} totalTradesCount={trades.length} />
-        ) : resolvedTab === 'year' ? (
-          <YearBlock
-            breakdown={activeYearBreakdown}
-            slug={slug}
-            smtLabel={smtLabel}
-            trades={activeTrades}
-            onJumpToTrades={(year) => { setJumpYear(year); setJumpTab('trades'); }}
-            isStraddle={!!fbo}
-            totalTradesCount={trades.length}
-          />
-        ) : resolvedTab === 'trades' ? (
-          <TradesBlock
-            trades={activeTrades}
-            tradesByVariant={fbo ? undefined : filteredByVariant}
-            variant={variant}
-            setVariant={() => {}}
-            dayFilter={dayFilter}
-            yearFilter={resolvedYearFilter}
-            onClearYearFilter={jumpYear !== null ? () => { setJumpYear(null); setJumpTab(null); } : undefined}
-            slug={slug}
-            eventShort={eventShort}
-            asset={asset}
-            smtLabel={smtLabel}
-            barsSlug={barsSlug}
-            filterLabel={fbo ? `${kpiVariantLabel} Stop · ${fbo.tpOptions?.find((o) => o.key === urlTp)?.label ?? urlTp} TP · ${fbo.smtOptions?.find((o) => o.key === searchParams.get('smt'))?.label ?? 'Both'}` : undefined}
-            totalTradesCount={trades.length}
-          />
-        ) : resolvedTab === 'methodology' ? (
-          <div className="v3-meth-link">
-            <Link href="/studies/methodology/">Read full methodology →</Link>
-            <p>Data sources, backtest engine, assumptions, what this is not.</p>
+      {!flat ? (
+        <div className="fb-animated">
+          {resolvedTab === 'weekday' ? (
+            <WeekdayBlock breakdown={activeBreakdown} slug={slug} smtLabel={smtLabel} totalTradesCount={trades.length} />
+          ) : resolvedTab === 'year' ? (
+            <YearBlock
+              breakdown={activeYearBreakdown}
+              slug={slug}
+              smtLabel={smtLabel}
+              trades={activeTrades}
+              onJumpToTrades={(year) => { setJumpYear(year); setJumpTab('trades'); }}
+              isStraddle={!!fbo}
+              totalTradesCount={trades.length}
+            />
+          ) : resolvedTab === 'trades' ? (
+            <TradesBlock
+              trades={activeTrades}
+              tradesByVariant={fbo ? undefined : filteredByVariant}
+              variant={variant}
+              setVariant={() => {}}
+              dayFilter={dayFilter}
+              yearFilter={resolvedYearFilter}
+              onClearYearFilter={jumpYear !== null ? () => { setJumpYear(null); setJumpTab(null); } : undefined}
+              slug={slug}
+              eventShort={eventShort}
+              asset={asset}
+              smtLabel={smtLabel}
+              barsSlug={barsSlug}
+              filterLabel={fbo ? `${kpiVariantLabel} Stop · ${fbo.tpOptions?.find((o) => o.key === urlTp)?.label ?? urlTp} TP · ${fbo.smtOptions?.find((o) => o.key === searchParams.get('smt'))?.label ?? 'Both'}` : undefined}
+              totalTradesCount={trades.length}
+            />
+          ) : resolvedTab === 'methodology' ? (
+            <div className="v3-meth-link">
+              <Link href="/studies/methodology/">Read full methodology →</Link>
+              <p>Data sources, backtest engine, assumptions, what this is not.</p>
+            </div>
+          ) : (
+            /* overview */
+            <div className="v3-prose">{overviewContent}</div>
+          )}
+        </div>
+      ) : (
+        /* flat: compact single-view switcher (edgeful-style, no scroll) */
+        <div className="fb-animated">
+          {flatSec === 'year' ? (
+            <YearBlock
+              breakdown={activeYearBreakdown}
+              slug={slug}
+              smtLabel={smtLabel}
+              trades={activeTrades}
+              onJumpToTrades={() => setFlatSec('trades')}
+              isStraddle={!!fbo}
+              totalTradesCount={trades.length}
+            />
+          ) : flatSec === 'trades' ? (
+            <TradesBlock
+              trades={activeTrades}
+              tradesByVariant={fbo ? undefined : filteredByVariant}
+              variant={variant}
+              setVariant={() => {}}
+              dayFilter={dayFilter}
+              yearFilter={resolvedYearFilter}
+              onClearYearFilter={undefined}
+              slug={slug}
+              eventShort={eventShort}
+              asset={asset}
+              smtLabel={smtLabel}
+              barsSlug={barsSlug}
+              filterLabel={fbo ? `${kpiVariantLabel} Stop · ${fbo.tpOptions?.find((o) => o.key === urlTp)?.label ?? urlTp} TP · ${fbo.smtOptions?.find((o) => o.key === searchParams.get('smt'))?.label ?? 'Both'}` : undefined}
+              totalTradesCount={trades.length}
+            />
+          ) : (
+            <WeekdayBlock breakdown={activeBreakdown} slug={slug} smtLabel={smtLabel} totalTradesCount={trades.length} />
+          )}
+
+          {/* secondary: notes (collapsible) + methodology link — demoted, not in flow */}
+          <div className="v3-flat-secondary">
+            <button type="button" className="v3-flat-sec-link" onClick={() => setFlatNotesOpen((v) => !v)}>
+              {flatNotesOpen ? 'Hide notes' : 'Notes'}
+            </button>
+            <Link href="/studies/methodology/" className="v3-flat-sec-link">Methodology →</Link>
           </div>
-        ) : (
-          /* overview */
-          <div className="v3-prose">{overviewContent}</div>
-        )}
-      </div>
+          {flatNotesOpen && <div className="v3-prose v3-flat-notes-body">{overviewContent}</div>}
+        </div>
+      )}
     </>
   );
 }

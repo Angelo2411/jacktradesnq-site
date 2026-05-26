@@ -19,6 +19,8 @@ import BilingualTitle from '../_components/BilingualTitle';
 import V3Tabs from '../_components/V3Tabs';
 import StraddleWrappedTabs from '../_components/StraddleWrappedTabs';
 import PerformanceTearsheet from '../_components/PerformanceTearsheet';
+import ManipDataTabs, { type ContDataFile } from '../_components/ManipDataTabs';
+import { type ManipExample } from '../_components/ManipExampleChart';
 import { computeWeekdayBreakdown, computeYearBreakdown } from '@/lib/client-stats';
 import { getStrategyStats, getStrategyStatsByVariant, getStrategyStatsByVariantAndSmt, getWeekdayBreakdown, getYearBreakdown, getTradeList, getStraddleAllTrades, type TradeRow } from '@/lib/study-stats';
 
@@ -47,6 +49,7 @@ const EVENT_INFO: Record<string, { eventType: string; titlePrefix: string }> = {
 
 const KILLZONE_SLUG = 'killzone-past-vs-now';
 const NWOG_SLUG = 'asia-open';
+const MANIP_SLUG = 'manip930-distribution';
 
 const STRADDLE_V3_SLUGS = new Set(['cpi-day-stats', 'nfp', 'jobless-claims', 'ppi', 'retail-sales', 'durable-goods', 'pce']);
 
@@ -177,6 +180,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
   const isKillzone = slug === KILLZONE_SLUG;
   const isNwog = slug === NWOG_SLUG;
   const isIfvg = IFVG_SLUGS.has(slug);
+  const isManip = slug === MANIP_SLUG;
   const isStraddleV3 = STRADDLE_V3_SLUGS.has(slug);
 
   const genericCfg = GENERIC_STUDY_CONFIG[slug];
@@ -434,6 +438,49 @@ export default async function BacktestedDetail({ params }: PageProps) {
     );
   }
 
+  // Manip930-Distribution: continuation-vs-reversal study
+  if (isManip) {
+    const manipAssets: AssetKey[] = ['nq', 'gc', 'si', 'ym', 'es'];
+    const allData: Record<string, ContDataFile> = {};
+    for (const a of manipAssets) {
+      const suffix = a === 'nq' ? '' : `-${a}`;
+      const raw = fs.readFileSync(path.join(process.cwd(), 'public', 'data', `manip930-distribution-cont${suffix}.json`), 'utf-8');
+      allData[a] = JSON.parse(raw) as ContDataFile;
+    }
+
+    const examplesByAsset: Partial<Record<AssetKey, ManipExample[]>> = {};
+    for (const a of manipAssets) {
+      const suffix = a === 'nq' ? '' : `-${a}`;
+      try {
+        const raw = fs.readFileSync(path.join(process.cwd(), 'public', 'data', `manip930-distribution-examples${suffix}.json`), 'utf-8');
+        const parsed = JSON.parse(raw);
+        examplesByAsset[a] = parsed.examples ?? [];
+      } catch {
+        examplesByAsset[a] = [];
+      }
+    }
+
+    const manipOverviewNode = (
+      <BilingualProse htmlNq={entry.explanationHtmlNq} htmlGc={entry.explanationHtmlGc} htmlEs={entry.explanationHtmlEs} htmlSi={entry.explanationHtmlSi} htmlYm={entry.explanationHtmlYm} />
+    );
+
+    return (
+      <div>
+        <Link href="/studies/" className="v3-back">
+          ← back to Data
+        </Link>
+
+        <Suspense fallback={<div className="v3-tabs" style={{ height: 48 }} />}>
+          <AssetProvider assets={manipAssets} slug={slug}>
+            <ManipDataTabs allData={allData} overviewContent={manipOverviewNode} examplesByAsset={examplesByAsset} />
+          </AssetProvider>
+        </Suspense>
+
+        {pager}
+      </div>
+    );
+  }
+
   // IFVG slugs: v3 report-first layout with KPI band + tabs
   if (isIfvg) {
     const stratStats = getStrategyStats(slug);
@@ -479,7 +526,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
 
         {/* V3Tabs is a client component that reads ?tab from URL and renders the KPI band + tabs */}
         <Suspense fallback={<div className="v3-tabs" style={{ height: 48 }} />}>
-          <V3Tabs slug={slug} breakdown={breakdown} breakdownOff={breakdownOff} yearBreakdown={yearBreakdown} yearBreakdownOff={yearBreakdownOff} trades={trades} tradesByVariant={tradesByVariant} tradesByVariantOff={tradesByVariantOff} statsByVariant={statsByVariant} statsByVariantAndSmt={statsByVariantAndSmt} dateFrom={dateFrom} dateTo={dateTo} overviewContent={overviewNode} eventShort={stratStats?.event ?? ''} asset={(stratStats?.asset?.toLowerCase() ?? 'nq') as 'nq' | 'gc' | 'es' | 'si' | 'ym'} hideKpiBand={hasTearsheet} />
+          <V3Tabs slug={slug} breakdown={breakdown} breakdownOff={breakdownOff} yearBreakdown={yearBreakdown} yearBreakdownOff={yearBreakdownOff} trades={trades} tradesByVariant={tradesByVariant} tradesByVariantOff={tradesByVariantOff} statsByVariant={statsByVariant} statsByVariantAndSmt={statsByVariantAndSmt} dateFrom={dateFrom} dateTo={dateTo} overviewContent={overviewNode} eventShort={stratStats?.event ?? ''} asset={(stratStats?.asset?.toLowerCase() ?? 'nq') as 'nq' | 'gc' | 'es' | 'si' | 'ym'} hideKpiBand={hasTearsheet} flat={true} />
         </Suspense>
 
         {pager}

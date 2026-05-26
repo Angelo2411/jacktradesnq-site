@@ -125,7 +125,7 @@ function CylinderView({ data, unit }: { data: Summary; unit: string }) {
           gridTemplateColumns: 'repeat(3, 1fr)',
           gap: 16,
           padding: '20px 16px',
-          background: 'var(--c-paper-edge, oklch(0.94 0.02 85))',
+          background: 'var(--c-paper-edge, #2c2620)',
           borderRadius: 12,
           marginBottom: 24,
         }}
