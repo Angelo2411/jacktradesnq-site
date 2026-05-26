@@ -111,6 +111,7 @@ export default function StraddleWrappedTabs({
           asset={(assetKey as 'nq' | 'gc' | 'es' | 'si' | 'ym')}
           filterBarOverride={filterBarOverride}
           barsSlug={barsSlug}
+          flat={true}
         />
       </Suspense>
     </>
