@@ -4954,6 +4954,8 @@ a { color: inherit; text-decoration: none; }
 .bd-root .v3-flat-notes-body { margin-top: 20px; font-size: 0.95rem; color: var(--c-muted); }
 
 /* ── Hub editorial index (rows, replaces card grid) ── */
+.bd-root .bd-flt-asset-btn.on { background: var(--c-accent); color: var(--c-surface); }
+
 .bd-root .bd-hub-index { display: flex; flex-direction: column; }
 .bd-root .bd-row {
   display: grid;
