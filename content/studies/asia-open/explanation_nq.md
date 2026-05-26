@@ -1,56 +1,44 @@
-## New Week Opening Gap — Fill Study
+## New Week Opening Gap — Fill Study (NQ)
 
-A **New Week Opening Gap (NWOG)** is the difference between NQ futures' Friday 16:59 ET close and the Sunday 18:00 ET re-open. I only counted gaps of **≥50 points** — smaller gaps are noise on NQ and rarely produce a clean fill setup.
+A **New Week Opening Gap (NWOG)** is the difference between NQ futures' Friday 16:59 ET close and the Sunday 18:00 ET re-open. I only counted gaps of **≥50 points** — smaller gaps are noise on NQ and rarely produce a clean setup.
 
-### Methodology
+### Definition
 
 - Instrument: NQ continuous front-month futures
-- Period: 10-year backtest window (2016–2026, 1-minute timeframe)
-- Sample shown: first qualifying gap hit 2018-12-02
+- Period: 2025-01-01 → 2026-05-12
 - Threshold: gap size ≥ 50 pts (absolute)
-- Total events meeting threshold: **58** (19 bull gaps, 39 bear gaps)
+- Total qualifying gaps: **34** (14 up, 20 down)
+- Average absolute gap: **202.3 pts**
 
-Note: between 2016 and late 2018, NQ traded roughly between 4,000 and 7,500 — a 50-point gap on a 5,000 index is ~1%, which almost never happened in that low-vol regime. Pre-2018 simply had no events meeting the threshold.
-- Outcomes measured from Sunday 18:00 ET open:
-  - **Direct fill** — gap closes within 30 minutes of the open
-  - **Later fill** — gap closes after 30 min but before 00:00 ET (still Sunday night session)
-  - **Held** — gap never closes during the Sunday night session
+The 2025–2026 regime produces enormous weekend gaps — a 200-point average is double what NQ used to deliver pre-2024. These are not the small 50–75 point gaps of the past. Large macro-driven gaps behave differently: they almost always retrace to the Sunday open but fill and flip less reliably than smaller gaps.
 
-### Headline Results
+### Three gap behaviours
 
-| Outcome | Events | Percentage |
-|---------|--------|------------|
-| Direct fill (≤30 min) | 39 | 67.2% |
-| Later fill (30 min – 00:00 ET) | 8 | 13.8% |
-| Held through session | 11 | 19.0% |
+Every gap is classified across three outcomes, measured from the Sunday 18:00 ET open through Monday's cash close:
 
-Combined fill rate (direct + later): **81.0%** of all qualifying NWOGs fill before midnight ET.
+- **Retrace** — price pulls back at least to the Sunday open price. Measured in the Asia session bucket. **100.0%** of all qualifying gaps retraced in Asia. Pulling back to the open is near-certain on NQ regardless of gap size.
+- **Fill same-day** — the gap closes entirely on Monday (the cash session, not just the Sunday night). **61.8%** of gaps fill same-day (21 of 34).
+- **Flip** — among gaps that filled same-day, **81.0%** continued through the Friday close and traded to the other side. A fill that reverses is the dominant outcome when NQ fills.
 
-### Bull vs Bear Gaps
+### By session
 
-Bear gaps hold more often than bull gaps — 23.1% vs 10.5%. Bull gaps fill at a higher direct rate (73.7% vs 64.1%), which makes sense: the path of least resistance on a bullish gap is simply to retrace back into Friday's range before Asia pushes higher.
+Retrace and fill rates measured at each session boundary on Monday:
 
-| Direction | Events | Direct | Later | Held |
-|-----------|--------|--------|-------|------|
-| Bull | 19 | 73.7% | 15.8% | 10.5% |
-| Bear | 39 | 64.1% | 12.8% | 23.1% |
 
-### By Gap Size
+The retrace happens fast — every gap touches the Sunday open within Asia. Fills are slow: only ~3% fill in the first 30 minutes, and more than half only complete by NY PM.
 
-Bigger gaps hold more often — a 150+ pt gap represents a macro shock and price doesn't always come back to fill it the same night.
+### By regime (2025 vs 2026)
 
-| Gap size | Events | Direct | Later | Held |
-|----------|--------|--------|-------|------|
-| 50–75 pts | 25 | 76.0% | 12.0% | 12.0% |
-| 75–100 pts | 13 | 69.2% | 15.4% | 15.4% |
-| 100–150 pts | 7 | 57.1% | 14.3% | 28.6% |
-| 150+ pts | 13 | 53.8% | 15.4% | 30.8% |
 
-The 50–75 pt bucket is the cleanest: 76% direct fill, only 12% held. Once you're above 150 pts, you're in coin-flip territory on whether it fills the same night.
+2025 was the harder year for fills (54.5%). 2026 has been cleaner so far — 75% same-day fill with 89% of those flipping. The 2025 data was dominated by tariff-shock gaps in April and huge October–November macro moves that held open longer. 2026 is a smaller sample (12 gaps through mid-May) but shows a stronger fill-and-flip pattern.
 
-### Regime Shift in 2025
+### Lifecycle of non-same-day fills
 
-2025 is a notable outlier: direct fill rate dropped to ~53% vs a 91% direct fill rate in 2020. This lines up with the volatility expansion I see across all my NQ studies post-2024 — gaps that previously resolved fast are now sitting open longer or holding entirely. Use pre-2025 numbers as the long-run baseline but size expectations accordingly for the current regime.
+13 gaps (38.2%) did not fill on Monday. Where did they go?
 
-The full year-by-year breakdown and the complete 58-event list are in the PDF below.
 
+Nearly half of the gaps that survived Monday never filled that week. This is the regime effect: large 2025-26 gaps are structural, not just noise. A gap that doesn't close Monday should not be assumed to close later in the week.
+
+### Context
+
+These numbers describe behaviour only. There is no strategy claim and no edge promise here. A 100% Asia retrace rate does not mean every trade works — the fill and flip numbers show that NQ gaps in this regime are wide enough that same-day resolution is not guaranteed. Trade what you see, not what the stats imply.
