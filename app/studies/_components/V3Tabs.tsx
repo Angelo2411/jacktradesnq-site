@@ -600,6 +600,7 @@ export default function V3Tabs({
   hideKpiBand = false,
   filterBarOverride,
   barsSlug,
+  flat = false,
 }: {
   slug: string;
   breakdown: WeekdayBreakdown;
@@ -622,6 +623,7 @@ export default function V3Tabs({
   hideKpiBand?: boolean;
   filterBarOverride?: FilterBarOverride;
   barsSlug?: string;
+  flat?: boolean;
 }) {
   // ── URL-driven filter state ──────────────────────────────────────────
   const fbo = filterBarOverride;
@@ -791,60 +793,130 @@ export default function V3Tabs({
       )}
 
       {/* ── Tabs nav ── */}
-      <div className="v3-tabs">
-        {TAB_LIST.map((t) => (
-          <Link
-            key={t.key}
-            href={tabHref(t.key)}
-            className={'v3-tab' + (resolvedTab === t.key ? ' active' : '')}
-            onClick={() => { setJumpTab(null); setJumpYear(null); }}
-          >
-            {t.label}
-          </Link>
-        ))}
-      </div>
+      {!flat && (
+        <div className="v3-tabs">
+          {TAB_LIST.map((t) => (
+            <Link
+              key={t.key}
+              href={tabHref(t.key)}
+              className={'v3-tab' + (resolvedTab === t.key ? ' active' : '')}
+              onClick={() => { setJumpTab(null); setJumpYear(null); }}
+            >
+              {t.label}
+            </Link>
+          ))}
+        </div>
+      )}
+
+      {/* ── Flat anchor nav ── */}
+      {flat && hasTradeData && (
+        <nav className="v3-anchor">
+          <a href="#sec-weekday">Weekday</a>
+          <a href="#sec-year">By year</a>
+          <a href="#sec-trades">Trades</a>
+          <a href="#sec-method">Method</a>
+        </nav>
+      )}
 
       {/* ── Tab content ── */}
-      <div className="fb-animated">
-        {resolvedTab === 'weekday' ? (
-          <WeekdayBlock breakdown={activeBreakdown} slug={slug} smtLabel={smtLabel} totalTradesCount={trades.length} />
-        ) : resolvedTab === 'year' ? (
-          <YearBlock
-            breakdown={activeYearBreakdown}
-            slug={slug}
-            smtLabel={smtLabel}
-            trades={activeTrades}
-            onJumpToTrades={(year) => { setJumpYear(year); setJumpTab('trades'); }}
-            isStraddle={!!fbo}
-            totalTradesCount={trades.length}
-          />
-        ) : resolvedTab === 'trades' ? (
-          <TradesBlock
-            trades={activeTrades}
-            tradesByVariant={fbo ? undefined : filteredByVariant}
-            variant={variant}
-            setVariant={() => {}}
-            dayFilter={dayFilter}
-            yearFilter={resolvedYearFilter}
-            onClearYearFilter={jumpYear !== null ? () => { setJumpYear(null); setJumpTab(null); } : undefined}
-            slug={slug}
-            eventShort={eventShort}
-            asset={asset}
-            smtLabel={smtLabel}
-            barsSlug={barsSlug}
-            filterLabel={fbo ? `${kpiVariantLabel} Stop · ${fbo.tpOptions?.find((o) => o.key === urlTp)?.label ?? urlTp} TP · ${fbo.smtOptions?.find((o) => o.key === searchParams.get('smt'))?.label ?? 'Both'}` : undefined}
-            totalTradesCount={trades.length}
-          />
-        ) : resolvedTab === 'methodology' ? (
-          <div className="v3-meth-link">
-            <Link href="/studies/methodology/">Read full methodology →</Link>
-            <p>Data sources, backtest engine, assumptions, what this is not.</p>
-          </div>
-        ) : (
-          /* overview */
-          <div className="v3-prose">{overviewContent}</div>
-        )}
-      </div>
+      {!flat ? (
+        <div className="fb-animated">
+          {resolvedTab === 'weekday' ? (
+            <WeekdayBlock breakdown={activeBreakdown} slug={slug} smtLabel={smtLabel} totalTradesCount={trades.length} />
+          ) : resolvedTab === 'year' ? (
+            <YearBlock
+              breakdown={activeYearBreakdown}
+              slug={slug}
+              smtLabel={smtLabel}
+              trades={activeTrades}
+              onJumpToTrades={(year) => { setJumpYear(year); setJumpTab('trades'); }}
+              isStraddle={!!fbo}
+              totalTradesCount={trades.length}
+            />
+          ) : resolvedTab === 'trades' ? (
+            <TradesBlock
+              trades={activeTrades}
+              tradesByVariant={fbo ? undefined : filteredByVariant}
+              variant={variant}
+              setVariant={() => {}}
+              dayFilter={dayFilter}
+              yearFilter={resolvedYearFilter}
+              onClearYearFilter={jumpYear !== null ? () => { setJumpYear(null); setJumpTab(null); } : undefined}
+              slug={slug}
+              eventShort={eventShort}
+              asset={asset}
+              smtLabel={smtLabel}
+              barsSlug={barsSlug}
+              filterLabel={fbo ? `${kpiVariantLabel} Stop · ${fbo.tpOptions?.find((o) => o.key === urlTp)?.label ?? urlTp} TP · ${fbo.smtOptions?.find((o) => o.key === searchParams.get('smt'))?.label ?? 'Both'}` : undefined}
+              totalTradesCount={trades.length}
+            />
+          ) : resolvedTab === 'methodology' ? (
+            <div className="v3-meth-link">
+              <Link href="/studies/methodology/">Read full methodology →</Link>
+              <p>Data sources, backtest engine, assumptions, what this is not.</p>
+            </div>
+          ) : (
+            /* overview */
+            <div className="v3-prose">{overviewContent}</div>
+          )}
+        </div>
+      ) : (
+        /* flat: stacked sections */
+        <>
+          {hasTradeData && (
+            <section id="sec-weekday" className="v3-flat-sec">
+              <div className="v3-flat-kicker">Weekday</div>
+              <WeekdayBlock breakdown={activeBreakdown} slug={slug} smtLabel={smtLabel} totalTradesCount={trades.length} />
+            </section>
+          )}
+          {hasTradeData && (
+            <section id="sec-year" className="v3-flat-sec">
+              <div className="v3-flat-kicker">By year</div>
+              <YearBlock
+                breakdown={activeYearBreakdown}
+                slug={slug}
+                smtLabel={smtLabel}
+                trades={activeTrades}
+                onJumpToTrades={(year) => { setJumpYear(year); setJumpTab('trades'); }}
+                isStraddle={!!fbo}
+                totalTradesCount={trades.length}
+              />
+            </section>
+          )}
+          {hasTradeData && (
+            <section id="sec-trades" className="v3-flat-sec">
+              <div className="v3-flat-kicker">Trade list</div>
+              <TradesBlock
+                trades={activeTrades}
+                tradesByVariant={fbo ? undefined : filteredByVariant}
+                variant={variant}
+                setVariant={() => {}}
+                dayFilter={dayFilter}
+                yearFilter={resolvedYearFilter}
+                onClearYearFilter={jumpYear !== null ? () => { setJumpYear(null); setJumpTab(null); } : undefined}
+                slug={slug}
+                eventShort={eventShort}
+                asset={asset}
+                smtLabel={smtLabel}
+                barsSlug={barsSlug}
+                filterLabel={fbo ? `${kpiVariantLabel} Stop · ${fbo.tpOptions?.find((o) => o.key === urlTp)?.label ?? urlTp} TP · ${fbo.smtOptions?.find((o) => o.key === searchParams.get('smt'))?.label ?? 'Both'}` : undefined}
+                totalTradesCount={trades.length}
+              />
+            </section>
+          )}
+          <section id="sec-notes" className="v3-flat-sec v3-flat-notes">
+            <div className="v3-flat-kicker">Notes</div>
+            <div className="v3-prose">{overviewContent}</div>
+          </section>
+          <section id="sec-method" className="v3-flat-sec">
+            <div className="v3-flat-kicker">Methodology</div>
+            <div className="v3-meth-link">
+              <Link href="/studies/methodology/">Read full methodology →</Link>
+              <p>Data sources, backtest engine, assumptions, what this is not.</p>
+            </div>
+          </section>
+        </>
+      )}
     </>
   );
 }
