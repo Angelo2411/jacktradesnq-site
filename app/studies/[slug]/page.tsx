@@ -90,7 +90,7 @@ const IFVG_SLUGS = new Set([
   'cpi-ifvg-smt-ym', 'cpi-ifvg-smt-ym-vs-es', 'cpi-ifvg-smt-es-vs-ym', 'cpi-ifvg-smt-nq-vs-ym',
   'nfp-ifvg-smt-nq-vs-ym', 'nfp-ifvg-smt-es-vs-ym', 'nfp-ifvg-smt-ym-vs-es',
   'fomc-ifvg-smt-ym', 'fomc-ifvg-smt-ym-vs-es', 'fomc-ifvg-smt-es-vs-ym', 'fomc-ifvg-smt-nq-vs-ym',
-  'pce-ifvg-smt-ym', 'pce-ifvg-smt-ym-vs-es',
+  'pce-ifvg-smt-ym', 'pce-ifvg-smt-ym-vs-es', 'pce-ifvg-smt-gc-vs-ym',
   'ppi-ifvg-smt-ym-vs-es',
   'retailsales-ifvg-smt-ym', 'retailsales-ifvg-smt-ym-vs-es', 'retailsales-ifvg-smt-es-vs-ym', 'retailsales-ifvg-smt-nq-vs-ym',
   'philly-fed-ifvg-smt-ym', 'philly-fed-ifvg-smt-ym-vs-es', 'philly-fed-ifvg-smt-nq-vs-ym',
