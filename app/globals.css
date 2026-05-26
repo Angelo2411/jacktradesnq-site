@@ -4912,3 +4912,14 @@ a { color: inherit; text-decoration: none; }
 /* white-alpha panels that read as grey films on dark → warm dark surfaces */
 .bd-root .v3-kpi-band { background: var(--c-surface-card); }
 .bd-root .v3-table tbody tr:hover { background: var(--c-surface-hover); }
+
+/* gold restraint: data VALUES in warm cream (like the home), gold reserved for
+   chrome accents (eyebrows, active pills, logo dot, links) + chart bars/candles.
+   Negatives stay clay (the one semantic exception). Kills the "gold everywhere" feel. */
+.bd-root .v3-kpi-band-val.pos,
+.bd-root .v3-kpi-band-val.gold,
+.bd-root .bd-sc-val--pos,
+.bd-root .bd-sc-val--gold,
+.bd-root .ec-stat-pos,
+.bd-root .v3-wd-stat-pnl.pos,
+.bd-root .v3-yr-net.pos { color: var(--c-ink); }
