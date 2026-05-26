@@ -639,6 +639,8 @@ export default function V3Tabs({
   // ── Jump-to-trades state (year click in By year tab) ─────────────────
   const [jumpYear, setJumpYear] = useState<number | null>(null);
   const [jumpTab, setJumpTab] = useState<Tab | null>(null);
+  const [flatSec, setFlatSec] = useState<'weekday' | 'year' | 'trades'>('weekday');
+  const [flatNotesOpen, setFlatNotesOpen] = useState(false);
 
   const resolvedTab: Tab = jumpTab ?? activeTab;
   const resolvedYearFilter: string = jumpTab === 'trades' && jumpYear !== null
@@ -808,14 +810,13 @@ export default function V3Tabs({
         </div>
       )}
 
-      {/* ── Flat anchor nav ── */}
+      {/* ── Flat switcher chips ── */}
       {flat && hasTradeData && (
-        <nav className="v3-anchor">
-          <a href="#sec-weekday">Weekday</a>
-          <a href="#sec-year">By year</a>
-          <a href="#sec-trades">Trades</a>
-          <a href="#sec-method">Method</a>
-        </nav>
+        <div className="v3-flat-chips">
+          <button type="button" className={'v3-flat-chip' + (flatSec === 'weekday' ? ' active' : '')} onClick={() => setFlatSec('weekday')}>Weekday</button>
+          <button type="button" className={'v3-flat-chip' + (flatSec === 'year' ? ' active' : '')} onClick={() => setFlatSec('year')}>By year</button>
+          <button type="button" className={'v3-flat-chip' + (flatSec === 'trades' ? ' active' : '')} onClick={() => setFlatSec('trades')}>Trades</button>
+        </div>
       )}
 
       {/* ── Tab content ── */}
@@ -861,61 +862,48 @@ export default function V3Tabs({
           )}
         </div>
       ) : (
-        /* flat: stacked sections */
-        <>
-          {hasTradeData && (
-            <section id="sec-weekday" className="v3-flat-sec">
-              <div className="v3-flat-kicker">Weekday</div>
-              <WeekdayBlock breakdown={activeBreakdown} slug={slug} smtLabel={smtLabel} totalTradesCount={trades.length} />
-            </section>
+        /* flat: compact single-view switcher (edgeful-style, no scroll) */
+        <div className="fb-animated">
+          {flatSec === 'year' ? (
+            <YearBlock
+              breakdown={activeYearBreakdown}
+              slug={slug}
+              smtLabel={smtLabel}
+              trades={activeTrades}
+              onJumpToTrades={() => setFlatSec('trades')}
+              isStraddle={!!fbo}
+              totalTradesCount={trades.length}
+            />
+          ) : flatSec === 'trades' ? (
+            <TradesBlock
+              trades={activeTrades}
+              tradesByVariant={fbo ? undefined : filteredByVariant}
+              variant={variant}
+              setVariant={() => {}}
+              dayFilter={dayFilter}
+              yearFilter={resolvedYearFilter}
+              onClearYearFilter={undefined}
+              slug={slug}
+              eventShort={eventShort}
+              asset={asset}
+              smtLabel={smtLabel}
+              barsSlug={barsSlug}
+              filterLabel={fbo ? `${kpiVariantLabel} Stop · ${fbo.tpOptions?.find((o) => o.key === urlTp)?.label ?? urlTp} TP · ${fbo.smtOptions?.find((o) => o.key === searchParams.get('smt'))?.label ?? 'Both'}` : undefined}
+              totalTradesCount={trades.length}
+            />
+          ) : (
+            <WeekdayBlock breakdown={activeBreakdown} slug={slug} smtLabel={smtLabel} totalTradesCount={trades.length} />
           )}
-          {hasTradeData && (
-            <section id="sec-year" className="v3-flat-sec">
-              <div className="v3-flat-kicker">By year</div>
-              <YearBlock
-                breakdown={activeYearBreakdown}
-                slug={slug}
-                smtLabel={smtLabel}
-                trades={activeTrades}
-                onJumpToTrades={(year) => { setJumpYear(year); setJumpTab('trades'); }}
-                isStraddle={!!fbo}
-                totalTradesCount={trades.length}
-              />
-            </section>
-          )}
-          {hasTradeData && (
-            <section id="sec-trades" className="v3-flat-sec">
-              <div className="v3-flat-kicker">Trade list</div>
-              <TradesBlock
-                trades={activeTrades}
-                tradesByVariant={fbo ? undefined : filteredByVariant}
-                variant={variant}
-                setVariant={() => {}}
-                dayFilter={dayFilter}
-                yearFilter={resolvedYearFilter}
-                onClearYearFilter={jumpYear !== null ? () => { setJumpYear(null); setJumpTab(null); } : undefined}
-                slug={slug}
-                eventShort={eventShort}
-                asset={asset}
-                smtLabel={smtLabel}
-                barsSlug={barsSlug}
-                filterLabel={fbo ? `${kpiVariantLabel} Stop · ${fbo.tpOptions?.find((o) => o.key === urlTp)?.label ?? urlTp} TP · ${fbo.smtOptions?.find((o) => o.key === searchParams.get('smt'))?.label ?? 'Both'}` : undefined}
-                totalTradesCount={trades.length}
-              />
-            </section>
-          )}
-          <section id="sec-notes" className="v3-flat-sec v3-flat-notes">
-            <div className="v3-flat-kicker">Notes</div>
-            <div className="v3-prose">{overviewContent}</div>
-          </section>
-          <section id="sec-method" className="v3-flat-sec">
-            <div className="v3-flat-kicker">Methodology</div>
-            <div className="v3-meth-link">
-              <Link href="/studies/methodology/">Read full methodology →</Link>
-              <p>Data sources, backtest engine, assumptions, what this is not.</p>
-            </div>
-          </section>
-        </>
+
+          {/* secondary: notes (collapsible) + methodology link — demoted, not in flow */}
+          <div className="v3-flat-secondary">
+            <button type="button" className="v3-flat-sec-link" onClick={() => setFlatNotesOpen((v) => !v)}>
+              {flatNotesOpen ? 'Hide notes' : 'Notes'}
+            </button>
+            <Link href="/studies/methodology/" className="v3-flat-sec-link">Methodology →</Link>
+          </div>
+          {flatNotesOpen && <div className="v3-prose v3-flat-notes-body">{overviewContent}</div>}
+        </div>
       )}
     </>
   );
