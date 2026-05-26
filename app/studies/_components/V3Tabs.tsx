@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Fragment, useState, useMemo, useEffect } from 'react';
-import type { WeekdayBreakdown, WeekdayStats, YearBreakdown, TradeRow, StrategyStats } from '@/lib/study-stats';
+import type { WeekdayBreakdown, WeekdayStats, YearBreakdown, TradeRow, StrategyStats, ProfitableCombo } from '@/lib/study-stats';
+import { MIN_DISPLAY_PF } from '@/lib/study-display-config';
 import { aggregateYearTotals } from '@/lib/year-stats-utils';
 import { filterTradesByLookback, computeKPI, computeYearBreakdown, computeWeekdayBreakdown } from '@/lib/client-stats';
 import FilterBar, { useFilterState } from './FilterBar';
@@ -605,6 +606,7 @@ export default function V3Tabs({
   barsSlug,
   tradesUrl,
   flat = false,
+  profitableCombos,
 }: {
   slug: string;
   breakdown: WeekdayBreakdown;
@@ -629,6 +631,7 @@ export default function V3Tabs({
   barsSlug?: string;
   tradesUrl?: string;
   flat?: boolean;
+  profitableCombos?: ProfitableCombo[];
 }) {
   // ── Lazy-fetch trades client-side when a URL is provided (avoids serializing
   //    large trade arrays into the static HTML payload) ──────────────────
@@ -644,9 +647,43 @@ export default function V3Tabs({
   }, [tradesUrl]);
   const trades: TradeRow[] = tradesUrl ? (fetchedTrades ?? []) : tradesProp;
 
+  // ── Derive filtered options from profitableCombos (IFVG mode only) ──
+  // profitableCombos = combos with lifetime PF >= MIN_DISPLAY_PF from server.
+  // When present: restrict variant/smt options to survivors; best default = highest PF.
+  const ifvgFilteredVariantOpts = useMemo(() => {
+    if (!profitableCombos || profitableCombos.length === 0 || filterBarOverride) return undefined;
+    const variants = new Set(profitableCombos.map((c) => c.variant));
+    return [
+      { key: 'tp1_be', label: 'TP1 + BE' },
+      { key: 'be_50',  label: 'TP only + BE' },
+      { key: 'no_be',  label: 'TP only' },
+    ].filter((o) => variants.has(o.key as 'tp1_be' | 'be_50' | 'no_be'));
+  }, [profitableCombos, filterBarOverride]);
+
+  const ifvgFilteredSmtOpts = useMemo(() => {
+    if (!profitableCombos || profitableCombos.length === 0 || filterBarOverride) return undefined;
+    const smts = new Set(profitableCombos.map((c) => c.smt));
+    return [
+      { key: 'on',  label: 'SMT on' },
+      { key: 'off', label: 'SMT off' },
+    ].filter((o) => smts.has(o.key === 'on' ? true : false));
+  }, [profitableCombos, filterBarOverride]);
+
+  // Best default = surviving combo with highest PF
+  const ifvgBestDefault = useMemo(() => {
+    if (!profitableCombos || profitableCombos.length === 0 || filterBarOverride) return undefined;
+    const best = profitableCombos.reduce((a, b) => (b.pf > a.pf ? b : a));
+    return { variant: best.variant, smt: best.smt ? 'on' : 'off' };
+  }, [profitableCombos, filterBarOverride]);
+
   // ── URL-driven filter state ──────────────────────────────────────────
   const fbo = filterBarOverride;
-  const { variant, smtOn, lookback, tp: urlTp } = useFilterState(fbo ? { defaultVariant: fbo.defaultVariant, defaultSmt: fbo.defaultSmt, defaultTp: fbo.defaultTp } : undefined);
+  const filterDefaults = fbo
+    ? { defaultVariant: fbo.defaultVariant, defaultSmt: fbo.defaultSmt, defaultTp: fbo.defaultTp }
+    : ifvgBestDefault
+      ? { defaultVariant: ifvgBestDefault.variant, defaultSmt: ifvgBestDefault.smt }
+      : undefined;
+  const { variant, smtOn, lookback, tp: urlTp } = useFilterState(filterDefaults);
   const hasSmtToggle = fbo ? !!fbo.smtOptions : !!statsByVariantAndSmt;
 
   const searchParams = useSearchParams();
@@ -770,14 +807,14 @@ export default function V3Tabs({
           <FilterBar
             hasSmtToggle={hasSmtToggle}
             bestCombo={bestCombo}
-            variantOptions={fbo?.variantOptions}
-            smtOptions={fbo?.smtOptions}
+            variantOptions={fbo?.variantOptions ?? ifvgFilteredVariantOpts}
+            smtOptions={fbo?.smtOptions ?? ifvgFilteredSmtOpts}
             tpOptions={fbo?.tpOptions}
             variantLabel={fbo?.variantLabel}
             smtLabel={fbo?.smtLabel}
             tpLabel={fbo?.tpLabel}
-            defaultVariant={fbo?.defaultVariant}
-            defaultSmt={fbo?.defaultSmt}
+            defaultVariant={fbo?.defaultVariant ?? ifvgBestDefault?.variant}
+            defaultSmt={fbo?.defaultSmt ?? ifvgBestDefault?.smt}
             defaultTp={fbo?.defaultTp}
           />
         </div>
