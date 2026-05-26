@@ -4835,3 +4835,76 @@ a { color: inherit; text-decoration: none; }
   .manip-data-kpi-band .v3-kpi-cell { border-right: none; border-bottom: 1px solid var(--c-border); }
   .manip-data-kpi-band .v3-kpi-cell:last-child { border-bottom: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   DARK EDITORIAL RE-THEME — studies section (.bd-root)
+   Aligns /studies with the dark home (.jtnq-home): warm black + single
+   gold accent, Fraunces display, mono labels. Overrides the cream tokens
+   above by source order. Win = gold, loss = warm clay (no red/green slop).
+   ═══════════════════════════════════════════════════════════════════ */
+.bd-root {
+  /* cream primitives → dark, so any direct usage also goes dark */
+  --p-cream-97:    oklch(0.16 0.012 60);
+  --p-cream-95:    oklch(0.185 0.012 60);
+  --p-cream-94:    oklch(0.205 0.014 58);
+  --p-cream-92:    oklch(0.235 0.014 60);
+  --p-cream-88:    oklch(0.30 0.012 65);
+  --p-cream-85:    oklch(0.245 0.010 62);
+  --p-ink-18:      oklch(0.94 0.028 85);
+  --p-ink-55:      oklch(0.62 0.018 75);
+  --p-gold:        oklch(0.80 0.135 82);
+  --p-gold-deep:   oklch(0.72 0.14 80);
+
+  /* semantic */
+  --c-surface:        oklch(0.16 0.012 60);
+  --c-surface-raised: oklch(0.205 0.014 58);
+  --c-surface-hover:  oklch(0.235 0.014 60);
+  --c-surface-card:   oklch(0.185 0.012 60);
+  --c-ink:            oklch(0.94 0.028 85);
+  --c-muted:          oklch(0.62 0.018 75);
+  --c-border:         oklch(0.30 0.012 65);
+  --c-border-soft:    oklch(0.245 0.010 62);
+  --c-accent:         oklch(0.80 0.135 82);
+  --c-accent-deep:    oklch(0.72 0.14 80);
+  --c-gold-deep:      oklch(0.80 0.135 82);
+  --cream-bg:         oklch(0.16 0.012 60);
+  --cream-soft:       oklch(0.205 0.014 58);
+
+  /* data: win = gold, loss = warm clay (brightened for dark) */
+  --c-sage:       oklch(0.80 0.135 82);
+  --c-sage-soft:  oklch(0.30 0.05 82);
+  --c-terra:      oklch(0.62 0.14 32);
+  --c-terra-soft: oklch(0.30 0.06 32);
+
+  background: oklch(0.16 0.012 60);
+  color: oklch(0.94 0.028 85);
+  min-height: 100vh;
+}
+
+/* hardcoded win/loss spots → use the dark tokens (kill green hue 145) */
+.bd-root .bd-ranking-pos { color: var(--c-sage); }
+.bd-root .bd-ranking-neg { color: var(--c-terra); }
+.bd-root .bd-wd-bar--sage {
+  background: linear-gradient(180deg, var(--c-sage) 0%, oklch(0.66 0.13 82) 100%);
+}
+.bd-root .bd-wd-bar--terra {
+  background: linear-gradient(180deg, var(--c-terra) 0%, oklch(0.48 0.13 32) 100%);
+}
+
+/* active pills/toggles: gold fill + dark text (was light-ink inversion → cream slop) */
+.bd-root .v3-asset-pill.active,
+.bd-root .v3-flt-pill.active {
+  background: var(--c-accent);
+  color: var(--c-surface);
+  border-color: var(--c-accent);
+}
+.bd-root .fb-pill.active {
+  background: var(--c-accent);
+  color: var(--c-surface);
+  border-color: var(--c-accent-deep);
+}
+.bd-root .fb-best.active {
+  background: var(--c-accent);
+  color: var(--c-surface);
+  border-color: var(--c-accent);
+}
