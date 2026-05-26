@@ -32,22 +32,22 @@ function intensity(pnl: number, maxAbs: number): 1 | 2 | 3 | 4 | 5 {
  * All values chosen to stay in warm-editorial palette (no cold greens)
  */
 const WIN_COLORS: Record<1 | 2 | 3 | 4 | 5, string> = {
-  1: 'oklch(0.88 0.06 145)',
-  2: 'oklch(0.78 0.09 145)',
-  3: 'oklch(0.66 0.11 145)',
-  4: 'oklch(0.54 0.12 145)',
-  5: 'oklch(0.42 0.10 145)',
+  1: 'oklch(0.88 0.06 82)',
+  2: 'oklch(0.78 0.09 82)',
+  3: 'oklch(0.66 0.11 82)',
+  4: 'oklch(0.54 0.12 82)',
+  5: 'oklch(0.42 0.10 82)',
 };
 
 /**
  * OKLCH warm reds (terra-family, hue 25) — light to dark
  */
 const LOSS_COLORS: Record<1 | 2 | 3 | 4 | 5, string> = {
-  1: 'oklch(0.92 0.05 25)',
-  2: 'oklch(0.82 0.09 25)',
-  3: 'oklch(0.68 0.13 25)',
-  4: 'oklch(0.56 0.15 25)',
-  5: 'oklch(0.44 0.15 25)',
+  1: 'oklch(0.92 0.03 42)',
+  2: 'oklch(0.82 0.063 42)',
+  3: 'oklch(0.68 0.091 42)',
+  4: 'oklch(0.56 0.105 42)',
+  5: 'oklch(0.44 0.105 42)',
 };
 
 function buildGrid(trades: Trade[]): {

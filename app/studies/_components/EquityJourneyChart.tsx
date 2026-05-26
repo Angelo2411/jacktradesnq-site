@@ -115,7 +115,7 @@ export default function EquityJourneyChart({ data }: Props) {
         aria-label={`Cumulative equity curve from 0 to ${fmtPts(Math.round(maxVal))} pts over ${n} FOMC trades ${periodStart}–${periodEnd}`}
       >
         {/* Grid lines */}
-        <g stroke="oklch(0.20 0.02 270 / 0.07)" strokeWidth="1" strokeDasharray="2 4">
+        <g stroke="oklch(0.62 0.02 70 / 0.07)" strokeWidth="1" strokeDasharray="2 4">
           {yTicks.map((t) => {
             const y = toY(t, paddedMin, paddedMax);
             return <line key={t} x1={PAD_L} y1={y} x2={W - PAD_R} y2={y} />;
@@ -125,11 +125,11 @@ export default function EquityJourneyChart({ data }: Props) {
         {/* Zero baseline */}
         <line
           x1={PAD_L} y1={zeroY} x2={W - PAD_R} y2={zeroY}
-          stroke="oklch(0.20 0.02 270 / 0.22)" strokeWidth="1"
+          stroke="oklch(0.62 0.02 70 / 0.22)" strokeWidth="1"
         />
 
         {/* Y axis labels */}
-        <g fontFamily="Satoshi" fontSize="11" fill="oklch(0.52 0.012 270)" fontWeight="600">
+        <g fontFamily="Satoshi" fontSize="11" fill="oklch(0.62 0.02 70)" fontWeight="600">
           {yTicks.map((t) => (
             <text key={t} x={PAD_L - 6} y={toY(t, paddedMin, paddedMax) + 4} textAnchor="end">
               {t >= 0 ? `+${t}` : t}
@@ -138,7 +138,7 @@ export default function EquityJourneyChart({ data }: Props) {
         </g>
 
         {/* X axis year labels */}
-        <g fontFamily="Satoshi" fontSize="10" fill="oklch(0.52 0.012 270)" fontWeight="600">
+        <g fontFamily="Satoshi" fontSize="10" fill="oklch(0.62 0.02 70)" fontWeight="600">
           {yearLabels.map(({ x, label }) => (
             <text key={label} x={x} y={H - 4} textAnchor="middle">{label}</text>
           ))}
@@ -179,8 +179,8 @@ export default function EquityJourneyChart({ data }: Props) {
         {/* Peak marker */}
         {peakIdx > 0 && (
           <g transform={`translate(${peakPt.x.toFixed(1)},${peakPt.y.toFixed(1)})`}>
-            <circle r="5" fill="var(--c-sage)" stroke="oklch(0.96 0.02 145)" strokeWidth="2" />
-            <line x1="0" y1="-8" x2="0" y2="-22" stroke="oklch(0.42 0.10 145)" strokeWidth="1" strokeDasharray="2 2" />
+            <circle r="5" fill="var(--c-sage)" stroke="oklch(0.96 0.02 82)" strokeWidth="2" />
+            <line x1="0" y1="-8" x2="0" y2="-22" stroke="oklch(0.42 0.10 82)" strokeWidth="1" strokeDasharray="2 2" />
             {/* Single compact label block: line1 "PEAK +753", line2 date */}
             <text
               x="0" y="-26"
@@ -198,7 +198,7 @@ export default function EquityJourneyChart({ data }: Props) {
               textAnchor={peakAnchor}
               fontFamily="Satoshi"
               fontSize="9"
-              fill="oklch(0.52 0.012 270)"
+              fill="oklch(0.62 0.02 70)"
             >
               {peakDate}
             </text>
@@ -208,7 +208,7 @@ export default function EquityJourneyChart({ data }: Props) {
         {/* Trough marker */}
         {troughIdx > 0 && (
           <g transform={`translate(${troughPt.x.toFixed(1)},${troughPt.y.toFixed(1)})`}>
-            <circle r="5" fill="var(--c-terra)" stroke="oklch(0.96 0.02 25)" strokeWidth="2" />
+            <circle r="5" fill="var(--c-terra)" stroke="oklch(0.96 0.012 42)" strokeWidth="2" />
             <line x1="0" y1="8" x2="0" y2="22" stroke="var(--c-terra)" strokeWidth="1" strokeDasharray="2 2" />
             <text
               x="0" y="34"

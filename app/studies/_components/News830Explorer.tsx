@@ -533,9 +533,9 @@ export default function News830Explorer({ dataUrl, pdfTitle, dataUrlGc, pdfTitle
 
   const netColor =
     row && row.net_pts > 0
-      ? 'oklch(0.50 0.15 145)'
+      ? 'oklch(0.50 0.15 82)'
       : row && row.net_pts < 0
-      ? 'oklch(0.50 0.15 30)'
+      ? 'oklch(0.50 0.105 42)'
       : 'inherit';
 
   return (
@@ -606,12 +606,12 @@ export default function News830Explorer({ dataUrl, pdfTitle, dataUrlGc, pdfTitle
         }
         .n8-seg-btn:hover { color: var(--c-ink); }
         .n8-seg-btn--active {
-          background: oklch(0.99 0.005 90);
+          background: #1c1812;
           color: var(--c-ink);
           font-weight: 700;
-          box-shadow: 0 1px 2px oklch(0.18 0.01 60 / 0.10), 0 2px 6px oklch(0.18 0.01 60 / 0.06);
+          box-shadow: 0 1px 2px oklch(0.18 0.005 60 / 0.10), 0 2px 6px oklch(0.18 0.005 60 / 0.06);
         }
-        .n8-seg-btn--active:hover { background: oklch(0.99 0.005 90); }
+        .n8-seg-btn--active:hover { background: #1c1812; }
         .n8-seg-btn:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
         .n8-switch {
           position: relative;
@@ -634,8 +634,8 @@ export default function News830Explorer({ dataUrl, pdfTitle, dataUrlGc, pdfTitle
           width: 18px;
           height: 18px;
           border-radius: 999px;
-          background: oklch(0.99 0.005 90);
-          box-shadow: 0 1px 2px oklch(0.18 0.01 60 / 0.20);
+          background: #1c1812;
+          box-shadow: 0 1px 2px oklch(0.18 0.005 60 / 0.20);
           transition: transform 180ms cubic-bezier(0.34, 1.4, 0.64, 1);
         }
         .n8-switch--on .n8-switch-thumb { transform: translateX(20px); }
@@ -734,9 +734,9 @@ export default function News830Explorer({ dataUrl, pdfTitle, dataUrlGc, pdfTitle
           font-weight: 600;
           letter-spacing: 0.1em;
           text-transform: uppercase;
-          color: oklch(0.58 0.10 55);
-          background: oklch(0.93 0.08 85);
-          border: 1px solid oklch(0.86 0.12 75);
+          color: oklch(0.58 0.10 82);
+          background: oklch(0.16 0.014 62);
+          border: 1px solid oklch(0.16 0.014 62);
           border-radius: 4px;
           padding: 2px 7px;
           margin-left: 8px;
@@ -786,15 +786,15 @@ export default function News830Explorer({ dataUrl, pdfTitle, dataUrlGc, pdfTitle
         .n8-year-table tbody tr:hover { background: var(--c-surface-hover); }
         .n8-year-table tbody tr:last-child td { border-bottom: 0; }
         .n8-year-table tr[data-highlighted="true"] td {
-          background: oklch(0.92 0.05 75);
+          background: oklch(0.92 0.03 82);
         }
         .n8-year-table tr[data-highlighted="true"]:hover td {
-          background: oklch(0.89 0.07 75);
+          background: oklch(0.89 0.04 82);
         }
         .n8-downloads {
           margin-top: 32px;
           padding: 20px 0 4px;
-          border-top: 1px solid oklch(0.85 0.02 85);
+          border-top: 1px solid #2c2620;
         }
         .n8-downloads-label {
           font-family: var(--f-sans);
@@ -998,9 +998,9 @@ export default function News830Explorer({ dataUrl, pdfTitle, dataUrlGc, pdfTitle
                   {yearBreakdownRows.map((r) => {
                     const netCol =
                       r.net_pts > 0
-                        ? 'oklch(0.50 0.15 145)'
+                        ? 'oklch(0.50 0.15 82)'
                         : r.net_pts < 0
-                        ? 'oklch(0.50 0.15 30)'
+                        ? 'oklch(0.50 0.105 42)'
                         : 'inherit';
                     const isHighlighted = year !== 'ALL' && r.year === year;
                     return (

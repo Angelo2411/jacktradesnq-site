@@ -13,7 +13,7 @@ const PAD_B = 32;
 const CHART_W = SVG_W - PAD_L - PAD_R;
 const CHART_H = SVG_H - PAD_T - PAD_B;
 
-const COUNT_FILL = 'oklch(0.52 0.012 270)';
+const COUNT_FILL = '#9b948a';
 
 export default function PnLDistribution({ data }: Props) {
   const { distribution } = data;
@@ -46,11 +46,11 @@ export default function PnLDistribution({ data }: Props) {
       >
         {/* X axis */}
         <line x1={PAD_L} y1={axisY} x2={SVG_W - PAD_R} y2={axisY}
-          stroke="oklch(0.20 0.02 270 / 0.20)" strokeWidth="1" />
+          stroke="oklch(0.62 0.02 70 / 0.20)" strokeWidth="1" />
 
         {/* Zero marker — dashed line only, no text label */}
         <line x1={zeroX} y1={PAD_T} x2={zeroX} y2={axisY}
-          stroke="oklch(0.20 0.02 270 / 0.28)" strokeWidth="1" strokeDasharray="2 2" />
+          stroke="oklch(0.62 0.02 70 / 0.28)" strokeWidth="1" strokeDasharray="2 2" />
 
         {/* Bars */}
         {allBins.map((b, i) => {
@@ -81,7 +81,7 @@ export default function PnLDistribution({ data }: Props) {
         })}
 
         {/* X axis tick labels — every other bin to avoid crowding */}
-        <g fontFamily="Satoshi" fontSize="8" fill="oklch(0.52 0.012 270)" fontWeight="600">
+        <g fontFamily="Satoshi" fontSize="8" fill="#9b948a" fontWeight="600">
           {allBins.map((b, i) => {
             if (i % 2 !== 0) return null;
             const labelX = PAD_L + i * binW + binW / 2;

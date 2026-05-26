@@ -124,8 +124,8 @@ function LegendPill({ color, label, value }: { color: string; label: string; val
     <span style={{
       display: 'inline-flex', alignItems: 'center', gap: 5,
       padding: '2px 7px', borderRadius: 4,
-      background: 'oklch(0.97 0.01 80)',
-      border: '1px solid oklch(0.90 0.02 80)',
+      background: '#1c1812',
+      border: '1px solid #2c2620',
     }}>
       <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: 1, background: color }} />
       <span style={{ fontWeight: 600, color: 'var(--c-ink)' }}>{label}</span>
@@ -185,12 +185,12 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
 
     const el = containerRef.current;
 
-    const cPaper    = '#faf6ee';
-    const cEdge     = '#ece5d3';
-    const cInkDim   = '#5b5868';
-    const cInkQuiet = '#7d7a86';
-    const cUp       = '#7da274';
-    const cDown     = '#c97558';
+    const cPaper    = '#1c1812';
+    const cEdge     = '#2c2620';
+    const cInkDim   = '#efe7d8';
+    const cInkQuiet = '#9b948a';
+    const cUp       = '#e9b44b';
+    const cDown     = '#a55f44';
     const cGold     = '#b08932';
 
     const chart: IChartApi = createChart(el, {
@@ -558,9 +558,9 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
   }, [status]);
 
   const outcomeColor =
-    outcome === 'win' ? '#4a8c3f'
-    : outcome === 'loss' ? '#b8452a'
-    : '#7d7a86';
+    outcome === 'win' ? '#e9b44b'
+    : outcome === 'loss' ? '#a55f44'
+    : '#9b948a';
   const pnlSign = pnl_pts >= 0 ? '+' : '';
 
   return (
@@ -569,7 +569,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         {status === 'loading' && (
           <div style={{
             width: '100%', maxWidth: 720, height: 520,
-            background: 'oklch(0.97 0.01 80)',
+            background: '#1c1812',
             borderRadius: 8,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontFamily: 'var(--f-sans)', fontSize: '0.75rem', color: 'var(--c-muted)',
@@ -580,7 +580,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         {status === 'missing' && (
           <div style={{
             width: '100%', maxWidth: 720, height: 520,
-            background: 'oklch(0.97 0.01 80)',
+            background: '#1c1812',
             borderRadius: 8,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontFamily: 'var(--f-sans)', fontSize: '0.75rem', color: 'var(--c-muted)',
@@ -598,7 +598,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
               width: '100%', maxWidth: 720, height: 520,
               borderRadius: 8,
               overflow: 'hidden',
-              border: '1px solid oklch(0.90 0.02 80)',
+              border: '1px solid #2c2620',
             }}
           />
         </div>
@@ -610,7 +610,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
           <span style={{ color: outcomeColor, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
             {outcome}
           </span>
-          <span style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 700, color: pnl_pts > 0 ? '#4a8c3f' : pnl_pts < 0 ? '#b8452a' : 'var(--c-muted)' }}>
+          <span style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 700, color: pnl_pts > 0 ? '#e9b44b' : pnl_pts < 0 ? '#a55f44' : 'var(--c-muted)' }}>
             {pnlSign}{pnl_pts.toFixed(2)} pts
           </span>
           <span style={{ marginLeft: 'auto', display: 'flex', gap: 10, flexWrap: 'wrap', fontVariantNumeric: 'tabular-nums' }}>

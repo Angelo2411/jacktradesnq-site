@@ -29,12 +29,12 @@ export default function ManipExampleChart({ example }: Props) {
     if (!containerRef.current) return;
     const el = containerRef.current;
 
-    const cPaper     = '#faf6ee';
-    const cEdge      = '#ece5d3';
-    const cInkDim    = '#5b5868';
-    const cInkQuiet  = '#7d7a86';
-    const cUp        = '#7da274';
-    const cDown      = '#c97558';
+    const cPaper     = '#1c1812';
+    const cEdge      = '#2c2620';
+    const cInkDim    = '#efe7d8';
+    const cInkQuiet  = '#9b948a';
+    const cUp        = '#e9b44b';
+    const cDown      = '#a55f44';
 
     const candles: CandlestickData<UTCTimestamp>[] = example.bars.map((b) => ({
       time: Math.floor(new Date(b.ts).getTime() / 1000) as UTCTimestamp,
@@ -142,8 +142,8 @@ export default function ManipExampleChart({ example }: Props) {
 
   const direction = moveUp ? 'up' : 'down';
   const continued = moveUp === nextUp;
-  const directionColor = direction === 'up' ? '#4a8c3f' : '#b8452a';
-  const outcomeColor = continued ? '#4a8c3f' : '#b8452a';
+  const directionColor = direction === 'up' ? '#e9b44b' : '#a55f44';
+  const outcomeColor = continued ? '#e9b44b' : '#a55f44';
   const outcomeLabel = continued ? 'continued' : 'reversed';
 
   return (
@@ -156,7 +156,7 @@ export default function ManipExampleChart({ example }: Props) {
           height: 300,
           borderRadius: 8,
           overflow: 'hidden',
-          border: '1px solid oklch(0.90 0.02 80)',
+          border: '1px solid #2c2620',
         }}
       />
       <div style={{
