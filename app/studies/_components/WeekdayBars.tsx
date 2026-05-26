@@ -11,10 +11,10 @@ type SimpleProps = {
 };
 
 function simpleBarClass(w: number): string {
+  // Card teaser bars: single-tone gold (height encodes win rate). One accent like
+  // the home — the good/bad split lives on the full study page, not these minis.
   if (w === 0) return 'bd-wd-bar--mute';
-  if (w >= 60) return 'bd-wd-bar--sage';
-  if (w >= 50) return 'bd-wd-bar--gold';
-  return 'bd-wd-bar--terra';
+  return 'bd-wd-bar--sage';
 }
 
 export function WeekdayBarsSimple({ wr, n, asset }: SimpleProps) {

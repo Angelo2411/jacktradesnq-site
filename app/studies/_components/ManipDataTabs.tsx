@@ -1,7 +1,6 @@
 'use client';
 
-import { useSearchParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useState } from 'react';
 import { useAsset, type AssetKey } from './AssetContext';
 import AssetPills from './AssetPills';
 import ManipExampleChart, { type ManipExample } from './ManipExampleChart';
@@ -39,15 +38,6 @@ export interface ContDataFile {
 
 // ── helpers ────────────────────────────────────────────────────────────
 
-type TabKey = 'overview' | 'by_year' | 'by_regime' | 'examples' | 'methodology';
-
-const TAB_LIST: Array<{ key: TabKey; label: string }> = [
-  { key: 'overview', label: 'Overview' },
-  { key: 'by_year', label: 'By year' },
-  { key: 'by_regime', label: 'By regime' },
-  { key: 'examples', label: 'Examples' },
-  { key: 'methodology', label: 'Methodology' },
-];
 
 const REGIME_LABELS: Record<string, string> = {
   full: 'Full period',
@@ -80,25 +70,11 @@ export default function ManipDataTabs({
   examplesByAsset?: Partial<Record<AssetKey, ManipExample[]>>;
 }) {
   const { asset } = useAsset();
-  const searchParams = useSearchParams();
-  const router = useRouter();
-
-  const tab = (searchParams.get('tab') ?? 'overview') as TabKey;
-  const activeTab: TabKey = TAB_LIST.some((t) => t.key === tab) ? tab : 'overview';
+  // compact switcher (edgeful-style): data-first chips, prose/method demoted
+  const [sec, setSec] = useState<'by_regime' | 'by_year' | 'examples'>('by_regime');
+  const [notesOpen, setNotesOpen] = useState(false);
 
   const data = allData[asset];
-
-  function setParam(key: string, value: string) {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set(key, value);
-    router.replace(`?${params.toString()}`, { scroll: false });
-  }
-
-  const tabHref = (t: TabKey) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('tab', t);
-    return `?${params.toString()}`;
-  };
 
   if (!data) {
     return <div className="v3-coming-soon">No data available for this asset.</div>;
@@ -325,26 +301,28 @@ export default function ManipDataTabs({
 
       {kpiBand}
 
-      <div className="v3-tabs">
-        {TAB_LIST.map((t) => (
-          <Link
-            key={t.key}
-            href={tabHref(t.key)}
-            className={'v3-tab' + (activeTab === t.key ? ' active' : '')}
-          >
-            {t.label}
-          </Link>
-        ))}
+      <div className="v3-flat-chips">
+        <button type="button" className={'v3-flat-chip' + (sec === 'by_regime' ? ' active' : '')} onClick={() => setSec('by_regime')}>By regime</button>
+        <button type="button" className={'v3-flat-chip' + (sec === 'by_year' ? ' active' : '')} onClick={() => setSec('by_year')}>By year</button>
+        <button type="button" className={'v3-flat-chip' + (sec === 'examples' ? ' active' : '')} onClick={() => setSec('examples')}>Examples</button>
       </div>
 
-      {activeTab === 'overview' && (
-        <div className="v3-prose">{overviewContent}</div>
-      )}
+      <div className="fb-animated">
+        {sec === 'by_year' ? byYearTab : sec === 'examples' ? examplesTab : byRegimeTab}
 
-      {activeTab === 'by_year' && byYearTab}
-      {activeTab === 'by_regime' && byRegimeTab}
-      {activeTab === 'examples' && examplesTab}
-      {activeTab === 'methodology' && methodologyTab}
+        <div className="v3-flat-secondary">
+          <button type="button" className="v3-flat-sec-link" onClick={() => setNotesOpen((v) => !v)}>
+            {notesOpen ? 'Hide notes' : 'Notes'}
+          </button>
+          <button type="button" className="v3-flat-sec-link" onClick={() => setNotesOpen((v) => !v)}>Methodology</button>
+        </div>
+        {notesOpen && (
+          <div className="v3-prose v3-flat-notes-body">
+            {overviewContent}
+            {methodologyTab}
+          </div>
+        )}
+      </div>
     </>
   );
 }

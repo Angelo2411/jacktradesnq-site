@@ -1198,7 +1198,7 @@ export default function PandaMascot() {
           transform: translateX(-50%);
           width: 70%;
           height: 12px;
-          background: oklch(0.20 0.02 270 / 0.18);
+          background: oklch(0.20 0.02 70 / 0.18);
           border-radius: 50%;
           filter: blur(6px);
           pointer-events: none;
@@ -1267,14 +1267,14 @@ export default function PandaMascot() {
           bottom: calc(100% + 14px);
           left: 50%;
           transform: translateX(-50%);
-          background: var(--c-paper, oklch(0.975 0.015 85));
-          border: 1px solid var(--border-strong, oklch(0.20 0.02 270 / 0.18));
+          background: var(--c-paper, #1c1812);
+          border: 1px solid var(--border-strong, oklch(0.20 0.02 70 / 0.18));
           border-radius: var(--r-md, 12px);
           padding: var(--s-3, 0.75rem) var(--s-4, 1rem);
           font-family: var(--font-body, 'Satoshi', sans-serif);
           font-size: var(--fs-sm, 0.875rem);
-          color: var(--fg, oklch(0.20 0.02 270));
-          box-shadow: var(--shadow-md, 0 4px 16px oklch(0.20 0.02 270 / 0.12));
+          color: var(--fg, #efe7d8);
+          box-shadow: var(--shadow-md, 0 4px 16px oklch(0.20 0.02 70 / 0.12));
           white-space: normal;
           max-width: min(220px, 70vw);
           pointer-events: none;
@@ -1297,7 +1297,7 @@ export default function PandaMascot() {
           left: 50%;
           transform: translateX(-50%);
           border: 6px solid transparent;
-          border-top-color: var(--border-strong, oklch(0.20 0.02 270 / 0.18));
+          border-top-color: var(--border-strong, oklch(0.20 0.02 70 / 0.18));
         }
         .panda-bubble::before {
           content: '';
@@ -1306,7 +1306,7 @@ export default function PandaMascot() {
           left: 50%;
           transform: translateX(-50%);
           border: 6px solid transparent;
-          border-top-color: var(--c-paper, oklch(0.975 0.015 85));
+          border-top-color: var(--c-paper, #1c1812);
           z-index: 1;
         }
         @media (prefers-reduced-motion: reduce) {
