@@ -1624,6 +1624,30 @@ function getVirtualFullportCards(existing: StudyStats[]): StudyStats[] {
   return out;
 }
 
+// Distinct underlying event/setup key for a study slug.
+// Collapses asset ports (-gc/-es/-si/-ym, __asset) and analysis variants
+// (-ifvg-smt*, -day-stats*) onto the one event they describe.
+// Returns null for the multi-event asset rollup cards (es/si/nq-ifvg-smt) — those are not a single event.
+export function eventKeyOf(slug: string): string | null {
+  let s = slug.replace(/__(nq|gc|es|si|ym)$/, '');
+  s = s.replace(/-ifvg-smt.*$/, '');
+  s = s.replace(/-day-stats.*$/, '');
+  s = s.replace(/-(gc|es|si|ym)$/, '');
+  if (s === 'joblessclaims') s = 'jobless-claims';
+  if (s === 'retailsales') s = 'retail-sales';
+  if (s === 'es' || s === 'si' || s === 'nq') return null;
+  return s;
+}
+
+export function getDistinctEventCount(studies: StudyStats[]): number {
+  const set = new Set<string>();
+  for (const st of studies) {
+    const k = eventKeyOf(st.slug);
+    if (k) set.add(k);
+  }
+  return set.size;
+}
+
 export function getAllStudyStats(): StudyStats[] {
   if (!fs.existsSync(contentDir)) return [];
 

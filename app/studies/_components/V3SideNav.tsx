@@ -14,7 +14,7 @@ interface FamilyCounts {
 }
 
 const SUB_ITEMS = [
-  { key: 'all', label: 'All', cat: null },
+  { key: 'all', label: 'All variants', cat: null },
   { key: 'news', label: 'News', cat: 'news' },
   { key: 'ib', label: 'IB', cat: 'ib' },
   { key: 'ema', label: 'EMA', cat: 'ema' },
