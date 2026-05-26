@@ -4,26 +4,15 @@ import { useEffect, useRef } from 'react';
 import {
   createChart,
   CandlestickSeries,
-  createSeriesMarkers,
   CrosshairMode,
-  LineStyle,
   type IChartApi,
   type UTCTimestamp,
   type CandlestickData,
-  type SeriesMarker,
 } from 'lightweight-charts';
 
 export interface ManipExample {
   date: string;
   side: 'long' | 'short';
-  level: string;
-  level_price: number;
-  entry_ts: string;
-  entry_price: number;
-  sl_price: number;
-  tp1R_price: number;
-  pnl_pts: number;
-  outcome: string;
   manip_window: { start_ts: string; end_ts: string };
   trade_window: { start_ts: string; end_ts: string };
   bars: Array<{ ts: string; o: number; h: number; l: number; c: number }>;
@@ -46,9 +35,6 @@ export default function ManipExampleChart({ example }: Props) {
     const cInkQuiet  = '#7d7a86';
     const cUp        = '#7da274';
     const cDown      = '#c97558';
-    const cGold      = '#b08932';
-    const cManipBg   = 'rgba(180,140,60,0.06)';
-    const cDistribBg = 'rgba(120,120,160,0.06)';
 
     const candles: CandlestickData<UTCTimestamp>[] = example.bars.map((b) => ({
       time: Math.floor(new Date(b.ts).getTime() / 1000) as UTCTimestamp,
@@ -111,62 +97,6 @@ export default function ManipExampleChart({ example }: Props) {
     });
     candleSeries.setData(candles);
 
-    // Swept level line
-    candleSeries.createPriceLine({
-      price: example.level_price,
-      color: '#8a8a8a',
-      lineWidth: 1,
-      lineStyle: LineStyle.Dashed,
-      axisLabelVisible: true,
-      title: example.level,
-    });
-
-    const manipStartTs = Math.floor(new Date(example.manip_window.start_ts).getTime() / 1000) as UTCTimestamp;
-    const manipEndTs = Math.floor(new Date(example.manip_window.end_ts).getTime() / 1000) as UTCTimestamp;
-    const distribEndTs = Math.floor(new Date(example.trade_window.end_ts).getTime() / 1000) as UTCTimestamp;
-
-    // Window shading via markers — lightweight-charts supports background markers
-    const markers: SeriesMarker<UTCTimestamp>[] = [
-      {
-        time: manipStartTs,
-        position: 'inBar',
-        color: cManipBg,
-        shape: 'circle',
-        text: '',
-        size: 2,
-      },
-      {
-        time: manipEndTs,
-        position: 'inBar',
-        color: cManipBg,
-        shape: 'circle',
-        text: '',
-        size: 2,
-      },
-    ];
-
-    // Sweep marker label at 09:30
-    markers.push({
-      time: manipStartTs,
-      position: 'aboveBar',
-      color: '#8a8a8a',
-      shape: 'arrowDown',
-      text: 'sweep',
-      size: 2,
-    });
-
-    // Distribution start marker at 10:00
-    markers.push({
-      time: manipEndTs,
-      position: 'belowBar',
-      color: cGold,
-      shape: 'arrowUp',
-      text: 'distrib',
-      size: 2,
-    });
-
-    createSeriesMarkers(candleSeries, markers);
-
     const firstTs = candles[0]?.time as number | undefined;
     const lastTs = candles[candles.length - 1]?.time as number | undefined;
     if (firstTs !== undefined && lastTs !== undefined) {
@@ -179,8 +109,39 @@ export default function ManipExampleChart({ example }: Props) {
     return () => { chart.remove(); };
   }, [example]);
 
-  const continued = example.pnl_pts > 0;
-  const direction = example.side === 'long' ? 'up' : 'down';
+  const manipStartMs = new Date(example.manip_window.start_ts).getTime();
+  const manipEndMs = new Date(example.manip_window.end_ts).getTime();
+  const tradeStartMs = new Date(example.trade_window.start_ts).getTime();
+  const tradeEndMs = new Date(example.trade_window.end_ts).getTime();
+
+  const moveBars = example.bars.filter(
+    (b) => new Date(b.ts).getTime() >= manipStartMs && new Date(b.ts).getTime() <= manipEndMs,
+  );
+  const nextBars = example.bars.filter(
+    (b) => new Date(b.ts).getTime() >= tradeStartMs && new Date(b.ts).getTime() <= tradeEndMs,
+  );
+
+  let moveUp: boolean;
+  let nextUp: boolean;
+
+  if (moveBars.length > 0) {
+    const lastMove = moveBars[moveBars.length - 1];
+    const firstMove = moveBars[0];
+    moveUp = lastMove.c - firstMove.o > 0;
+  } else {
+    moveUp = example.side === 'long';
+  }
+
+  if (nextBars.length > 0) {
+    const lastNext = nextBars[nextBars.length - 1];
+    const firstNext = nextBars[0];
+    nextUp = lastNext.c - firstNext.o > 0;
+  } else {
+    nextUp = true;
+  }
+
+  const direction = moveUp ? 'up' : 'down';
+  const continued = moveUp === nextUp;
   const directionColor = direction === 'up' ? '#4a8c3f' : '#b8452a';
   const outcomeColor = continued ? '#4a8c3f' : '#b8452a';
   const outcomeLabel = continued ? 'continued' : 'reversed';

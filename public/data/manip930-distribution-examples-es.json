@@ -4,14 +4,6 @@
     {
       "date": "2026-03-02",
       "side": "long",
-      "level": "PDL",
-      "level_price": 6841.5,
-      "entry_ts": "2026-03-02T10:00:00-05:00",
-      "entry_price": 6853.75,
-      "sl_price": 6804.5,
-      "tp1R_price": 6903.0,
-      "pnl_pts": 12.25,
-      "outcome": "win",
       "manip_window": {
         "start_ts": "2026-03-02T09:30:00-05:00",
         "end_ts": "2026-03-02T09:59:00-05:00"
@@ -691,14 +683,6 @@
     {
       "date": "2023-03-13",
       "side": "long",
-      "level": "PDL",
-      "level_price": 3846.25,
-      "entry_ts": "2023-03-13T10:00:00-04:00",
-      "entry_price": 3858.75,
-      "sl_price": 3810.0,
-      "tp1R_price": 3907.5,
-      "pnl_pts": 22.25,
-      "outcome": "win",
       "manip_window": {
         "start_ts": "2023-03-13T09:30:00-04:00",
         "end_ts": "2023-03-13T09:59:00-04:00"
@@ -1378,14 +1362,6 @@
     {
       "date": "2024-08-06",
       "side": "long",
-      "level": "AsiaLo",
-      "level_price": 5250.0,
-      "entry_ts": "2024-08-06T10:00:00-04:00",
-      "entry_price": 5262.0,
-      "sl_price": 5221.75,
-      "tp1R_price": 5302.25,
-      "pnl_pts": 35.25,
-      "outcome": "win",
       "manip_window": {
         "start_ts": "2024-08-06T09:30:00-04:00",
         "end_ts": "2024-08-06T09:59:00-04:00"
