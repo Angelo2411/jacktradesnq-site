@@ -4,7 +4,6 @@ import { useMemo, Suspense } from 'react';
 import { useAsset, type AssetKey } from './AssetContext';
 import V3Tabs from './V3Tabs';
 import type { TradeRow } from '@/lib/study-stats';
-import { MIN_DISPLAY_PF } from '@/lib/study-display-config';
 import { computeKPI, computeYearBreakdown, computeWeekdayBreakdown } from '@/lib/client-stats';
 
 const STOP_GRIDS: Record<string, number[]> = {
@@ -68,59 +67,17 @@ export default function StraddleWrappedTabs({
 
   const trades = allTrades[assetKey] ?? [];
 
-  // Compute lifetime PF per (stop × tp) combo from all trades (both sides)
-  const comboPfMap = useMemo(() => {
-    const map = new Map<string, number>();
-    for (const stop of stopGrid) {
-      for (const tp of tpGrid) {
-        const filtered = trades.filter(
-          (t) => t.x_stop === stop && t.y_tp === tp
-        );
-        const wins = filtered.filter((t) => t.pnl_pts > 0);
-        const losses = filtered.filter((t) => t.pnl_pts < 0);
-        const grossW = wins.reduce((s, t) => s + t.pnl_pts, 0);
-        const grossL = Math.abs(losses.reduce((s, t) => s + t.pnl_pts, 0));
-        const pf = grossL > 0 ? grossW / grossL : grossW > 0 ? 99 : 0;
-        map.set(`${formatNum(stop)}|${formatNum(tp)}`, pf);
-      }
-    }
-    return map;
-  }, [trades, stopGrid, tpGrid]);
-
-  const filterBarOverride = useMemo(() => {
-    // Surviving stop values: at least one tp partner makes PF >= MIN_DISPLAY_PF
-    const survivingStops = stopGrid.filter((stop) =>
-      tpGrid.some((tp) => (comboPfMap.get(`${formatNum(stop)}|${formatNum(tp)}`) ?? 0) >= MIN_DISPLAY_PF)
-    );
-    // Surviving tp values: at least one stop partner makes PF >= MIN_DISPLAY_PF
-    const survivingTps = tpGrid.filter((tp) =>
-      stopGrid.some((stop) => (comboPfMap.get(`${formatNum(stop)}|${formatNum(tp)}`) ?? 0) >= MIN_DISPLAY_PF)
-    );
-    // Fall back to full grid if nothing survives (safety: should not happen per spec)
-    const vOpts = (survivingStops.length > 0 ? survivingStops : stopGrid).map((v) => ({ key: formatNum(v), label: formatNum(v) }));
-    const tOpts = (survivingTps.length > 0 ? survivingTps : tpGrid).map((v) => ({ key: formatNum(v), label: formatNum(v) }));
-    // Best default: combo with highest PF among survivors
-    let bestStop = survivingStops[0] ?? stopGrid[0];
-    let bestTp = survivingTps[0] ?? tpGrid[0];
-    let bestPf = -1;
-    for (const stop of (survivingStops.length > 0 ? survivingStops : stopGrid)) {
-      for (const tp of (survivingTps.length > 0 ? survivingTps : tpGrid)) {
-        const pf = comboPfMap.get(`${formatNum(stop)}|${formatNum(tp)}`) ?? 0;
-        if (pf > bestPf) { bestPf = pf; bestStop = stop; bestTp = tp; }
-      }
-    }
-    return {
-      variantOptions: vOpts,
-      tpOptions: tOpts,
-      smtOptions: SIDE_OPTS,
-      variantLabel: 'Stop',
-      tpLabel: 'TP',
-      smtLabel: 'Side',
-      defaultVariant: formatNum(bestStop),
-      defaultSmt: 'both',
-      defaultTp: formatNum(bestTp),
-    };
-  }, [stopGrid, tpGrid, comboPfMap]);
+  const filterBarOverride = useMemo(() => ({
+    variantOptions: stopGrid.map((v) => ({ key: formatNum(v), label: formatNum(v) })),
+    tpOptions: tpGrid.map((v) => ({ key: formatNum(v), label: formatNum(v) })),
+    smtOptions: SIDE_OPTS,
+    variantLabel: 'Stop',
+    tpLabel: 'TP',
+    smtLabel: 'Side',
+    defaultVariant: formatNum(stopGrid[0]),
+    defaultSmt: 'both',
+    defaultTp: formatNum(tpGrid[0]),
+  }), [stopGrid, tpGrid]);
 
   const initialBreakdown = useMemo(() => computeWeekdayBreakdown(trades), [trades]);
   const initialYearBreakdown = useMemo(() => computeYearBreakdown(trades), [trades]);

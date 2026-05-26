@@ -1,7 +1,6 @@
 'use client';
 
-import { useMemo, useState, useEffect, useRef } from 'react';
-import { MIN_DISPLAY_PF } from '@/lib/study-display-config';
+import { useMemo, useState, useEffect } from 'react';
 import { useAsset } from './AssetContext';
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -167,12 +166,11 @@ export default function News830Explorer({ dataUrl, pdfTitle, dataUrlGc, pdfTitle
   const [generatingCustom, setGeneratingCustom] = useState(false);
   const [generatingAll, setGeneratingAll] = useState(false);
 
-  // filter state — initialized to best profitable combo after data loads
+  // filter state
   const [variant, setVariant] = useState<'no_be' | 'be_50' | 'tp1_be'>('no_be');
   const [smt, setSmt]         = useState<boolean>(false);
   const [side, setSide]       = useState<'BOTH' | 'LONG' | 'SHORT'>('BOTH');
   const [year, setYear]       = useState<Year>('ALL');
-  const defaultsApplied       = useRef(false);
 
   // view state
   type ViewMode = 'TABLE' | 'RANKING' | 'BEST';
@@ -191,18 +189,6 @@ export default function News830Explorer({ dataUrl, pdfTitle, dataUrlGc, pdfTitle
       .then((j) => {
         if (cancelled) return;
         setData(j);
-        // Set default to best profitable combo (highest PF among ALL/BOTH rows >= MIN_DISPLAY_PF)
-        if (!defaultsApplied.current) {
-          defaultsApplied.current = true;
-          const allBoth = j.rows.filter(
-            (r) => r.year === 'ALL' && r.side === 'BOTH' && r.pf >= MIN_DISPLAY_PF
-          );
-          if (allBoth.length > 0) {
-            const best = allBoth.reduce((a, b) => (b.pf > a.pf ? b : a));
-            setVariant(best.variant);
-            setSmt(best.smt);
-          }
-        }
         setLoading(false);
       })
       .catch(() => {
@@ -279,34 +265,6 @@ export default function News830Explorer({ dataUrl, pdfTitle, dataUrlGc, pdfTitle
         avg_loss: r.avg_loss,
       }));
   }, [data, year]);
-
-  // Surviving variant/smt options: only show combos with lifetime PF >= MIN_DISPLAY_PF
-  const profitableVariants = useMemo((): Set<Variant> => {
-    if (!data) return new Set(['no_be', 'be_50', 'tp1_be']);
-    const s = new Set<Variant>();
-    for (const r of data.rows) {
-      if (r.year === 'ALL' && r.side === 'BOTH' && r.pf >= MIN_DISPLAY_PF) {
-        s.add(r.variant);
-      }
-    }
-    return s.size > 0 ? s : new Set(['no_be', 'be_50', 'tp1_be']);
-  }, [data]);
-
-  const profitableSmts = useMemo((): Set<boolean> => {
-    if (!data) return new Set([false, true]);
-    const s = new Set<boolean>();
-    for (const r of data.rows) {
-      if (r.year === 'ALL' && r.side === 'BOTH' && r.pf >= MIN_DISPLAY_PF) {
-        s.add(r.smt);
-      }
-    }
-    return s.size > 0 ? s : new Set([false, true]);
-  }, [data]);
-
-  const filteredVariantOptions = useMemo(
-    () => VARIANT_OPTIONS.filter((o) => profitableVariants.has(o.value)),
-    [profitableVariants]
-  );
 
   const rankingRows: N8Combo[] = useMemo(() => {
     return [...combosInScope].sort((a, b) => {
@@ -899,7 +857,7 @@ export default function News830Explorer({ dataUrl, pdfTitle, dataUrlGc, pdfTitle
             value={variant}
             onChange={(e) => setVariant(e.target.value as Variant)}
           >
-            {filteredVariantOptions.map((o) => (
+            {VARIANT_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>{o.label}</option>
             ))}
           </select>
@@ -912,8 +870,8 @@ export default function News830Explorer({ dataUrl, pdfTitle, dataUrlGc, pdfTitle
             value={smt ? 'on' : 'off'}
             onChange={(e) => setSmt(e.target.value === 'on')}
           >
-            {profitableSmts.has(false) && <option value="off">Off</option>}
-            {profitableSmts.has(true) && <option value="on">On</option>}
+            <option value="off">Off</option>
+            <option value="on">On</option>
           </select>
         </label>
 
