@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const N = {
   backToHome: { label: 'Jacktradesnq', url: '/' },
@@ -20,7 +20,6 @@ const N = {
   ],
   cta: { label: 'Join Nefarious', url: 'https://discord.com/invite/Xug73qenBq', note: 'FREE · NO CATCH' },
   closer: { lead: 'Drop in, lurk, ask anything. It costs nothing.' },
-  members: '1,498 members',
   legal: {
     copyright: '© 2026 JackTradesNQ. All rights reserved.',
     mentionsUrl: '/mentions-legales/',
@@ -33,6 +32,17 @@ const N = {
 const wordCount = (s: string) => s.trim().split(/\s+/).filter(Boolean).length;
 
 export default function Nefarious() {
+  const [members, setMembers] = useState<number>(5091);
+
+  useEffect(() => {
+    fetch('/api/community')
+      .then((r) => r.json())
+      .then((d) => {
+        if (typeof d.members === 'number' && d.members > 0) setMembers(d.members);
+      })
+      .catch(() => {});
+  }, []);
+
   useEffect(() => {
     const prev = document.body.style.background;
     document.body.style.background = 'oklch(0.12 0.008 60)';
@@ -86,7 +96,7 @@ export default function Nefarious() {
         <section className="testimonials">
           <div className="section-head">
             <h2>From the community</h2>
-            <span className="count">{N.members}</span>
+            <span className="count">{members.toLocaleString('en-US')} Discord members</span>
           </div>
           <div className="testi-grid">
             {N.testimonials.map((t, i) => (
