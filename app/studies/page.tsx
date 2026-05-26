@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { getAllStudyStats } from '@/lib/study-stats';
+import { getAllStudyStats, getDistinctEventCount } from '@/lib/study-stats';
 import { getWeeklyPlaybook } from '@/lib/today-events';
 import HubFilters from './_components/HubFilters';
 
@@ -10,6 +10,7 @@ export default function BacktestedHub() {
   const totalTrades = studies.reduce((s, st) => s + st.n, 0);
   const assets = [...new Set(studies.map((s) => s.asset))].length;
   const count = studies.length;
+  const eventCount = getDistinctEventCount(studies);
 
   const today = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
@@ -30,12 +31,12 @@ export default function BacktestedHub() {
         </p>
         <div className="bd-hub-meta">
           <div className="bd-hub-meta-item">
-            <b className="bd-hub-meta-num">{count}</b>
+            <b className="bd-hub-meta-num">{eventCount}</b>
             <i className="bd-hub-meta-lbl">studies</i>
           </div>
           <div className="bd-hub-meta-item">
-            <b className="bd-hub-meta-num">{totalTrades.toLocaleString()}</b>
-            <i className="bd-hub-meta-lbl">trades backtested</i>
+            <b className="bd-hub-meta-num">{count}</b>
+            <i className="bd-hub-meta-lbl">variants tested</i>
           </div>
           <div className="bd-hub-meta-item">
             <b className="bd-hub-meta-num">10y</b>
