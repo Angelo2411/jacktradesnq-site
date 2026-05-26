@@ -4,6 +4,15 @@ import path from 'path';
 const contentDir = path.join(process.cwd(), 'content', 'studies');
 const dataDir = path.join(process.cwd(), 'public', 'data');
 
+export { MIN_DISPLAY_PF } from './study-display-config';
+import { MIN_DISPLAY_PF } from './study-display-config';
+
+export type ProfitableCombo = {
+  variant: 'tp1_be' | 'be_50' | 'no_be';
+  smt: boolean;
+  pf: number;
+};
+
 type Trade = {
   ts: string;
   year: string | number;
@@ -45,6 +54,29 @@ function loadIfvgJson(slug: string): IfvgJson | null {
   } catch {
     return null;
   }
+}
+
+/**
+ * Return all IFVG combos (variant × smt) whose lifetime PF >= MIN_DISPLAY_PF.
+ * Reads rows[year="ALL", side="BOTH"] from the study JSON.
+ * Returns null when the JSON cannot be read.
+ */
+export function getProfitableIfvgCombos(slug: string): ProfitableCombo[] | null {
+  const json = loadIfvgJson(slug);
+  if (!json || !json.rows) return null;
+  const out: ProfitableCombo[] = [];
+  for (const row of json.rows) {
+    if (row.year !== 'ALL') continue;
+    if (row.side !== 'BOTH') continue;
+    if (row.pf >= MIN_DISPLAY_PF) {
+      out.push({
+        variant: row.variant as 'tp1_be' | 'be_50' | 'no_be',
+        smt: row.smt,
+        pf: row.pf,
+      });
+    }
+  }
+  return out;
 }
 
 export type StrategyStats = {
