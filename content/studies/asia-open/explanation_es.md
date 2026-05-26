@@ -1,53 +1,44 @@
 ## New Week Opening Gap — Fill Study (S&P 500)
 
-A **New Week Opening Gap (NWOG)** is the difference between ES futures' Friday 16:59 ET close and the Sunday 18:00 ET re-open. I counted gaps of **≥5 points** — the threshold was determined by computing |sun_open − fri_close| across all 447 Sundays in the dataset. The median absolute gap is 3.50 points; I used max(median × 1.5, 5) = 5.0 points as the cutoff.
+A **New Week Opening Gap (NWOG)** is the difference between ES futures' Friday 16:59 ET close and the Sunday 18:00 ET re-open. I counted gaps of **≥5 points** — the threshold filters out normal tick-level noise on ES.
 
-### Methodology
+### Definition
 
 - Instrument: ES continuous front-month futures (S&P 500 E-mini)
-- Period: 10-year backtest window (2016–2026, 1-minute timeframe)
-- First qualifying gap: 2016-04-24 (5.5 pt bull gap, direct fill)
-- Threshold: gap size ≥ 5 pts (absolute), via max(median × 1.5, 5) on empirical gap distribution
-- Total events meeting threshold: **183** (92 bull gaps, 91 bear gaps)
+- Period: 2025-01-01 → 2026-05-12
+- Threshold: gap size ≥ 5 pts (absolute)
+- Total qualifying gaps: **47** (21 up, 26 down)
+- Average absolute gap: **35.5 pts**
 
-Bull/bear split is nearly 50/50 — unlike NQ or GC, ES shows no structural directional bias on the Sunday open. Gaps open up or down with roughly equal probability.
-- Outcomes measured from Sunday 18:00 ET open:
-  - **Direct fill** — gap closes within 30 minutes of the open
-  - **Later fill** — gap closes after 30 min but before 00:00 ET (still Sunday night session)
-  - **Held** — gap never closes during the Sunday night session
+ES gaps are smaller and more numerous than NQ — 47 events in the same window vs 34 for NQ. The bull/bear split is roughly balanced (21 up, 26 down).
 
-### Headline Results
+### Three gap behaviours
 
-| Outcome | Events | Percentage |
-|---------|--------|------------|
-| Direct fill (≤30 min) | 138 | 75.4% |
-| Later fill (30 min – 00:00 ET) | 14 | 7.7% |
-| Held through session | 31 | 16.9% |
+Every gap is classified across three outcomes, measured from the Sunday 18:00 ET open through Monday's cash close:
 
-Combined fill rate (direct + later): **83.1%** of all qualifying NWOGs fill before midnight ET. ES fills less reliably than NQ or GC — the index tends to hold gaps longer, with a 17% held rate vs 7% for GC.
+- **Retrace** — price pulls back at least to the Sunday open price. Measured in the Asia session bucket. **100.0%** of all qualifying gaps retraced in Asia. Every ES gap touches the open before Asia closes.
+- **Fill same-day** — the gap closes entirely on Monday. **72.3%** of gaps fill same-day (34 of 47).
+- **Flip** — among gaps that filled same-day, **64.7%** continued through the Friday close and traded to the other side. ES shows a lower flip tendency than NQ (81.0%) — fills on ES are more likely to hold at the Friday close rather than reverse through it.
 
-### Bull vs Bear Gaps
+### By session
 
-Bear gaps fill faster than bull gaps — 80.2% direct vs 70.7% direct. Bear gaps also get held less often (12.1% vs 21.7% held). When ES gaps down into the Sunday open, the market tends to buy the gap quickly. Bullish gaps are more likely to run without filling.
+Retrace and fill rates measured at each session boundary on Monday:
 
-| Direction | Events | Direct | Later | Held |
-|-----------|--------|--------|-------|------|
-| Bull | 92 | 70.7% | 7.6% | 21.7% |
-| Bear | 91 | 80.2% | 7.7% | 12.1% |
 
-### By Gap Size
+ES fills earlier than NQ — 12.8% fill in the first 30 minutes vs 2.9% for NQ. By NY AM, more than half have filled. The fill distribution is front-loaded compared to NQ, consistent with smaller average gap size.
 
-Fill rate is fairly stable across bucket sizes — the 8–15 pt bucket has the highest direct rate at 81.1%. The largest 30+ pt gaps drop to 68.4% direct and carry the highest held rate at 26.3%. Unlike Gold where the biggest gaps are the cleanest, large ES gaps are harder to fill.
+### By regime (2025 vs 2026)
 
-| Gap size | Events | Direct | Later | Held |
-|----------|--------|--------|-------|------|
-| 5–8 pts | 69 | 71.0% | 7.2% | 21.7% |
-| 8–15 pts | 53 | 81.1% | 9.4% | 9.4% |
-| 15–30 pts | 42 | 78.6% | 7.1% | 14.3% |
-| 30+ pts | 19 | 68.4% | 5.3% | 26.3% |
 
-### Regime Stability
+2026 is running hot on fill rate (86.7% vs 65.6% in 2025) but the flip rate has dipped slightly. The 2025 data includes the tariff-shock April period where several large gaps held through the week.
 
-ES fill rates are notably volatile year over year — 2017 saw only 33.3% direct fill (2/6), while 2023 and 2026 YTD are above 90%. This contrasts with GC's stable 80–100% range and suggests ES NWOG performance is regime-dependent. Treat the 75.4% headline as a long-run average; the short run can diverge meaningfully.
+### Lifecycle of non-same-day fills
 
-The full year-by-year breakdown and the complete 183-event list are in the PDF below.
+13 gaps (27.7%) did not fill on Monday. Where did they go?
+
+
+Similar lifecycle to NQ: of the 13 gaps that survived Monday, nearly half never filled that week. The ones that do fill tend to do so on J+3 or J+4.
+
+### Context
+
+These numbers describe behaviour only. ES fills more reliably than NQ but the sample is moderate (47 events). The 2025 vs 2026 divergence is notable — if 2026 is the new regime, fill rates may be structurally higher than the 2025 number suggests.

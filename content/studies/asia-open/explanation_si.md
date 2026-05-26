@@ -1,53 +1,44 @@
 ## New Week Opening Gap — Fill Study (Silver)
 
-A **New Week Opening Gap (NWOG)** is the difference between SI futures' Friday 16:59 ET close and the Sunday 18:00 ET re-open. I counted gaps of **≥0.10 points** ($0.10/oz) — this is a baseline threshold set low to capture actionable moves on Silver, where a $0.10 gap can represent a meaningful re-pricing.
+A **New Week Opening Gap (NWOG)** is the difference between SI futures' Friday 16:59 ET close and the Sunday 18:00 ET re-open. I counted gaps of **≥0.10 points** ($0.10/oz) — the threshold is set low to capture actionable moves on Silver.
 
-### Methodology
+### Definition
 
 - Instrument: SI continuous front-month futures (Silver)
-- Period: 10-year backtest window (2016–2026, 1-minute timeframe) — real BBO data
-- First qualifying gap: 2016-08-07 (0.18 pt bear gap, direct fill)
-- Threshold: gap size ≥ 0.10 pt ($0.10/oz) — baseline, to be re-evaluated
-- Total events meeting threshold: **49** (35 bull gaps, 14 bear gaps)
+- Period: 2025-01-01 → 2026-05-12
+- Threshold: gap size ≥ 0.10 $/oz (absolute)
+- Total qualifying gaps: **27** (16 up, 11 down)
+- Average absolute gap: **0.56 $/oz**
 
-Silver shows a strong bull bias in NWOGs — roughly 2.5:1 bull-to-bear split, reflecting the structural uptrend and the metal's tendency to re-price higher into Asian demand on Sunday night.
-- Outcomes measured from Sunday 18:00 ET open:
-  - **Direct fill** — gap closes within 30 minutes of the open
-  - **Later fill** — gap closes after 30 min but before 00:00 ET (still Sunday night session)
-  - **Held** — gap never closes during the Sunday night session
+Silver shows a bull bias in NWOGs (16 up vs 11 down), consistent with the precious metals uptrend. The average gap is small at $0.56/oz — Silver gaps are compressed compared to Gold or equities, with most falling in the 0.10–0.50 range.
 
-### Headline Results
+### Three gap behaviours
 
-| Outcome | Events | Percentage |
-|---------|--------|------------|
-| Direct fill (≤30 min) | 36 | 73.5% |
-| Later fill (30 min – 00:00 ET) | 10 | 20.4% |
-| Held through session | 3 | 6.1% |
+Every gap is classified across three outcomes, measured from the Sunday 18:00 ET open through Monday's cash close:
 
-Combined fill rate (direct + later): **93.9%** of all qualifying NWOGs fill before midnight ET. The very low held rate (6.1%) means Silver almost never holds a Sunday gap through the session — similar to Gold's behavior, reflecting the metal's 24h continuous demand profile.
+- **Retrace** — price pulls back at least to the Sunday open price. Measured in the Asia session bucket. **100.0%** of all qualifying gaps retraced in Asia. Every SI gap touches the open.
+- **Fill same-day** — the gap closes entirely on Monday. **66.7%** of gaps fill same-day (18 of 27).
+- **Flip** — among gaps that filled same-day, **50.0%** continued through the Friday close and traded to the other side. Silver fills are a perfect 50/50 coin flip on reversal — exactly half continue, half reverse through the close.
 
-### Bull vs Bear Gaps
+### By session
 
-Bull gaps fill much more reliably than bear gaps on Silver. All 35 bull gaps eventually filled (direct or later — 0% held rate). Bear gaps have a 21.4% held rate and only 57.1% direct fill. When Silver gaps down, it's more likely to keep going; when it gaps up, the fill is nearly guaranteed.
+Retrace and fill rates measured at each session boundary on Monday:
 
-| Direction | Events | Direct | Later | Held |
-|-----------|--------|--------|-------|------|
-| Bull | 35 | 80.0% | 20.0% | 0.0% |
-| Bear | 14 | 57.1% | 21.4% | 21.4% |
 
-### By Gap Size
+Silver fills aggressively in Asia — 59.3% have filled by the end of the Asia session. The fill rate actually declines through the day (48.1% NY AM, 37.0% NY PM), which mirrors Gold's front-loaded fill pattern. Like Gold, if Silver doesn't fill by Asia, it becomes progressively less likely to fill as the day wears on.
 
-The vast majority of events (39/49) fall in the 0.10–0.50 pt bucket. Only 3 events exceed 1.00 pt, and there are zero 2.00+ pt NWOGs over the 10-year window. Small gaps are the norm on Silver — the distribution is compressed compared to Gold or equities.
+### By regime (2025 vs 2026)
 
-| Gap size | Events | Direct | Later | Held |
-|----------|--------|--------|-------|------|
-| 0.10–0.50 pts | 39 | 74.4% | 20.5% | 5.1% |
-| 0.50–1.00 pts | 7 | 71.4% | 28.6% | 0.0% |
-| 1.00–2.00 pts | 3 | 66.7% | 0.0% | 33.3% |
-| 2.00+ pts | 0 | — | — | — |
 
-### Notes: Low N and Sparse Data
+The regime flip is stark. 2025 had a high fill rate (80%) with low flip tendency (25%). 2026 is the inverse: lower fill rate (58.8%) but 70% of fills flip. The 2026 data includes the Jan–Feb Silver squeeze period where large gaps opened and reversed violently, driving the flip rate up while the fill rate dropped. The 2025 sample is smaller (10 events) and should be treated cautiously.
 
-With only 49 total events over 10 years, Silver NWOGs are far less frequent than Gold (155 events) or ES (183 events). Several years have 0–2 events. The headline 73.5% direct rate is directionally useful but should be treated with appropriate caution given the low sample size. Consider raising the threshold (e.g., 0.25 pts) to reduce noise, or combining SI with GC for a precious-metals NWOG basket.
+### Lifecycle of non-same-day fills
 
-The full year-by-year breakdown and the complete 49-event list are in the PDF below.
+9 gaps (33.3%) did not fill on Monday. Where did they go?
+
+
+Similar to Gold — 66.7% of gaps that survive Monday never fill that week. Late-week fills are rare (only 11.1% on J+3, zero on J+2 and J+4). Silver is a "fill early or not at all" asset like Gold.
+
+### Context
+
+Silver has the smallest sample (27 events) and the most extreme regime shift between 2025 and 2026. The headline fill rate (66.7%) and 50/50 flip rate should be viewed as a blend of two different regimes rather than a stable equilibrium. The key structural observation is the front-loaded fill profile: if Silver fills, it fills in Asia. If it doesn't fill by NY PM, assume it won't fill that week at all.

@@ -1,175 +1,455 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useAsset } from './AssetContext';
 
-const NQ_SUMMARY = {
-  totalEvents: 58,
-  gapMinPoints: 50,
-  direct: { count: 39, pct: 67.2 },
-  later: { count: 8, pct: 13.8 },
-  held: { count: 11, pct: 19.0 },
-  bull: { count: 19, direct: 73.7, later: 15.8, held: 10.5 },
-  bear: { count: 39, direct: 64.1, later: 12.8, held: 23.1 },
+type SessionKey = '30min' | 'Asia' | 'London_lun' | 'NY_AM_lun' | 'NY_PM_lun';
+type YearKey = '2025' | '2026';
+type DayKey = 'J+1' | 'J+2' | 'J+3' | 'J+4' | 'non comblé';
+
+type SessionStats = { retrace_pct: number; fill_pct: number; retrace_n: number; fill_n: number };
+type YearStats = { n: number; jm_fill: number; flip: number; cf_total: number; jm_fill_pct: number; flip_pct: number };
+type DayDist = { n: number; pct: number };
+
+type AssetPayload = {
+  meta: {
+    date_range: string; min_gap_pts: number; N_gaps: number; n_up: number; n_down: number;
+    avg_gap_abs: number; asset: string; unit: string;
+  };
+  bucket_stats: Record<SessionKey, SessionStats>;
+  jour_meme: { fill_pct: number; fill_n: number; continue_n: number; flip_n: number; continue_pct: number; flip_pct: number };
+  by_year: Record<YearKey, YearStats>;
+  day_of_fill_distribution: { non_jour_meme_n: number; distribution: Record<DayKey, DayDist> };
 };
 
-const GC_SUMMARY = {
-  totalEvents: 155,
-  gapMinPoints: 2,
-  direct: { count: 134, pct: 86.5 },
-  later: { count: 10, pct: 6.5 },
-  held: { count: 11, pct: 7.1 },
-  bull: { count: 102, direct: 90.2, later: 4.9, held: 4.9 },
-  bear: { count: 53, direct: 79.2, later: 9.4, held: 11.3 },
+type DataSet = Record<string, AssetPayload>;
+
+const SESSION_LABELS: Record<SessionKey, string> = {
+  '30min': 'First 30 min',
+  'Asia': 'Asia',
+  'London_lun': 'London (Mon)',
+  'NY_AM_lun': 'NY AM (Mon)',
+  'NY_PM_lun': 'NY PM (Mon)',
 };
 
-const ES_SUMMARY = {
-  totalEvents: 183,
-  gapMinPoints: 5,
-  direct: { count: 138, pct: 75.4 },
-  later: { count: 14, pct: 7.7 },
-  held: { count: 31, pct: 16.9 },
-  bull: { count: 92, direct: 70.7, later: 7.6, held: 21.7 },
-  bear: { count: 91, direct: 80.2, later: 7.7, held: 12.1 },
+const LIFECYCLE_LABELS: Record<DayKey, string> = {
+  'J+1': 'J+1',
+  'J+2': 'J+2',
+  'J+3': 'J+3',
+  'J+4': 'J+4',
+  'non comblé': 'Never that week',
 };
 
-const SI_SUMMARY = {
-  totalEvents: 49,
-  gapMinPoints: 0.1,
-  direct: { count: 36, pct: 73.5 },
-  later: { count: 10, pct: 20.4 },
-  held: { count: 3, pct: 6.1 },
-  bull: { count: 35, direct: 80.0, later: 20.0, held: 0.0 },
-  bear: { count: 14, direct: 57.1, later: 21.4, held: 21.4 },
-};
-
-type Summary = typeof NQ_SUMMARY;
-
-function Cylinder({
-  label,
-  count,
-  direct,
-  later,
-  held,
-}: {
-  label: 'Bull' | 'Bear';
-  count: number;
-  direct: number;
-  later: number;
-  held: number;
-}) {
-  const segments = [
-    { key: 'direct', pct: direct, color: 'var(--c-sage)', text: 'var(--c-paper)', name: 'Direct' },
-    { key: 'later', pct: later, color: 'var(--c-accent)', text: 'var(--c-ink)', name: 'Later' },
-    { key: 'held', pct: held, color: 'var(--c-terra)', text: 'var(--c-paper)', name: 'Held' },
-  ];
-  return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
-      <div style={{ fontFamily: 'var(--f-sans)', fontSize: '0.875rem', fontWeight: 600, color: 'var(--c-ink)' }}>
-        {label}
-        <span style={{ marginLeft: 8, color: 'var(--c-ink-quiet)', fontWeight: 400 }}>{count} events</span>
-      </div>
-      <div
-        role="img"
-        aria-label={`${label}: Direct ${direct}%, Later ${later}%, Held ${held}%`}
-        style={{
-          width: '100%',
-          maxWidth: 180,
-          height: 320,
-          display: 'flex',
-          flexDirection: 'column',
-          borderRadius: 12,
-          overflow: 'hidden',
-          border: '1px solid var(--c-paper-edge)',
-          boxShadow: '0 1px 2px oklch(0.20 0.02 270 / 0.06)',
-        }}
-      >
-        {segments.map((s) => (
-          <div
-            key={s.key}
-            style={{
-              flexBasis: `${s.pct}%`,
-              background: s.color,
-              color: s.text,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontFamily: 'var(--f-sans)',
-              fontSize: s.pct < 8 ? '0.7rem' : '0.95rem',
-              fontWeight: 700,
-              padding: s.pct < 8 ? '2px 4px' : '6px 8px',
-              minHeight: 0,
-            }}
-          >
-            <span>{s.pct.toFixed(1)}%</span>
-            {s.pct >= 12 && (
-              <span style={{ fontSize: '0.7rem', fontWeight: 500, opacity: 0.85, marginTop: 2 }}>{s.name}</span>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function CylinderView({ data, unit }: { data: Summary; unit: string }) {
-  return (
-    <div aria-live="polite" style={{ marginTop: 16 }}>
-      <p style={{ fontFamily: 'var(--f-sans)', fontSize: '0.875rem', color: 'var(--c-muted, var(--c-ink-quiet))', marginBottom: 20 }}>
-        {data.totalEvents} events · gap ≥{data.gapMinPoints} {unit}.
-      </p>
-
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: 16,
-          padding: '20px 16px',
-          background: 'var(--c-paper-edge, #2c2620)',
-          borderRadius: 12,
-          marginBottom: 24,
-        }}
-      >
-        {[
-          { lbl: 'Direct (≤30 min)', val: data.direct.pct, cnt: data.direct.count, c: 'var(--c-sage)' },
-          { lbl: 'Later fill', val: data.later.pct, cnt: data.later.count, c: 'var(--c-accent)' },
-          { lbl: 'Held', val: data.held.pct, cnt: data.held.count, c: 'var(--c-terra)' },
-        ].map((kpi) => (
-          <div key={kpi.lbl} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-            <span style={{ fontFamily: 'var(--f-serif, var(--f-sans))', fontSize: '2.25rem', fontWeight: 700, color: kpi.c, lineHeight: 1 }}>
-              {kpi.val}%
-            </span>
-            <span style={{ fontFamily: 'var(--f-sans)', fontSize: '0.75rem', color: 'var(--c-ink-quiet)', marginTop: 6, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-              {kpi.lbl}
-            </span>
-            <span style={{ fontFamily: 'var(--f-sans)', fontSize: '0.75rem', color: 'var(--c-ink-dim)', marginTop: 2 }}>
-              {kpi.cnt} events
-            </span>
-          </div>
-        ))}
-      </div>
-
-      <div style={{ display: 'flex', gap: 24, alignItems: 'flex-end', justifyContent: 'center', paddingTop: 8 }}>
-        <Cylinder label="Bull" count={data.bull.count} direct={data.bull.direct} later={data.bull.later} held={data.bull.held} />
-        <Cylinder label="Bear" count={data.bear.count} direct={data.bear.direct} later={data.bear.later} held={data.bear.held} />
-      </div>
-    </div>
-  );
-}
+const ASSET_JSON_KEY: Record<string, string> = { nq: 'NQ', gc: 'GC', es: 'ES', si: 'SI' };
 
 export default function NwogSwitcher() {
   const { asset } = useAsset();
+  const [data, setData] = useState<DataSet | null>(null);
 
-  const config = (() => {
-    if (asset === 'gc') return { data: GC_SUMMARY, unit: 'pts' };
-    if (asset === 'es') return { data: ES_SUMMARY, unit: 'pts' };
-    if (asset === 'si') return { data: SI_SUMMARY, unit: '$/oz' };
-    return { data: NQ_SUMMARY, unit: 'pts' };
-  })();
+  useEffect(() => {
+    fetch('/data/nwog-4asset.json')
+      .then((r) => r.json())
+      .then((json) => setData(json as DataSet))
+      .catch(() => setData(null));
+  }, []);
+
+  if (!data) {
+    return (
+      <div className="bd-asset-scope" data-asset={asset}>
+        <p style={{ fontFamily: 'var(--f-sans)', fontSize: '0.875rem', color: 'var(--c-muted)', paddingTop: 16 }}>
+          Loading…
+        </p>
+      </div>
+    );
+  }
+
+  const key = ASSET_JSON_KEY[asset] ?? 'NQ';
+  const payload = data[key];
+  if (!payload) {
+    return (
+      <div className="bd-asset-scope" data-asset={asset}>
+        <p style={{ fontFamily: 'var(--f-sans)', fontSize: '0.875rem', color: 'var(--c-muted)', paddingTop: 16 }}>
+          No data for {asset.toUpperCase()}.
+        </p>
+      </div>
+    );
+  }
+
+  const { meta, bucket_stats, jour_meme, by_year, day_of_fill_distribution } = payload;
 
   return (
     <div className="bd-asset-scope" data-asset={asset} style={{ marginBottom: 32 }}>
-      <CylinderView data={config.data} unit={config.unit} />
+      <div aria-live="polite">
+        <p
+          style={{
+            fontFamily: 'var(--f-sans)',
+            fontSize: '0.875rem',
+            color: 'var(--c-muted)',
+            marginBottom: 20,
+          }}
+        >
+          {meta.N_gaps} qualifying weekend gaps · avg {meta.avg_gap_abs.toFixed(1)} {meta.unit} · 2025–2026
+        </p>
+
+        {/* KPI cards */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: 16,
+            padding: '20px 16px',
+            background: 'var(--c-surface-raised)',
+            borderRadius: 12,
+            marginBottom: 24,
+          }}
+          className="nwog-kpi-grid"
+        >
+          {[
+            { label: 'Retrace', val: bucket_stats.Asia.retrace_pct, color: 'var(--c-sage)', sub: 'pulls back to open' },
+            { label: 'Fill same-day', val: jour_meme.fill_pct, color: 'var(--c-accent)', sub: 'fully closes' },
+            { label: 'Flip', val: jour_meme.flip_pct, color: 'var(--c-terra)', sub: 'fills then reverses' },
+          ].map((kpi) => (
+            <div key={kpi.label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+              <span
+                style={{
+                  fontFamily: 'var(--f-serif)',
+                  fontSize: '2.25rem',
+                  fontWeight: 700,
+                  color: kpi.color,
+                  lineHeight: 1,
+                }}
+              >
+                {kpi.val.toFixed(1)}%
+              </span>
+              <span
+                style={{
+                  fontFamily: 'var(--f-sans)',
+                  fontSize: '0.75rem',
+                  color: 'var(--c-muted)',
+                  marginTop: 6,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                }}
+              >
+                {kpi.label}
+              </span>
+              <span style={{ fontFamily: 'var(--f-sans)', fontSize: '0.75rem', color: 'var(--c-muted)', marginTop: 2, opacity: 0.75 }}>
+                {kpi.sub}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* By session table */}
+        <p
+          style={{
+            fontFamily: 'var(--f-sans)',
+            fontWeight: 600,
+            fontSize: '0.8rem',
+            color: 'var(--c-ink)',
+            marginBottom: 10,
+            textTransform: 'uppercase',
+            letterSpacing: '0.06em',
+          }}
+        >
+          By session
+        </p>
+        <table
+          style={{
+            width: '100%',
+            borderCollapse: 'collapse',
+            fontFamily: 'var(--f-sans)',
+            fontSize: '0.875rem',
+            marginBottom: 24,
+          }}
+        >
+          <thead>
+            <tr>
+              <th
+                style={{
+                  textAlign: 'left',
+                  fontWeight: 600,
+                  color: 'var(--c-ink)',
+                  padding: '8px 12px',
+                  borderBottom: '1px solid var(--c-ink)',
+                }}
+              >
+                Session
+              </th>
+              <th
+                style={{
+                  textAlign: 'right',
+                  fontWeight: 600,
+                  color: 'var(--c-ink)',
+                  padding: '8px 12px',
+                  borderBottom: '1px solid var(--c-ink)',
+                }}
+              >
+                Retrace %
+              </th>
+              <th
+                style={{
+                  textAlign: 'right',
+                  fontWeight: 600,
+                  color: 'var(--c-ink)',
+                  padding: '8px 12px',
+                  borderBottom: '1px solid var(--c-ink)',
+                }}
+              >
+                Fill %
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {(Object.keys(SESSION_LABELS) as SessionKey[]).map((sk) => (
+              <tr key={sk}>
+                <td
+                  style={{
+                    padding: '8px 12px',
+                    borderBottom: '1px solid var(--c-surface-raised)',
+                    color: 'var(--c-ink)',
+                  }}
+                >
+                  {SESSION_LABELS[sk]}
+                </td>
+                <td
+                  style={{
+                    padding: '8px 12px',
+                    borderBottom: '1px solid var(--c-surface-raised)',
+                    textAlign: 'right',
+                    fontVariantNumeric: 'tabular-nums',
+                    color: 'var(--c-ink)',
+                  }}
+                >
+                  {bucket_stats[sk].retrace_pct.toFixed(1)}%
+                </td>
+                <td
+                  style={{
+                    padding: '8px 12px',
+                    borderBottom: '1px solid var(--c-surface-raised)',
+                    textAlign: 'right',
+                    fontVariantNumeric: 'tabular-nums',
+                    color: 'var(--c-ink)',
+                  }}
+                >
+                  {bucket_stats[sk].fill_pct.toFixed(1)}%
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {/* By regime table */}
+        <p
+          style={{
+            fontFamily: 'var(--f-sans)',
+            fontWeight: 600,
+            fontSize: '0.8rem',
+            color: 'var(--c-ink)',
+            marginBottom: 10,
+            textTransform: 'uppercase',
+            letterSpacing: '0.06em',
+          }}
+        >
+          By regime
+        </p>
+        <table
+          style={{
+            width: '100%',
+            borderCollapse: 'collapse',
+            fontFamily: 'var(--f-sans)',
+            fontSize: '0.875rem',
+            marginBottom: 24,
+          }}
+        >
+          <thead>
+            <tr>
+              <th
+                style={{
+                  textAlign: 'left',
+                  fontWeight: 600,
+                  color: 'var(--c-ink)',
+                  padding: '8px 12px',
+                  borderBottom: '1px solid var(--c-ink)',
+                }}
+              >
+                Year
+              </th>
+              <th
+                style={{
+                  textAlign: 'right',
+                  fontWeight: 600,
+                  color: 'var(--c-ink)',
+                  padding: '8px 12px',
+                  borderBottom: '1px solid var(--c-ink)',
+                }}
+              >
+                N
+              </th>
+              <th
+                style={{
+                  textAlign: 'right',
+                  fontWeight: 600,
+                  color: 'var(--c-ink)',
+                  padding: '8px 12px',
+                  borderBottom: '1px solid var(--c-ink)',
+                }}
+              >
+                Fill same-day %
+              </th>
+              <th
+                style={{
+                  textAlign: 'right',
+                  fontWeight: 600,
+                  color: 'var(--c-ink)',
+                  padding: '8px 12px',
+                  borderBottom: '1px solid var(--c-ink)',
+                }}
+              >
+                Flip %
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {(['2025', '2026'] as YearKey[]).map((yr) => (
+              <tr key={yr}>
+                <td
+                  style={{
+                    padding: '8px 12px',
+                    borderBottom: '1px solid var(--c-surface-raised)',
+                    fontFamily: 'var(--f-serif)',
+                    fontWeight: 700,
+                    color: 'var(--c-ink)',
+                  }}
+                >
+                  {yr}
+                </td>
+                <td
+                  style={{
+                    padding: '8px 12px',
+                    borderBottom: '1px solid var(--c-surface-raised)',
+                    textAlign: 'right',
+                    fontVariantNumeric: 'tabular-nums',
+                    color: 'var(--c-ink)',
+                  }}
+                >
+                  {by_year[yr].n}
+                </td>
+                <td
+                  style={{
+                    padding: '8px 12px',
+                    borderBottom: '1px solid var(--c-surface-raised)',
+                    textAlign: 'right',
+                    fontVariantNumeric: 'tabular-nums',
+                    color: 'var(--c-ink)',
+                  }}
+                >
+                  {by_year[yr].jm_fill_pct.toFixed(1)}%
+                </td>
+                <td
+                  style={{
+                    padding: '8px 12px',
+                    borderBottom: '1px solid var(--c-surface-raised)',
+                    textAlign: 'right',
+                    fontVariantNumeric: 'tabular-nums',
+                    color: 'var(--c-ink)',
+                  }}
+                >
+                  {by_year[yr].flip_pct.toFixed(1)}%
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {/* Lifecycle */}
+        <p
+          style={{
+            fontFamily: 'var(--f-sans)',
+            fontWeight: 600,
+            fontSize: '0.8rem',
+            color: 'var(--c-ink)',
+            marginBottom: 8,
+            textTransform: 'uppercase',
+            letterSpacing: '0.06em',
+          }}
+        >
+          Lifecycle
+        </p>
+        <p
+          style={{
+            fontFamily: 'var(--f-sans)',
+            fontSize: '0.8rem',
+            color: 'var(--c-muted)',
+            marginBottom: 12,
+          }}
+        >
+          Gaps not filled on Monday (n={day_of_fill_distribution.non_jour_meme_n})
+        </p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          {(Object.keys(LIFECYCLE_LABELS) as DayKey[]).map((dk) => {
+            const entry = day_of_fill_distribution.distribution[dk];
+            return (
+              <div
+                key={dk}
+                style={{
+                  flex: '1 1 auto',
+                  minWidth: 90,
+                  padding: '10px 12px',
+                  background: 'var(--c-surface-raised)',
+                  borderRadius: 8,
+                  textAlign: 'center',
+                }}
+              >
+                <span
+                  style={{
+                    display: 'block',
+                    fontFamily: 'var(--f-serif)',
+                    fontWeight: 700,
+                    fontSize: '1.25rem',
+                    color: 'var(--c-ink)',
+                    lineHeight: 1.2,
+                  }}
+                >
+                  {entry.pct.toFixed(1)}%
+                </span>
+                <span
+                  style={{
+                    display: 'block',
+                    fontFamily: 'var(--f-sans)',
+                    fontSize: '0.72rem',
+                    color: 'var(--c-muted)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    marginTop: 3,
+                  }}
+                >
+                  {LIFECYCLE_LABELS[dk]}
+                </span>
+                <span
+                  style={{
+                    display: 'block',
+                    fontFamily: 'var(--f-sans)',
+                    fontSize: '0.68rem',
+                    color: 'var(--c-muted)',
+                    opacity: 0.75,
+                    marginTop: 2,
+                  }}
+                >
+                  n={entry.n}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <style>{`
+        @media (max-width: 520px) {
+          .nwog-kpi-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
