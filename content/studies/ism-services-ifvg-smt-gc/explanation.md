@@ -1,4 +1,4 @@
-ISM Services drops at 10:00 ET, third business day of the month. It covers about 75% of the US economy — the biggest single-sector macro print — and metals react through the dollar and risk-sentiment channel.
+ISM Services drops at 10:00 ET, third business day of the month. It covers the bulk of the US economy — the biggest single-sector macro print — and metals react through the dollar and risk-sentiment channel.
 
 This study uses the pre-news high and low as targets on Gold (GC). Price sweeps one side, leaves an Inverse Fair Value Gap (IFVG) on the rejection, and you enter when it breaks back inside the range, aiming for the opposite side's liquidity. An optional Silver (SI) filter only keeps the trade when silver confirms the same move. Tested on 1-minute GC data, 2016 to 2026.
 

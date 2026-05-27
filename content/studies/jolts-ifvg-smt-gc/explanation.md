@@ -4,6 +4,8 @@ This study uses the pre-news high and low as targets on Gold (GC). Price sweeps 
 
 Rules: sweep the pre-news high/low, wait for the rejection gap, enter on the break back inside. Stop 0.10 (one GC tick) beyond the sweep. Target the opposite liquidity (the pre-news pivot). The SI filter keeps a trade only if silver reaches its mirror target within the sweep window (up to 12:00 ET, resolve by 16:00 ET). Uses the IFVG inversion engine with the opposite-leg sweep filter.
 
+> **Variant legend** — **TP only** = full SL stays through, no break-even move. **TP only + BE** = once price reaches halfway from entry to TP, stop moves to entry (break-even). **TP1 + BE** = close 50% of size at the first TP (halfway to full TP), then move stop to entry on the rest.
+
 ### Performance — GC, 10 years
 
 SMT-filtered across three variants (27 trades each):
