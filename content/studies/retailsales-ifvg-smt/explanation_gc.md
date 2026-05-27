@@ -1,31 +1,19 @@
-This study tests a reversal entry on Gold (GC) futures triggered by Retail Sales — the monthly report on consumer spending — released at 8:30 ET. After the release sweeps a pre-news level, you wait for an Inverse Fair Value Gap (IFVG) to form, then enter when price breaks back inside the range, with an optional Silver (SI) SMT Divergence (SMT) filter. Tested across 2016–2026 on 1-minute GC data.
+Retail Sales hits at 8:30 ET. Consumer spending drives two-thirds of GDP — when the number surprises, the dollar moves, and gold moves the other way.
 
-### Setup Logic
+This study uses the pre-news high and low as targets on Gold (GC). Price sweeps one side, leaves an Inverse Fair Value Gap (IFVG) on the rejection, and you enter when it breaks back inside the range, aiming for the opposite side's liquidity. If both sides get swept before the IFVG triggers, the setup is dead — the target liquidity is already gone. An optional Silver (SI) filter only keeps the trade when silver confirms the same move. Tested on 1-minute GC data, 2016 to 2026.
 
-Mark out the data high/low (range price was trading in right before 8:30 ET). Wait for price to sweep one side, then wait for an FVG to form on the rejection. Entry on the IFVG break (close back inside the range). SL on the sweep extreme + 0.10 (1 GC tick). TP on the opposite liquidity.
+Rules: sweep the pre-news high/low, wait for the rejection gap, enter on the break back inside. Stop 0.10 (one GC tick) beyond the sweep. Target the opposite liquidity (the pre-news pivot). The SI filter keeps a trade only if silver reaches its mirror target within 2h30 of the release. Missing SI bars at 8:30 ET return no confirmation — that's a data gap, not a disqualifier.
 
-**Invalidation**: if the opposite side of the range also gets swept BEFORE the IFVG break (entry) — the target liquidity has already been taken, no edge left → skip the setup.
+### Performance — GC, 10 years
 
-### SI SMT Confirmation Filter
+No filter: 101 trades, profit factor 1.00, net +0.1 GC points. With the silver filter: 2 trades, win rate 0%, profit factor —, net -2.2 GC points.
 
-A trade is kept **only if SI also reaches the same target** within 2h30 after the release.
+Flat without SMT. No edge with SI confirmation.
 
-- GC SHORT (sweep UP) → SI must sweep its low
-- GC LONG (sweep DOWN) → SI must sweep its high
+### Why gold behaves differently from the Nasdaq
 
-When no SI bar exists at 8:30 ET, the filter returns False — no confirmation, not a disqualifier.
-
-### Performance — GC 10y
-
-Without SI SMT: 101 trades, PF 1.00, net +0.1 GC pts. With SI SMT (2 trades): WR 0%, PF —, net -2.2 GC pts.
-
-Flat without SMT; no edge observed with SI confirmation.
-
-### Why Gold Behaves Differently from NQ
-
-NQ and ES are equity index futures — near-perfect correlation, SMT divergence is a clean signal. GC and SI are both precious metals but their intraday liquidity profiles diverge sharply at macro releases: GC is deep and continuous; SI is thin and sparse. The SMT signal is structurally weaker because SI's sparsity means many "no confirmation" readings are data gaps rather than genuine divergence.
+The Nasdaq and the S&P are both equity indices and move almost in lockstep, so cross-confirmation between them is a clean signal. Gold and silver are both metals, but their intraday liquidity splits at news: gold is deep and continuous, silver is thin and patchy. The SMT signal is structurally weaker because SI's sparsity means many "no confirmation" readings are data gaps rather than genuine divergence.
 
 ### Disclaimer
 
-101 total setups, 2 SMT-filtered trades. AI-assisted analysis — not financial advice.
-
+101 total setups, 2 SMT-filtered trades. AI-assisted analysis, not financial advice.

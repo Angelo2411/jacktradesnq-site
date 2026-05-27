@@ -1,31 +1,17 @@
-This study tests a reversal entry on Nasdaq 100 (NQ) futures triggered by Retail Sales — the monthly report on consumer spending — released at 8:30 ET. After the release sweeps a pre-news level, you wait for an Inverse Fair Value Gap (IFVG) to form, then enter when price breaks back inside the range, with an optional S&P 500 (ES) SMT Divergence (SMT) filter. Tested across 2016–2026 on 1-minute NQ data.
+Retail Sales hits at 8:30 ET. Consumer spending drives two-thirds of GDP — when the number misses or beats, the Nasdaq moves.
 
-### Setup Logic
+This study uses the pre-news high and low as targets on Nasdaq 100 (NQ). Price sweeps one side, leaves an Inverse Fair Value Gap (IFVG) on the rejection, and you enter when it breaks back inside the range, aiming for the opposite side's liquidity. If both sides get swept before the IFVG triggers, the setup is dead — the target liquidity is already gone. An optional S&P 500 (ES) filter only keeps the trade when the S&P confirms the same move, so you're not chasing one index on its own. Tested on 1-minute NQ data, 2016 to 2026.
 
-Mark out the data high/low (range price was trading in right before 8:30 ET). Wait for price to sweep one side, then wait for an FVG to form on the rejection. Entry on the IFVG break (close back inside the range). SL on the sweep extreme. TP on the opposite liquidity.
+Rules: sweep the pre-news high/low, wait for the rejection gap, enter on the break back inside. Stop one tick beyond the sweep. Target the opposite liquidity (the pre-news pivot). The ES filter keeps a trade only if the S&P reaches its mirror target within 2h30 of the release.
 
-**Invalidation**: if the opposite side of the range also gets swept BEFORE the IFVG break (entry) — the target liquidity has already been taken, no edge left → skip the setup.
+### Performance — NQ, 10 years
 
-### ES SMT Confirmation Filter
+No filter: 36 trades, profit factor 0.83, net -42 NQ points. With the S&P 500 filter: 24 trades, profit factor 1.25, net +33 NQ points.
 
-A trade is kept **only if ES (E-mini S&P 500) also reaches the same target** within 2h30 after the release.
+### Why the filter matters
 
-- NQ SHORT (sweep UP) → ES must sweep its low
-- NQ LONG (sweep DOWN) → ES must sweep its high
-
-If ES never reaches its target by 11:00 ET → trade was a one-sided NQ move, excluded from the SMT-filtered stats.
-
-### Performance — NQ 10y
-
-Without SMT: 36 trades, PF 0.83, net -42 NQ pts. With SMT: 24 trades remain, PF 1.25, net +33 NQ pts. Year-by-year breakdown in the explorer below + Full PDF download.
-
-<div data-equity="nfp"></div>
-
-### Why It Works
-
-NQ and ES are highly correlated indices. When NQ reaches the target side but ES doesn't follow during the same window, the move is a one-sided drift — likely a fakeout for the broader market. Filtering for ES confirmation keeps only setups where both indices participate in the reversal.
+The Nasdaq and the S&P move together almost all the time. When the Nasdaq hits its target but the S&P doesn't follow, it's one index drifting alone — usually a fakeout, not a real reversal. Demanding S&P confirmation drops those and keeps the setups where both indices turn together.
 
 ### Disclaimer
 
-Sample size 24 SMT-filtered trades is statistically thin; treat as indicative not predictive. AI-assisted analysis — not financial advice.
-
+24 filtered trades is a thin sample, so treat this as a read on the setup, not a guarantee. AI-assisted analysis, not financial advice.

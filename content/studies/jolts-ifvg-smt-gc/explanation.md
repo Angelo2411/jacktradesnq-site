@@ -1,25 +1,25 @@
-This study tests a reversal entry on Gold (GC) futures triggered by Job Openings (JOLTS) — the monthly labor-market report on openings and turnover released at 10:00 ET. After the release sweeps a pre-news level, you wait for an Inverse Fair Value Gap (IFVG) to form, then enter when price breaks back inside the range, with a Silver (SI) SMT Divergence (SMT) confirmation filter. Tested across 10 years of GC data.
+JOLTS drops at 10:00 ET, once a month — job openings and turnover. Labor-supply data that feeds the Fed's rate calculus, and gold listens.
 
-## Model
+This study uses the pre-news high and low as targets on Gold (GC). Price sweeps one side, leaves an Inverse Fair Value Gap (IFVG) on the rejection, and you enter when it breaks back inside the range, aiming for the opposite side's liquidity. An optional Silver (SI) filter only keeps the trade when silver confirms the same move. Tested on 1-minute GC data, 2016 to 2026.
 
-Same engine as the NQ variant (IFVG inversion + opposite-leg sweep filter + "TP1 + BE" variant), executed on GC. Release time is 10:00 ET (BLS, monthly Tuesday or Wednesday); sweep window extends to 12:00 ET, resolve deadline 16:00 ET.
-
-## SMT pair
-
-NQ variants use ES as the SMT confirmation pair. GC variants use SI (Silver) — the closest correlated metals contract.
-
-## Performance — GC 10y
+Rules: sweep the pre-news high/low, wait for the rejection gap, enter on the break back inside. Stop 0.10 (one GC tick) beyond the sweep. Target the opposite liquidity (the pre-news pivot). The SI filter keeps a trade only if silver reaches its mirror target within the sweep window (up to 12:00 ET, resolve by 16:00 ET). Uses the IFVG inversion engine with the opposite-leg sweep filter.
 
 > **Variant legend** — **TP only** = full SL stays through, no break-even move. **TP only + BE** = once price reaches halfway from entry to TP, stop moves to entry (break-even). **TP1 + BE** = close 50% of size at the first TP (halfway to full TP), then move stop to entry on the rest.
 
-Net positive across all three variants on the SMT-filtered sample:
+### Performance — GC, 10 years
 
-- **TP only**: n=27, WR=44%, PF=1.67, net=+18.8 pts
-- **TP only + BE**: n=27, WR=43%, PF=1.68, net=+16.4 pts
-- **TP1 + BE**: n=27, WR=59%, PF=2.17, net=+23.9 pts
+SMT-filtered across three variants (27 trades each):
 
-The SMT filter behaves better on GC than on NQ for JOLTS — metals show a cleaner reaction to labor-supply data when SI confirms the move. Sample size remains small (n=27), so the edge is indicative, not predictive.
+- **TP only:** win rate 44%, profit factor 1.67, net +18.8 points
+- **TP only + BE:** win rate 43%, profit factor 1.68, net +16.4 points
+- **TP1 + BE:** win rate 59%, profit factor 2.17, net +23.9 points
 
-## Results
+The SI filter behaves better here than on other GC studies — metals show a cleaner reaction to labor-supply data when silver confirms. Sample is small (27 trades), so the edge is a read, not a guarantee.
 
-See the stat band above and the By weekday / By year / Trade list tabs for full breakdown.
+### Why gold behaves differently from the Nasdaq
+
+The Nasdaq and the S&P are both equity indices and move almost in lockstep, so cross-confirmation between them is a clean signal. Gold and silver are both metals, but their intraday liquidity splits at news: gold is deep and continuous, silver is thin and patchy. That makes the silver filter weak here — a lot of its "no confirmation" readings are just gaps in silver's data, not a real disagreement.
+
+### Disclaimer
+
+27 filtered trades. AI-assisted analysis, not financial advice.
