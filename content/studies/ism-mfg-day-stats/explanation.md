@@ -1,6 +1,6 @@
 ## ISM Manufacturing PMI — Release Bar Range Stats
 
-This study measures how much the Nasdaq 100 (NQ) moves when ISM Manufacturing (ISM Mfg) — the monthly factory-sector activity index — is released at 10:00 ET on the first business day of each month. It records the high-to-low travel of the 1-minute release candle across events from 2016 to 2026.
+How far does the Nasdaq 100 (NQ) actually travel when ISM Manufacturing (ISM Mfg) hits at 10:00 ET? This tracks the high-to-low range of the 1-minute release candle on every factory PMI print from 2016 to 2026, so you know what to expect before the number drops.
 
 **Range 1m** = the high minus the low (in NQ points) of the release-time candle.
 

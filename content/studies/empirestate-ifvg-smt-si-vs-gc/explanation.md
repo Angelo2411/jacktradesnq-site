@@ -1,6 +1,8 @@
 # Empire State IFVG + GC SMT (Silver)
 
-This study tests a reversal entry on Silver (SI) futures triggered by Empire State Mfg — the New York regional factory survey released at 8:30 ET. After the release sweeps a pre-news level, you wait for an Inverse Fair Value Gap (IFVG) to form, then enter when price breaks back inside the range, with a Gold (GC) SMT Divergence (SMT) confirmation filter requiring both metals to agree. Tested across 10 years of SI data.
+Empire State Manufacturing drops at 8:30 ET — one of the earliest regional factory reads each month. The release usually manipulates one side of the pre-news range, then distributes in the real direction: it runs the stops above or below, then reverses.
+
+This study uses the pre-news high and low as targets, traded on Silver (SI). Price sweeps one side, leaves an Inverse Fair Value Gap (IFVG) on the rejection, and you enter when it breaks back inside the range, aiming for the opposite side's liquidity. An optional Gold (GC) SMT filter only keeps the trade when gold confirms the same move — both metals need to agree. Tested on 1-minute Silver data, 2016 to 2026.
 
 ## Model
 

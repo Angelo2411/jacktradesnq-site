@@ -1,6 +1,6 @@
 ## Jobless Claims Straddle — NQ
 
-Jobless Claims (weekly US unemployment filings) drops every Thursday at 8:30 ET — it's the most frequent labor market data point on the calendar, published weekly rather than monthly. This study brackets each release with a straddle on Nasdaq 100 (NQ) futures: two orders placed above and below price before the number drops, entering whichever direction fires. The weekly cadence means far more trade samples than monthly events, so the edge here is built on consistency over a large sample.
+Jobless Claims drops every Thursday at 8:30 ET — weekly unemployment filings, the highest-frequency labor market read on the calendar. You don't pick a side here: you bracket the release. A buy-stop sits above price, a sell-stop below, both set before the number drops, and whichever way the Nasdaq 100 (NQ) breaks, you're already in.
 
 These datas were my own tests to see which stop/TP combos perform best on NQ around the 8:30 ET jobless claims release. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 

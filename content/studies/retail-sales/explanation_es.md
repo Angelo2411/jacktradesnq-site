@@ -1,6 +1,6 @@
 ## Retail Sales Straddle — S&P 500 (ES)
 
-Retail Sales is the monthly US consumer spending report, released at 8:30 ET — consumer spending drives roughly 70% of the US economy, so a big surprise moves markets. This study brackets each release with a straddle on S&P 500 (ES) futures: two orders placed above and below price before the number drops, entering whichever direction fires. ES absorbs the growth-expectations repricing across all 500 names when the consumer beats or misses.
+Retail Sales hits at 8:30 ET — the monthly consumer spending report, how much Americans spent at stores and online. You don't pick a side here: you bracket the release. A buy-stop sits above price, a sell-stop below, both set before the number drops, and whichever way the S&P 500 (ES) breaks, you're already in.
 
 These datas were my own tests to see which stop/TP combos perform best on ES around Retail Sales. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 

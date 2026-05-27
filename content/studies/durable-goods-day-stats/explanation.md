@@ -1,6 +1,6 @@
 ## Durable Goods Orders — Release Bar Range Stats
 
-This study measures how much the Nasdaq 100 (NQ) moves when Durable Goods Orders — the monthly Census Bureau report on long-lived goods manufacturing — is released at 8:30 ET. It records the high-to-low travel of the 1-minute release candle across events from 2016 to 2026.
+How far does the Nasdaq 100 (NQ) actually travel when Durable Goods Orders hits at 8:30 ET? This tracks the high-to-low range of the 1-minute release candle on every Census Bureau print from 2016 to 2026, so you know what to expect before the number drops.
 
 **Range 1m** = the high minus the low (in NQ points) of the release-time candle.
 

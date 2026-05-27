@@ -1,6 +1,6 @@
 ## PPI Straddle — Dow (YM)
 
-The Producer Price Index (PPI) measures wholesale inflation — what factories charge before goods reach the consumer — released monthly at 8:30 ET. This study runs a straddle on Dow Jones (YM) futures around each PPI release: two bracket orders sit above and below price before the number drops, entering whichever direction fires. The Dow's heavy industrial and materials composition makes it especially sensitive to factory-gate cost surprises.
+PPI hits at 8:30 ET — wholesale inflation, the prices factories charge before goods reach the shelf. You don't pick a side here: you bracket the release. A buy-stop sits above price, a sell-stop below, both set before the number drops, and whichever way the Dow (YM) breaks, you're already in.
 
 These datas were my own tests to see which stop/TP combos perform best on YM around PPI. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 

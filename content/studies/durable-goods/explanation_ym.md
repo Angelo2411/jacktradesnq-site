@@ -1,6 +1,6 @@
 ## Durable Goods Straddle — Dow (YM)
 
-Durable Goods Orders (Durable Goods) measures orders for long-lasting manufactured goods — aircraft, machinery, heavy equipment — released monthly at 8:30 ET as a direct read on business investment. This study brackets each release with a straddle on Dow Jones (YM) futures: two orders placed above and below price before the number drops, entering whichever direction fires. The Dow is packed with the exact industrials this report measures — Boeing, Caterpillar, 3M — making Durable Goods one of the most directly relevant macro prints for YM.
+Durable Goods hits at 8:30 ET — factory orders for long-lasting goods: aircraft, machinery, electronics. You don't pick a side here: you bracket the release. A buy-stop sits above price, a sell-stop below, both set before the number drops, and whichever way the Dow (YM) breaks, you're already in.
 
 These datas were my own tests to see which stop/TP combos perform best on YM around Durable Goods. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 
