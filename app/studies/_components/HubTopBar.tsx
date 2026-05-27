@@ -1,6 +1,7 @@
 'use client';
 
 import type { AssetType, FamilyType } from '@/lib/study-stats';
+import { assetLabel } from '@/lib/terminology';
 
 type AssetFilter = AssetType | 'All';
 type FamilyFilter = FamilyType | 'All';
@@ -54,6 +55,7 @@ export default function HubTopBar({
               key={a}
               className={`bd-flt-asset-btn${asset === a ? ' on' : ''}`}
               onClick={() => onAsset(a)}
+              title={a === 'All' ? 'All instruments' : assetLabel(a)}
             >
               {a}
             </button>
