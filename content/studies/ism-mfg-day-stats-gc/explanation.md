@@ -1,6 +1,6 @@
 ## Article 1 — ISM Manufacturing Points (GC)
 
-This study measures how much Gold (GC) futures move when ISM Manufacturing (ISM Mfg) — the monthly factory-sector activity index — is released at 10:00 ET. It records the high-to-low travel of the 1-minute release candle across events from 2016 to 2026.
+How far does Gold (GC) travel when ISM Manufacturing (ISM Mfg) — the monthly factory-sector activity index — prints at 10:00 ET? This tracks the high-to-low range of the 1-minute release candle on every print from 2016 to 2026.
 
 **Range 1m** = the high minus the low (in GC points / dollars per oz) of the release-time candle.
 

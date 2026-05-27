@@ -1,6 +1,6 @@
 ## Article 1 — NFP Points (Gold)
 
-This study measures how much Gold (GC) futures move at the moment Non-Farm Payrolls (NFP) — the US monthly jobs report — is released at 8:30 ET. A hot print tends to tank the dollar and lift Gold; a miss does the opposite — this dataset of 124 releases from 2016 to 2026 lets you size straddle entries and set expectations before each print. Release-candle ranges are measured in points (dollars per oz). The full year-by-year breakdown is in the PDF below.
+How far does Gold (GC) move when Non-Farm Payrolls (NFP) — the US monthly jobs report — prints at 8:30 ET? A hot print tends to tank the dollar and lift Gold; a miss does the opposite — this covers 124 releases from 2016 to 2026 so you can size straddle entries before each number. Release-candle ranges are measured in points (dollars per oz). The full year-by-year breakdown is in the PDF below.
 
 <a class="bd-btn bd-btn-secondary" href="/downloads/studies/nfp-points.pdf" download>Download — NFP Points PDF</a>
 

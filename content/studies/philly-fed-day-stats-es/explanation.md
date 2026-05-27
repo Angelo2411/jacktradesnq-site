@@ -1,6 +1,6 @@
 ## Article 1 — Philadelphia Fed Points (ES)
 
-This study measures how much S&P 500 (ES) futures move when the Philadelphia Fed Index (Philly Fed) — the regional manufacturing survey released at 8:30 ET — hits. It records the high-to-low travel of the 1-minute release candle across events from 2016 to 2026.
+How far does the S&P 500 (ES) travel when the Philadelphia Fed Index (Philly Fed) — the regional manufacturing survey — prints at 8:30 ET? This tracks the high-to-low range of the 1-minute release candle on every print from 2016 to 2026.
 
 **Range 1m** = the high minus the low (in ES points) of the release-time candle.
 

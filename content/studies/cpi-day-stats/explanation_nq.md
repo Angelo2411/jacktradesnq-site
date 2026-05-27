@@ -1,6 +1,6 @@
 ## Article 1 — CPI Points
 
-This study measures how violently the Nasdaq 100 (NQ) futures market moves at the moment the Consumer Price Index (CPI) — the US monthly inflation report — is released at 8:30 ET. It records the high-to-low travel of the 1-minute candle at release time, across every event from 2016 to 2026, so you can size straddle entries and set expectations before each print.
+How far does the Nasdaq 100 (NQ) travel when the Consumer Price Index (CPI) — the US monthly inflation report — prints at 8:30 ET? This tracks the high-to-low range of the 1-minute release candle on every print from 2016 to 2026, so you know what to expect before the number drops.
 
 ### Year-by-Year — Release Candle Range (1m, 8:30 ET)
 

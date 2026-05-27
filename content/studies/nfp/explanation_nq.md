@@ -1,6 +1,6 @@
 ## Article 1 — NFP Points
 
-This study measures how violently the Nasdaq 100 (NQ) futures market moves at the moment Non-Farm Payrolls (NFP) — the US monthly jobs report — is released at 8:30 ET. It records the high-to-low travel of the 1-minute candle at release time across 102 events from 2016 to 2026, so you can size straddle entries and set expectations before each print.
+How far does the Nasdaq 100 (NQ) travel when Non-Farm Payrolls (NFP) — the US monthly jobs report — prints at 8:30 ET? This tracks the high-to-low range of the 1-minute release candle across 102 events from 2016 to 2026, so you know what to expect before the number drops.
 
 ### Year-by-Year — Release Candle Range (1m, 8:30 ET)
 

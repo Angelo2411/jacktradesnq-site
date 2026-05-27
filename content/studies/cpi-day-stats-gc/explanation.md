@@ -1,6 +1,6 @@
 ## Article 1 — CPI Points (GC)
 
-This study measures how much Gold (GC) futures move at the moment the Consumer Price Index (CPI) — the US monthly inflation report — is released at 8:30 ET. It records the high-to-low travel of the 1-minute release candle across events from 2016 to 2026.
+How far does Gold (GC) travel when the Consumer Price Index (CPI) — the US monthly inflation report — hits at 8:30 ET? This tracks the high-to-low range of the 1-minute release candle on every print from 2016 to 2026.
 
 **Range 1m** = the high minus the low (in GC points / dollars per oz) of the release-time candle.
 
