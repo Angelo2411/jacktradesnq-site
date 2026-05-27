@@ -5,38 +5,13 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import type { StudyStats, AssetType, FamilyType } from '@/lib/study-stats';
 import { eventKeyOf } from '@/lib/event-key';
 import type { DayPlaybook } from '@/lib/today-events';
+import { eventFull } from '@/lib/terminology';
 import StudyRow from './StudyRow';
 import HubTopBar, { type SortBy } from './HubTopBar';
 
-/** Human-readable label for an event key */
-const EVENT_LABELS: Record<string, string> = {
-  cpi: 'CPI',
-  nfp: 'NFP',
-  ppi: 'PPI',
-  pce: 'PCE',
-  gdp: 'GDP',
-  fomc: 'FOMC',
-  adp: 'ADP',
-  jolts: 'JOLTS',
-  'ism-mfg': 'ISM Manufacturing',
-  'ism-services': 'ISM Services',
-  'ism-manufacturing': 'ISM Manufacturing',
-  'retail-sales': 'Retail Sales',
-  'jobless-claims': 'Jobless Claims',
-  'cb-confidence': 'CB Consumer Confidence',
-  'empire-state': 'Empire State',
-  'durable-goods': 'Durable Goods',
-  'philly-fed': 'Philly Fed',
-  'empire-state-mfg': 'Empire State Mfg',
-};
-
+/** Human-readable label for an event key — delegates to terminology.ts */
 function eventLabel(key: string): string {
-  if (EVENT_LABELS[key]) return EVENT_LABELS[key];
-  // Title-case fallback: replace hyphens with spaces, capitalize each word
-  return key
-    .split('-')
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ');
+  return eventFull(key);
 }
 
 interface EventGroup {

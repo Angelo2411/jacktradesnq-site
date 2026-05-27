@@ -5,6 +5,7 @@ import { useAsset, type AssetKey } from './AssetContext';
 import V3Tabs from './V3Tabs';
 import type { TradeRow } from '@/lib/study-stats';
 import { computeKPI, computeYearBreakdown, computeWeekdayBreakdown } from '@/lib/client-stats';
+import { assetShort } from '@/lib/terminology';
 
 const STOP_GRIDS: Record<string, number[]> = {
   nq: [25, 30, 35, 40],
@@ -33,11 +34,11 @@ function formatNum(n: number): string {
 }
 
 const ASSET_LABEL: Record<string, string> = {
-  nq: 'NQ',
-  gc: 'GC',
-  si: 'SI',
-  ym: 'YM',
-  es: 'ES',
+  nq: assetShort('nq'),
+  gc: assetShort('gc'),
+  si: assetShort('si'),
+  ym: assetShort('ym'),
+  es: assetShort('es'),
 };
 
 export default function StraddleWrappedTabs({

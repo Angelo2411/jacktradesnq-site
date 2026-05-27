@@ -12,6 +12,7 @@ import {
   type UTCTimestamp,
   type CandlestickData,
 } from 'lightweight-charts';
+import { EVENT_SHORT_MAP as EVENT_SHORT } from '@/lib/terminology';
 
 interface EventBar {
   m: number;
@@ -29,26 +30,6 @@ interface EventBarsEntry {
   ib_low?: number;
   bars: EventBar[];
 }
-
-const EVENT_SHORT: Record<string, string> = {
-  'CPI':              'cpi',
-  'NFP':              'nfp',
-  'PPI':              'ppi',
-  'PCE':              'pce',
-  'GDP':              'gdp',
-  'Jobless Claims':   'joblessclaims',
-  'Retail Sales':     'retailsales',
-  'Empire State':     'empirestate',
-  'Employment Cost':  'employmentcostindex',
-  'FOMC':                                  'fomc',
-  'ADP':                                   'adp',
-  'JOLTS':                                 'jolts',
-  'ISM Manufacturing PMI':                 'ism_mfg',
-  'ISM Services PMI':                      'ism_services',
-  'CB Consumer Confidence':                'cb_confidence',
-  'Philadelphia Fed Manufacturing':        'philly_fed',
-  'Durable Goods Orders':                  'durable_goods',
-};
 
 interface Props {
   eventShort: string;
