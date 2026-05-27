@@ -154,6 +154,22 @@ export function generateStaticParams() {
   return getAllEntries().map((entry) => ({ slug: entry.slug }));
 }
 
+// Clean display title for the prev/next pager — mirrors each layout's own h1
+// so neighbour links read like the page they open (full event names, not raw codes).
+function pagerDisplayTitle(e: { slug: string; title: string }): string {
+  const genericCfg = GENERIC_STUDY_CONFIG[e.slug];
+  if (genericCfg) return genericCfg.title;
+  if (STRADDLE_V3_SLUGS.has(e.slug)) {
+    const ev = EVENT_INFO[STRADDLE_BARS_KEY[e.slug] ?? e.slug]?.eventType ?? e.title;
+    return `${eventFull(ev.toLowerCase().replace(/\s+/g, '-'))} · Straddle`;
+  }
+  if (IFVG_SLUGS.has(e.slug)) {
+    const ev = getStrategyStats(e.slug)?.event ?? e.title;
+    return `${eventFull(ev.toLowerCase().replace(/\s+/g, '-'))} · IFVG + SMT`;
+  }
+  return e.title;
+}
+
 export default async function BacktestedDetail({ params }: PageProps) {
   const { slug } = await params;
   const entry = getEntry(slug);
@@ -308,14 +324,14 @@ export default async function BacktestedDetail({ params }: PageProps) {
       <span>
         {prev ? (
           <Link href={`/studies/${prev.slug}/`} className="bd-link-gold">
-            ← {prev.title.length > 38 ? prev.title.slice(0, 36) + '…' : prev.title}
+            ← {(() => { const t = pagerDisplayTitle(prev); return t.length > 38 ? t.slice(0, 36) + '…' : t; })()}
           </Link>
         ) : <span className="bd-meta" style={{ opacity: 0.4 }}>—</span>}
       </span>
       <span>
         {next ? (
           <Link href={`/studies/${next.slug}/`} className="bd-link-gold">
-            {next.title.length > 38 ? next.title.slice(0, 36) + '…' : next.title} →
+            {(() => { const t = pagerDisplayTitle(next); return t.length > 38 ? t.slice(0, 36) + '…' : t; })()} →
           </Link>
         ) : <span className="bd-meta" style={{ opacity: 0.4 }}>—</span>}
       </span>
