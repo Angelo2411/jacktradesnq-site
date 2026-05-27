@@ -1587,7 +1587,7 @@ function getVirtualFullportCards(existing: StudyStats[]): StudyStats[] {
   const existingSlugs = new Set(existing.map(s => s.slug));
   const out: StudyStats[] = [];
   for (const ev of FULLPORT_EVENTS) {
-    for (const asset of ['gc', 'si', 'ym', 'es'] as const) {
+    for (const asset of ['gc', 'si', 'es'] as const) {
       const staticKey = `${ev.slug}-${asset}`;
       if (existingSlugs.has(staticKey)) continue;
 

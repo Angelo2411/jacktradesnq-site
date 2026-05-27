@@ -86,19 +86,6 @@ const IFVG_SLUGS = new Set([
   'philly-fed-ifvg-smt-es', 'durable-goods-ifvg-smt-es', 'es-ifvg-smt',
   // SI aggregate
   'si-ifvg-smt',
-  // 40 YM slugs
-  'cpi-ifvg-smt-ym', 'cpi-ifvg-smt-ym-vs-es', 'cpi-ifvg-smt-es-vs-ym', 'cpi-ifvg-smt-nq-vs-ym',
-  'nfp-ifvg-smt-nq-vs-ym', 'nfp-ifvg-smt-es-vs-ym', 'nfp-ifvg-smt-ym-vs-es',
-  'fomc-ifvg-smt-ym', 'fomc-ifvg-smt-ym-vs-es', 'fomc-ifvg-smt-es-vs-ym', 'fomc-ifvg-smt-nq-vs-ym',
-  'pce-ifvg-smt-ym', 'pce-ifvg-smt-ym-vs-es', 'pce-ifvg-smt-gc-vs-ym',
-  'ppi-ifvg-smt-ym-vs-es',
-  'retailsales-ifvg-smt-ym', 'retailsales-ifvg-smt-ym-vs-es', 'retailsales-ifvg-smt-es-vs-ym', 'retailsales-ifvg-smt-nq-vs-ym',
-  'philly-fed-ifvg-smt-ym', 'philly-fed-ifvg-smt-ym-vs-es', 'philly-fed-ifvg-smt-nq-vs-ym',
-  'durable-goods-ifvg-smt-ym', 'durable-goods-ifvg-smt-ym-vs-es', 'durable-goods-ifvg-smt-es-vs-ym',
-  'ism-services-ifvg-smt-ym', 'ism-services-ifvg-smt-ym-vs-es', 'ism-services-ifvg-smt-es-vs-ym',
-  'cb-confidence-ifvg-smt-ym', 'cb-confidence-ifvg-smt-ym-vs-es',
-  'joblessclaims-ifvg-smt-ym-vs-es',
-  'es-ifvg-smt-vs-ym', 'nq-ifvg-smt-vs-ym',
   // SI anchor + GC SMT (canonical precious-metals pair)
   'nfp-ifvg-smt-si-vs-gc', 'retailsales-ifvg-smt-si-vs-gc', 'empirestate-ifvg-smt-si-vs-gc',
 ]);
@@ -386,7 +373,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
     const eventName = EVENT_INFO[STRADDLE_BARS_KEY[slug] ?? slug]?.eventType ?? entry.title;
     const releaseTime = '8:30 ET';
     const allTrades: Record<string, import('@/lib/study-stats').TradeRow[]> = {};
-    for (const asset of ['nq', 'gc', 'si', 'ym', 'es']) {
+    for (const asset of ['nq', 'gc', 'si', 'es']) {
       allTrades[asset] = getStraddleAllTrades(slug, asset);
     }
 
@@ -438,7 +425,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
 
   // Manip930-Distribution: continuation-vs-reversal study
   if (isManip) {
-    const manipAssets: AssetKey[] = ['nq', 'gc', 'si', 'ym', 'es'];
+    const manipAssets: AssetKey[] = ['nq', 'gc', 'si', 'es'];
     const allData: Record<string, ContDataFile> = {};
     for (const a of manipAssets) {
       const suffix = a === 'nq' ? '' : `-${a}`;
