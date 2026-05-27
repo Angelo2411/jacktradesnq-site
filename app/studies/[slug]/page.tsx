@@ -149,9 +149,7 @@ const GENERIC_STUDY_CONFIG: Record<string, {
   asset: 'nq' | 'gc' | 'es' | 'si' | 'ym';
 }> = {
   'globex-ib50':    { dataFile: 'globex-ib50.json',    title: 'Globex IB50', subtitle: 'NQ futures · 10-min Globex initial balance · 2016–2026 backtest', asset: 'nq' },
-  'globex-ib50-gc': { dataFile: 'globex-ib50_gc.json', title: 'Globex IB50', subtitle: 'GC futures · 10-min Globex initial balance · 2016–2026 backtest', asset: 'gc' },
   'globex-ib50-es': { dataFile: 'globex-ib50-es.json', title: 'Globex IB50', subtitle: 'ES futures · 10-min Globex initial balance · 2016–2026 backtest', asset: 'es' },
-  'globex-ib50-si': { dataFile: 'globex-ib50-si.json', title: 'Globex IB50', subtitle: 'SI futures · 10-min Globex initial balance · 2016–2026 backtest', asset: 'si' },
 };
 
 interface PageProps {
