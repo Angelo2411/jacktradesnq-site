@@ -1,6 +1,6 @@
 ## Philadelphia Fed Manufacturing — Release Bar Range Stats
 
-This study measures how much the Nasdaq 100 (NQ) moves when the Philadelphia Fed Index (Philly Fed) — the regional manufacturing survey released the third Thursday of each month at 8:30 ET — hits. It records the high-to-low travel of the 1-minute release candle across events from 2016 to 2026.
+How far does the Nasdaq 100 (NQ) actually travel when the Philadelphia Fed Index (Philly Fed) hits at 8:30 ET? This tracks the high-to-low range of the 1-minute release candle on every regional factory survey from 2016 to 2026, so you know what to expect before the number drops.
 
 **Range 1m** = the high minus the low (in NQ points) of the release-time candle.
 
