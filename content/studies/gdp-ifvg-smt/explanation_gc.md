@@ -1,15 +1,17 @@
-This study tests a reversal entry on Gold (GC) futures triggered by the Gross Domestic Product (GDP) advance release — one print per quarter at 8:30 ET, the only estimate that consistently moves markets. After the release sweeps a pre-news level, you wait for an Inverse Fair Value Gap (IFVG) to form, then enter when price breaks back inside the range. Tested across 2016–2026 on 1-minute GC data; Silver (SI) SMT Divergence (SMT) filter is disabled on this variant due to data availability.
+GDP advance hits at 8:30 ET, once a quarter. That's the print that moves metals — the revisions come later and barely register.
 
-Sweep the pre-news data high/low, wait for an FVG on the rejection, enter on the IFVG break back inside range · SL = sweep extreme + 0.10 (1 GC tick) · TP = opposite liquidity (pre-news pivot). The widget reports the baseline IFVG numbers only — toggle SI SMT off to read the results.
+This study uses the pre-news high and low as targets on Gold (GC). Price sweeps one side, leaves an Inverse Fair Value Gap (IFVG) on the rejection, and you enter when it breaks back inside the range, aiming for the opposite side's liquidity. The Silver (SI) filter is disabled on this variant — SI data wasn't available for this run. Tested on 1-minute GC data, 2016 to 2026. Second and third estimates are excluded — only the advance release counts.
 
-### Performance — GC 10y (advance-only, baseline)
+Rules: sweep the pre-news high/low, wait for the rejection gap, enter on the break back inside. Stop 0.10 (one GC tick) beyond the sweep. Target the opposite liquidity (the pre-news pivot). The widget reports baseline IFVG numbers only — toggle SI SMT off to read the results.
 
-18 trades, PF 0.44, net -15.5 GC pts. Small sample (~40 advance events over 10y, 18 IFVG setups fired); treat with caution.
+### Performance — GC, 10 years (advance-only)
 
-### Why Gold Behaves Differently from NQ
+18 trades, profit factor 0.44, net -15.5 GC points. Small sample — about 40 advance events over 10 years, 18 IFVG setups fired.
 
-NQ and ES are equity index futures — near-perfect correlation, SMT divergence is a clean signal. GC and SI are both precious metals but their intraday liquidity profiles diverge sharply at macro releases: GC is deep and continuous; SI is thin and sparse. The SMT signal is structurally weaker because SI's sparsity means many "no confirmation" readings are data gaps rather than genuine divergence.
+### Why gold behaves differently from the Nasdaq
+
+The Nasdaq and the S&P are both equity indices and move almost in lockstep, so cross-confirmation between them is a clean signal. Gold and silver are both metals, but their intraday liquidity splits at news: gold is deep and continuous, silver is thin and patchy. The SMT signal is structurally weaker because SI's sparsity means many "no confirmation" readings are data gaps rather than genuine divergence.
 
 ### Disclaimer
 
-18 total setups, SMT filter disabled (SI data unavailable for this run). AI-assisted analysis — not financial advice.
+18 total setups, SMT filter disabled (SI data unavailable for this run). AI-assisted analysis, not financial advice.

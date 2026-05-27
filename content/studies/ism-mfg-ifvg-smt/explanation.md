@@ -1,11 +1,13 @@
-This study tests a reversal entry on Nasdaq 100 (NQ) futures triggered by ISM Manufacturing (ISM Mfg) — the monthly factory-sector activity index released on the first business day of each month at 10:00 ET. After the release sweeps a pre-news level, you wait for an Inverse Fair Value Gap (IFVG) to form, then enter when price breaks back inside the range, with an optional S&P 500 (ES) SMT Divergence (SMT) filter. A reading above 50 signals expansion; below 50 signals contraction. Tested across 2016–2026 on 1-minute NQ data.
+ISM Manufacturing drops at 10:00 ET on the first business day of the month. Above 50 means expansion, below 50 means contraction — either way, the number moves the Nasdaq.
 
-Sweep the release-bar high/low (10:00 ET 1m candle), wait for an FVG on the rejection, enter on the IFVG break back inside range · SL = sweep ± 1 tick · TP = opposite liquidity (release-bar pivot). ES SMT keeps only trades where ES also reaches its mirror target within the 10:01-12:00 ET sweep window.
+This study uses the release-bar high and low as targets. Price sweeps one side, leaves an Inverse Fair Value Gap (IFVG) on the rejection, and you enter when it breaks back inside the range, aiming for the opposite side's liquidity. At 10:00 ET the opening range is already established, so liquidity pools form cleanly above and below the release bar. An optional S&P 500 (ES) filter only keeps the trade when the S&P confirms the same move. Tested on 1-minute Nasdaq 100 (NQ) data, 2016 to 2026.
 
-### Why It Works
+Rules: sweep the 10:00 ET candle high/low, wait for the rejection gap, enter on the break back inside. Stop one tick beyond the sweep. Target the opposite liquidity (the release-bar pivot). The ES filter keeps a trade only if the S&P reaches its mirror target within the 10:01–12:00 ET window.
 
-ISM Manufacturing is a leading indicator with strong market-moving history. Because it prints at 10:00 ET — after the opening range establishes — liquidity pools form cleanly above/below the release bar. NQ and ES are highly correlated, so requiring ES to confirm the mirror-side sweep filters out one-sided drifts that do not get broad participation.
+### Why the filter matters
+
+The Nasdaq and the S&P move together almost all the time. When the Nasdaq hits its target but the S&P doesn't follow, it's one index drifting alone — usually a fakeout, not a real reversal. Demanding S&P confirmation drops those and keeps the setups where both indices turn together.
 
 ### Disclaimer
 
-Sample sizes post-SMT filter are statistically thin; treat as indicative not predictive. AI-assisted analysis — not financial advice. See live data below.
+Sample sizes after the SMT filter are thin. Treat this as a read on the setup, not a guarantee. AI-assisted analysis, not financial advice.

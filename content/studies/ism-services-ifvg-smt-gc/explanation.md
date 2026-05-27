@@ -1,17 +1,13 @@
-This study tests a reversal entry on Gold (GC) futures triggered by ISM Services (ISM Services) — the services-sector activity index released the third business day of each month at 10:00 ET. After the release sweeps a pre-news level, you wait for an Inverse Fair Value Gap (IFVG) to form, then enter when price breaks back inside the range, with a Silver (SI) SMT Divergence (SMT) confirmation filter. Tested across 10 years of GC data.
+ISM Services drops at 10:00 ET, third business day of the month. It covers about 75% of the US economy — the biggest single-sector macro print — and metals react through the dollar and risk-sentiment channel.
 
-## Model
+This study uses the pre-news high and low as targets on Gold (GC). Price sweeps one side, leaves an Inverse Fair Value Gap (IFVG) on the rejection, and you enter when it breaks back inside the range, aiming for the opposite side's liquidity. An optional Silver (SI) filter only keeps the trade when silver confirms the same move. Tested on 1-minute GC data, 2016 to 2026.
 
-Same engine as the NQ variant (IFVG inversion + opposite-leg sweep filter + "TP1 + BE" variant), executed on GC. Release time is 10:00 ET (ISM, third business day of month); sweep window extends to 12:00 ET, resolve deadline 16:00 ET.
+Rules: sweep the pre-news high/low, wait for the rejection gap, enter on the break back inside. Stop 0.10 (one GC tick) beyond the sweep. Target the opposite liquidity (the pre-news pivot). The SI filter keeps a trade only if silver reaches its mirror target within the sweep window (up to 12:00 ET, resolve by 16:00 ET). Uses the IFVG inversion engine with the opposite-leg sweep filter and TP1 + BE variant.
 
-## SMT pair
+### Why gold behaves differently from the Nasdaq
 
-NQ variants use ES as the SMT confirmation pair. GC variants use SI (Silver) — the closest correlated metals contract.
+The Nasdaq and the S&P are both equity indices and move almost in lockstep, so cross-confirmation between them is a clean signal. Gold and silver are both metals, but their intraday liquidity splits at news: gold is deep and continuous, silver is thin and patchy. That makes the silver filter weak here — a lot of its "no confirmation" readings are just gaps in silver's data, not a real disagreement.
 
-## Why This Event
+### Disclaimer
 
-Services PMI is the single largest macro print covering US economic activity. Metals respond via the USD and risk-sentiment channel — a strong print typically supports the dollar and pressures gold, creating a directional setup SI can confirm.
-
-## Results
-
-See the stat band above and the By weekday / By year / Trade list tabs for full breakdown.
+AI-assisted analysis, not financial advice. See the stat band and trade tabs for the full breakdown.

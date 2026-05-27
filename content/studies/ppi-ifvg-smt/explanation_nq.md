@@ -1,15 +1,17 @@
-This study tests a reversal entry on Nasdaq 100 (NQ) futures triggered by Producer Price Index (PPI) — the wholesale inflation report — released at 8:30 ET. After the release sweeps a pre-news level, you wait for an Inverse Fair Value Gap (IFVG) to form, then enter when price breaks back inside the range, with an optional S&P 500 (ES) SMT Divergence (SMT) filter keeping only trades where both indices agree. Tested across 2016–2026 on 1-minute NQ data.
+PPI hits at 8:30 ET — wholesale inflation, prints a week before CPI. When it surprises, the Nasdaq reacts fast because it front-runs the bigger CPI move.
 
-Sweep the pre-news data high/low, wait for an FVG on the rejection, enter on the IFVG break back inside range · SL = sweep ± 1 tick · TP = opposite liquidity (pre-news pivot). ES SMT keeps only trades where ES also reaches its mirror target within 2h30 of the release.
+This study uses the pre-news high and low as targets on Nasdaq 100 (NQ). Price sweeps one side, leaves an Inverse Fair Value Gap (IFVG) on the rejection, and you enter when it breaks back inside the range, aiming for the opposite side's liquidity. An optional S&P 500 (ES) filter only keeps the trade when the S&P confirms the same move, so you're not chasing one index on its own. Tested on 1-minute NQ data, 2016 to 2026.
 
-### Performance — NQ 10y
+Rules: sweep the pre-news high/low, wait for the rejection gap, enter on the break back inside. Stop one tick beyond the sweep. Target the opposite liquidity (the pre-news pivot). The ES filter keeps a trade only if the S&P reaches its mirror target within 2h30 of the release.
 
-Without SMT: 46 trades, PF 1.11, net +40 NQ pts. With SMT: 32 trades remain, PF 2.83, net +254 NQ pts.
+### Performance — NQ, 10 years
 
-### Why It Works
+No filter: 46 trades, profit factor 1.11, net +40 NQ points. With the S&P 500 filter: 32 trades, profit factor 2.83, net +254 NQ points.
 
-NQ and ES are highly correlated indices. When NQ reaches the target side but ES doesn't follow during the same window, the move is a one-sided drift — likely a fakeout for the broader market. Filtering for ES confirmation keeps only setups where both indices participate in the reversal.
+### Why the filter matters
+
+The Nasdaq and the S&P move together almost all the time. When the Nasdaq hits its target but the S&P doesn't follow, it's one index drifting alone — usually a fakeout, not a real reversal. Demanding S&P confirmation drops those and keeps the setups where both indices turn together.
 
 ### Disclaimer
 
-Sample size 32 SMT-filtered trades is statistically thin; treat as indicative not predictive. AI-assisted analysis — not financial advice.
+32 filtered trades is a thin sample, so treat this as a read on the setup, not a guarantee. AI-assisted analysis, not financial advice.
