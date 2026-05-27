@@ -1,6 +1,6 @@
 ## Article 1 — FOMC Points (ES)
 
-This study measures how much S&P 500 (ES) futures move at the moment the Fed Rate Decision (FOMC) statement is released at 14:00 ET — the full high-to-low travel of the 1-minute release candle across events from 2016 to 2026.
+How far does the S&P 500 (ES) travel when the Fed Rate Decision (FOMC) statement drops at 14:00 ET? This tracks the high-to-low range of the 1-minute release candle on every decision from 2016 to 2026.
 
 **Range 1m** = the high minus the low (in ES points) of the release-time candle.
 

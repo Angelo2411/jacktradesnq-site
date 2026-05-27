@@ -1,6 +1,6 @@
 ## Article 1 — FOMC Points
 
-This study measures how violently the Nasdaq 100 (NQ) moves when the Fed Rate Decision (FOMC) statement is released at 14:00 ET. It records the release-window range across 86 events from 2016 to 2026, so you can size straddle entries and set expectations before each decision.
+How far does the Nasdaq 100 (NQ) travel when the Fed Rate Decision (FOMC) statement drops at 14:00 ET? This tracks the release-window range across 86 decisions from 2016 to 2026, so you know what to expect before the statement hits.
 
 ### Year-by-Year — Release Window Range (5-min, 14:00 ET)
 

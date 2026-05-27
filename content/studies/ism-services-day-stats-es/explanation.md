@@ -1,6 +1,6 @@
 ## Article 1 — ISM Services Points (ES)
 
-This study measures how much S&P 500 (ES) futures move when ISM Services (ISM Services) — the monthly services-sector activity index — is released at 10:00 ET. It records the high-to-low travel of the 1-minute release candle across events from 2016 to 2026.
+How far does the S&P 500 (ES) travel when ISM Services (ISM Services) — the monthly services-sector activity index — prints at 10:00 ET? This tracks the high-to-low range of the 1-minute release candle on every print from 2016 to 2026.
 
 **Range 1m** = the high minus the low (in ES points) of the release-time candle.
 

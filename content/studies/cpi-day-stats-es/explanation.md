@@ -1,6 +1,6 @@
 ## Article 1 — CPI Points (ES)
 
-This study measures how much S&P 500 (ES) futures move at the moment the Consumer Price Index (CPI) — the US monthly inflation report — is released at 8:30 ET. It records the high-to-low travel of the 1-minute release candle across events from 2016 to 2026.
+How far does the S&P 500 (ES) travel when the Consumer Price Index (CPI) — the US monthly inflation report — hits at 8:30 ET? This tracks the high-to-low range of the 1-minute release candle on every print from 2016 to 2026.
 
 **Range 1m** = the high minus the low (in ES points) of the release-time candle.
 
