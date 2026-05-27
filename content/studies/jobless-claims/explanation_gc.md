@@ -1,6 +1,6 @@
 ## Jobless Claims Straddle — Gold
 
-Jobless Claims (weekly US unemployment filings) hits every Thursday at 8:30 ET — a surprisingly high number means the labor market is weakening, a low number signals strength, and both move Gold (GC). This study brackets each release with a straddle: two orders placed above and below price before the number drops, entering whichever side fires. Because it's weekly rather than monthly, the backtest accumulates far more trade samples than any other event on the calendar.
+Jobless Claims drops every Thursday at 8:30 ET — weekly unemployment filings, the highest-frequency labor market read on the calendar. You don't pick a side here: you bracket the release. A buy-stop sits above price, a sell-stop below, both set before the number drops, and whichever way Gold (GC) breaks, you're already in.
 
 These datas were my own tests to see which stop/TP combos perform best on Gold around the 8:30 ET jobless claims release. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 

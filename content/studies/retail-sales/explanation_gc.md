@@ -1,6 +1,6 @@
 ## Retail Sales Straddle — Gold
 
-Retail Sales is the monthly US consumer spending report, released at 8:30 ET — it shows how much Americans spent at stores and online, signaling whether the economy is running hot or cooling. This study brackets each release with a straddle on Gold (GC) futures: two orders placed above and below price before the number drops, entering whichever side fires. Gold reacts because strong consumer spending can push rates higher, pressuring the metal, while a weak print fuels safe-haven demand and bids it.
+Retail Sales hits at 8:30 ET — the monthly consumer spending report, how much Americans spent at stores and online. You don't pick a side here: you bracket the release. A buy-stop sits above price, a sell-stop below, both set before the number drops, and whichever way Gold (GC) breaks, you're already in.
 
 These datas were my own tests to see which stop/TP combos perform best on Gold around Retail Sales. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 

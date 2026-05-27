@@ -1,6 +1,6 @@
 ## PPI Straddle — NQ
 
-The Producer Price Index (PPI) measures wholesale inflation — what factories and suppliers charge before goods reach consumers — released monthly at 8:30 ET. This study brackets the PPI release with a straddle: two orders placed above and below the price before the number drops, taking whichever direction fires. The test runs on Nasdaq 100 (NQ) futures, capturing how tech-heavy growth stocks reprice when factory-gate costs surprise the market.
+PPI hits at 8:30 ET — wholesale inflation, the prices factories charge before goods reach the shelf. You don't pick a side here: you bracket the release. A buy-stop sits above price, a sell-stop below, both set before the number drops, and whichever way the Nasdaq 100 (NQ) breaks, you're already in.
 
 These datas were my own tests to see which stop/TP combos perform best on NQ around PPI. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 

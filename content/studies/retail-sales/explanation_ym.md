@@ -1,6 +1,6 @@
 ## Retail Sales Straddle — Dow (YM)
 
-Retail Sales is the monthly US consumer spending report, released at 8:30 ET — it directly measures demand for the goods and services that drive Dow-listed companies' revenues. This study brackets each release with a straddle on Dow Jones (YM) futures: two orders placed above and below price before the number drops, entering whichever direction fires. The Dow's consumer-cyclical tilt — retailers, autos, home improvement — makes this one of the most relevant macro releases for YM specifically.
+Retail Sales hits at 8:30 ET — the monthly consumer spending report, how much Americans spent at stores and online. You don't pick a side here: you bracket the release. A buy-stop sits above price, a sell-stop below, both set before the number drops, and whichever way the Dow (YM) breaks, you're already in.
 
 These datas were my own tests to see which stop/TP combos perform best on YM around Retail Sales. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 

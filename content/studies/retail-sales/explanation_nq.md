@@ -1,6 +1,6 @@
 ## Retail Sales Straddle — NQ
 
-Retail Sales is the monthly US consumer spending report, released at 8:30 ET — it measures how much Americans spent at stores and online, giving a direct read on economic health. This study brackets each release with a straddle on Nasdaq 100 (NQ) futures: two orders placed above and below price before the number drops, entering whichever direction fires. A strong surprise tends to lift growth expectations and bid NQ; a miss does the opposite.
+Retail Sales hits at 8:30 ET — the monthly consumer spending report, how much Americans spent at stores and online. You don't pick a side here: you bracket the release. A buy-stop sits above price, a sell-stop below, both set before the number drops, and whichever way the Nasdaq 100 (NQ) breaks, you're already in.
 
 These datas were my own tests to see which stop/TP combos perform best on NQ around Retail Sales. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 

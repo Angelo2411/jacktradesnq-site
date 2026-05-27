@@ -1,6 +1,6 @@
 ## PCE Core Straddle — Silver
 
-PCE Inflation (PCE) is the Federal Reserve's preferred inflation measure, released monthly at 8:30 ET — when it surprises, rate expectations shift and metals move. This study brackets each PCE release with a straddle on Silver (SI) futures: two orders placed above and below price before the number drops, entering whichever side fires. Silver responds on two tracks — as an inflation hedge and as an industrial metal — making PCE one of the more impactful releases for the asset.
+PCE hits at 8:30 ET — the Fed's preferred inflation gauge, the one that moves rate expectations faster than CPI. You don't pick a side here: you bracket the release. A buy-stop sits above price, a sell-stop below, both set before the number drops, and whichever way Silver (SI) breaks, you're already in.
 
 These datas were my own tests to see which stop/TP combos perform best on Silver futures around PCE. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 

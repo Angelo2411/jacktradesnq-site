@@ -1,6 +1,6 @@
 ## PCE Core Straddle — Gold
 
-PCE Inflation (PCE) is the Federal Reserve's preferred inflation gauge, released monthly at 8:30 ET — it directly shapes interest rate expectations and moves Gold (GC) hard when it surprises. This study runs a straddle around each PCE release: two bracket orders sit above and below price before the number drops, taking whichever direction fires. Gold is particularly sensitive to PCE because the metal prices real rates, and the Fed's reaction to this print determines whether those rates tighten or ease.
+PCE hits at 8:30 ET — the Fed's preferred inflation gauge, the one that moves rate expectations faster than CPI. You don't pick a side here: you bracket the release. A buy-stop sits above price, a sell-stop below, both set before the number drops, and whichever way Gold (GC) breaks, you're already in.
 
 These datas were my own tests to see which stop/TP combos perform best on Gold around PCE. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 
