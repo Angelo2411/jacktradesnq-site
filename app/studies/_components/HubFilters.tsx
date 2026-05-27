@@ -290,7 +290,7 @@ export default function HubFilters({
                         <summary className="bd-evt-head">
                           <span className="bd-evt-name">{g.label}</span>
                           <span className="bd-evt-meta">
-                            {g.items.length} variants · best PF{' '}
+                            <span className="bd-evt-count">{g.items.length} variants · </span>best PF{' '}
                             <span className="bd-evt-pf">{g.bestPf.toFixed(2)}</span>
                           </span>
                           <span className="bd-evt-chevron" aria-hidden="true">›</span>
