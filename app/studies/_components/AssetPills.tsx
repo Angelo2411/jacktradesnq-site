@@ -10,6 +10,13 @@ const LABELS: Record<AssetKey, string> = {
   es: 'ES',
 };
 
+// Studies that switch asset in-place (one slug, asset chosen via ?asset=)
+// instead of navigating to a per-asset sibling slug.
+const INLINE_SWITCHER_ASSETS: Record<string, AssetKey[]> = {
+  'killzone-past-vs-now': ['nq', 'gc', 'es'],
+  'asia-open': ['nq', 'gc', 'es', 'si'],
+};
+
 function currentBase(currentPath: string): string | null {
   const match = currentPath.match(/^\/studies\/([^\/]+)\/?/);
   if (!match) return null;
@@ -38,7 +45,9 @@ export default function AssetPills({ availableSlugs }: { availableSlugs?: string
 
   const slugSet = availableSlugs ? new Set(availableSlugs) : null;
   const onSlugRoute = /^\/studies\/[^\/]+\/?$/.test(pathname);
-  const inlineMode = !availableSlugs || availableSlugs.length === 0;
+  const currentSlug = pathname.match(/^\/studies\/([^\/]+)\/?/)?.[1] ?? '';
+  const switcherAssets = INLINE_SWITCHER_ASSETS[currentSlug] ?? null;
+  const inlineMode = !!switcherAssets || !availableSlugs || availableSlugs.length === 0;
 
   if (!onSlugRoute) return null;
 
@@ -47,12 +56,20 @@ export default function AssetPills({ availableSlugs }: { availableSlugs?: string
     // Clear filter params that may be invalid under the new asset's grid
     // (Stop/TP grids differ per asset; keeping stale variant/tp causes "No trade data available").
     const params = new URLSearchParams(window.location.search);
-    const hadFilters = params.has('variant') || params.has('tp') || params.has('smt') || params.has('asset') || params.has('year');
-    params.delete('asset');
     params.delete('year');
     params.delete('variant');
     params.delete('tp');
     params.delete('smt');
+    if (switcherAssets) {
+      // In-place asset switch: persist choice in the URL so it's shareable.
+      if (value === 'nq') params.delete('asset');
+      else params.set('asset', value);
+      const qs = params.toString();
+      router.replace(pathname + (qs ? '?' + qs : ''), { scroll: false });
+      return;
+    }
+    const hadFilters = params.has('variant') || params.has('tp') || params.has('smt') || params.has('asset') || params.has('year');
+    params.delete('asset');
     if (inlineMode) {
       if (hadFilters) {
         const qs = params.toString();
@@ -71,8 +88,9 @@ export default function AssetPills({ availableSlugs }: { availableSlugs?: string
 
   return (
     <div className="v3-asset-pills" data-inline={inlineMode ? '' : undefined}>
-      {availableAssets
+      {(switcherAssets ?? availableAssets)
         .filter((key) => {
+          if (switcherAssets) return true;
           if (!slugSet) return true;
           if (key === asset) return true;
           const target = computeTargetSlug(pathname, key);
