@@ -1,4 +1,4 @@
-ICT post-news IFVG entry on 8:30 ET PCE releases, with optional **ES SMT confirmation filter**. Tested 2016 → 2026 on NQ 1m.
+This study tests a reversal entry on Nasdaq 100 (NQ) futures triggered by PCE Inflation (PCE) — the Federal Reserve's preferred inflation gauge — released at 8:30 ET. After the release sweeps a pre-news level, you wait for an Inverse Fair Value Gap (IFVG) to form, then enter when price breaks back inside the range, with an optional S&P 500 (ES) SMT Divergence (SMT) filter. Tested across 2016–2026 on 1-minute NQ data.
 
 Sweep the pre-news data high/low, wait for an FVG on the rejection, enter on the IFVG break back inside range · SL = sweep ± 1 tick · TP = opposite liquidity (pre-news pivot). ES SMT keeps only trades where ES also reaches its mirror target within 2h30 of the release.
 

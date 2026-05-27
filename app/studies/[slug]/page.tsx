@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 import { getAllEntries, getEntry } from '@/lib/studies';
+import { eventFull, assetShort } from '@/lib/terminology';
 import { IconArrowUpRight } from '../_components/icons';
 import { AssetProvider, type AssetKey } from '../_components/AssetContext';
 import AssetPills from '../_components/AssetPills';
@@ -26,6 +27,12 @@ import { getStrategyStats, getStrategyStatsByVariant, getStrategyStatsByVariantA
 
 const EXPLORER_RE =
   /<div data-explorer="(cpi|nfp|jobless-claims|ppi|retail-sales|durable-goods|pce|nfp-ifvg-smt|cpi-ifvg-smt|ppi-ifvg-smt|retailsales-ifvg-smt|pce-ifvg-smt|gdp-ifvg-smt|joblessclaims-ifvg-smt|empirestate-ifvg-smt|employmentcostindex-ifvg-smt)">\s*<\/div>/i;
+
+/** Extract the first <p>…</p> block from an HTML string for Simple mode intro. */
+function extractFirstParagraph(html: string): string {
+  const m = html.match(/<p[\s>][\s\S]*?<\/p>/i);
+  return m ? m[0] : '';
+}
 
 const STRADDLE_BARS_KEY: Record<string, string> = {
   'cpi-day-stats': 'cpi',
@@ -204,6 +211,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
               defaultVariant: '0',
               variantLabel: 'Stop',
             }}
+            simpleModeIntroHtml={extractFirstParagraph(entry.explanationHtmlNq)}
           />
         </Suspense>
       </div>
@@ -416,6 +424,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
           dateFrom={dateFrom}
           dateTo={dateTo}
           overviewContent={straddleOverviewNode}
+          simpleModeIntroHtml={extractFirstParagraph(entry.explanationHtmlNq)}
         />
 
         {pager}
@@ -499,11 +508,11 @@ export default async function BacktestedDetail({ params }: PageProps) {
         </Link>
 
         <h1 className="v3-sub-h1">
-          <span className="v3-sub-ev">{eventLabel}</span>
+          <span className="v3-sub-ev">{eventFull(eventLabel.toLowerCase().replace(/\s+/g, '-'))}</span>
           {' · IFVG + SMT'}
         </h1>
         <p className="v3-sub-sub">
-          {assetLabel} futures · {stratStats?.releaseTime ?? '8:30 ET'} release · {dateFrom}–{dateTo} backtest
+          {assetShort(assetLabel)} futures · {stratStats?.releaseTime ?? '8:30 ET'} release · {dateFrom}–{dateTo} backtest
           {stratStats ? ` · ${stratStats.n} events` : ''}
         </p>
 
@@ -512,7 +521,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
 
         {/* V3Tabs is a client component that reads ?tab from URL and renders the KPI band + tabs */}
         <Suspense fallback={<div className="v3-tabs" style={{ height: 48 }} />}>
-          <V3Tabs slug={slug} breakdown={breakdown} breakdownOff={breakdownOff} yearBreakdown={yearBreakdown} yearBreakdownOff={yearBreakdownOff} trades={trades} tradesByVariant={tradesByVariant} tradesByVariantOff={tradesByVariantOff} statsByVariant={statsByVariant} statsByVariantAndSmt={statsByVariantAndSmt} profitableCombos={profitableCombos} dateFrom={dateFrom} dateTo={dateTo} overviewContent={overviewNode} eventShort={stratStats?.event ?? ''} asset={(stratStats?.asset?.toLowerCase() ?? 'nq') as 'nq' | 'gc' | 'es' | 'si' | 'ym'} hideKpiBand={hasTearsheet} flat={true} />
+          <V3Tabs slug={slug} breakdown={breakdown} breakdownOff={breakdownOff} yearBreakdown={yearBreakdown} yearBreakdownOff={yearBreakdownOff} trades={trades} tradesByVariant={tradesByVariant} tradesByVariantOff={tradesByVariantOff} statsByVariant={statsByVariant} statsByVariantAndSmt={statsByVariantAndSmt} profitableCombos={profitableCombos} dateFrom={dateFrom} dateTo={dateTo} overviewContent={overviewNode} eventShort={stratStats?.event ?? ''} asset={(stratStats?.asset?.toLowerCase() ?? 'nq') as 'nq' | 'gc' | 'es' | 'si' | 'ym'} hideKpiBand={hasTearsheet} flat={true} simpleModeIntroHtml={extractFirstParagraph(entry.explanationHtmlNq)} />
         </Suspense>
 
         {pager}

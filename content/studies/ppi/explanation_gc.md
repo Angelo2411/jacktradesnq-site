@@ -1,6 +1,6 @@
 ## PPI Straddle — Gold
 
-PPI on Gold is a direct inflation-driver trade — Gold reprices instantly on factory-gate inflation surprises because they feed into the broader inflation narrative. Monthly, 8:30 ET, the release hits the tape and the metal moves.
+The Producer Price Index (PPI) tracks wholesale inflation — what suppliers charge before goods reach store shelves — published monthly at 8:30 ET. This study runs a straddle on Gold (GC) futures around each PPI release: two bracket orders placed before the number drops, entering whichever side fires. Gold responds to PPI because factory-gate price surprises shift real-rate expectations, which directly moves the metal.
 
 These datas were my own tests to see which stop/TP combos perform best on Gold around PPI. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 

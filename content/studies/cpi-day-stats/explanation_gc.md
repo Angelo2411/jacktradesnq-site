@@ -1,8 +1,6 @@
 ## Article 1 — CPI Points (Gold)
 
-The PDF "CPI Points (Gold)" shows every data related to CPI releases in pts from 2016 to 2026 — 125 releases.
-
-CPI on Gold is a direct inflation trade — the metal reprices instantly on the print. Release-candle ranges are measured in pts. The full year-by-year breakdown of 1-minute release candle ranges is in the PDF below.
+This study measures how much Gold (GC) futures move at the moment the Consumer Price Index (CPI) — the US monthly inflation report — is released at 8:30 ET. Gold reprices instantly on inflation data; this dataset covers 125 releases from 2016 to 2026 so you can calibrate straddle offsets and size entries before each print. Release-candle ranges are measured in points (dollars per oz). The full year-by-year breakdown of 1-minute release candle ranges is in the PDF below.
 
 <a class="bd-btn bd-btn-secondary" href="/downloads/studies/cpi-points.pdf" download>Download — CPI Points PDF</a>
 

@@ -1,6 +1,6 @@
 ## Article 1 — FOMC Points (ES)
 
-The FOMC is released at 14:00 ET. This study measures how much ES futures travel high-to-low on the 1-minute release bar — the full top-to-bottom move during the 60 seconds of the release.
+This study measures how much S&P 500 (ES) futures move at the moment the Fed Rate Decision (FOMC) statement is released at 14:00 ET — the full high-to-low travel of the 1-minute release candle across events from 2016 to 2026.
 
 **Range 1m** = the high minus the low (in ES points) of the release-time candle.
 

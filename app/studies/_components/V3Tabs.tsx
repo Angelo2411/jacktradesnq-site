@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Fragment, useState, useMemo, useEffect } from 'react';
+import { Fragment, Suspense, useState, useMemo, useEffect } from 'react';
 import type { WeekdayBreakdown, WeekdayStats, YearBreakdown, TradeRow, StrategyStats, ProfitableCombo } from '@/lib/study-stats';
 import { MIN_DISPLAY_PF } from '@/lib/study-display-config';
 import { aggregateYearTotals } from '@/lib/year-stats-utils';
@@ -14,6 +14,8 @@ import WeekdayBars from './WeekdayBars';
 import EquityCurve from './EquityCurve';
 import DailyPnlBars from './DailyPnlBars';
 import StraddleCylinders from './StraddleCylinders';
+import ModeToggle from './ModeToggle';
+import SimpleStatBand from './SimpleStatBand';
 
 type Tab = 'overview' | 'weekday' | 'year' | 'trades' | 'methodology';
 
@@ -607,6 +609,7 @@ export default function V3Tabs({
   tradesUrl,
   flat = false,
   profitableCombos,
+  simpleModeIntroHtml,
 }: {
   slug: string;
   breakdown: WeekdayBreakdown;
@@ -632,6 +635,8 @@ export default function V3Tabs({
   tradesUrl?: string;
   flat?: boolean;
   profitableCombos?: ProfitableCombo[];
+  /** HTML string of the first paragraph — shown in Simple mode intro. */
+  simpleModeIntroHtml?: string;
 }) {
   // ── Lazy-fetch trades client-side when a URL is provided (avoids serializing
   //    large trade arrays into the static HTML payload) ──────────────────
@@ -799,8 +804,45 @@ export default function V3Tabs({
     return (VARIANT_LABELS as Record<string, string>)[variant] ?? variant;
   }, [fbo, variant]);
 
+  // ── Simple / Advanced mode ───────────────────────────────────────────
+  const isSimpleMode = searchParams.get('mode') !== 'advanced';
+
+  // Extract first paragraph of overview prose for Simple mode intro.
+  // overviewContent is a React node; we render it hidden and grab HTML
+  // only when overviewContent is a string — otherwise fall back to empty.
+  // For server-rendered HTML strings passed as dangerouslySetInnerHTML
+  // children, the parent page already converts md→HTML. We accept a
+  // pre-extracted `simpleModeIntroHtml` prop (optional); if absent we
+  // show a generic one-liner so Simple mode still works for all study types.
+  const introHtml = simpleModeIntroHtml ?? '';
+
+  if (isSimpleMode && hasTradeData) {
+    return (
+      <>
+        <SimpleStatBand
+          wr={kpi.wr}
+          pf={kpi.pf}
+          n={kpi.n}
+          net={kpi.net}
+          dateFrom={dateFrom}
+          dateTo={dateTo}
+          lookback={lookback}
+          introHtml={introHtml}
+        />
+      </>
+    );
+  }
+
+  // Advanced mode: render full experience + toggle to go back to Simple
   return (
     <>
+      {/* ── Advanced mode toggle (top, above FilterBar) ── */}
+      <div className="v3-simple-adv-bar">
+        <Suspense fallback={null}>
+          <ModeToggle />
+        </Suspense>
+      </div>
+
       {/* ── Sticky FilterBar ── */}
       {hasTradeData && (
         <div className="fb-sticky-wrap">

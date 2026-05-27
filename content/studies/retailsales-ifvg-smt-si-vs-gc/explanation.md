@@ -1,6 +1,6 @@
 # Retail Sales IFVG + GC SMT (Silver)
 
-10-year backtest of the Retail Sales release at 8:30 ET on SI (Silver) futures, using the IFVG entry pattern with GC (Gold) SMT confirmation.
+This study tests a reversal entry on Silver (SI) futures triggered by Retail Sales — the monthly consumer spending report released at 8:30 ET. After the release sweeps a pre-news level, you wait for an Inverse Fair Value Gap (IFVG) to form, then enter when price breaks back inside the range, with a Gold (GC) SMT Divergence (SMT) confirmation filter requiring both metals to agree. Tested across 10 years of SI data.
 
 ## Model
 

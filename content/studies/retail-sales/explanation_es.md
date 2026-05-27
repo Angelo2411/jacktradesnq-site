@@ -1,6 +1,6 @@
 ## Retail Sales Straddle — S&P 500 (ES)
 
-ES futures straddle around the monthly 8:30 ET Retail Sales release. Consumer spending is ~70% of GDP — when Retail Sales surprises, the broad market re-rates growth expectations, and ES moves as a bloc.
+Retail Sales is the monthly US consumer spending report, released at 8:30 ET — consumer spending drives roughly 70% of the US economy, so a big surprise moves markets. This study brackets each release with a straddle on S&P 500 (ES) futures: two orders placed above and below price before the number drops, entering whichever direction fires. ES absorbs the growth-expectations repricing across all 500 names when the consumer beats or misses.
 
 These datas were my own tests to see which stop/TP combos perform best on ES around Retail Sales. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 

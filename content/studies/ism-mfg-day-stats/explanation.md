@@ -1,6 +1,6 @@
 ## ISM Manufacturing PMI — Release Bar Range Stats
 
-The ISM Manufacturing PMI is released by Institute for Supply Management at 10:00 ET. This study measures how much NQ futures travel high-to-low on the 1-minute release bar — i.e. the full top-to-bottom move during the 60 seconds of the release.
+This study measures how much the Nasdaq 100 (NQ) moves when ISM Manufacturing (ISM Mfg) — the monthly factory-sector activity index — is released at 10:00 ET on the first business day of each month. It records the high-to-low travel of the 1-minute release candle across events from 2016 to 2026.
 
 **Range 1m** = the high minus the low (in NQ points) of the release-time candle.
 

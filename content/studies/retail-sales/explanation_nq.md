@@ -1,6 +1,6 @@
 ## Retail Sales Straddle — NQ
 
-Retail Sales is the consumer-demand pulse — monthly, 8:30 ET, and one of the few reports that can move markets independent of the inflation narrative. When the consumer surprises, NQ reprices growth expectations instantly.
+Retail Sales is the monthly US consumer spending report, released at 8:30 ET — it measures how much Americans spent at stores and online, giving a direct read on economic health. This study brackets each release with a straddle on Nasdaq 100 (NQ) futures: two orders placed above and below price before the number drops, entering whichever direction fires. A strong surprise tends to lift growth expectations and bid NQ; a miss does the opposite.
 
 These datas were my own tests to see which stop/TP combos perform best on NQ around Retail Sales. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 

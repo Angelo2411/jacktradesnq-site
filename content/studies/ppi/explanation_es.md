@@ -1,6 +1,6 @@
 ## PPI Straddle — S&P 500 (ES)
 
-ES futures straddle around the monthly 8:30 ET PPI release. The broad index absorbs PPI through the rate-expectations channel — hot producer prices tighten financial conditions, and 500 stocks reprice together.
+The Producer Price Index (PPI) measures wholesale inflation at the factory level, released monthly at 8:30 ET. This study runs a straddle on S&P 500 (ES) futures around each PPI release: two bracket orders sit above and below the market before the number drops, entering whichever direction fires. When PPI surprises, rate expectations shift and the broad index reprices across all 500 names at once.
 
 These datas were my own tests to see which stop/TP combos perform best on ES around PPI. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 

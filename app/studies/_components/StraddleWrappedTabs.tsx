@@ -5,6 +5,7 @@ import { useAsset, type AssetKey } from './AssetContext';
 import V3Tabs from './V3Tabs';
 import type { TradeRow } from '@/lib/study-stats';
 import { computeKPI, computeYearBreakdown, computeWeekdayBreakdown } from '@/lib/client-stats';
+import { assetShort, eventFull } from '@/lib/terminology';
 
 const STOP_GRIDS: Record<string, number[]> = {
   nq: [25, 30, 35, 40],
@@ -33,11 +34,11 @@ function formatNum(n: number): string {
 }
 
 const ASSET_LABEL: Record<string, string> = {
-  nq: 'NQ',
-  gc: 'GC',
-  si: 'SI',
-  ym: 'YM',
-  es: 'ES',
+  nq: assetShort('nq'),
+  gc: assetShort('gc'),
+  si: assetShort('si'),
+  ym: assetShort('ym'),
+  es: assetShort('es'),
 };
 
 export default function StraddleWrappedTabs({
@@ -49,6 +50,7 @@ export default function StraddleWrappedTabs({
   dateFrom,
   dateTo,
   overviewContent,
+  simpleModeIntroHtml,
 }: {
   slug: string;
   allTrades: Record<string, TradeRow[]>;
@@ -58,6 +60,8 @@ export default function StraddleWrappedTabs({
   dateFrom: string;
   dateTo: string;
   overviewContent: React.ReactNode;
+  /** First paragraph HTML for Simple mode — passed through to V3Tabs. */
+  simpleModeIntroHtml?: string;
 }) {
   const { asset } = useAsset();
   const assetKey = asset as string;
@@ -87,7 +91,7 @@ export default function StraddleWrappedTabs({
   return (
     <>
       <h1 className="v3-sub-h1">
-        <span className="v3-sub-ev">{eventName}</span>
+        <span className="v3-sub-ev">{eventFull(eventName.toLowerCase().replace(/\s+/g, '-'))}</span>
         {' · Straddle'}
       </h1>
       <p className="v3-sub-sub">
@@ -112,6 +116,7 @@ export default function StraddleWrappedTabs({
           filterBarOverride={filterBarOverride}
           barsSlug={barsSlug}
           flat={true}
+          simpleModeIntroHtml={simpleModeIntroHtml}
         />
       </Suspense>
     </>

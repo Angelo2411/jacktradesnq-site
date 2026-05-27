@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAsset } from './AssetContext';
+import { assetShort } from '@/lib/terminology';
 
 type SessionKey = '30min' | 'Asia' | 'London_lun' | 'NY_AM_lun' | 'NY_PM_lun';
 type YearKey = '2025' | '2026';
@@ -40,6 +41,7 @@ const LIFECYCLE_LABELS: Record<DayKey, string> = {
   'non comblé': 'Never that week',
 };
 
+/** Maps asset code -> JSON key in nwog-4asset.json (uppercase ticker) */
 const ASSET_JSON_KEY: Record<string, string> = { nq: 'NQ', gc: 'GC', es: 'ES', si: 'SI' };
 
 export default function NwogSwitcher() {

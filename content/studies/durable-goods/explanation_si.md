@@ -1,6 +1,6 @@
 ## Durable Goods Straddle — Silver
 
-Silver straddles around the monthly Durable Goods release at 8:30 ET. Silver's industrial-demand leg makes this release especially relevant — strong capex orders imply factories are heating up, and Silver's industrial consumption is a direct beneficiary.
+Durable Goods Orders (Durable Goods) measures orders for long-lasting manufactured goods — machinery, electronics, aircraft — released monthly at 8:30 ET as a read on factory and business activity. This study brackets each release with a straddle on Silver (SI) futures: two orders placed above and below price before the number drops, entering whichever side fires. Silver has a direct industrial-demand link to this report — strong capex orders mean more factory activity, which consumes silver in manufacturing processes.
 
 These datas were my own tests to see which stop/TP combos perform best on Silver futures around Durable Goods. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 

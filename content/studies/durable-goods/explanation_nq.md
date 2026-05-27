@@ -1,6 +1,6 @@
 ## Durable Goods Straddle — NQ
 
-Durable Goods Orders is the capex signal — monthly, 8:30 ET, and a direct read on business confidence. When companies commit to big-ticket equipment, it signals forward-looking optimism that reprices NQ instantly.
+Durable Goods Orders (Durable Goods) tracks orders for long-lasting manufactured goods — aircraft, machinery, electronics — released monthly at 8:30 ET as a direct read on business investment and confidence. This study brackets each release with a straddle on Nasdaq 100 (NQ) futures: two orders placed above and below price before the number drops, entering whichever direction fires. A strong surprise signals companies are spending on the future, which reprices growth expectations and moves NQ fast.
 
 These datas were my own tests to see which stop/TP combos perform best on NQ around Durable Goods. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 
