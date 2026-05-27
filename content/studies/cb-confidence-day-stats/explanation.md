@@ -1,6 +1,6 @@
 ## CB Consumer Confidence — Release Bar Range Stats
 
-The CB Consumer Confidence is released by Conference Board at 10:00 ET. This study measures how much NQ futures travel high-to-low on the 1-minute release bar — i.e. the full top-to-bottom move during the 60 seconds of the release.
+This study measures how much the Nasdaq 100 (NQ) moves when Consumer Confidence (CB Confidence) — the Conference Board's monthly sentiment survey — is released at 10:00 ET. It records the high-to-low travel of the 1-minute release candle across events from 2016 to 2026.
 
 **Range 1m** = the high minus the low (in NQ points) of the release-time candle.
 

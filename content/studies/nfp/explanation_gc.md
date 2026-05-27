@@ -1,8 +1,6 @@
 ## Article 1 — NFP Points (Gold)
 
-The PDF "NFP Points (Gold)" shows every data related to NFP releases in pts from 2016 to 2026 — 124 releases.
-
-NFP on Gold is all about the dollar reaction — a hot print tanks the dollar, Gold rips; a miss sends the dollar bid and Gold gets sold. Release-candle ranges are measured in pts. The full year-by-year breakdown is in the PDF below.
+This study measures how much Gold (GC) futures move at the moment Non-Farm Payrolls (NFP) — the US monthly jobs report — is released at 8:30 ET. A hot print tends to tank the dollar and lift Gold; a miss does the opposite — this dataset of 124 releases from 2016 to 2026 lets you size straddle entries and set expectations before each print. Release-candle ranges are measured in points (dollars per oz). The full year-by-year breakdown is in the PDF below.
 
 <a class="bd-btn bd-btn-secondary" href="/downloads/studies/nfp-points.pdf" download>Download — NFP Points PDF</a>
 

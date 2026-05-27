@@ -1,4 +1,4 @@
-ICT post-news IFVG entry on 8:30 ET NFP releases, with optional **SI SMT confirmation filter**. Tested 2016 → 2026 on GC 1m.
+This study tests a reversal entry on Gold (GC) futures triggered by Non-Farm Payrolls (NFP) — the US monthly jobs report — released at 8:30 ET. After the release sweeps a pre-news level, you wait for an Inverse Fair Value Gap (IFVG) to form, then enter when price breaks back inside the range, with an optional Silver (SI) SMT Divergence (SMT) filter requiring both metals to confirm the move. Tested across 2016–2026 on 1-minute GC data.
 
 Sweep the pre-news data high/low, wait for an FVG on the rejection, enter on the IFVG break back inside range · SL = sweep extreme + 0.10 (1 GC tick) · TP = opposite liquidity (pre-news pivot). SI SMT keeps only trades where SI also reaches its mirror target within 2h30 of the release; missing SI bars at 8:30 ET return no confirmation (not a disqualifier).
 

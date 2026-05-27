@@ -1,6 +1,6 @@
 ## Philadelphia Fed Manufacturing — Release Bar Range Stats
 
-The Philadelphia Fed Manufacturing is released by Philadelphia Fed at 08:30 ET. This study measures how much NQ futures travel high-to-low on the 1-minute release bar — i.e. the full top-to-bottom move during the 60 seconds of the release.
+This study measures how much the Nasdaq 100 (NQ) moves when the Philadelphia Fed Index (Philly Fed) — the regional manufacturing survey released the third Thursday of each month at 8:30 ET — hits. It records the high-to-low travel of the 1-minute release candle across events from 2016 to 2026.
 
 **Range 1m** = the high minus the low (in NQ points) of the release-time candle.
 
