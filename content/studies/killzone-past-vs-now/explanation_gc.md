@@ -1,4 +1,4 @@
-The following PDF shows informations about the killzone ranges for Gold (GC) futures under different conditions — measured in pts.
+The tables above show the average killzone range (in points) per month and per season for 2025–2026 — Gold (GC) futures. The PDF below adds the full 10-year breakdown by weekday, news (red folder) and holiday.
 
 ### Killzone hours (New York time, DST auto)
 

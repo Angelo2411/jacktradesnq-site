@@ -1,4 +1,4 @@
-The following PDF shows informations about the numbers of points each killzone had under different conditions.
+The tables above show the average killzone range (in points) per month and per season for 2025–2026 — NQ. The PDF below adds the full 10-year breakdown by weekday, news (red folder) and holiday.
 
 ### Killzone hours (New York time, DST auto)
 
