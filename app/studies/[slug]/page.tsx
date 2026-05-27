@@ -27,6 +27,12 @@ import { getStrategyStats, getStrategyStatsByVariant, getStrategyStatsByVariantA
 const EXPLORER_RE =
   /<div data-explorer="(cpi|nfp|jobless-claims|ppi|retail-sales|durable-goods|pce|nfp-ifvg-smt|cpi-ifvg-smt|ppi-ifvg-smt|retailsales-ifvg-smt|pce-ifvg-smt|gdp-ifvg-smt|joblessclaims-ifvg-smt|empirestate-ifvg-smt|employmentcostindex-ifvg-smt)">\s*<\/div>/i;
 
+/** Extract the first <p>…</p> block from an HTML string for Simple mode intro. */
+function extractFirstParagraph(html: string): string {
+  const m = html.match(/<p[\s>][\s\S]*?<\/p>/i);
+  return m ? m[0] : '';
+}
+
 const STRADDLE_BARS_KEY: Record<string, string> = {
   'cpi-day-stats': 'cpi',
   'nfp': 'nfp',
@@ -204,6 +210,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
               defaultVariant: '0',
               variantLabel: 'Stop',
             }}
+            simpleModeIntroHtml={extractFirstParagraph(entry.explanationHtmlNq)}
           />
         </Suspense>
       </div>
@@ -416,6 +423,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
           dateFrom={dateFrom}
           dateTo={dateTo}
           overviewContent={straddleOverviewNode}
+          simpleModeIntroHtml={extractFirstParagraph(entry.explanationHtmlNq)}
         />
 
         {pager}
@@ -512,7 +520,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
 
         {/* V3Tabs is a client component that reads ?tab from URL and renders the KPI band + tabs */}
         <Suspense fallback={<div className="v3-tabs" style={{ height: 48 }} />}>
-          <V3Tabs slug={slug} breakdown={breakdown} breakdownOff={breakdownOff} yearBreakdown={yearBreakdown} yearBreakdownOff={yearBreakdownOff} trades={trades} tradesByVariant={tradesByVariant} tradesByVariantOff={tradesByVariantOff} statsByVariant={statsByVariant} statsByVariantAndSmt={statsByVariantAndSmt} profitableCombos={profitableCombos} dateFrom={dateFrom} dateTo={dateTo} overviewContent={overviewNode} eventShort={stratStats?.event ?? ''} asset={(stratStats?.asset?.toLowerCase() ?? 'nq') as 'nq' | 'gc' | 'es' | 'si' | 'ym'} hideKpiBand={hasTearsheet} flat={true} />
+          <V3Tabs slug={slug} breakdown={breakdown} breakdownOff={breakdownOff} yearBreakdown={yearBreakdown} yearBreakdownOff={yearBreakdownOff} trades={trades} tradesByVariant={tradesByVariant} tradesByVariantOff={tradesByVariantOff} statsByVariant={statsByVariant} statsByVariantAndSmt={statsByVariantAndSmt} profitableCombos={profitableCombos} dateFrom={dateFrom} dateTo={dateTo} overviewContent={overviewNode} eventShort={stratStats?.event ?? ''} asset={(stratStats?.asset?.toLowerCase() ?? 'nq') as 'nq' | 'gc' | 'es' | 'si' | 'ym'} hideKpiBand={hasTearsheet} flat={true} simpleModeIntroHtml={extractFirstParagraph(entry.explanationHtmlNq)} />
         </Suspense>
 
         {pager}
