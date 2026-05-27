@@ -3,9 +3,92 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { StudyStats, AssetType, FamilyType } from '@/lib/study-stats';
+import { eventKeyOf } from '@/lib/event-key';
 import type { DayPlaybook } from '@/lib/today-events';
 import StudyRow from './StudyRow';
 import HubTopBar, { type SortBy } from './HubTopBar';
+
+/** Human-readable label for an event key */
+const EVENT_LABELS: Record<string, string> = {
+  cpi: 'CPI',
+  nfp: 'NFP',
+  ppi: 'PPI',
+  pce: 'PCE',
+  gdp: 'GDP',
+  fomc: 'FOMC',
+  adp: 'ADP',
+  jolts: 'JOLTS',
+  'ism-mfg': 'ISM Manufacturing',
+  'ism-services': 'ISM Services',
+  'ism-manufacturing': 'ISM Manufacturing',
+  'retail-sales': 'Retail Sales',
+  'jobless-claims': 'Jobless Claims',
+  'cb-confidence': 'CB Consumer Confidence',
+  'empire-state': 'Empire State',
+  'durable-goods': 'Durable Goods',
+  'philly-fed': 'Philly Fed',
+  'empire-state-mfg': 'Empire State Mfg',
+};
+
+function eventLabel(key: string): string {
+  if (EVENT_LABELS[key]) return EVENT_LABELS[key];
+  // Title-case fallback: replace hyphens with spaces, capitalize each word
+  return key
+    .split('-')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+}
+
+interface EventGroup {
+  key: string;
+  label: string;
+  items: StudyStats[];
+  bestPf: number;
+}
+
+function groupItems(items: StudyStats[]): Array<EventGroup | StudyStats> {
+  const groupMap = new Map<string, StudyStats[]>();
+  const singletons: StudyStats[] = [];
+
+  for (const s of items) {
+    const key = eventKeyOf(s.slug);
+    if (key === null) {
+      singletons.push(s);
+      continue;
+    }
+    const bucket = groupMap.get(key) ?? [];
+    bucket.push(s);
+    groupMap.set(key, bucket);
+  }
+
+  // Groups of size ≥2 become accordions; singletons render as-is
+  const groups: EventGroup[] = [];
+  const extraSingletons: StudyStats[] = [];
+
+  for (const [key, bucket] of groupMap.entries()) {
+    if (bucket.length >= 2) {
+      groups.push({
+        key,
+        label: eventLabel(key),
+        items: bucket,
+        bestPf: Math.max(...bucket.map((s) => s.pf)),
+      });
+    } else {
+      extraSingletons.push(...bucket);
+    }
+  }
+
+  // Sort groups by best PF descending
+  groups.sort((a, b) => b.bestPf - a.bestPf);
+
+  // Interleave: groups first, then all singletons (both the eventKeyOf-null ones
+  // and the size-1 groups) at the end, preserving their existing PF sort order
+  const allSingletons = [...singletons, ...extraSingletons].sort(
+    (a, b) => b.pf - a.pf,
+  );
+
+  return [...groups, ...allSingletons];
+}
 
 const STORAGE_KEY = 'hub-filters-v3';
 
@@ -177,19 +260,53 @@ export default function HubFilters({
         {sections.length === 0 ? (
           <p className="bd-hub-empty">No studies match your filters.</p>
         ) : (
-          sections.map(({ key, label, subtitle, items }) => (
-            <section key={key} className="bd-kind-section">
-              <div className="bd-kind-head">
-                <h2 className="bd-kind-title">{label}</h2>
-                <p className="bd-kind-subtitle">{subtitle}</p>
-              </div>
-              <div className="bd-hub-index">
-                {items.map((s) => (
-                  <StudyRow key={s.slug} s={s} />
-                ))}
-              </div>
-            </section>
-          ))
+          sections.map(({ key, label, subtitle, items }) => {
+            const grouped = groupItems(items);
+            const searchActive = filters.query.trim() !== '';
+            const groupCount = grouped.filter(
+              (g): g is EventGroup => 'key' in g && 'bestPf' in g,
+            ).length;
+            const defaultOpen = searchActive || groupCount <= 3;
+            return (
+              <section key={key} className="bd-kind-section">
+                <div className="bd-kind-head">
+                  <h2 className="bd-kind-title">{label}</h2>
+                  <p className="bd-kind-subtitle">{subtitle}</p>
+                </div>
+                <div className="bd-hub-index">
+                  {grouped.map((entry) => {
+                    if ('slug' in entry) {
+                      // singleton StudyStats
+                      return <StudyRow key={entry.slug} s={entry} />;
+                    }
+                    // EventGroup accordion
+                    const g = entry as EventGroup;
+                    return (
+                      <details
+                        key={g.key}
+                        className="bd-evt"
+                        open={defaultOpen || undefined}
+                      >
+                        <summary className="bd-evt-head">
+                          <span className="bd-evt-name">{g.label}</span>
+                          <span className="bd-evt-meta">
+                            {g.items.length} variants · best PF{' '}
+                            <span className="bd-evt-pf">{g.bestPf.toFixed(2)}</span>
+                          </span>
+                          <span className="bd-evt-chevron" aria-hidden="true">›</span>
+                        </summary>
+                        <div className="bd-evt-body">
+                          {g.items.map((s) => (
+                            <StudyRow key={s.slug} s={s} />
+                          ))}
+                        </div>
+                      </details>
+                    );
+                  })}
+                </div>
+              </section>
+            );
+          })
         )}
       </main>
     </>
