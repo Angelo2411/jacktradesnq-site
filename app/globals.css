@@ -3725,6 +3725,19 @@ a { color: inherit; text-decoration: none; }
   .v3-day-cards { grid-template-columns: repeat(2, 1fr); }
   .v3-wd-grid   { grid-template-columns: repeat(2, 1fr); }
   .v3-main { padding: 20px 16px 56px; }
+  /* RESIDUAL #1 — align filter bar bleed to 16px padding (was -20px → 4px overshoot) */
+  .fb-sticky-wrap {
+    margin-left: -16px;
+    margin-right: -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+/* RESIDUAL #2 — calendar 1-col under 360px (iPhone SE 320px: 2-col = 143px → content overflows) */
+@media (max-width: 360px) {
+  .v3-day-cards { grid-template-columns: 1fr; }
+  .v3-wd-grid   { grid-template-columns: 1fr; }
 }
 
 /* Methodology doc page */
