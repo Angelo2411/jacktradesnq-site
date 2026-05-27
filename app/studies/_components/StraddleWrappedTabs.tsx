@@ -49,6 +49,7 @@ export default function StraddleWrappedTabs({
   dateFrom,
   dateTo,
   overviewContent,
+  simpleModeIntroHtml,
 }: {
   slug: string;
   allTrades: Record<string, TradeRow[]>;
@@ -58,6 +59,8 @@ export default function StraddleWrappedTabs({
   dateFrom: string;
   dateTo: string;
   overviewContent: React.ReactNode;
+  /** First paragraph HTML for Simple mode — passed through to V3Tabs. */
+  simpleModeIntroHtml?: string;
 }) {
   const { asset } = useAsset();
   const assetKey = asset as string;
@@ -112,6 +115,7 @@ export default function StraddleWrappedTabs({
           filterBarOverride={filterBarOverride}
           barsSlug={barsSlug}
           flat={true}
+          simpleModeIntroHtml={simpleModeIntroHtml}
         />
       </Suspense>
     </>
