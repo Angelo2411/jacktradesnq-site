@@ -1,6 +1,8 @@
 # FOMC IFVG + SI SMT (Gold)
 
-This study tests a reversal entry on Gold (GC) futures triggered by Fed Rate Decision (FOMC) statements released at 14:00 ET. After the release bar sweeps a level, you wait for an Inverse Fair Value Gap (IFVG) to form, then enter when price breaks back inside the range, with a Silver (SI) SMT Divergence (SMT) confirmation filter. Tested across 10 years of GC data.
+The FOMC statement drops at 14:00 ET. The release bar usually manipulates one side of the pre-news range, then distributes in the real direction: it runs the stops sitting above or below, then reverses.
+
+This study uses the pre-news high and low as targets, traded on Gold (GC). Price sweeps one side, leaves an Inverse Fair Value Gap (IFVG) on the rejection, and you enter when it breaks back inside the range, aiming for the opposite side's liquidity. An optional Silver (SI) SMT filter only keeps the trade when silver confirms the same move. Tested on 1-minute Gold data, 2016 to 2026.
 
 ## Model
 

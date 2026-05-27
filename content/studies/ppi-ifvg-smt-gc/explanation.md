@@ -1,6 +1,8 @@
 # PPI IFVG + SI SMT (Gold)
 
-This study tests a reversal entry on Gold (GC) futures triggered by Producer Price Index (PPI) — the wholesale inflation report — at 8:30 ET. After the release sweeps a pre-news level, you wait for an Inverse Fair Value Gap (IFVG) to form, then enter when price breaks back inside the range, with a Silver (SI) SMT Divergence (SMT) confirmation filter. Tested across 10 years of GC data.
+PPI — the wholesale inflation report — drops at 8:30 ET. The release usually manipulates one side of the pre-news range, then distributes in the real direction: it runs the stops above or below, then reverses.
+
+This study uses the pre-news high and low as targets, traded on Gold (GC). Price sweeps one side, leaves an Inverse Fair Value Gap (IFVG) on the rejection, and you enter when it breaks back inside the range, aiming for the opposite side's liquidity. An optional Silver (SI) SMT filter only keeps the trade when silver confirms the same move. Tested on 1-minute Gold data, 2016 to 2026.
 
 ## Model
 
