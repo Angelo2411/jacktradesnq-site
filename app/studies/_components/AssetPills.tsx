@@ -1,13 +1,14 @@
 'use client';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAsset, type AssetKey } from './AssetContext';
+import { assetShort } from '@/lib/terminology';
 
 const LABELS: Record<AssetKey, string> = {
-  nq: 'NQ',
-  gc: 'GC',
-  si: 'SI',
-  ym: 'YM',
-  es: 'ES',
+  nq: assetShort('nq'),
+  gc: assetShort('gc'),
+  si: assetShort('si'),
+  ym: assetShort('ym'),
+  es: assetShort('es'),
 };
 
 // Studies that switch asset in-place (one slug, asset chosen via ?asset=)

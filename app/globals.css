@@ -5267,3 +5267,16 @@ a { color: inherit; text-decoration: none; }
   justify-content: flex-end;
   padding: 0 0 12px;
 }
+
+/* ============================================================
+   AGENT-GLOSSARY: .gloss — inline tooltip for trading terms
+   Contract section B. Uses existing OKLCH tokens. No new color.
+   ============================================================ */
+.gloss {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--c-muted, oklch(0.55 0.01 250));
+  cursor: help;
+  font-style: normal;
+}

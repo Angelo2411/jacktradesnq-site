@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAsset } from './AssetContext';
+import { assetLabel as getAssetLabel } from '@/lib/terminology';
 
 type KillzoneKey = 'Asia' | 'London' | 'NY AM' | 'NY PM';
 
@@ -69,7 +70,7 @@ export default function KillzoneSwitcher() {
     );
   }
 
-  const assetLabel = asset === 'gc' ? 'Gold (GC)' : asset === 'es' ? 'S&P 500 (ES)' : 'Nasdaq (NQ)';
+  const assetLabel = getAssetLabel(asset);
   const unit = 'pts';
 
   return (
