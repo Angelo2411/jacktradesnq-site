@@ -14,7 +14,7 @@ export default function BacktestedLayout({
   const allSlugs = getAllStudyStats().map((s) => s.slug);
 
   return (
-    <AssetProvider assets={['nq', 'gc', 'si', 'ym', 'es']}>
+    <AssetProvider assets={['nq', 'gc', 'si', 'es']}>
     <div className="bd-root">
       {/* Topbar */}
       <header className="v3-topbar">

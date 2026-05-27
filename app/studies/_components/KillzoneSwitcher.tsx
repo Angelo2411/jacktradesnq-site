@@ -69,7 +69,7 @@ export default function KillzoneSwitcher() {
     );
   }
 
-  const assetLabel = asset === 'gc' ? 'Gold (GC)' : 'Nasdaq (NQ)';
+  const assetLabel = asset === 'gc' ? 'Gold (GC)' : asset === 'es' ? 'S&P 500 (ES)' : 'Nasdaq (NQ)';
   const unit = 'pts';
 
   return (
