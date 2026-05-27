@@ -1,4 +1,4 @@
-ICT post-news IFVG entry on 8:30 ET GDP **advance releases** (1 per quarter, Jan/Apr/Jul/Oct). Tested 2016 → 2026 on GC 1m. 2nd and 3rd estimate releases are excluded — only the advance produces a clean market reaction. SI SMT filter is currently disabled on this study (SI data unavailable when this study was re-run on advance-only events).
+This study tests a reversal entry on Gold (GC) futures triggered by the Gross Domestic Product (GDP) advance release — one print per quarter at 8:30 ET, the only estimate that consistently moves markets. After the release sweeps a pre-news level, you wait for an Inverse Fair Value Gap (IFVG) to form, then enter when price breaks back inside the range. Tested across 2016–2026 on 1-minute GC data; Silver (SI) SMT Divergence (SMT) filter is disabled on this variant due to data availability.
 
 Sweep the pre-news data high/low, wait for an FVG on the rejection, enter on the IFVG break back inside range · SL = sweep extreme + 0.10 (1 GC tick) · TP = opposite liquidity (pre-news pivot). The widget reports the baseline IFVG numbers only — toggle SI SMT off to read the results.
 

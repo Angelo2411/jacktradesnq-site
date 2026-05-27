@@ -1,6 +1,6 @@
 ## Article 1 — NFP Points
 
-The PDF "NFP Points" shows every data related to NFP in terms of points from 2016 to 2026. Sample size: **102 releases** with valid 1-minute NQ bar data.
+This study measures how violently the Nasdaq 100 (NQ) futures market moves at the moment Non-Farm Payrolls (NFP) — the US monthly jobs report — is released at 8:30 ET. It records the high-to-low travel of the 1-minute candle at release time across 102 events from 2016 to 2026, so you can size straddle entries and set expectations before each print.
 
 ### Year-by-Year — Release Candle Range (1m, 8:30 ET)
 

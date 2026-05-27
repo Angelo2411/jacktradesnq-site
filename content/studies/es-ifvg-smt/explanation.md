@@ -1,4 +1,4 @@
-ICT post-news IFVG entry across 17 red-folder releases (CPI, NFP, PPI, RetailSales, PCE, GDP, JoblessClaims, EmpireState, ECI, FOMC, ADP, JOLTS, ISM Mfg, ISM Services, CB Confidence, Philly Fed, Durable Goods), with optional **NQ SMT confirmation filter**. Tested 2016 → 2026 on ES 1m.
+This study tests a reversal entry on S&P 500 (ES) futures across 17 major economic releases — Consumer Price Index (CPI), Non-Farm Payrolls (NFP), Producer Price Index (PPI), Retail Sales, PCE Inflation (PCE), Gross Domestic Product (GDP), Jobless Claims, and more. After each release sweeps a pre-news level, you wait for an Inverse Fair Value Gap (IFVG) to form, then enter when price breaks back inside the range, with an optional Nasdaq 100 (NQ) SMT Divergence (SMT) filter. Tested across 2016–2026 on 1-minute ES data.
 
 ### Setup Logic
 

@@ -1,6 +1,6 @@
 ## Article 1 — Durable Goods Points (GC)
 
-The Durable Goods is released at 8:30 ET. This study measures how much GC (Gold) futures travel high-to-low on the 1-minute release bar — the full top-to-bottom move during the 60 seconds of the release.
+This study measures how much Gold (GC) futures move when Durable Goods Orders — the monthly report on long-lived goods manufacturing — is released at 8:30 ET. It records the high-to-low travel of the 1-minute release candle across events from 2016 to 2026.
 
 **Range 1m** = the high minus the low (in GC points / dollars per oz) of the release-time candle.
 

@@ -1,6 +1,6 @@
 ## Article 1 — CPI Points
 
-The PDF "CPI Points" shows every data related to CPI in terms of points from 2016 to 2026.
+This study measures how violently the Nasdaq 100 (NQ) futures market moves at the moment the Consumer Price Index (CPI) — the US monthly inflation report — is released at 8:30 ET. It records the high-to-low travel of the 1-minute candle at release time, across every event from 2016 to 2026, so you can size straddle entries and set expectations before each print.
 
 ### Year-by-Year — Release Candle Range (1m, 8:30 ET)
 

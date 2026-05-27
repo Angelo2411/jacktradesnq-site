@@ -1,6 +1,6 @@
 # NFP IFVG + NQ SMT — ES (S&P 500 Futures)
 
-ES backtest of the IFVG-SMT reversal strategy on Non-Farm Payrolls events.
+This study tests a reversal entry on S&P 500 (ES) futures triggered by Non-Farm Payrolls (NFP) — the US monthly jobs report — at 8:30 ET. After the release sweeps a pre-news level, you wait for an Inverse Fair Value Gap (IFVG) to form, then enter when price breaks back inside the range, with an optional Nasdaq 100 (NQ) SMT Divergence (SMT) filter. Tested across 2016–2026 on 1-minute ES data.
 
 **Asset**: ES (S&P 500 E-mini futures, tick size 0.25 pt)
 **SMT partner**: NQ (Nasdaq E-mini futures)

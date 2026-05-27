@@ -1,6 +1,6 @@
 # GDP IFVG + SI SMT (Gold)
 
-10-year backtest of the GDP release at 8:30 ET on GC futures, using the IFVG entry pattern with SI (Silver) SMT confirmation.
+This study tests a reversal entry on Gold (GC) futures triggered by the Gross Domestic Product (GDP) advance release — one print per quarter at 8:30 ET. After the release sweeps a pre-news level, you wait for an Inverse Fair Value Gap (IFVG) to form, then enter when price breaks back inside the range, with a Silver (SI) SMT Divergence (SMT) confirmation filter. Tested across 10 years of GC data.
 
 ## Model
 

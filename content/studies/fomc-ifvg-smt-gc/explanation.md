@@ -1,6 +1,6 @@
 # FOMC IFVG + SI SMT (Gold)
 
-10-year backtest of the FOMC statement at 14:00 ET on GC futures, using the IFVG entry pattern with SI (Silver) SMT confirmation.
+This study tests a reversal entry on Gold (GC) futures triggered by Fed Rate Decision (FOMC) statements released at 14:00 ET. After the release bar sweeps a level, you wait for an Inverse Fair Value Gap (IFVG) to form, then enter when price breaks back inside the range, with a Silver (SI) SMT Divergence (SMT) confirmation filter. Tested across 10 years of GC data.
 
 ## Model
 

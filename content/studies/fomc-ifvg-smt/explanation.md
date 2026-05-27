@@ -1,4 +1,4 @@
-ICT post-news IFVG entry on 14:00 ET FOMC statements, with optional **ES SMT confirmation filter**. Tested 2016 → 2026 on NQ 1m.
+This study tests a reversal entry on Nasdaq 100 (NQ) futures triggered by Fed Rate Decision (FOMC) statements released at 14:00 ET. After the release bar sweeps a level, you wait for an Inverse Fair Value Gap (IFVG) to form, then enter when price breaks back inside the range, with an optional S&P 500 (ES) SMT Divergence (SMT) filter keeping only trades where both indices agree. Tested across 2016–2026 on 1-minute NQ data.
 
 Sweep the release-bar high/low (14:00 ET 1m candle), wait for an FVG on the rejection, enter on the IFVG break back inside range · SL = sweep ± 1 tick · TP = opposite liquidity (release-bar pivot). ES SMT keeps only trades where ES also reaches its mirror target within the 14:01-17:00 ET sweep window.
 
