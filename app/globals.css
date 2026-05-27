@@ -3897,6 +3897,14 @@ a { color: inherit; text-decoration: none; }
 .v3-tr-row td:last-child { text-align: right; }
 .v3-tr-row:last-child td { border-bottom: none; }
 .v3-tr-row:hover td { background: var(--c-surface-hover); }
+/* Mobile: drop the redundant Outcome column (PnL sign + colour already convey win/loss)
+   and tighten cell padding so Date · Side · PnL fit cleanly without horizontal scroll. */
+@media (max-width: 520px) {
+  .v3-tr-table thead th:last-child,
+  .v3-tr-row td:last-child { display: none; }
+  .v3-tr-table thead th,
+  .v3-tr-row td { padding-left: 12px; padding-right: 12px; }
+}
 .v3-tr-date {
   font-family: var(--f-sans);
   font-size: 0.8rem;
