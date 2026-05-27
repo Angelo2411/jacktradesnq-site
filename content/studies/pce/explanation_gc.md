@@ -1,6 +1,6 @@
 ## PCE Core Straddle — Gold
 
-PCE Core on Gold is the highest-stakes inflation trade on the calendar. When the Fed's favorite inflation gauge prints hot, real rates shift and Gold reprices violently — the metal is the purest expression of the PCE surprise.
+PCE Inflation (PCE) is the Federal Reserve's preferred inflation gauge, released monthly at 8:30 ET — it directly shapes interest rate expectations and moves Gold (GC) hard when it surprises. This study runs a straddle around each PCE release: two bracket orders sit above and below price before the number drops, taking whichever direction fires. Gold is particularly sensitive to PCE because the metal prices real rates, and the Fed's reaction to this print determines whether those rates tighten or ease.
 
 These datas were my own tests to see which stop/TP combos perform best on Gold around PCE. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 

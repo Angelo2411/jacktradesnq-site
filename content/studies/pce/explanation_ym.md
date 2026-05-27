@@ -1,6 +1,6 @@
 ## PCE Core Straddle — Dow (YM)
 
-YM futures straddle around the monthly 8:30 ET PCE Core release. The Dow's composition — industrials, financials, cyclicals — means PCE hits through the cost-of-capital channel: tighter policy on a hot print raises borrowing costs across the Dow's capital-intensive names.
+PCE Inflation (PCE) is the Federal Reserve's preferred inflation gauge, released monthly at 8:30 ET — a surprise print shifts the rate path and reprices equity markets immediately. This study brackets each PCE release with a straddle on Dow Jones (YM) futures: two orders placed above and below price before the number drops, entering whichever direction fires. The Dow's heavy weighting in industrials and financials makes it particularly sensitive to the cost-of-capital shift that follows a hot or cold PCE print.
 
 These datas were my own tests to see which stop/TP combos perform best on YM around PCE. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 

@@ -1,6 +1,6 @@
 ## PPI Straddle — Dow (YM)
 
-YM futures straddle around the monthly 8:30 ET PPI release. The Dow's old-economy tilt — industrials, materials, energy — makes PPI especially relevant: higher input costs squeeze margins, and YM reflects that pain directly.
+The Producer Price Index (PPI) measures wholesale inflation — what factories charge before goods reach the consumer — released monthly at 8:30 ET. This study runs a straddle on Dow Jones (YM) futures around each PPI release: two bracket orders sit above and below price before the number drops, entering whichever direction fires. The Dow's heavy industrial and materials composition makes it especially sensitive to factory-gate cost surprises.
 
 These datas were my own tests to see which stop/TP combos perform best on YM around PPI. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 

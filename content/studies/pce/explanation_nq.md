@@ -1,6 +1,6 @@
 ## PCE Core Straddle — NQ
 
-PCE Core is the Fed's preferred inflation gauge — monthly, 8:30 ET, and the single data point that most directly shapes rate-path expectations. When PCE surprises, the entire curve reprices, and NQ moves with it.
+PCE Inflation (PCE) is the Federal Reserve's preferred measure of inflation, released monthly at 8:30 ET — when it surprises, the Fed's rate path shifts and markets move fast. This study brackets each PCE release with a straddle: two orders placed above and below the Nasdaq 100 (NQ) price before the number drops, entering whichever direction fires. Because the Fed watches PCE more closely than any other inflation print, the reaction on NQ tends to be sharp and decisive.
 
 These datas were my own tests to see which stop/TP combos perform best on NQ around PCE. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 

@@ -1,6 +1,6 @@
 ## PPI Straddle — Silver
 
-Silver straddles around the monthly PPI release at 8:30 ET. Silver's dual identity — both a precious metal and an industrial commodity — means PPI hits it from both angles: inflation-hedge demand plus factory-input cost signals.
+The Producer Price Index (PPI) tracks wholesale inflation — what manufacturers pay before goods reach consumers — released monthly at 8:30 ET. This study runs a straddle on Silver (SI) futures around each PPI release: two bracket orders placed above and below price before the number drops, entering whichever side fires. Silver reacts to PPI through two channels at once — as an inflation hedge and as an industrial metal tied to factory activity.
 
 These datas were my own tests to see which stop/TP combos perform best on Silver futures around PPI. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 

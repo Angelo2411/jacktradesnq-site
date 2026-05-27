@@ -1,6 +1,6 @@
 ## PCE Core Straddle — S&P 500 (ES)
 
-ES futures straddle around the monthly 8:30 ET PCE Core release. As the Fed's primary inflation compass, PCE is the single release most likely to move the entire rate curve — and ES, as the broadest equity benchmark, absorbs that repricing across all 500 names.
+PCE Inflation (PCE) is the Federal Reserve's preferred inflation gauge, released monthly at 8:30 ET — it shapes rate expectations more directly than any other inflation print. This study runs a straddle on S&P 500 (ES) futures around each PCE release: two bracket orders placed above and below price before the number drops, entering whichever direction fires. As the broadest US equity benchmark, ES absorbs the rate-path repricing across all 500 names simultaneously.
 
 These datas were my own tests to see which stop/TP combos perform best on ES around PCE. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 

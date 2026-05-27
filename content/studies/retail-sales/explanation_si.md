@@ -1,6 +1,6 @@
 ## Retail Sales Straddle — Silver
 
-Silver straddles around the monthly Retail Sales release at 8:30 ET. Silver's industrial-demand leg means strong retail sales — implying strong manufacturing — can be directly bullish for the metal, separate from the rate channel.
+Retail Sales is the monthly US consumer spending report, released at 8:30 ET — strong numbers signal economic expansion, weak numbers raise slowdown fears. This study brackets each release with a straddle on Silver (SI) futures: two orders placed above and below price before the number drops, entering whichever side fires. Silver reacts through two channels — industrial demand tied to manufacturing activity, and safe-haven flows when the data disappoints.
 
 These datas were my own tests to see which stop/TP combos perform best on Silver futures around Retail Sales. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 
