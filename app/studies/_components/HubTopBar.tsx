@@ -49,7 +49,7 @@ export default function HubTopBar({
       {/* Asset toggle */}
       <div className="bd-hub-topbar-group">
         <div className="bd-flt-asset-toggle bd-flt-asset-toggle--inline">
-          {(['All', 'NQ', 'ES', 'YM', 'GC', 'SI'] as AssetFilter[]).map((a) => (
+          {(['All', 'NQ', 'ES', 'GC', 'SI'] as AssetFilter[]).map((a) => (
             <button
               key={a}
               className={`bd-flt-asset-btn${asset === a ? ' on' : ''}`}

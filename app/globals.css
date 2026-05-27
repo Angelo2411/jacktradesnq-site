@@ -3708,6 +3708,38 @@ a { color: inherit; text-decoration: none; }
   .v3-hero-h1 { font-size: 2rem; }
 }
 
+/* ── Mobile fixes (375-520px) ────────────────────────────────────────────── */
+/* BUG #1 — topbar overflow: reduce padding/gap, hide redundant home link */
+@media (max-width: 600px) {
+  .v3-topbar {
+    padding: 12px 16px;
+    gap: 12px;
+  }
+  .v3-home-link {
+    display: none;
+  }
+}
+
+/* BUG #2 — calendar/weekday grids: 3-col too tight at 375px */
+@media (max-width: 520px) {
+  .v3-day-cards { grid-template-columns: repeat(2, 1fr); }
+  .v3-wd-grid   { grid-template-columns: repeat(2, 1fr); }
+  .v3-main { padding: 20px 16px 56px; }
+  /* RESIDUAL #1 — align filter bar bleed to 16px padding (was -20px → 4px overshoot) */
+  .fb-sticky-wrap {
+    margin-left: -16px;
+    margin-right: -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+/* RESIDUAL #2 — calendar 1-col under 360px (iPhone SE 320px: 2-col = 143px → content overflows) */
+@media (max-width: 360px) {
+  .v3-day-cards { grid-template-columns: 1fr; }
+  .v3-wd-grid   { grid-template-columns: 1fr; }
+}
+
 /* Methodology doc page */
 .v3-divider { border: none; border-top: 1px solid var(--c-border); margin: 28px 0 36px; }
 .v3-doc-section { max-width: 68ch; margin-bottom: 44px; }
@@ -3865,6 +3897,14 @@ a { color: inherit; text-decoration: none; }
 .v3-tr-row td:last-child { text-align: right; }
 .v3-tr-row:last-child td { border-bottom: none; }
 .v3-tr-row:hover td { background: var(--c-surface-hover); }
+/* Mobile: drop the redundant Outcome column (PnL sign + colour already convey win/loss)
+   and tighten cell padding so Date · Side · PnL fit cleanly without horizontal scroll. */
+@media (max-width: 520px) {
+  .v3-tr-table thead th:last-child,
+  .v3-tr-row td:last-child { display: none; }
+  .v3-tr-table thead th,
+  .v3-tr-row td { padding-left: 12px; padding-right: 12px; }
+}
 .v3-tr-date {
   font-family: var(--f-sans);
   font-size: 0.8rem;
@@ -4995,4 +5035,95 @@ a { color: inherit; text-decoration: none; }
   .bd-root .bd-row { grid-template-columns: 1fr auto; gap: 4px 16px; }
   .bd-root .bd-row-kicker { grid-column: 1 / -1; }
   .bd-root .bd-row-arrow { display: none; }
+}
+
+/* ── Event accordion (.bd-evt) ── */
+.bd-root .bd-evt {
+  border-top: 1px solid var(--c-border-soft);
+}
+.bd-root .bd-evt:last-child {
+  border-bottom: 1px solid var(--c-border-soft);
+}
+.bd-root .bd-evt summary { list-style: none; }
+.bd-root .bd-evt summary::-webkit-details-marker { display: none; }
+
+.bd-root .bd-evt-head {
+  display: grid;
+  grid-template-columns: 1fr auto 20px;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 8px;
+  cursor: pointer;
+  user-select: none;
+  transition: background .15s ease, padding-left .15s ease;
+}
+.bd-root .bd-evt-head:hover {
+  background: var(--c-surface-card);
+  padding-left: 16px;
+}
+.bd-root .bd-evt-head:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: -2px;
+  border-radius: 4px;
+}
+
+.bd-root .bd-evt-name {
+  font-family: var(--f-serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--c-ink);
+}
+.bd-root .bd-evt-meta {
+  font-family: var(--f-mono, "JetBrains Mono", ui-monospace, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+  white-space: nowrap;
+}
+.bd-root .bd-evt-pf {
+  color: var(--c-accent);
+  font-weight: 700;
+}
+.bd-root .bd-evt-chevron {
+  font-size: 1.1rem;
+  color: var(--c-muted);
+  transition: transform .2s ease, color .15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bd-root .bd-evt[open] .bd-evt-chevron {
+  transform: rotate(90deg);
+  color: var(--c-accent);
+}
+.bd-root .bd-evt-head:hover .bd-evt-chevron {
+  color: var(--c-accent);
+}
+
+.bd-root .bd-evt-body {
+  /* indent rows slightly to visually nest under the accordion header */
+  padding-left: 0;
+}
+/* first row inside accordion loses the duplicate top border */
+.bd-root .bd-evt-body .bd-row:first-child {
+  border-top: none;
+}
+
+@media (max-width: 640px) {
+  .bd-root .bd-evt-head {
+    grid-template-columns: 1fr auto 20px;
+    gap: 8px;
+  }
+  .bd-root .bd-evt-count { display: none; }
+  .bd-root .bd-evt-meta {
+    display: flex;
+    align-items: center;
+    font-size: 0.7rem;
+    white-space: nowrap;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bd-root .bd-evt-chevron { transition: none; }
 }

@@ -443,6 +443,15 @@ const CSS = `
 .jtnq-home .hero-foot .meta-l{ justify-self: start; }
 .jtnq-home .hero-foot .meta-r{ justify-self: end; }
 
+@media (max-width: 640px){
+  .jtnq-home .hero-content{ padding: 0 var(--pad-x); }
+  .jtnq-home .wordmark{ font-size: clamp(38px, 12.5vw, 88px); letter-spacing: -0.02em; }
+  .jtnq-home .hero-canvas{
+    -webkit-mask-image: radial-gradient(ellipse 58% 30% at 50% 50%, transparent 0%, transparent 24%, rgba(0,0,0,.55) 52%, #000 74%);
+    mask-image: radial-gradient(ellipse 58% 30% at 50% 50%, transparent 0%, transparent 24%, rgba(0,0,0,.55) 52%, #000 74%);
+  }
+}
+
 .jtnq-home .hub{
   max-width: var(--maxw); margin: 0 auto;
   padding: clamp(56px, 8vw, 96px) var(--pad-x) clamp(48px, 6vw, 72px);
