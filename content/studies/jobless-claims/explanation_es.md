@@ -1,6 +1,6 @@
 ## Jobless Claims Straddle — S&P 500 (ES)
 
-ES futures straddle around the 8:30 ET Thursday jobless claims release. The S&P's broad-market composition — 500 names across all sectors — makes it the benchmark for how labor data hits risk appetite. Wider participation, more measured moves than NQ.
+Jobless Claims (weekly US unemployment filings) drops every Thursday at 8:30 ET — the most frequent labor market data point on the calendar, published weekly rather than monthly. This study brackets each release with a straddle on S&P 500 (ES) futures: two orders placed above and below price before the number drops, entering whichever direction fires. ES captures how labor data hits broad risk appetite across all 500 names, with generally more measured moves than the tech-heavy Nasdaq.
 
 These datas were my own tests to see which stop/TP combos perform best on ES around jobless claims. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 

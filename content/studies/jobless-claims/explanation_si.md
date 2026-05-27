@@ -1,6 +1,6 @@
 ## Jobless Claims Straddle — Silver
 
-Silver straddles around the weekly jobless claims release — 8:30 ET every Thursday. Silver amplifies the same dollar-reaction dynamic as Gold but with wider ranges and lower liquidity, so the backtest profile is different.
+Jobless Claims (weekly US unemployment filings) drops every Thursday at 8:30 ET — a high reading signals labor market weakness, a low reading signals strength, and both move metals through the dollar channel. This study brackets each release with a straddle on Silver (SI) futures: two orders placed above and below price before the number drops, entering whichever side fires. Silver amplifies the same dollar-reaction as Gold but with wider ranges and thinner liquidity, producing a different backtest profile.
 
 These datas were my own tests to see which stop/TP combos perform best on Silver futures around jobless claims. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 

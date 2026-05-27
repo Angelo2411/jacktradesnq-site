@@ -1,6 +1,6 @@
 ## Jobless Claims Straddle — Gold
 
-Jobless Claims on Gold is a weekly dollar-reaction trade. A hot print sends the dollar bid and Gold gets sold; a miss weakens the dollar and Gold rips. The sample size dwarfs monthly releases — more events, more reps.
+Jobless Claims (weekly US unemployment filings) hits every Thursday at 8:30 ET — a surprisingly high number means the labor market is weakening, a low number signals strength, and both move Gold (GC). This study brackets each release with a straddle: two orders placed above and below price before the number drops, entering whichever side fires. Because it's weekly rather than monthly, the backtest accumulates far more trade samples than any other event on the calendar.
 
 These datas were my own tests to see which stop/TP combos perform best on Gold around the 8:30 ET jobless claims release. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 

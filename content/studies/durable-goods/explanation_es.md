@@ -1,6 +1,6 @@
 ## Durable Goods Straddle — S&P 500 (ES)
 
-ES futures straddle around the monthly 8:30 ET Durable Goods release. The broad index captures the capex signal through industrials, tech, and materials — three sectors that reprice immediately on business-spending data.
+Durable Goods Orders (Durable Goods) measures orders for long-lasting manufactured goods — machinery, electronics, aircraft — released monthly at 8:30 ET as a direct read on business investment confidence. This study brackets each release with a straddle on S&P 500 (ES) futures: two orders placed above and below price before the number drops, entering whichever direction fires. The broad index captures the capex signal through industrials, tech, and materials sectors that reprice immediately on business-spending surprises.
 
 These datas were my own tests to see which stop/TP combos perform best on ES around Durable Goods. I remind you guys that these datas are gathered with AI and this is **NOT financial advice** — datas could be wrong, so backtest yourself.
 
