@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 import { getAllEntries, getEntry } from '@/lib/studies';
+import { eventFull, assetShort } from '@/lib/terminology';
 import { IconArrowUpRight } from '../_components/icons';
 import { AssetProvider, type AssetKey } from '../_components/AssetContext';
 import AssetPills from '../_components/AssetPills';
@@ -507,11 +508,11 @@ export default async function BacktestedDetail({ params }: PageProps) {
         </Link>
 
         <h1 className="v3-sub-h1">
-          <span className="v3-sub-ev">{eventLabel}</span>
+          <span className="v3-sub-ev">{eventFull(eventLabel.toLowerCase().replace(/\s+/g, '-'))}</span>
           {' · IFVG + SMT'}
         </h1>
         <p className="v3-sub-sub">
-          {assetLabel} futures · {stratStats?.releaseTime ?? '8:30 ET'} release · {dateFrom}–{dateTo} backtest
+          {assetShort(assetLabel)} futures · {stratStats?.releaseTime ?? '8:30 ET'} release · {dateFrom}–{dateTo} backtest
           {stratStats ? ` · ${stratStats.n} events` : ''}
         </p>
 
