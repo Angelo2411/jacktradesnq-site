@@ -1,6 +1,9 @@
+import Link from 'next/link';
 import { Suspense } from 'react';
 import { getAllStudyStats, getDistinctEventCount } from '@/lib/study-stats';
 import { getWeeklyPlaybook } from '@/lib/today-events';
+import { eventKeyOf } from '@/lib/event-key';
+import { eventFull } from '@/lib/terminology';
 import HubFilters from './_components/HubFilters';
 import BasicsBanner from './_components/BasicsBanner';
 
@@ -12,6 +15,18 @@ export default function BacktestedHub() {
   const assets = [...new Set(studies.map((s) => s.asset))].length;
   const count = studies.length;
   const eventCount = getDistinctEventCount(studies);
+
+  // Strongest edges: best honest strategy per event (n ≥ 10, real PF), top 3 by PF.
+  const topEdges = (() => {
+    const byEvent = new Map<string, (typeof studies)[number]>();
+    for (const s of studies) {
+      if (s.kind !== 'strategy' || s.n < 10 || s.pf <= 0 || s.pf >= 99) continue;
+      const k = eventKeyOf(s.slug) ?? s.slug;
+      const cur = byEvent.get(k);
+      if (!cur || s.pf > cur.pf) byEvent.set(k, s);
+    }
+    return [...byEvent.values()].sort((a, b) => b.pf - a.pf).slice(0, 3);
+  })();
 
   const today = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
@@ -54,6 +69,33 @@ export default function BacktestedHub() {
           </div>
         </div>
       </header>
+
+      {topEdges.length > 0 && (
+        <section className="idx-top" aria-label="Strongest edges">
+          <h2 className="idx-top-h">Strongest edges</h2>
+          <div className="idx-top-grid">
+            {topEdges.map((s) => {
+              const label = eventFull(eventKeyOf(s.slug) ?? s.slug);
+              return (
+                <Link key={s.slug} href={s.href ?? `/studies/${s.slug}/`} className="idx-edge">
+                  <div className="idx-edge-row">
+                    <span className="idx-edge-ev">{label}</span>
+                    <span className="idx-edge-asset">{s.asset}</span>
+                  </div>
+                  <div className="idx-edge-pf">
+                    <span className="idx-edge-pf-val">{s.pf.toFixed(2)}</span>
+                    <span className="idx-edge-pf-lbl">profit factor</span>
+                  </div>
+                  <div className="idx-edge-bar" aria-hidden="true">
+                    <div className="idx-edge-bar-fill" style={{ width: `${s.wr}%` }} />
+                  </div>
+                  <div className="idx-edge-foot">{s.wr}% win · {s.n} events</div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       <Suspense fallback={null}>
         <HubFilters studies={studies} weekly={weekly} />

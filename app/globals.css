@@ -3614,6 +3614,89 @@ a { color: inherit; text-decoration: none; }
   .sh-bn-val, .sh-gauge-val { font-size: 2.1rem; }
 }
 
+/* ── Index "Strongest edges" strip (hub payoff) ──────────────────────── */
+.idx-top { margin: 8px 0 36px; }
+.idx-top-h {
+  font-family: var(--f-mono, ui-monospace, "JetBrains Mono", monospace);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+  margin-bottom: 14px;
+}
+.idx-top-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.idx-edge {
+  display: block;
+  text-decoration: none;
+  border: 1px solid var(--c-border);
+  border-radius: 14px;
+  padding: 20px;
+  background:
+    radial-gradient(120% 140% at 0% 0%, oklch(0.80 0.135 82 / 0.07), transparent 55%),
+    oklch(0.19 0.014 64);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.idx-edge:hover { border-color: var(--c-accent); transform: translateY(-2px); }
+.idx-edge-row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.idx-edge-ev {
+  font-family: var(--f-serif);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--c-ink);
+  line-height: 1.2;
+}
+.idx-edge-asset {
+  font-family: var(--f-mono, ui-monospace, monospace);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--c-muted);
+}
+.idx-edge-pf { display: flex; align-items: baseline; gap: 10px; margin: 14px 0 12px; }
+.idx-edge-pf-val {
+  font-family: var(--f-serif);
+  font-weight: 700;
+  font-size: 2.6rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--c-accent);
+  font-variant-numeric: tabular-nums;
+}
+.idx-edge-pf-lbl {
+  font-family: var(--f-sans);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+.idx-edge-bar {
+  height: 6px;
+  border-radius: 999px;
+  background: oklch(0.26 0.012 64);
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.idx-edge-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--c-accent-deep), var(--c-accent));
+}
+.idx-edge-foot {
+  font-family: var(--f-sans);
+  font-size: 0.74rem;
+  color: var(--c-muted);
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 760px) {
+  .idx-top-grid { grid-template-columns: 1fr; gap: 12px; }
+}
+
 /* ── FilterBar — sticky global filter strip ─────────────────────────── */
 .fb-sticky-wrap {
   position: sticky;
