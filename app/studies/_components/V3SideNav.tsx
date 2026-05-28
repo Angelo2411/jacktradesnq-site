@@ -34,8 +34,8 @@ export default function V3SideNav({ counts, tree }: { counts: FamilyCounts; tree
         className={'v3-nav-btn' + (isBasics ? ' active' : '')}
       >
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ flexShrink: 0, opacity: 0.8 }}>
-          <path d="M2 3h4l2 6-2 4h7" strokeLinecap="round" strokeLinejoin="round" />
-          <circle cx="12" cy="4" r="1.2" fill="currentColor" />
+          <path d="M8 4.5C6.4 3.4 4.2 3.2 2.5 3.6v8.2c1.7-.4 3.9-.2 5.5.9 1.6-1.1 3.8-1.3 5.5-.9V3.6C11.8 3.2 9.6 3.4 8 4.5z" strokeLinejoin="round" />
+          <path d="M8 4.5v8.6" />
         </svg>
         Basics
       </Link>
