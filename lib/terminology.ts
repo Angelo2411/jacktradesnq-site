@@ -81,6 +81,8 @@ export const EVENTS: Record<string, EventEntry> = {
   'empire-state-mfg':  { full: 'Empire State Mfg',          gloss: 'NY regional factory survey'                   },
   'durable-goods':     { full: 'Durable Goods Orders'                                                             },
   'philly-fed':        { full: 'Philadelphia Fed Index'                                                           },
+  'es-ifvg-smt':       { full: 'ES IFVG + NQ SMT',  gloss: 'ES IFVG across all news events, filtered by NQ SMT'   },
+  'si-ifvg-smt':       { full: 'SI IFVG + GC SMT',  gloss: 'SI IFVG across all news events, filtered by GC SMT'   },
 };
 
 /**

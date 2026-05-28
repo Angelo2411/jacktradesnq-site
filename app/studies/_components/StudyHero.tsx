@@ -8,10 +8,11 @@ interface Props {
   winRate: number;   // 0-100
   pf: string;
   net: string;       // already signed, e.g. "+906.5"
+  netSub: string;    // e.g. "GC points · 2016–2026"
   bias: string;      // Long | Short | Both
 }
 
-export default function StudyHero({ title, meta, winRate, pf, net, bias }: Props) {
+export default function StudyHero({ title, meta, winRate, pf, net, netSub, bias }: Props) {
   const lossRate = Math.max(0, 100 - winRate);
   return (
     <section className="sh-card" aria-label="Study headline">
@@ -39,9 +40,9 @@ export default function StudyHero({ title, meta, winRate, pf, net, bias }: Props
             <span className="sh-bn-sub">${pf} won per $1 lost</span>
           </div>
           <div className="sh-bn">
-            <span className="sh-bn-val pos">{net}</span>
+            <span className={`sh-bn-val ${net.trim().startsWith('-') ? 'neg' : 'pos'}`}>{net}</span>
             <span className="sh-bn-lbl">Net result</span>
-            <span className="sh-bn-sub">NQ points, 10-year test</span>
+            <span className="sh-bn-sub">{netSub}</span>
           </div>
           <div className="sh-bn">
             <span className="sh-bn-val">{bias}</span>

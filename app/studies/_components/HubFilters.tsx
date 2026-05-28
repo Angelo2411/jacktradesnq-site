@@ -25,8 +25,7 @@ function groupItems(items: StudyStats[]): EventGroup[] {
   const groupMap = new Map<string, StudyStats[]>();
 
   for (const s of items) {
-    const key = eventKeyOf(s.slug);
-    if (key === null) continue;
+    const key = eventKeyOf(s.slug) ?? s.slug;
     const bucket = groupMap.get(key) ?? [];
     bucket.push(s);
     groupMap.set(key, bucket);

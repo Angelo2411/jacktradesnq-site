@@ -778,8 +778,8 @@ export default function V3Tabs({
 
   // Directional bias from the active trade set (Long / Short / Both).
   const heroBias = useMemo(() => {
-    const longs = activeTrades.filter((t) => t.side === 'LONG');
-    const shorts = activeTrades.filter((t) => t.side === 'SHORT');
+    const longs = activeTrades.filter((t) => t.side.toLowerCase() === 'long');
+    const shorts = activeTrades.filter((t) => t.side.toLowerCase() === 'short');
     const lwr = longs.length ? longs.filter((t) => t.pnl_pts > 0).length / longs.length : 0;
     const swr = shorts.length ? shorts.filter((t) => t.pnl_pts > 0).length / shorts.length : 0;
     return lwr > swr + 0.05 ? 'Long' : swr > lwr + 0.05 ? 'Short' : 'Both';
@@ -812,6 +812,7 @@ export default function V3Tabs({
       winRate={kpi.wr}
       pf={kpi.pf.toFixed(2)}
       net={`${kpi.net >= 0 ? '+' : ''}${kpi.net.toFixed(1)}`}
+      netSub={`${asset.toUpperCase()} points · ${dateFrom}–${dateTo}`}
       bias={heroBias}
     />
   ) : null;

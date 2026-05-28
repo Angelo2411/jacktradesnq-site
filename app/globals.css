@@ -3552,6 +3552,7 @@ a { color: inherit; text-decoration: none; }
   font-variant-numeric: tabular-nums;
 }
 .sh-bn-val.pos { color: var(--c-accent); }
+.sh-bn-val.neg { color: oklch(0.64 0.14 36); }
 .sh-bn-lbl {
   font-family: var(--f-sans);
   font-size: 0.66rem;
