@@ -250,8 +250,13 @@ export default function HubFilters({
                       <summary className="bd-evt-head">
                         <span className="bd-evt-name">{g.label}</span>
                         <span className="bd-evt-meta">
-                          <span className="bd-evt-count">{g.items.length} variants · </span>best PF{' '}
-                          <span className="bd-evt-pf">{g.bestPf.toFixed(2)}</span>
+                          <span className="bd-evt-count">{g.items.length} variants</span>
+                          {g.bestPf > 0 && (
+                            <>
+                              <span className="bd-evt-count"> · best PF </span>
+                              <span className="bd-evt-pf">{g.bestPf.toFixed(2)}</span>
+                            </>
+                          )}
                         </span>
                         <span className="bd-evt-chevron" aria-hidden="true">›</span>
                       </summary>
