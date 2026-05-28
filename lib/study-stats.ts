@@ -6,6 +6,7 @@ const dataDir = path.join(process.cwd(), 'public', 'data');
 
 export { MIN_DISPLAY_PF } from './study-display-config';
 import { MIN_DISPLAY_PF } from './study-display-config';
+import { eventFull } from '@/lib/terminology';
 
 export type ProfitableCombo = {
   variant: 'tp1_be' | 'be_50' | 'no_be';
@@ -1679,4 +1680,36 @@ export function getStudyCountsByFamily(): { total: number; news: number; ib: num
     time: all.filter((s) => s.family === 'Time').length,
     misc: all.filter((s) => s.family === 'Misc').length,
   };
+}
+
+export interface NavEvent { key: string; label: string; count: number; bestPf: number; }
+export interface NavFamily { family: FamilyType; label: string; cat: string; count: number; events: NavEvent[]; }
+
+const NAV_FAMILY_ORDER: { family: FamilyType; label: string; cat: string }[] = [
+  { family: 'News', label: 'News',            cat: 'news' },
+  { family: 'Time', label: 'Sessions',        cat: 'time' },
+  { family: 'IB',   label: 'Initial Balance', cat: 'ib'   },
+  { family: 'EMA',  label: 'EMA',             cat: 'ema'  },
+  { family: 'Misc', label: 'Other',           cat: 'misc' },
+];
+
+export function getStudyNavTree(): NavFamily[] {
+  const all = getAllStudyStats();
+  const out: NavFamily[] = [];
+  for (const fam of NAV_FAMILY_ORDER) {
+    const items = all.filter((s) => s.family === fam.family);
+    if (items.length === 0) continue;
+    const evMap = new Map<string, StudyStats[]>();
+    for (const s of items) {
+      const k = eventKeyOf(s.slug) ?? s.slug;
+      const arr = evMap.get(k) ?? [];
+      arr.push(s);
+      evMap.set(k, arr);
+    }
+    const events: NavEvent[] = [...evMap.entries()]
+      .map(([key, arr]) => ({ key, label: eventFull(key), count: arr.length, bestPf: Math.max(...arr.map((x) => x.pf)) }))
+      .sort((a, b) => b.bestPf - a.bestPf);
+    out.push({ family: fam.family, label: fam.label, cat: fam.cat, count: items.length, events });
+  }
+  return out;
 }

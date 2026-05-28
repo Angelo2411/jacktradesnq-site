@@ -2997,6 +2997,16 @@ a { color: inherit; text-decoration: none; }
   flex-direction: column;
   gap: 2px;
 }
+.v3-nav-grouplbl {
+  font-family: var(--f-mono, ui-monospace, monospace);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.5;
+  padding: 14px 12px 6px;
+}
 .v3-nav-sub {
   display: flex;
   align-items: center;
