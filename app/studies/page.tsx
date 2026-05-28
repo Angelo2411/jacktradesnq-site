@@ -86,10 +86,7 @@ export default function BacktestedHub() {
                     <span className="idx-edge-pf-val">{s.pf.toFixed(2)}</span>
                     <span className="idx-edge-pf-lbl">profit factor</span>
                   </div>
-                  <div className="idx-edge-bar" aria-hidden="true">
-                    <div className="idx-edge-bar-fill" style={{ width: `${s.wr}%` }} />
-                  </div>
-                  <div className="idx-edge-foot">{s.wr}% win · {s.n} events</div>
+                  <div className="idx-edge-foot">{s.wr}% win rate · {s.n} events</div>
                 </Link>
               );
             })}
