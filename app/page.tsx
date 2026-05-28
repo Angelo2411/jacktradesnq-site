@@ -10,7 +10,7 @@ const SITE = {
     { name: 'Instagram', url: 'https://www.instagram.com/jack.tradesnq' },
     { name: 'X', url: 'https://x.com/jacktradesnq' },
   ],
-  studies: { url: '/studies/', tagline: '10 years of NQ data, backtested with AI' },
+  studies: { url: '/studies/', tagline: '10 years of futures data, backtested with AI' },
   nefarious: { name: 'Nefarious', url: '/nefarious/', tagline: 'Official partner · free Discord community' },
   legal: {
     copyright: '© 2026 JackTradesNQ. All rights reserved.',
