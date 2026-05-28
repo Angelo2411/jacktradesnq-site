@@ -1701,7 +1701,8 @@ export function getStudyNavTree(): NavFamily[] {
     if (items.length === 0) continue;
     const evMap = new Map<string, StudyStats[]>();
     for (const s of items) {
-      const k = eventKeyOf(s.slug) ?? s.slug;
+      const k = eventKeyOf(s.slug);
+      if (k === null) continue;
       const arr = evMap.get(k) ?? [];
       arr.push(s);
       evMap.set(k, arr);

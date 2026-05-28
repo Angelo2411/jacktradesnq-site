@@ -76,6 +76,7 @@ export const EVENTS: Record<string, EventEntry> = {
   'jobless-claims':    { full: 'Jobless Claims',            gloss: 'weekly unemployment filings'                  },
   'cb-confidence':     { full: 'Consumer Confidence',       gloss: 'Conference Board sentiment survey'            },
   'cb-consumer-confidence': { full: 'Consumer Confidence',  gloss: 'Conference Board sentiment survey'            },
+  empirestate:         { full: 'Empire State Mfg',          gloss: 'NY regional factory survey'                   },
   'empire-state':      { full: 'Empire State Mfg',          gloss: 'NY regional factory survey'                   },
   'empire-state-mfg':  { full: 'Empire State Mfg',          gloss: 'NY regional factory survey'                   },
   'durable-goods':     { full: 'Durable Goods Orders'                                                             },

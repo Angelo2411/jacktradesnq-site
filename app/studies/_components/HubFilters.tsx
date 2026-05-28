@@ -21,48 +21,31 @@ interface EventGroup {
   bestPf: number;
 }
 
-function groupItems(items: StudyStats[]): Array<EventGroup | StudyStats> {
+function groupItems(items: StudyStats[]): EventGroup[] {
   const groupMap = new Map<string, StudyStats[]>();
-  const singletons: StudyStats[] = [];
 
   for (const s of items) {
     const key = eventKeyOf(s.slug);
-    if (key === null) {
-      singletons.push(s);
-      continue;
-    }
+    if (key === null) continue;
     const bucket = groupMap.get(key) ?? [];
     bucket.push(s);
     groupMap.set(key, bucket);
   }
 
-  // Groups of size ≥2 become accordions; singletons render as-is
   const groups: EventGroup[] = [];
-  const extraSingletons: StudyStats[] = [];
 
   for (const [key, bucket] of groupMap.entries()) {
-    if (bucket.length >= 2) {
-      groups.push({
-        key,
-        label: eventLabel(key),
-        items: bucket,
-        bestPf: Math.max(...bucket.map((s) => s.pf)),
-      });
-    } else {
-      extraSingletons.push(...bucket);
-    }
+    groups.push({
+      key,
+      label: eventLabel(key),
+      items: bucket,
+      bestPf: Math.max(...bucket.map((s) => s.pf)),
+    });
   }
 
-  // Sort groups by best PF descending
   groups.sort((a, b) => b.bestPf - a.bestPf);
 
-  // Interleave: groups first, then all singletons (both the eventKeyOf-null ones
-  // and the size-1 groups) at the end, preserving their existing PF sort order
-  const allSingletons = [...singletons, ...extraSingletons].sort(
-    (a, b) => b.pf - a.pf,
-  );
-
-  return [...groups, ...allSingletons];
+  return groups;
 }
 
 const STORAGE_KEY = 'hub-filters-v3';
@@ -249,9 +232,7 @@ export default function HubFilters({
           sections.map(({ key, label, subtitle, items }) => {
             const grouped = groupItems(items);
             const searchActive = filters.query.trim() !== '';
-            const groupCount = grouped.filter(
-              (g): g is EventGroup => 'key' in g && 'bestPf' in g,
-            ).length;
+            const groupCount = grouped.length;
             const defaultOpen = searchActive || groupCount <= 3;
             return (
               <section key={key} className="bd-kind-section">
@@ -260,35 +241,27 @@ export default function HubFilters({
                   <p className="bd-kind-subtitle">{subtitle}</p>
                 </div>
                 <div className="bd-hub-index">
-                  {grouped.map((entry) => {
-                    if ('slug' in entry) {
-                      // singleton StudyStats
-                      return <StudyRow key={entry.slug} s={entry} />;
-                    }
-                    // EventGroup accordion
-                    const g = entry as EventGroup;
-                    return (
-                      <details
-                        key={g.key}
-                        className="bd-evt"
-                        open={defaultOpen || undefined}
-                      >
-                        <summary className="bd-evt-head">
-                          <span className="bd-evt-name">{g.label}</span>
-                          <span className="bd-evt-meta">
-                            <span className="bd-evt-count">{g.items.length} variants · </span>best PF{' '}
-                            <span className="bd-evt-pf">{g.bestPf.toFixed(2)}</span>
-                          </span>
-                          <span className="bd-evt-chevron" aria-hidden="true">›</span>
-                        </summary>
-                        <div className="bd-evt-body">
-                          {g.items.map((s) => (
-                            <StudyRow key={s.slug} s={s} />
-                          ))}
-                        </div>
-                      </details>
-                    );
-                  })}
+                  {grouped.map((g) => (
+                    <details
+                      key={g.key}
+                      className="bd-evt"
+                      open={defaultOpen || undefined}
+                    >
+                      <summary className="bd-evt-head">
+                        <span className="bd-evt-name">{g.label}</span>
+                        <span className="bd-evt-meta">
+                          <span className="bd-evt-count">{g.items.length} variants · </span>best PF{' '}
+                          <span className="bd-evt-pf">{g.bestPf.toFixed(2)}</span>
+                        </span>
+                        <span className="bd-evt-chevron" aria-hidden="true">›</span>
+                      </summary>
+                      <div className="bd-evt-body">
+                        {g.items.map((s) => (
+                          <StudyRow key={s.slug} s={s} />
+                        ))}
+                      </div>
+                    </details>
+                  ))}
                 </div>
               </section>
             );
