@@ -900,10 +900,10 @@ function inferFamily(slug: string, group?: string): FamilyType {
   for (const ev of newsEvents) {
     if (slug.startsWith(ev) || slug.includes(ev)) return 'News';
   }
-  if (slug.includes('killzone')) return 'Time';
+  if (slug.includes('killzone') || slug.includes('manip')) return 'Time';
   if (slug.includes('nwog') || slug.includes('asia-open')) return 'Time';
   if (slug.includes('ema')) return 'EMA';
-  if (slug.includes('ib') || slug.includes('ib50')) return 'IB';
+  if (slug.includes('ib50') || slug.includes('globex-ib')) return 'IB';
   if (slug.includes('straddle')) return 'News';
   return 'Misc';
 }
