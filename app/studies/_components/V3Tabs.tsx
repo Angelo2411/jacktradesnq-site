@@ -610,6 +610,7 @@ export default function V3Tabs({
   flat = false,
   profitableCombos,
   simpleModeIntroHtml,
+  simpleHideStatBand = false,
 }: {
   slug: string;
   breakdown: WeekdayBreakdown;
@@ -637,6 +638,8 @@ export default function V3Tabs({
   profitableCombos?: ProfitableCombo[];
   /** HTML string of the first paragraph — shown in Simple mode intro. */
   simpleModeIntroHtml?: string;
+  /** Suppress the Simple-mode 4-stat band (when a richer hero already shows them). */
+  simpleHideStatBand?: boolean;
 }) {
   // ── Lazy-fetch trades client-side when a URL is provided (avoids serializing
   //    large trade arrays into the static HTML payload) ──────────────────
@@ -828,6 +831,7 @@ export default function V3Tabs({
           dateTo={dateTo}
           lookback={lookback}
           introHtml={introHtml}
+          hideStatBand={simpleHideStatBand}
         />
       </>
     );

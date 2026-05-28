@@ -1,44 +1,71 @@
-// StudyHero — server component (prototype: nfp-ifvg-smt)
-// Report-first fold: one dominant headline number + plain-language verdict + supporting micro-stats.
-// Editorial dark + single gold accent (no edgeful copy). Fed by getStrategyStats values.
-
-interface MicroStat {
-  label: string;
-  value: string;
-  tone?: 'pos' | 'neutral';
-}
+// StudyHero — report-first data-viz fold (prototype: nfp-ifvg-smt)
+// Edgeful-style: numbers exposed on a gauge + bars inside a dark card. Our gold/dark palette.
+import type { CSSProperties } from 'react';
 
 interface Props {
-  eyebrow: string;
-  value: string;
-  valueLabel: string;
-  valueSub: string;
-  verdict: string;
-  micro: MicroStat[];
+  title: string;
+  meta: string;
+  winRate: number;   // 0-100
+  pf: string;
+  net: string;       // already signed, e.g. "+906.5"
+  bias: string;      // Long | Short | Both
 }
 
-export default function StudyHero({ eyebrow, value, valueLabel, valueSub, verdict, micro }: Props) {
+export default function StudyHero({ title, meta, winRate, pf, net, bias }: Props) {
+  const lossRate = Math.max(0, 100 - winRate);
   return (
-    <section className="sh-hero" aria-label="Study headline">
-      <p className="sh-eyebrow">{eyebrow}</p>
-      <div className="sh-body">
-        <div className="sh-numblock">
-          <span className="sh-num">{value}</span>
-          <span className="sh-numside">
-            <span className="sh-numlabel">{valueLabel}</span>
-            <span className="sh-numsub">{valueSub}</span>
-          </span>
+    <section className="sh-card" aria-label="Study headline">
+      <div className="sh-card-head">
+        <span className="sh-card-title">{title}</span>
+        <span className="sh-card-meta">{meta}</span>
+      </div>
+
+      <div className="sh-card-body">
+        {/* Win-rate gauge */}
+        <div className="sh-gauge">
+          <div className="sh-gauge-ring" style={{ '--p': winRate } as CSSProperties}>
+            <div className="sh-gauge-hole">
+              <span className="sh-gauge-val">{winRate}<span className="sh-gauge-pct">%</span></span>
+              <span className="sh-gauge-lbl">win rate</span>
+            </div>
+          </div>
         </div>
-        <div className="sh-right">
-          <p className="sh-verdict">{verdict}</p>
-          <dl className="sh-micro">
-            {micro.map((m) => (
-              <div className="sh-micro-item" key={m.label}>
-                <dt className="sh-micro-lbl">{m.label}</dt>
-                <dd className={`sh-micro-val${m.tone === 'pos' ? ' pos' : ''}`}>{m.value}</dd>
-              </div>
-            ))}
-          </dl>
+
+        {/* Headline numbers */}
+        <div className="sh-bignums">
+          <div className="sh-bn">
+            <span className="sh-bn-val">{pf}</span>
+            <span className="sh-bn-lbl">Profit factor</span>
+            <span className="sh-bn-sub">${pf} won per $1 lost</span>
+          </div>
+          <div className="sh-bn">
+            <span className="sh-bn-val pos">{net}</span>
+            <span className="sh-bn-lbl">Net result</span>
+            <span className="sh-bn-sub">NQ points, 10-year test</span>
+          </div>
+          <div className="sh-bn">
+            <span className="sh-bn-val">{bias}</span>
+            <span className="sh-bn-lbl">Bias</span>
+            <span className="sh-bn-sub">direction of the edge</span>
+          </div>
+        </div>
+
+        {/* Win / loss split bars */}
+        <div className="sh-bars">
+          <div className="sh-bar-col">
+            <span className="sh-bar-pct">{winRate}%</span>
+            <div className="sh-bar-track">
+              <div className="sh-bar-fill win" style={{ height: `${winRate}%` }} />
+            </div>
+            <span className="sh-bar-name">wins</span>
+          </div>
+          <div className="sh-bar-col">
+            <span className="sh-bar-pct">{lossRate}%</span>
+            <div className="sh-bar-track">
+              <div className="sh-bar-fill loss" style={{ height: `${lossRate}%` }} />
+            </div>
+            <span className="sh-bar-name">losses</span>
+          </div>
         </div>
       </div>
     </section>

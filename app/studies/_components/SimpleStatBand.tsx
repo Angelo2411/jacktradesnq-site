@@ -20,6 +20,8 @@ interface SimpleStatBandProps {
   lookback?: string;
   // First paragraph of overview prose (HTML string)
   introHtml: string;
+  // When a richer hero already exposes these numbers, suppress the 4-stat band.
+  hideStatBand?: boolean;
 }
 
 const LOOKBACK_LABELS: Record<string, string> = {
@@ -35,6 +37,7 @@ export default function SimpleStatBand({
   dateTo,
   lookback = 'all',
   introHtml,
+  hideStatBand = false,
 }: SimpleStatBandProps) {
   const periodLabel = lookback === 'all'
     ? (dateFrom && dateTo ? `${dateFrom}–${dateTo}` : 'full period')
@@ -49,6 +52,7 @@ export default function SimpleStatBand({
       />
 
       {/* 4-stat compact band */}
+      {!hideStatBand && (
       <div className="v3-simple-band">
         <div className="v3-simple-stat">
           <div className="v3-simple-stat-val gold">{wr}%</div>
@@ -73,6 +77,7 @@ export default function SimpleStatBand({
           <div className="v3-simple-stat-mean">total over the test window</div>
         </div>
       </div>
+      )}
 
       {/* Legend */}
       <p className="v3-simple-legend">

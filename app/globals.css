@@ -3452,102 +3452,166 @@ a { color: inherit; text-decoration: none; }
   font-style: italic;
 }
 
-/* ── StudyHero — report-first fold (prototype: nfp) ──────────────────── */
-.sh-hero {
-  margin-bottom: 40px;
-  padding-bottom: 32px;
+/* ── StudyHero — report-first data-viz card (prototype: nfp) ──────────── */
+.sh-card {
+  margin-bottom: 36px;
+  border: 1px solid var(--c-border);
+  border-radius: 16px;
+  background:
+    radial-gradient(120% 140% at 0% 0%, oklch(0.80 0.135 82 / 0.06), transparent 55%),
+    oklch(0.19 0.014 64);
+  overflow: hidden;
+}
+.sh-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
   border-bottom: 1px solid var(--c-border);
 }
-.sh-eyebrow {
+.sh-card-title {
   font-family: var(--f-mono, ui-monospace, "JetBrains Mono", monospace);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--c-muted);
-  margin-bottom: 20px;
-}
-.sh-body {
-  display: flex;
-  align-items: flex-start;
-  gap: 48px;
-  flex-wrap: wrap;
-}
-.sh-numblock {
-  display: flex;
-  align-items: baseline;
-  gap: 16px;
-}
-.sh-num {
-  font-family: var(--f-serif);
-  font-weight: 700;
-  font-size: clamp(72px, 11vw, 132px);
-  line-height: 0.88;
-  letter-spacing: -0.03em;
-  color: var(--c-accent);
-  font-variant-numeric: tabular-nums;
-}
-.sh-numside {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding-bottom: 12px;
-}
-.sh-numlabel {
-  font-family: var(--f-sans);
   font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--c-ink);
 }
-.sh-numsub {
-  font-family: var(--f-sans);
-  font-size: 0.8rem;
-  color: var(--c-muted);
-  max-width: 180px;
-}
-.sh-right {
-  flex: 1 1 320px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  max-width: 440px;
-}
-.sh-verdict {
-  font-family: var(--f-serif);
-  font-size: 1.25rem;
-  line-height: 1.45;
-  color: var(--c-ink);
-}
-.sh-micro {
-  display: flex;
-  gap: 32px;
-  flex-wrap: wrap;
-  margin: 0;
-}
-.sh-micro-item { display: flex; flex-direction: column; gap: 3px; }
-.sh-micro-lbl {
-  font-family: var(--f-sans);
-  font-size: 0.62rem;
-  font-weight: 700;
+.sh-card-meta {
+  font-family: var(--f-mono, ui-monospace, "JetBrains Mono", monospace);
+  font-size: 0.68rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--c-muted);
 }
-.sh-micro-val {
+.sh-card-body {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  padding: 32px 24px;
+  flex-wrap: wrap;
+}
+
+/* gauge */
+.sh-gauge { flex: 0 0 auto; }
+.sh-gauge-ring {
+  width: 148px;
+  height: 148px;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--c-accent) calc(var(--p) * 1%),
+    oklch(0.30 0.014 64) 0
+  );
+  display: grid;
+  place-items: center;
+}
+.sh-gauge-hole {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  background: oklch(0.19 0.014 64);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+.sh-gauge-val {
   font-family: var(--f-serif);
   font-weight: 700;
-  font-size: 1.3rem;
+  font-size: 2.6rem;
   line-height: 1;
+  color: var(--c-accent);
   font-variant-numeric: tabular-nums;
-  color: var(--c-ink);
 }
-.sh-micro-val.pos { color: var(--c-sage-soft); }
-@media (max-width: 700px) {
-  .sh-body { flex-direction: column; gap: 28px; }
-  .sh-right { max-width: none; }
-  .sh-numsub { max-width: none; }
+.sh-gauge-pct { font-size: 1.2rem; }
+.sh-gauge-lbl {
+  font-family: var(--f-sans);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+
+/* big numbers */
+.sh-bignums {
+  display: flex;
+  gap: 40px;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+}
+.sh-bn { display: flex; flex-direction: column; gap: 4px; }
+.sh-bn-val {
+  font-family: var(--f-serif);
+  font-weight: 700;
+  font-size: 2.6rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--c-ink);
+  font-variant-numeric: tabular-nums;
+}
+.sh-bn-val.pos { color: var(--c-accent); }
+.sh-bn-lbl {
+  font-family: var(--f-sans);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--c-ink);
+  margin-top: 4px;
+}
+.sh-bn-sub {
+  font-family: var(--f-sans);
+  font-size: 0.74rem;
+  color: var(--c-muted);
+}
+
+/* win / loss bars */
+.sh-bars {
+  display: flex;
+  gap: 18px;
+  align-items: flex-end;
+  flex: 0 0 auto;
+}
+.sh-bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 56px;
+}
+.sh-bar-pct {
+  font-family: var(--f-serif);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--c-ink);
+  font-variant-numeric: tabular-nums;
+}
+.sh-bar-track {
+  width: 100%;
+  height: 120px;
+  display: flex;
+  align-items: flex-end;
+  background: oklch(0.24 0.012 64);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.sh-bar-fill { width: 100%; border-radius: 6px 6px 0 0; }
+.sh-bar-fill.win  { background: linear-gradient(180deg, var(--c-accent), var(--c-accent-deep)); }
+.sh-bar-fill.loss { background: linear-gradient(180deg, oklch(0.58 0.12 42), oklch(0.44 0.098 42)); }
+.sh-bar-name {
+  font-family: var(--f-sans);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+@media (max-width: 760px) {
+  .sh-card-body { gap: 28px; padding: 24px 18px; justify-content: space-between; }
+  .sh-bignums { gap: 24px; }
+  .sh-bn-val, .sh-gauge-val { font-size: 2.1rem; }
 }
 
 /* ── FilterBar — sticky global filter strip ─────────────────────────── */

@@ -534,16 +534,12 @@ export default async function BacktestedDetail({ params }: PageProps) {
             const h = statsByVariant.be_50;
             return (
               <StudyHero
-                eyebrow={`${assetShort(assetLabel)} futures · ${eventFull(eventLabel.toLowerCase().replace(/\s+/g, '-'))} · ${dateFrom}–${dateTo} · ${h.n} events`}
-                value={String(h.pf)}
-                valueLabel="Profit factor"
-                valueSub={`$${h.pf} won for every $1 lost`}
-                verdict="When NFP's first move sweeps liquidity and reverses, fading it back to the opposite side has returned $6.49 for every $1 risked on NQ — the strongest news edge in this set. On 22 events it's a high-conviction read, not a guarantee."
-                micro={[
-                  { label: 'Win rate', value: `${h.wr}%` },
-                  { label: 'Net result', value: `${h.net > 0 ? '+' : ''}${h.net} pts`, tone: 'pos' },
-                  { label: 'Sample', value: `${h.n} events` },
-                ]}
+                title="Performance"
+                meta={`${assetShort(assetLabel)} · ${dateFrom}–${dateTo} · ${h.n} events`}
+                winRate={h.wr}
+                pf={String(h.pf)}
+                net={`${h.net > 0 ? '+' : ''}${h.net}`}
+                bias={h.bias}
               />
             );
           })()
@@ -559,7 +555,7 @@ export default async function BacktestedDetail({ params }: PageProps) {
 
         {/* V3Tabs is a client component that reads ?tab from URL and renders the KPI band + tabs */}
         <Suspense fallback={<div className="v3-tabs" style={{ height: 48 }} />}>
-          <V3Tabs slug={slug} breakdown={breakdown} breakdownOff={breakdownOff} yearBreakdown={yearBreakdown} yearBreakdownOff={yearBreakdownOff} trades={trades} tradesByVariant={tradesByVariant} tradesByVariantOff={tradesByVariantOff} statsByVariant={statsByVariant} statsByVariantAndSmt={statsByVariantAndSmt} profitableCombos={profitableCombos} dateFrom={dateFrom} dateTo={dateTo} overviewContent={overviewNode} eventShort={stratStats?.event ?? ''} asset={(stratStats?.asset?.toLowerCase() ?? 'nq') as 'nq' | 'gc' | 'es' | 'si' | 'ym'} hideKpiBand={hasTearsheet} flat={true} simpleModeIntroHtml={extractFirstParagraph(entry.explanationHtmlNq)} />
+          <V3Tabs slug={slug} breakdown={breakdown} breakdownOff={breakdownOff} yearBreakdown={yearBreakdown} yearBreakdownOff={yearBreakdownOff} trades={trades} tradesByVariant={tradesByVariant} tradesByVariantOff={tradesByVariantOff} statsByVariant={statsByVariant} statsByVariantAndSmt={statsByVariantAndSmt} profitableCombos={profitableCombos} dateFrom={dateFrom} dateTo={dateTo} overviewContent={overviewNode} eventShort={stratStats?.event ?? ''} asset={(stratStats?.asset?.toLowerCase() ?? 'nq') as 'nq' | 'gc' | 'es' | 'si' | 'ym'} hideKpiBand={hasTearsheet} flat={true} simpleModeIntroHtml={extractFirstParagraph(entry.explanationHtmlNq)} simpleHideStatBand={slug === 'nfp-ifvg-smt'} />
         </Suspense>
 
         {pager}
