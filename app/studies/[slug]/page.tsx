@@ -20,7 +20,6 @@ import BilingualTitle from '../_components/BilingualTitle';
 import V3Tabs from '../_components/V3Tabs';
 import StraddleWrappedTabs from '../_components/StraddleWrappedTabs';
 import PerformanceTearsheet from '../_components/PerformanceTearsheet';
-import StudyHero from '../_components/StudyHero';
 import ManipDataTabs, { type ContDataFile } from '../_components/ManipDataTabs';
 import { type ManipExample } from '../_components/ManipExampleChart';
 import { computeWeekdayBreakdown, computeYearBreakdown } from '@/lib/client-stats';
@@ -528,34 +527,19 @@ export default async function BacktestedDetail({ params }: PageProps) {
           <span className="v3-sub-ev">{eventFull(eventLabel.toLowerCase().replace(/\s+/g, '-'))}</span>
           {' · IFVG + SMT'}
         </h1>
-        {slug === 'nfp-ifvg-smt' && statsByVariant?.be_50 ? (
-          // Hero figures match the canonical default the KPI band shows below (be_50 variant, SMT-on).
-          (() => {
-            const h = statsByVariant.be_50;
-            return (
-              <StudyHero
-                title="Performance"
-                meta={`${assetShort(assetLabel)} · ${dateFrom}–${dateTo} · ${h.n} events`}
-                winRate={h.wr}
-                pf={String(h.pf)}
-                net={`${h.net > 0 ? '+' : ''}${h.net}`}
-                bias={h.bias}
-              />
-            );
-          })()
-        ) : (
+        {hasTearsheet ? (
           <p className="v3-sub-sub">
             {assetShort(assetLabel)} futures · {stratStats?.releaseTime ?? '8:30 ET'} release · {dateFrom}–{dateTo} backtest
             {stratStats ? ` · ${stratStats.n} events` : ''}
           </p>
-        )}
+        ) : null}
 
         {/* Performance Tearsheet — pilot: fomc-ifvg-smt only. Extend by running gen_tearsheet.py for other slugs. */}
         <PerformanceTearsheet slug={slug} />
 
         {/* V3Tabs is a client component that reads ?tab from URL and renders the KPI band + tabs */}
         <Suspense fallback={<div className="v3-tabs" style={{ height: 48 }} />}>
-          <V3Tabs slug={slug} breakdown={breakdown} breakdownOff={breakdownOff} yearBreakdown={yearBreakdown} yearBreakdownOff={yearBreakdownOff} trades={trades} tradesByVariant={tradesByVariant} tradesByVariantOff={tradesByVariantOff} statsByVariant={statsByVariant} statsByVariantAndSmt={statsByVariantAndSmt} profitableCombos={profitableCombos} dateFrom={dateFrom} dateTo={dateTo} overviewContent={overviewNode} eventShort={stratStats?.event ?? ''} asset={(stratStats?.asset?.toLowerCase() ?? 'nq') as 'nq' | 'gc' | 'es' | 'si' | 'ym'} hideKpiBand={hasTearsheet} flat={true} simpleModeIntroHtml={extractFirstParagraph(entry.explanationHtmlNq)} simpleHideStatBand={slug === 'nfp-ifvg-smt'} />
+          <V3Tabs slug={slug} breakdown={breakdown} breakdownOff={breakdownOff} yearBreakdown={yearBreakdown} yearBreakdownOff={yearBreakdownOff} trades={trades} tradesByVariant={tradesByVariant} tradesByVariantOff={tradesByVariantOff} statsByVariant={statsByVariant} statsByVariantAndSmt={statsByVariantAndSmt} profitableCombos={profitableCombos} dateFrom={dateFrom} dateTo={dateTo} overviewContent={overviewNode} eventShort={stratStats?.event ?? ''} asset={(stratStats?.asset?.toLowerCase() ?? 'nq') as 'nq' | 'gc' | 'es' | 'si' | 'ym'} hideKpiBand={hasTearsheet} flat={true} simpleModeIntroHtml={extractFirstParagraph(entry.explanationHtmlNq)} simpleHideStatBand={!hasTearsheet} showHero={!hasTearsheet} heroMeta={`${assetShort(assetLabel)} · ${dateFrom}–${dateTo}${stratStats ? ` · ${stratStats.n} events` : ''}`} />
         </Suspense>
 
         {pager}

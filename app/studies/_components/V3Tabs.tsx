@@ -16,6 +16,7 @@ import DailyPnlBars from './DailyPnlBars';
 import StraddleCylinders from './StraddleCylinders';
 import ModeToggle from './ModeToggle';
 import SimpleStatBand from './SimpleStatBand';
+import StudyHero from './StudyHero';
 
 type Tab = 'overview' | 'weekday' | 'year' | 'trades' | 'methodology';
 
@@ -611,6 +612,8 @@ export default function V3Tabs({
   profitableCombos,
   simpleModeIntroHtml,
   simpleHideStatBand = false,
+  showHero = false,
+  heroMeta = '',
 }: {
   slug: string;
   breakdown: WeekdayBreakdown;
@@ -640,6 +643,10 @@ export default function V3Tabs({
   simpleModeIntroHtml?: string;
   /** Suppress the Simple-mode 4-stat band (when a richer hero already shows them). */
   simpleHideStatBand?: boolean;
+  /** Render the data-viz hero card (gauge + numbers + win/loss bars) at the top. */
+  showHero?: boolean;
+  /** Eyebrow meta line for the hero (e.g. "Nasdaq 100 · 2016–2026 · 22 events"). */
+  heroMeta?: string;
 }) {
   // ── Lazy-fetch trades client-side when a URL is provided (avoids serializing
   //    large trade arrays into the static HTML payload) ──────────────────
@@ -769,6 +776,15 @@ export default function V3Tabs({
   // ── KPI: recomputed client-side from filtered trades ──────────────────
   const kpi = useMemo(() => computeKPI(activeTrades), [activeTrades]);
 
+  // Directional bias from the active trade set (Long / Short / Both).
+  const heroBias = useMemo(() => {
+    const longs = activeTrades.filter((t) => t.side === 'LONG');
+    const shorts = activeTrades.filter((t) => t.side === 'SHORT');
+    const lwr = longs.length ? longs.filter((t) => t.pnl_pts > 0).length / longs.length : 0;
+    const swr = shorts.length ? shorts.filter((t) => t.pnl_pts > 0).length / shorts.length : 0;
+    return lwr > swr + 0.05 ? 'Long' : swr > lwr + 0.05 ? 'Short' : 'Both';
+  }, [activeTrades]);
+
   // ── Breakdowns: recomputed from filtered trades ───────────────────────
   const activeYearBreakdown = useMemo(
     () => computeYearBreakdown(activeTrades),
@@ -788,6 +804,17 @@ export default function V3Tabs({
   }
 
   const hasTradeData = fbo ? activeTrades.length > 0 : (tradesByVariant?.tp1_be?.length ?? 0) > 0;
+
+  const heroNode = showHero && hasTradeData ? (
+    <StudyHero
+      title="Performance"
+      meta={heroMeta}
+      winRate={kpi.wr}
+      pf={kpi.pf.toFixed(2)}
+      net={`${kpi.net >= 0 ? '+' : ''}${kpi.net.toFixed(1)}`}
+      bias={heroBias}
+    />
+  ) : null;
 
   // ── Best combo ───────────────
   const bestCombo = useMemo(
@@ -822,6 +849,7 @@ export default function V3Tabs({
   if (isSimpleMode && hasTradeData) {
     return (
       <>
+        {heroNode}
         <div className="v3-simple-adv-bar">
           <Suspense fallback={null}>
             <ModeToggle />
@@ -845,6 +873,7 @@ export default function V3Tabs({
   // Advanced mode: render full experience + toggle to go back to Simple
   return (
     <>
+      {heroNode}
       {/* ── Advanced mode toggle (top, above FilterBar) ── */}
       <div className="v3-simple-adv-bar">
         <Suspense fallback={null}>
