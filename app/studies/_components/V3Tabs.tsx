@@ -822,6 +822,11 @@ export default function V3Tabs({
   if (isSimpleMode && hasTradeData) {
     return (
       <>
+        <div className="v3-simple-adv-bar">
+          <Suspense fallback={null}>
+            <ModeToggle />
+          </Suspense>
+        </div>
         <SimpleStatBand
           wr={kpi.wr}
           pf={kpi.pf}

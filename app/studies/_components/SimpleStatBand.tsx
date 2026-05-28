@@ -1,8 +1,5 @@
 'use client';
 
-import { Suspense } from 'react';
-import ModeToggle from './ModeToggle';
-
 /**
  * SimpleStatBand — the compact 4-stat card shown in Simple mode.
  *
@@ -83,11 +80,6 @@ export default function SimpleStatBand({
       <p className="v3-simple-legend">
         Stats shown for {periodLabel}. Profit factor &gt; 1 means the strategy made money overall.
       </p>
-
-      {/* Toggle to Advanced */}
-      <Suspense fallback={null}>
-        <ModeToggle />
-      </Suspense>
     </div>
   );
 }
