@@ -7,8 +7,6 @@ interface Props {
 export default function QualityFactors({ data }: Props) {
   const rows: { k: string; v: string; cls?: string }[] = [
     { k: 'Sharpe (yearly)', v: String(data.sharpe) },
-    { k: 'Calmar ratio', v: String(data.calmar) },
-    { k: 'Sortino', v: String(data.sortino) },
     { k: 'Avg win', v: `+${data.avgWin}`, cls: 'pos' },
     { k: 'Avg loss', v: String(data.avgLoss), cls: 'neg' },
     {
