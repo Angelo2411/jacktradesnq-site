@@ -20,6 +20,7 @@ import BilingualTitle from '../_components/BilingualTitle';
 import V3Tabs from '../_components/V3Tabs';
 import StraddleWrappedTabs from '../_components/StraddleWrappedTabs';
 import PerformanceTearsheet from '../_components/PerformanceTearsheet';
+import StudyHero from '../_components/StudyHero';
 import ManipDataTabs, { type ContDataFile } from '../_components/ManipDataTabs';
 import { type ManipExample } from '../_components/ManipExampleChart';
 import { computeWeekdayBreakdown, computeYearBreakdown } from '@/lib/client-stats';
@@ -527,10 +528,31 @@ export default async function BacktestedDetail({ params }: PageProps) {
           <span className="v3-sub-ev">{eventFull(eventLabel.toLowerCase().replace(/\s+/g, '-'))}</span>
           {' · IFVG + SMT'}
         </h1>
-        <p className="v3-sub-sub">
-          {assetShort(assetLabel)} futures · {stratStats?.releaseTime ?? '8:30 ET'} release · {dateFrom}–{dateTo} backtest
-          {stratStats ? ` · ${stratStats.n} events` : ''}
-        </p>
+        {slug === 'nfp-ifvg-smt' && statsByVariant?.be_50 ? (
+          // Hero figures match the canonical default the KPI band shows below (be_50 variant, SMT-on).
+          (() => {
+            const h = statsByVariant.be_50;
+            return (
+              <StudyHero
+                eyebrow={`${assetShort(assetLabel)} futures · ${eventFull(eventLabel.toLowerCase().replace(/\s+/g, '-'))} · ${dateFrom}–${dateTo} · ${h.n} events`}
+                value={String(h.pf)}
+                valueLabel="Profit factor"
+                valueSub={`$${h.pf} won for every $1 lost`}
+                verdict="When NFP's first move sweeps liquidity and reverses, fading it back to the opposite side has returned $6.49 for every $1 risked on NQ — the strongest news edge in this set. On 22 events it's a high-conviction read, not a guarantee."
+                micro={[
+                  { label: 'Win rate', value: `${h.wr}%` },
+                  { label: 'Net result', value: `${h.net > 0 ? '+' : ''}${h.net} pts`, tone: 'pos' },
+                  { label: 'Sample', value: `${h.n} events` },
+                ]}
+              />
+            );
+          })()
+        ) : (
+          <p className="v3-sub-sub">
+            {assetShort(assetLabel)} futures · {stratStats?.releaseTime ?? '8:30 ET'} release · {dateFrom}–{dateTo} backtest
+            {stratStats ? ` · ${stratStats.n} events` : ''}
+          </p>
+        )}
 
         {/* Performance Tearsheet — pilot: fomc-ifvg-smt only. Extend by running gen_tearsheet.py for other slugs. */}
         <PerformanceTearsheet slug={slug} />
