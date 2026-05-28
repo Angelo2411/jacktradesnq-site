@@ -707,7 +707,7 @@ export default function V3Tabs({
   const [flatNotesOpen, setFlatNotesOpen] = useState(false);
 
   const resolvedTab: Tab = jumpTab ?? activeTab;
-  const resolvedYearFilter: string = jumpTab === 'trades' && jumpYear !== null
+  const resolvedYearFilter: string = (jumpTab === 'trades' || flatSec === 'trades') && jumpYear !== null
     ? String(jumpYear)
     : yearFilter;
 
@@ -915,9 +915,9 @@ export default function V3Tabs({
       {/* ── Flat switcher chips ── */}
       {flat && hasTradeData && (
         <div className="v3-flat-chips">
-          <button type="button" className={'v3-flat-chip' + (flatSec === 'weekday' ? ' active' : '')} onClick={() => setFlatSec('weekday')}>Weekday</button>
-          <button type="button" className={'v3-flat-chip' + (flatSec === 'year' ? ' active' : '')} onClick={() => setFlatSec('year')}>By year</button>
-          <button type="button" className={'v3-flat-chip' + (flatSec === 'trades' ? ' active' : '')} onClick={() => setFlatSec('trades')}>Trades</button>
+          <button type="button" className={'v3-flat-chip' + (flatSec === 'weekday' ? ' active' : '')} onClick={() => { setJumpYear(null); setFlatSec('weekday'); }}>Weekday</button>
+          <button type="button" className={'v3-flat-chip' + (flatSec === 'year' ? ' active' : '')} onClick={() => { setJumpYear(null); setFlatSec('year'); }}>By year</button>
+          <button type="button" className={'v3-flat-chip' + (flatSec === 'trades' ? ' active' : '')} onClick={() => { setJumpYear(null); setFlatSec('trades'); }}>Trades</button>
         </div>
       )}
 
@@ -972,7 +972,7 @@ export default function V3Tabs({
               slug={slug}
               smtLabel={smtLabel}
               trades={activeTrades}
-              onJumpToTrades={() => setFlatSec('trades')}
+              onJumpToTrades={(year) => { setJumpYear(year); setFlatSec('trades'); }}
               isStraddle={!!fbo}
               totalTradesCount={trades.length}
             />
@@ -984,7 +984,7 @@ export default function V3Tabs({
               setVariant={() => {}}
               dayFilter={dayFilter}
               yearFilter={resolvedYearFilter}
-              onClearYearFilter={undefined}
+              onClearYearFilter={jumpYear !== null ? () => setJumpYear(null) : undefined}
               slug={slug}
               eventShort={eventShort}
               asset={asset}

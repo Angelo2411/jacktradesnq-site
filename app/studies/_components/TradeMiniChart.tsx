@@ -443,7 +443,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
         if (zone !== null) {
           candleSeries.createPriceLine({
             price: zone.gap_high,
-            color: 'rgba(180,150,100,0.5)',
+            color: 'rgba(130,158,200,0.6)',
             lineWidth: 1,
             lineStyle: LineStyle.Dotted,
             axisLabelVisible: false,
@@ -451,7 +451,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
           });
           candleSeries.createPriceLine({
             price: zone.gap_low,
-            color: 'rgba(180,150,100,0.5)',
+            color: 'rgba(130,158,200,0.6)',
             lineWidth: 1,
             lineStyle: LineStyle.Dotted,
             axisLabelVisible: false,
@@ -528,7 +528,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
       const formSec = (Math.floor(new Date(ifvgFormationTs).getTime() / 1000) - 120) as UTCTimestamp;
       // Stop IFVG at the entry bar's CLOSE (entry_ts + 60s) so the breaking bar is inside the zone.
       const entrySec = (Math.floor(new Date(entryTs).getTime() / 1000) + 60) as UTCTimestamp;
-      const cIfvg = 'rgba(20, 20, 20, 0.9)';
+      const cIfvg = 'rgba(130, 158, 200, 0.95)';
 
       const topEdge = chart.addSeries(LineSeries, {
         color: cIfvg, lineWidth: 1, lineStyle: LineStyle.Solid,
@@ -677,7 +677,7 @@ export default function TradeMiniChart({ eventShort, asset, tradeDate, side, pnl
             )}
             {dataHigh !== undefined && (<LegendPill color="rgba(122,110,90,0.85)" label="Release H" value={dataHigh} />)}
             {ifvgTop !== undefined && ifvgBottom !== undefined && (
-              <LegendPill color="#141414" label="IFVG" value={`${ifvgBottom}–${ifvgTop}`} />
+              <LegendPill color="rgba(130,158,200,0.95)" label="IFVG" value={`${ifvgBottom}–${ifvgTop}`} />
             )}
             {dataLow !== undefined && (<LegendPill color="rgba(122,110,90,0.85)" label="Release L" value={dataLow} />)}
             {entryPriceProp !== undefined && (<LegendPill color="#b08932" label="Entry" value={entryPriceProp} />)}
