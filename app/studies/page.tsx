@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { getAllStudyStats, getDistinctEventCount } from '@/lib/study-stats';
 import { getWeeklyPlaybook } from '@/lib/today-events';
 import HubFilters from './_components/HubFilters';
+import BasicsBanner from './_components/BasicsBanner';
 
 export default function BacktestedHub() {
   const studies = getAllStudyStats();
@@ -20,6 +21,7 @@ export default function BacktestedHub() {
 
   return (
     <div className="bd-hub-center">
+      <BasicsBanner />
       <header className="bd-hub-head">
         <div className="bd-hub-crumb">Atlas · Updated {today}</div>
         <h1 className="bd-h1">
@@ -28,6 +30,10 @@ export default function BacktestedHub() {
         <p className="bd-hub-sub">
           Every futures setup, backtested on 10 years of 1-minute bars.
           Numbers first — methodology underneath. Re-verify before risking capital.
+        </p>
+        <p className="bd-hub-legend">
+          PF = profit factor ($ won per $1 lost). New to the terms?{' '}
+          <a href="/studies/basics/">See the Basics.</a>
         </p>
         <div className="bd-hub-meta">
           <div className="bd-hub-meta-item">

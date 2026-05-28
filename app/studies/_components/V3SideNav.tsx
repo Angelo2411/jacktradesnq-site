@@ -20,13 +20,26 @@ export default function V3SideNav({ counts, tree }: { counts: FamilyCounts; tree
   const activeCat = searchParams.get('cat');
   const activeEvent = searchParams.get('event');
 
+  const isBasics = pathname.includes('/basics');
   const isCalendar = pathname.includes('/calendar');
   const isMethodology = pathname.includes('/methodology');
-  const isData = !isCalendar && !isMethodology;
+  const isData = !isBasics && !isCalendar && !isMethodology;
   const [dataOpen, setDataOpen] = useState(true);
 
   return (
     <aside className="v3-sidenav">
+      {/* Basics */}
+      <Link
+        href="/studies/basics/"
+        className={'v3-nav-btn' + (isBasics ? ' active' : '')}
+      >
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ flexShrink: 0, opacity: 0.8 }}>
+          <path d="M2 3h4l2 6-2 4h7" strokeLinecap="round" strokeLinejoin="round" />
+          <circle cx="12" cy="4" r="1.2" fill="currentColor" />
+        </svg>
+        Basics
+      </Link>
+
       {/* Data (parent) */}
       <button
         type="button"
