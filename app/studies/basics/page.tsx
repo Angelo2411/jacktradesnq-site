@@ -66,47 +66,49 @@ export default function BasicsPage() {
         <p className="v3-doc-p">
           Trading jargon is a wall. Here&rsquo;s what each concept actually means:
         </p>
-        <p className="v3-doc-p">
-          <strong>IFVG (Inverse Fair Value Gap)</strong> — A price gap that got filled
-          and then flipped into support or resistance. The market ran through an old gap
-          and is now treating it as the opposite level.
-        </p>
-        <p className="v3-doc-p">
-          <strong>SMT Divergence</strong> — Two related markets (like NQ and ES) disagree
-          on direction. One makes a higher high while the other doesn&rsquo;t. ICT
-          traders treat that disagreement as a reversal signal.
-        </p>
-        <p className="v3-doc-p">
-          <strong>Straddle</strong> — Bracketing both sides of a news release. You
-          enter in whichever direction fires after the number drops. If it rips up,
-          you&rsquo;re long. If it dumps, you&rsquo;re short.
-        </p>
-        <p className="v3-doc-p">
-          <strong>Killzone</strong> — A high-activity trading window during the session,
-          like the London or New York open. ICT traders treat these as the most liquid
-          and predictable hours to trade.
-        </p>
-        <p className="v3-doc-p">
-          <strong>IB50 (Initial Balance 50%)</strong> — An entry at the 50% retracement
-          of the session&rsquo;s first range. The idea is price will revisit the midpoint
-          of its opening swing before continuing.
-        </p>
-        <p className="v3-doc-p">
-          <strong>FVG (Fair Value Gap)</strong> — A price imbalance left by a fast
-          move: three candles where the wicks don&rsquo;t overlap. Markets often
-          revisit these gaps to &ldquo;fill&rdquo; them.
-        </p>
-        <p className="v3-doc-p">
-          <strong>NWOG (New Week Opening Gap)</strong> — The gap between Friday&rsquo;s
-          close and Sunday&rsquo;s open. Some setups use this as a magnet level for the
-          early-week price action.
-        </p>
-        <p className="v3-doc-p">
-          <strong>BE / SL / TP</strong> — Break Even (moving your stop to entry price
-          so you can&rsquo;t lose), Stop Loss (the level that closes a losing trade),
-          Take Profit (the target where you close a winning trade). These are the three
-          exit points every trade has.
-        </p>
+        <ul className="v3-doc-ul">
+          <li>
+            <strong>IFVG (Inverse Fair Value Gap)</strong> — A price gap that got filled
+            and then flipped into support or resistance. The market ran through an old gap
+            and is now treating it as the opposite level.
+          </li>
+          <li>
+            <strong>SMT Divergence</strong> — Two related markets (like NQ and ES) disagree
+            on direction. One makes a higher high while the other doesn&rsquo;t. ICT
+            traders treat that disagreement as a reversal signal.
+          </li>
+          <li>
+            <strong>Straddle</strong> — Bracketing both sides of a news release. You
+            enter in whichever direction fires after the number drops. If it rips up,
+            you&rsquo;re long. If it dumps, you&rsquo;re short.
+          </li>
+          <li>
+            <strong>Killzone</strong> — A high-activity trading window during the session,
+            like the London or New York open. ICT traders treat these as the most liquid
+            and predictable hours to trade.
+          </li>
+          <li>
+            <strong>IB50 (Initial Balance 50%)</strong> — An entry at the 50% retracement
+            of the session&rsquo;s first range. The idea is price will revisit the midpoint
+            of its opening swing before continuing.
+          </li>
+          <li>
+            <strong>FVG (Fair Value Gap)</strong> — A price imbalance left by a fast
+            move: three candles where the wicks don&rsquo;t overlap. Markets often
+            revisit these gaps to &ldquo;fill&rdquo; them.
+          </li>
+          <li>
+            <strong>NWOG (New Week Opening Gap)</strong> — The gap between Friday&rsquo;s
+            close and Sunday&rsquo;s open. Some setups use this as a magnet level for the
+            early-week price action.
+          </li>
+          <li>
+            <strong>BE / SL / TP</strong> — Break Even (moving your stop to entry price
+            so you can&rsquo;t lose), Stop Loss (the level that closes a losing trade),
+            Take Profit (the target where you close a winning trade). These are the three
+            exit points every trade has.
+          </li>
+        </ul>
       </section>
 
       <section className="v3-doc-section">
