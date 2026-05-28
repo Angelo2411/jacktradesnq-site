@@ -3,7 +3,7 @@ import { Suspense } from 'react';
 import V3SideNav from './_components/V3SideNav';
 import { AssetProvider } from './_components/AssetContext';
 import AssetPills from './_components/AssetPills';
-import { getStudyCountsByFamily, getAllStudyStats } from '@/lib/study-stats';
+import { getStudyCountsByFamily, getAllStudyStats, getStudyNavTree } from '@/lib/study-stats';
 
 export default function BacktestedLayout({
   children,
@@ -11,6 +11,7 @@ export default function BacktestedLayout({
   children: React.ReactNode;
 }) {
   const cf = getStudyCountsByFamily();
+  const tree = getStudyNavTree();
   const allSlugs = getAllStudyStats().map((s) => s.slug);
 
   return (
@@ -40,7 +41,7 @@ export default function BacktestedLayout({
       {/* Body: sidenav (client, pathname-aware) + main */}
       <div className="v3-body">
         <Suspense fallback={null}>
-          <V3SideNav counts={cf} />
+          <V3SideNav counts={cf} tree={tree} />
         </Suspense>
         <main className="v3-main">{children}</main>
       </div>

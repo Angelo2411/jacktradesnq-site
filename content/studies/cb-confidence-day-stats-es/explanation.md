@@ -35,7 +35,6 @@ Release-bar measured at 10:00 ET. ES (S&P 500 futures) — 1 ES pt ≈ $50 / 1 M
 ### Related
 
 - [CB Consumer Confidence NQ — release bar stats](/studies/cb-confidence-day-stats/) — NQ version with full year-by-year breakdown.
-- [Full IFVG + SMT ES backtest](/studies/cb-confidence-ifvg-smt-es/) — ES variant.
 - [CPI straddle (fullport model)](/studies/cpi-day-stats/) — macro day fullport explorer.
 - [NFP straddle (fullport model)](/studies/nfp/) — macro day fullport explorer.
 

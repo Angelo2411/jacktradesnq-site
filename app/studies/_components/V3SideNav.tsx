@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
+import type { NavFamily } from '@/lib/study-stats';
 
 interface FamilyCounts {
   total: number;
@@ -13,36 +14,16 @@ interface FamilyCounts {
   misc: number;
 }
 
-const SUB_ITEMS = [
-  { key: 'all', label: 'All', cat: null },
-  { key: 'news', label: 'News', cat: 'news' },
-  { key: 'ib', label: 'IB', cat: 'ib' },
-  { key: 'ema', label: 'EMA', cat: 'ema' },
-  { key: 'time', label: 'Time', cat: 'time' },
-  { key: 'misc', label: 'Misc', cat: 'misc' },
-] as const;
-
-export default function V3SideNav({ counts }: { counts: FamilyCounts }) {
+export default function V3SideNav({ counts, tree }: { counts: FamilyCounts; tree: NavFamily[] }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const activeCat = searchParams.get('cat');
+  const activeEvent = searchParams.get('event');
 
   const isCalendar = pathname.includes('/calendar');
   const isMethodology = pathname.includes('/methodology');
   const isData = !isCalendar && !isMethodology;
   const [dataOpen, setDataOpen] = useState(true);
-
-  const getCount = (key: string) => {
-    const map: Record<string, number> = {
-      all: counts.total,
-      news: counts.news,
-      ib: counts.ib,
-      ema: counts.ema,
-      time: counts.time,
-      misc: counts.misc,
-    };
-    return map[key] ?? 0;
-  };
 
   return (
     <aside className="v3-sidenav">
@@ -50,7 +31,7 @@ export default function V3SideNav({ counts }: { counts: FamilyCounts }) {
       <button
         type="button"
         onClick={() => setDataOpen((v) => !v)}
-        className={'v3-nav-btn v3-nav-btn-toggle' + (isData && !activeCat ? ' active' : '')}
+        className={'v3-nav-btn v3-nav-btn-toggle' + (isData && !activeCat && !activeEvent ? ' active' : '')}
         aria-expanded={dataOpen}
       >
         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style={{ flexShrink: 0, opacity: 0.8 }}>
@@ -67,22 +48,38 @@ export default function V3SideNav({ counts }: { counts: FamilyCounts }) {
       {/* Sub-items */}
       {dataOpen && (
       <ul className="v3-nav-sublist">
-        {SUB_ITEMS.filter((sub) => sub.key === 'all' || getCount(sub.key) > 0).map((sub) => {
-          const href = sub.cat ? `/studies/?cat=${sub.cat}` : '/studies/';
-          const active = sub.cat ? activeCat === sub.cat : isData && !activeCat;
-          return (
-            <li key={sub.key}>
-              <Link
-                href={href}
-                className={'v3-nav-sub' + (active ? ' active' : '')}
-              >
-                <span className="v3-nav-sub-dot" aria-hidden="true" />
-                {sub.label}
-                <span className="v3-nav-sub-count">({getCount(sub.key)})</span>
-              </Link>
-            </li>
-          );
-        })}
+        {/* All */}
+        <li>
+          <Link
+            href="/studies/"
+            className={'v3-nav-sub' + (isData && !activeCat && !activeEvent ? ' active' : '')}
+          >
+            <span className="v3-nav-sub-dot" aria-hidden="true" />
+            All
+            <span className="v3-nav-sub-count">({counts.total})</span>
+          </Link>
+        </li>
+
+        {/* Family groups with nested events */}
+        {tree.map((fam) => (
+          <li key={fam.family}>
+            <div className="v3-nav-grouplbl">{fam.label}</div>
+            <ul className="v3-nav-sublist">
+              {fam.events.map((ev) => (
+                <li key={ev.key}>
+                  <Link
+                    href={`/studies/?event=${ev.key}`}
+                    className={'v3-nav-sub' + (activeEvent === ev.key ? ' active' : '')}
+                  >
+                    <span className="v3-nav-sub-dot" aria-hidden="true" />
+                    {ev.label}
+                    <span className="v3-nav-sub-count">({ev.count})</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
       </ul>
       )}
 

@@ -6,6 +6,7 @@ const dataDir = path.join(process.cwd(), 'public', 'data');
 
 export { MIN_DISPLAY_PF } from './study-display-config';
 import { MIN_DISPLAY_PF } from './study-display-config';
+import { eventFull } from '@/lib/terminology';
 
 export type ProfitableCombo = {
   variant: 'tp1_be' | 'be_50' | 'no_be';
@@ -125,12 +126,12 @@ const IFVG_SLUGS: Array<{ slug: string; event: string; asset: string; releaseTim
   { slug: 'ism-mfg-ifvg-smt',           event: 'ISM Manufacturing PMI', asset: 'NQ', releaseTime: '10:00 ET' },
   { slug: 'ism-services-ifvg-smt',      event: 'ISM Services PMI',      asset: 'NQ', releaseTime: '10:00 ET' },
 
-  { slug: 'philly-fed-ifvg-smt',        event: 'Philadelphia Fed Manufacturing', asset: 'NQ', releaseTime: '8:30 ET' },
+
   { slug: 'durable-goods-ifvg-smt',     event: 'Durable Goods Orders', asset: 'NQ', releaseTime: '8:30 ET' },
   { slug: 'cpi-ifvg-smt-gc',                 event: 'CPI',             asset: 'GC' },
   { slug: 'nfp-ifvg-smt-gc',                 event: 'NFP',             asset: 'GC' },
   { slug: 'ppi-ifvg-smt-gc',                 event: 'PPI',             asset: 'GC' },
-  { slug: 'pce-ifvg-smt-gc',                 event: 'PCE',             asset: 'GC' },
+
   { slug: 'gdp-ifvg-smt-gc',                 event: 'GDP',             asset: 'GC' },
   { slug: 'joblessclaims-ifvg-smt-gc',       event: 'Jobless Claims',  asset: 'GC' },
   { slug: 'retailsales-ifvg-smt-gc',         event: 'Retail Sales',    asset: 'GC' },
@@ -141,7 +142,7 @@ const IFVG_SLUGS: Array<{ slug: string; event: string; asset: string; releaseTim
   { slug: 'jolts-ifvg-smt-gc',               event: 'JOLTS',           asset: 'GC', releaseTime: '10:00 ET' },
   { slug: 'ism-mfg-ifvg-smt-gc',             event: 'ISM Manufacturing PMI', asset: 'GC', releaseTime: '10:00 ET' },
   { slug: 'ism-services-ifvg-smt-gc',        event: 'ISM Services PMI',      asset: 'GC', releaseTime: '10:00 ET' },
-  { slug: 'cb-confidence-ifvg-smt-gc',       event: 'CB Consumer Confidence', asset: 'GC', releaseTime: '10:00 ET' },
+
   { slug: 'philly-fed-ifvg-smt-gc',          event: 'Philadelphia Fed Manufacturing', asset: 'GC', releaseTime: '8:30 ET' },
   { slug: 'durable-goods-ifvg-smt-gc',       event: 'Durable Goods Orders', asset: 'GC', releaseTime: '8:30 ET' },
   { slug: 'es-ifvg-smt',                event: 'Multi-event',          asset: 'ES' },
@@ -160,8 +161,8 @@ const IFVG_SLUGS: Array<{ slug: string; event: string; asset: string; releaseTim
   { slug: 'jolts-ifvg-smt-es',               event: 'JOLTS',           asset: 'ES', releaseTime: '10:00 ET' },
   { slug: 'ism-mfg-ifvg-smt-es',             event: 'ISM Manufacturing PMI', asset: 'ES', releaseTime: '10:00 ET' },
   { slug: 'ism-services-ifvg-smt-es',        event: 'ISM Services PMI',      asset: 'ES', releaseTime: '10:00 ET' },
-  { slug: 'cb-confidence-ifvg-smt-es',       event: 'CB Consumer Confidence', asset: 'ES', releaseTime: '10:00 ET' },
-  { slug: 'philly-fed-ifvg-smt-es',          event: 'Philadelphia Fed Manufacturing', asset: 'ES', releaseTime: '8:30 ET' },
+
+
   { slug: 'durable-goods-ifvg-smt-es',       event: 'Durable Goods Orders', asset: 'ES', releaseTime: '8:30 ET' },
 ];
 
@@ -431,8 +432,8 @@ const EVENT_SLUG_MAP: Record<string, { nq: string | null; gc: string | null; es:
   'NFP':                              { nq: 'nfp-ifvg-smt',                gc: 'nfp-ifvg-smt-gc',                es: 'nfp-ifvg-smt-es' },
   'Non-Farm Payrolls':                { nq: 'nfp-ifvg-smt',                gc: 'nfp-ifvg-smt-gc',                es: 'nfp-ifvg-smt-es' },
   'PPI':                              { nq: 'ppi-ifvg-smt',                gc: 'ppi-ifvg-smt-gc',                es: 'ppi-ifvg-smt-es' },
-  'PCE':                              { nq: 'pce-ifvg-smt',                gc: 'pce-ifvg-smt-gc',                es: 'pce-ifvg-smt-es' },
-  'Core PCE':                         { nq: 'pce-ifvg-smt',                gc: 'pce-ifvg-smt-gc',                es: 'pce-ifvg-smt-es' },
+  'PCE':                              { nq: 'pce-ifvg-smt',                gc: null,                              es: 'pce-ifvg-smt-es' },
+  'Core PCE':                         { nq: 'pce-ifvg-smt',                gc: null,                              es: 'pce-ifvg-smt-es' },
   'Jobless Claims':                   { nq: 'joblessclaims-ifvg-smt',      gc: 'joblessclaims-ifvg-smt-gc',      es: 'joblessclaims-ifvg-smt-es' },
   'Initial Jobless Claims':           { nq: 'joblessclaims-ifvg-smt',      gc: 'joblessclaims-ifvg-smt-gc',      es: 'joblessclaims-ifvg-smt-es' },
   'Retail Sales':                     { nq: 'retailsales-ifvg-smt',        gc: 'retailsales-ifvg-smt-gc',        es: 'retailsales-ifvg-smt-es' },
@@ -450,8 +451,8 @@ const EVENT_SLUG_MAP: Record<string, { nq: string | null; gc: string | null; es:
   'ISM Manufacturing PMI':                 { nq: 'ism-mfg-ifvg-smt',      gc: 'ism-mfg-ifvg-smt-gc',            es: 'ism-mfg-ifvg-smt-es' },
   'ISM Services PMI':                      { nq: 'ism-services-ifvg-smt', gc: 'ism-services-ifvg-smt-gc',       es: 'ism-services-ifvg-smt-es' },
   'ISM Non-Manufacturing PMI':             { nq: 'ism-services-ifvg-smt', gc: 'ism-services-ifvg-smt-gc',       es: 'ism-services-ifvg-smt-es' },
-  'CB Consumer Confidence':                { nq: null, gc: 'cb-confidence-ifvg-smt-gc',       es: 'cb-confidence-ifvg-smt-es' },
-  'Philadelphia Fed Manufacturing Index':  { nq: 'philly-fed-ifvg-smt',   gc: 'philly-fed-ifvg-smt-gc',         es: 'philly-fed-ifvg-smt-es' },
+  'CB Consumer Confidence':                { nq: null, gc: null, es: null },
+  'Philadelphia Fed Manufacturing Index':  { nq: null, gc: 'philly-fed-ifvg-smt-gc',         es: null },
   'Durable Goods Orders':                  { nq: 'durable-goods-ifvg-smt', gc: 'durable-goods-ifvg-smt-gc',       es: 'durable-goods-ifvg-smt-es' },
   'Core Durable Goods Orders':             { nq: 'durable-goods-ifvg-smt', gc: 'durable-goods-ifvg-smt-gc',       es: 'durable-goods-ifvg-smt-es' },
   // ── FF red folder, no backtest yet (visible with "No backtest yet" badge) ─
@@ -1679,4 +1680,36 @@ export function getStudyCountsByFamily(): { total: number; news: number; ib: num
     time: all.filter((s) => s.family === 'Time').length,
     misc: all.filter((s) => s.family === 'Misc').length,
   };
+}
+
+export interface NavEvent { key: string; label: string; count: number; bestPf: number; }
+export interface NavFamily { family: FamilyType; label: string; cat: string; count: number; events: NavEvent[]; }
+
+const NAV_FAMILY_ORDER: { family: FamilyType; label: string; cat: string }[] = [
+  { family: 'News', label: 'News',            cat: 'news' },
+  { family: 'Time', label: 'Sessions',        cat: 'time' },
+  { family: 'IB',   label: 'Initial Balance', cat: 'ib'   },
+  { family: 'EMA',  label: 'EMA',             cat: 'ema'  },
+  { family: 'Misc', label: 'Other',           cat: 'misc' },
+];
+
+export function getStudyNavTree(): NavFamily[] {
+  const all = getAllStudyStats();
+  const out: NavFamily[] = [];
+  for (const fam of NAV_FAMILY_ORDER) {
+    const items = all.filter((s) => s.family === fam.family);
+    if (items.length === 0) continue;
+    const evMap = new Map<string, StudyStats[]>();
+    for (const s of items) {
+      const k = eventKeyOf(s.slug) ?? s.slug;
+      const arr = evMap.get(k) ?? [];
+      arr.push(s);
+      evMap.set(k, arr);
+    }
+    const events: NavEvent[] = [...evMap.entries()]
+      .map(([key, arr]) => ({ key, label: eventFull(key), count: arr.length, bestPf: Math.max(...arr.map((x) => x.pf)) }))
+      .sort((a, b) => b.bestPf - a.bestPf);
+    out.push({ family: fam.family, label: fam.label, cat: fam.cat, count: items.length, events });
+  }
+  return out;
 }

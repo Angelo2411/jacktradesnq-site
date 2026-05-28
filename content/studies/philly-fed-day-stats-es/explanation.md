@@ -35,8 +35,6 @@ Release-bar measured at 8:30 ET. ES (S&P 500 futures) — 1 ES pt ≈ $50 / 1 ME
 ### Related
 
 - [Philadelphia Fed NQ — release bar stats](/studies/philly-fed-day-stats/) — NQ version with full year-by-year breakdown.
-- [Full IFVG + SMT NQ backtest](/studies/philly-fed-ifvg-smt/) — sweep + IFVG entry on this event.
-- [Full IFVG + SMT ES backtest](/studies/philly-fed-ifvg-smt-es/) — ES variant.
 - [CPI straddle (fullport model)](/studies/cpi-day-stats/) — macro day fullport explorer.
 - [NFP straddle (fullport model)](/studies/nfp/) — macro day fullport explorer.
 

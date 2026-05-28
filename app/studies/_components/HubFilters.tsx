@@ -120,6 +120,7 @@ export default function HubFilters({
   const [filters, setFilters] = useState<FilterState>(DEFAULT_STATE);
   const [mounted, setMounted] = useState(false);
   const [selectedDow, setSelectedDow] = useState<number | null>(null);
+  const [eventFilter, setEventFilter] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -131,11 +132,17 @@ export default function HubFilters({
 
   useEffect(() => {
     const cat = searchParams.get('cat');
+    const event = searchParams.get('event');
     const CAT_TO_FAMILY: Record<string, FamilyType> = { news: 'News', ib: 'IB', ema: 'EMA', time: 'Time', misc: 'Misc' };
-    if (cat && CAT_TO_FAMILY[cat]) {
+    if (event) {
+      setFilters((f) => ({ ...f, family: 'All', asset: 'All' }));
+      setEventFilter(event);
+    } else if (cat && CAT_TO_FAMILY[cat]) {
       setFilters((f) => ({ ...f, family: CAT_TO_FAMILY[cat], asset: 'All' }));
+      setEventFilter(null);
     } else if (cat === null) {
       setFilters((f) => ({ ...f, family: 'All' }));
+      setEventFilter(null);
     }
   }, [searchParams]);
 
@@ -149,6 +156,7 @@ export default function HubFilters({
 
   const clearFamily = useCallback(() => {
     setFilters((f) => ({ ...f, family: 'All' }));
+    setEventFilter(null);
     router.push('/studies/', { scroll: false });
   }, [router]);
 
@@ -159,6 +167,9 @@ export default function HubFilters({
     }
     if (filters.family !== 'All') {
       list = list.filter((s) => s.family === filters.family);
+    }
+    if (eventFilter) {
+      list = list.filter((s) => (eventKeyOf(s.slug) ?? s.slug) === eventFilter);
     }
     const q = filters.query.trim().toLowerCase();
     if (q) {
@@ -183,7 +194,7 @@ export default function HubFilters({
         break;
     }
     return list;
-  }, [studies, filters]);
+  }, [studies, filters, eventFilter]);
 
   const strategies = useMemo(() => filtered.filter((s) => s.kind === 'strategy'), [filtered]);
   const marketStudies = useMemo(() => filtered.filter((s) => s.kind === 'study'), [filtered]);

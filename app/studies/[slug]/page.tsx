@@ -76,21 +76,21 @@ const IFVG_SLUGS = new Set([
   'employmentcostindex-ifvg-smt', 'gdp-ifvg-smt',
   'fomc-ifvg-smt', 'adp-ifvg-smt', 'jolts-ifvg-smt',
   'ism-mfg-ifvg-smt', 'ism-services-ifvg-smt',
-  'philly-fed-ifvg-smt', 'durable-goods-ifvg-smt',
+  'durable-goods-ifvg-smt',
   // 9 individual GC event slugs
-  'cpi-ifvg-smt-gc', 'nfp-ifvg-smt-gc', 'ppi-ifvg-smt-gc', 'pce-ifvg-smt-gc',
+  'cpi-ifvg-smt-gc', 'nfp-ifvg-smt-gc', 'ppi-ifvg-smt-gc',
   'gdp-ifvg-smt-gc', 'joblessclaims-ifvg-smt-gc', 'retailsales-ifvg-smt-gc',
   'empirestate-ifvg-smt-gc', 'employmentcostindex-ifvg-smt-gc',
   'fomc-ifvg-smt-gc', 'adp-ifvg-smt-gc', 'jolts-ifvg-smt-gc',
-  'ism-mfg-ifvg-smt-gc', 'ism-services-ifvg-smt-gc', 'cb-confidence-ifvg-smt-gc',
+  'ism-mfg-ifvg-smt-gc', 'ism-services-ifvg-smt-gc',
   'philly-fed-ifvg-smt-gc', 'durable-goods-ifvg-smt-gc',
   // 17 individual ES event slugs + 1 combined
   'cpi-ifvg-smt-es', 'nfp-ifvg-smt-es', 'ppi-ifvg-smt-es', 'pce-ifvg-smt-es',
   'gdp-ifvg-smt-es', 'joblessclaims-ifvg-smt-es', 'retailsales-ifvg-smt-es',
   'empirestate-ifvg-smt-es', 'employmentcostindex-ifvg-smt-es',
   'fomc-ifvg-smt-es', 'adp-ifvg-smt-es', 'jolts-ifvg-smt-es',
-  'ism-mfg-ifvg-smt-es', 'ism-services-ifvg-smt-es', 'cb-confidence-ifvg-smt-es',
-  'philly-fed-ifvg-smt-es', 'durable-goods-ifvg-smt-es', 'es-ifvg-smt',
+  'ism-mfg-ifvg-smt-es', 'ism-services-ifvg-smt-es',
+  'durable-goods-ifvg-smt-es', 'es-ifvg-smt',
   // SI aggregate
   'si-ifvg-smt',
   // SI anchor + GC SMT (canonical precious-metals pair)
