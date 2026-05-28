@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import type { NavFamily } from '@/lib/study-stats';
@@ -24,7 +24,13 @@ export default function V3SideNav({ counts, tree }: { counts: FamilyCounts; tree
   const isCalendar = pathname.includes('/calendar');
   const isMethodology = pathname.includes('/methodology');
   const isData = !isBasics && !isCalendar && !isMethodology;
-  const [dataOpen, setDataOpen] = useState(true);
+  const [dataOpen, setDataOpen] = useState(isData);
+
+  // Collapse the Data tree when navigating away from a Data page (Basics/Calendar/Methodology),
+  // re-open it when back on a Data page.
+  useEffect(() => {
+    setDataOpen(isData);
+  }, [isData]);
 
   return (
     <aside className="v3-sidenav">
