@@ -24,7 +24,6 @@ Across **35 sweep-qualified setups** 2016–2026, average release-bar range was 
 
 ### Related
 
-- [Full IFVG + SMT GC backtest](/studies/cb-confidence-ifvg-smt-gc/) — Gold variant.
 - [CPI straddle (fullport model)](/studies/cpi-day-stats/) — macro day fullport explorer.
 - [NFP straddle (fullport model)](/studies/nfp/) — macro day fullport explorer.
 
