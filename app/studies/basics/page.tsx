@@ -114,7 +114,8 @@ export default function BasicsPage() {
         <p className="v3-doc-p">
           This is a collection of educational backtests on 1-minute futures data. It is
           not trading signals, not financial advice, and not a roadmap for what to do
-          at 8:30 AM. Every number here is a rear-view mirror — past performance does not
+          at the next 8:30&nbsp;AM data release (when most US economic numbers drop).
+          Every figure here is a rear-view mirror — past performance does not
           guarantee future results. Always re-verify before risking money.
         </p>
         <p className="v3-doc-p">
