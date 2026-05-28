@@ -34,7 +34,7 @@ const LOOKBACK_OPTS: Array<{ key: LookbackKey; label: string }> = [
 // Defaults — absent from URL means default
 const DEFAULT_VARIANT: VariantKey = 'tp1_be';
 const DEFAULT_SMT: SmtKey = 'on';
-const DEFAULT_LOOKBACK: LookbackKey = '1y';
+const DEFAULT_LOOKBACK: LookbackKey = 'all';
 
 export function useFilterState(opts?: { defaultVariant?: string; defaultSmt?: string; defaultTp?: string }) {
   const searchParams = useSearchParams();

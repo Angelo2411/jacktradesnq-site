@@ -56,7 +56,7 @@ function WeekdayBlock({
 }) {
   const sp = useSearchParams();
   const router = useRouter();
-  const lookback = sp.get('lookback') || '1y';
+  const lookback = sp.get('lookback') || 'all';
 
   const days: Array<{ key: keyof WeekdayBreakdown; label: string }> = [
     { key: 'mon', label: 'Mon' },
@@ -187,7 +187,7 @@ function WeekdayBlock({
 function YearBlock({ breakdown, slug, smtLabel = 'SMT-on', trades = [], onJumpToTrades, isStraddle = false, totalTradesCount = 0 }: { breakdown: YearBreakdown; slug: string; smtLabel?: string; trades?: TradeRow[]; onJumpToTrades?: (year: number) => void; isStraddle?: boolean; totalTradesCount?: number }) {
   const sp = useSearchParams();
   const router = useRouter();
-  const lookback = sp.get('lookback') || '1y';
+  const lookback = sp.get('lookback') || 'all';
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
 
   const filteredTrades = useMemo(
@@ -385,7 +385,7 @@ function TradesBlock({
 }) {
   const sp = useSearchParams();
   const router = useRouter();
-  const lookback = sp.get('lookback') || '1y';
+  const lookback = sp.get('lookback') || 'all';
 
   const activeTrades = tradesByVariant ? (tradesByVariant as Record<string, TradeRow[]>)[variant] ?? trades : trades;
   const dayFiltered = dayFilter && DAY_KEY_TO_NUM[dayFilter] !== undefined
