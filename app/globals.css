@@ -2949,7 +2949,8 @@ a { color: inherit; text-decoration: none; }
 .v3-home-link:hover { color: var(--c-ink); }
 
 .v3-body {
-  display: block;
+  display: grid;
+  grid-template-columns: 220px 1fr;
   min-height: calc(100vh - 53px);
 }
 .v3-sidenav {
