@@ -1,17 +1,13 @@
 import Link from 'next/link';
-import { Suspense } from 'react';
-import V3SideNav from './_components/V3SideNav';
 import { AssetProvider } from './_components/AssetContext';
 import AssetPills from './_components/AssetPills';
-import { getStudyCountsByFamily, getAllStudyStats, getStudyNavTree } from '@/lib/study-stats';
+import { getAllStudyStats } from '@/lib/study-stats';
 
 export default function BacktestedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const cf = getStudyCountsByFamily();
-  const tree = getStudyNavTree();
   const allSlugs = getAllStudyStats().map((s) => s.slug);
 
   return (
@@ -38,11 +34,8 @@ export default function BacktestedLayout({
         </a>
       </header>
 
-      {/* Body: sidenav (client, pathname-aware) + main */}
+      {/* Body: full-width main — navigation is the card grid itself (Edgeful-style) */}
       <div className="v3-body">
-        <Suspense fallback={null}>
-          <V3SideNav counts={cf} tree={tree} />
-        </Suspense>
         <main className="v3-main">{children}</main>
       </div>
     </div>
