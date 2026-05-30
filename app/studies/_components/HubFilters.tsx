@@ -126,6 +126,15 @@ export default function HubFilters({
       setFilters((f) => ({ ...f, family: 'All' }));
       setEventFilter(null);
     }
+    // When the left-nav selects an event/family, the filtered grid sits below the
+    // hero (Strongest edges + meta + asset pills) — all outside this component and
+    // never filtered. Without scrolling, the visible viewport doesn't change and the
+    // click reads as a no-op. Bring the (now-filtered) grid into view.
+    if (event || (cat && CAT_TO_FAMILY[cat])) {
+      requestAnimationFrame(() => {
+        document.getElementById('hub-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
   }, [searchParams]);
 
   useEffect(() => {
